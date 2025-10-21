@@ -25,7 +25,7 @@ The application is fully functional with all core features implemented:
 - Added error handling and loading states throughout
 - Implemented search and filter functionality
 
-### Builder Application System (Latest)
+### Builder Application System
 - Added complete builder application schema with category-specific fields
 - Created multi-step form wizard (/apply route) with 4 steps:
   - Step 1: Profile information (name, email, bio, experience)
@@ -41,6 +41,29 @@ The application is fully functional with all core features implemented:
   - **Development**: Programming languages, blockchain frameworks, GitHub profile
   - **Volume**: Trading experience, volume capabilities, compliance knowledge
 - Fixed all TypeScript LSP errors and React controlled input warnings
+
+### Base Pay Integration (Latest)
+- **Replaced mock wallet with real Base Account SDK** (`@base-org/account`)
+- Implemented production-ready wallet connection flow:
+  - Real Base network integration (mainnet + Sepolia testnet support)
+  - Automatic chain verification and switching to Base network
+  - EIP-1193 compliant error handling (code 4001 for user rejection, 4902 for chain addition)
+  - Provider event listeners for account/chain changes
+- **Enhanced $PSX token balance checking**:
+  - Proper ERC-20 ABI encoding for `balanceOf` and `decimals` calls
+  - BigInt-based arithmetic to prevent precision loss
+  - Dynamic decimals detection via `decimals()` function call
+  - Returns '0' on error (removed fake balance fallback for security)
+- **Added security features**:
+  - Environment variable for PSX token address (`VITE_PSX_TOKEN_ADDRESS`)
+  - `hasMinPSXBalance()` helper for token-gating enforcement
+  - Network verification before all operations
+  - Graceful handling of missing token configuration
+- **UI improvements**:
+  - Provider event handling (account/chain changes trigger state updates)
+  - Loading states and error toasts
+  - Automatic reconnection on page load if previously connected
+  - Real wallet address formatting (0x1234...5678)
 
 ## Project Architecture
 
@@ -70,10 +93,15 @@ The application is fully functional with all core features implemented:
 ## Key Features
 
 ### Token Gating
-- Wallet connection with Base network integration
-- PSX balance verification
+- **Real Base Pay wallet connection** using Base Account SDK
+- Automatic network verification and switching to Base (mainnet/testnet)
+- **Production-ready $PSX token balance verification**:
+  - Proper ERC-20 contract calls with correct ABI encoding
+  - Dynamic decimals detection
+  - BigInt-based calculations for precision
 - Tier system (Bronze, Silver, Gold, Platinum) based on holdings
-- Mock verification for MVP (ready for real smart contract integration)
+- Provider event handling for account/chain changes
+- Environment-based token address configuration (`VITE_PSX_TOKEN_ADDRESS`)
 
 ### Builder Profiles
 - Comprehensive profiles with portfolios and past work
@@ -95,11 +123,15 @@ The application is fully functional with all core features implemented:
 - Professional Web3 aesthetic
 
 ## Next Phase Features (Not Yet Implemented)
-- Real Base network integration with actual PSX token contract
-- On-chain payment processing with Base Pay
+- On-chain payment processing with Base Pay (`pay` function for USDC transfers)
 - Escrow smart contracts for secure payments
 - Real-time messaging between clients and builders
 - On-chain review verification
-- Project milestone tracking
+- Client onboarding with "Become a Client" button and registration flow
+- Project milestone tracking with payment integration
 - Admin dashboard for reviewing and approving builder applications
 - Builder approval workflow (converting approved applications to active builder profiles)
+
+## Configuration Required
+To enable full token-gating functionality, set the following environment variable:
+- `VITE_PSX_TOKEN_ADDRESS`: The deployed PSX ERC-20 token contract address on Base network
