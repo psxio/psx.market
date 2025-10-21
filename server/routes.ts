@@ -886,6 +886,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.get("/api/auth/wallet/:address", async (req, res) => {
+    try {
+      const { address } = req.params;
+      
+      if (!address) {
+        return res.status(400).json({ error: "Wallet address required" });
+      }
+
+      const normalizedAddress = address.toLowerCase();
+      
+      const client = await storage.getClientByWallet(normalizedAddress);
+      if (client) {
+        return res.json({ 
+          type: "client", 
+          id: client.id,
+          walletAddress: client.walletAddress,
+          name: client.name,
+          verified: client.verified,
+          psxTier: client.psxTier
+        });
+      }
+
+      const builder = await storage.getBuilderByWallet(normalizedAddress);
+      if (builder) {
+        return res.json({ 
+          type: "builder", 
+          id: builder.id,
+          walletAddress: builder.walletAddress,
+          name: builder.name,
+          verified: builder.verified,
+          category: builder.category
+        });
+      }
+
+      res.json({ type: null });
+    } catch (error) {
+      console.error("Error checking wallet status:", error);
+      res.status(500).json({ error: "Failed to check wallet status" });
+    }
+  });
+
   app.post("/api/orders", requireClientAuth, async (req, res) => {
     try {
       const orderData = {

@@ -2,9 +2,9 @@ import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, Shield, MessageCircle, Grid3x3 } from "lucide-react";
+import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useClientAuth } from "@/hooks/use-client-auth";
+import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import {
   Sheet,
   SheetContent,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sheet";
 
 export function Header() {
-  const { client } = useClientAuth();
+  const { isClient, isBuilder, client } = useWalletAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,17 +49,27 @@ export function Header() {
               </Button>
             </Link>
             
-            {client && (
+            {(isClient || isBuilder) && (
               <>
-                <div className="hidden md:block">
-                  <NotificationCenter userId={client.id} userType="client" />
-                </div>
-                <Link href="/messages" className="hidden md:block">
-                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
-                    <MessageCircle className="h-3.5 w-3.5" />
-                    Messages
+                <Link href={isClient ? "/dashboard" : "/builder-dashboard"} className="hidden md:block">
+                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-dashboard">
+                    <LayoutDashboard className="h-3.5 w-3.5" />
+                    Dashboard
                   </Button>
                 </Link>
+                {client && (
+                  <>
+                    <div className="hidden md:block">
+                      <NotificationCenter userId={client.id} userType="client" />
+                    </div>
+                    <Link href="/messages" className="hidden md:block">
+                      <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        Messages
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </>
             )}
             
@@ -109,6 +119,19 @@ export function Header() {
                         Browse Services
                       </Button>
                     </Link>
+                    
+                    {(isClient || isBuilder) && (
+                      <Link href={isClient ? "/dashboard" : "/builder-dashboard"}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-2 hover-elevate"
+                          data-testid="link-dashboard-mobile"
+                        >
+                          <LayoutDashboard className="h-4 w-4" />
+                          Dashboard
+                        </Button>
+                      </Link>
+                    )}
                     
                     {client && (
                       <Link href="/messages">

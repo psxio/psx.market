@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import { useClientAuth } from "@/hooks/use-client-auth";
-import { connectWallet, getCurrentAccount, formatAddress } from "@/lib/baseAccount";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,10 +13,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/header";
 import { Wallet, CheckCircle2, Shield, Zap, Users, Star, ArrowRight, Building2, Globe, MessageSquare, Clock } from "lucide-react";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function BecomeClient() {
-  const [walletAddress, setWalletAddress] = useState("");
-  const [isConnected, setIsConnected] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -34,47 +33,18 @@ export default function BecomeClient() {
   const [twitterHandle, setTwitterHandle] = useState("");
   const [telegramHandle, setTelegramHandle] = useState("");
   
-  const { register, isAuthenticated } = useClientAuth();
+  const { address, isConnected, isRegistered, userType } = useWalletAuth();
+  const { register } = useClientAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isRegistered && userType === "client") {
       setLocation("/dashboard");
+    } else if (isRegistered && userType === "builder") {
+      setLocation("/builder-dashboard");
     }
-  }, [isAuthenticated, setLocation]);
-
-  useEffect(() => {
-    checkWalletConnection();
-  }, []);
-
-  const checkWalletConnection = async () => {
-    const account = await getCurrentAccount();
-    if (account && typeof account === 'object' && 'address' in account && account.address) {
-      setWalletAddress(account.address);
-      setIsConnected(true);
-    }
-  };
-
-  const handleConnectWallet = async () => {
-    try {
-      const address = await connectWallet();
-      if (address) {
-        setWalletAddress(address);
-        setIsConnected(true);
-        toast({
-          title: "Wallet connected",
-          description: formatAddress(address),
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Connection failed",
-        description: error.message || "Failed to connect wallet",
-        variant: "destructive",
-      });
-    }
-  };
+  }, [isRegistered, userType, setLocation]);
 
   const handleCategoryToggle = (category: string) => {
     setInterestedCategories(prev =>
@@ -87,10 +57,10 @@ export default function BecomeClient() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isConnected) {
+    if (!isConnected || !address) {
       toast({
         title: "Wallet required",
-        description: "Please connect your wallet before registering",
+        description: "Please connect your wallet using the button in the header before registering",
         variant: "destructive",
       });
       return;
@@ -100,7 +70,7 @@ export default function BecomeClient() {
 
     try {
       await register({
-        walletAddress,
+        walletAddress: address.toLowerCase(),
         name,
         email,
         companyName: companyName || undefined,
@@ -229,23 +199,17 @@ export default function BecomeClient() {
                     {!isConnected ? (
                       <div>
                         <p className="mb-3 text-sm text-muted-foreground">
-                          Connect your Base wallet to verify your $PSX holdings and access the marketplace
+                          Please connect your wallet using the "Connect Wallet" button in the header to verify your $CREATE or $PSX holdings
                         </p>
-                        <Button
-                          type="button"
-                          onClick={handleConnectWallet}
-                          variant="outline"
-                          className="gap-2"
-                          data-testid="button-connect-wallet"
-                        >
-                          <Wallet className="h-4 w-4" />
-                          Connect Wallet
-                        </Button>
+                        <div className="flex justify-center py-2">
+                          <ConnectButton />
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 rounded-md border bg-background p-3">
                         <CheckCircle2 className="h-4 w-4 text-green-500" />
-                        <span className="font-mono text-sm">{formatAddress(walletAddress)}</span>
+                        <span className="font-mono text-sm">{address}</span>
+                        <Badge variant="secondary" className="ml-auto">Connected</Badge>
                       </div>
                     )}
                   </div>
