@@ -30,7 +30,7 @@ create.psx is built with a clear separation between its frontend and backend for
 - **Backend**: Express and TypeScript, RESTful API structure.
 - **Authentication**: Session-based authentication using `express-session`; `bcrypt` for admin password hashing; Base Account SDK for client wallet connection.
 - **Wallet Integration**: Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 $PSX token balance checking.
-- **Data Storage**: Currently uses in-memory storage (`MemStorage`) for development.
+- **Data Storage**: PostgreSQL database with Drizzle ORM for production-grade persistent storage.
 - **Data Models**: Comprehensive schemas for Builders, Builder Projects, Clients, Services, Categories, Reviews, Review Votes, Review Disputes, Builder Applications, Admins, Referrals, Orders, Order Revisions, Order Activities, Payments, Milestones, Payouts, Disputes, Refunds, Invoices, Chat Threads, Messages, Message Read Receipts, Message Attachments, Project Deliverables, Progress Updates, Project Documents, Builder Follows, Builder Activity Feed, Builder Badges, Builder Testimonials, Builder View Tracking, Platform Statistics, Builder Application Revisions, and Builder Onboarding.
 - **Order Management System**: Full order booking and management with status workflows, revision tracking, activity logging, and client/builder dashboards.
 - **Payment Integration**: Comprehensive USDC payment system on Base blockchain using Base Pay SDK. Features smart contract-based escrow with milestone releases, configurable platform fees, automated payouts, transaction history, invoice generation, dispute resolution, and refund processing.
@@ -52,7 +52,17 @@ create.psx is built with a clear separation between its frontend and backend for
   - **Notification Center UI**: Integrated into header and builder dashboard with real-time unread count badges
   - **Settings Page**: Dedicated notification settings page (/settings/notifications) for managing preferences and push permissions
   - **Backend Utilities**: Helper functions for sending notifications from various parts of the application (notifyOrderUpdate, notifyNewMessage, notifyPaymentReceived, etc.)
-  - **Storage Layer**: Complete CRUD operations for notifications, preferences, and push subscriptions in MemStorage
+  - **Storage Layer**: Complete CRUD operations for notifications, preferences, and push subscriptions in PostgreSQL
+- **File Upload & Storage System**: Complete file upload and storage infrastructure using Replit Object Storage (Google Cloud Storage backend). Features include:
+  - **Object Storage Service**: Core service (`server/objectStorage.ts`) for managing file uploads, downloads, and ACL policies
+  - **Access Control**: Granular ACL system (`server/objectAcl.ts`) with public/private visibility controls and owner-based access
+  - **File Upload UI**: Reusable `ObjectUploader` component with drag-and-drop interface, progress tracking, and file preview
+  - **Presigned URLs**: Secure direct-to-storage uploads using presigned URLs (no server-side file handling)
+  - **Multiple Upload Types**: Support for portfolio images (public), message attachments (private), deliverables (private), and project documents
+  - **API Endpoints**: Dedicated routes for upload URL generation (`/api/objects/upload`), file serving (`/objects/*`, `/public-objects/*`), and ACL management
+  - **Authentication Integration**: File uploads require authentication (client wallet or admin session)
+  - **File Metadata**: Automatic content-type detection, cache control headers, and proper file streaming
+  - **Size Limits**: Configurable file size limits (default 10MB) with client-side validation
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
