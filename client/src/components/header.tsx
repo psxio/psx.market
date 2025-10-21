@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, Shield, MessageCircle } from "lucide-react";
+import { Search, Menu, Shield, MessageCircle, Grid3x3 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useClientAuth } from "@/hooks/use-client-auth";
 import {
@@ -12,14 +12,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const categories = [
-  { name: "KOLs", slug: "kols" },
-  { name: "3D Content", slug: "3d-content" },
-  { name: "Marketing", slug: "marketing" },
-  { name: "Development", slug: "development" },
-  { name: "Volume", slug: "volume" },
-];
-
 export function Header() {
   const { client } = useClientAuth();
 
@@ -27,31 +19,14 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2" data-testid="link-home">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
-                P
-              </div>
-              <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
-                Create x PSX Marketplace
-              </span>
-            </Link>
-
-            <nav className="hidden items-center gap-1 lg:flex">
-              {categories.map((category) => (
-                <Link key={category.slug} href={`/category/${category.slug}`}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover-elevate"
-                    data-testid={`link-category-${category.slug}`}
-                  >
-                    {category.name}
-                  </Button>
-                </Link>
-              ))}
-            </nav>
-          </div>
+          <Link href="/" className="flex items-center gap-2" data-testid="link-home">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
+              P
+            </div>
+            <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
+              Create x PSX Marketplace
+            </span>
+          </Link>
 
           <div className="hidden flex-1 max-w-md md:flex">
             <div className="relative w-full">
@@ -66,6 +41,13 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link href="/marketplace" className="hidden md:block">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-browse">
+                <Grid3x3 className="h-3.5 w-3.5" />
+                Browse Services
+              </Button>
+            </Link>
+            
             {client && (
               <Link href="/messages" className="hidden md:block">
                 <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
@@ -87,7 +69,7 @@ export function Header() {
             </div>
 
             <Sheet>
-              <SheetTrigger asChild className="lg:hidden">
+              <SheetTrigger asChild className="md:hidden">
                 <Button variant="ghost" size="icon" data-testid="button-menu">
                   <Menu className="h-5 w-5" />
                 </Button>
@@ -111,24 +93,22 @@ export function Header() {
                   </div>
 
                   <nav className="flex flex-col gap-2">
-                    {categories.map((category) => (
-                      <Link key={category.slug} href={`/category/${category.slug}`}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start hover-elevate"
-                        >
-                          {category.name}
-                        </Button>
-                      </Link>
-                    ))}
-                  </nav>
-
-                  <div className="border-t pt-4 mt-4">
+                    <Link href="/marketplace">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 hover-elevate"
+                        data-testid="link-browse-mobile"
+                      >
+                        <Grid3x3 className="h-4 w-4" />
+                        Browse Services
+                      </Button>
+                    </Link>
+                    
                     {client && (
                       <Link href="/messages">
                         <Button
                           variant="ghost"
-                          className="w-full justify-start gap-2 hover-elevate mb-2"
+                          className="w-full justify-start gap-2 hover-elevate"
                           data-testid="link-messages-mobile"
                         >
                           <MessageCircle className="h-4 w-4" />
@@ -147,7 +127,7 @@ export function Header() {
                         Admin Dashboard
                       </Button>
                     </Link>
-                  </div>
+                  </nav>
                 </div>
               </SheetContent>
             </Sheet>
