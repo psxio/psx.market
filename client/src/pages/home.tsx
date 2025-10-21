@@ -73,11 +73,16 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link href="/marketplace">
                   <Button size="lg" className="gap-2 text-base" data-testid="button-browse-services">
                     Browse Services
                     <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/become-client">
+                  <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-become-client">
+                    Become a Client
                   </Button>
                 </Link>
                 <Link href="/apply">
