@@ -688,7 +688,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/builder-applications", async (req, res) => {
     try {
-      const validatedData = insertBuilderApplicationSchema.parse(req.body);
+      const { inviteToken, ...applicationData } = req.body;
+      const validatedData = insertBuilderApplicationSchema.parse(applicationData);
+      
+      if (inviteToken) {
+        const token = await storage.getBuilderInviteToken(inviteToken);
+        
+        if (!token) {
+          return res.status(400).json({ error: "Invalid invite token" });
+        }
+        
+        if (token.used) {
+          return res.status(400).json({ error: "Invite token already used" });
+        }
+        
+        if (token.expiresAt && new Date(token.expiresAt) < new Date()) {
+          return res.status(400).json({ error: "Invite token expired" });
+        }
+        
+        const builder = await storage.createBuilder({
+          walletAddress: validatedData.walletAddress,
+          name: validatedData.name,
+          bio: validatedData.bio,
+          category: validatedData.category,
+          rating: "5.0",
+          reviewCount: 0,
+          skills: validatedData.skills || [],
+          verified: true,
+          featured: false,
+          twitterHandle: validatedData.twitterHandle,
+          portfolioItems: [],
+        });
+        
+        await storage.markInviteTokenAsUsed(inviteToken, builder.id, builder.name);
+        
+        return res.status(201).json({
+          id: builder.id,
+          builderId: builder.id,
+          status: "approved",
+          message: "Welcome to Create.psx! Your builder profile has been created.",
+        });
+      }
       
       const application = await storage.createBuilderApplication(validatedData);
       
@@ -701,6 +741,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error.name === "ZodError") {
         return res.status(400).json({ error: "Invalid application data", details: error.errors });
       }
+      console.error("Application submission error:", error);
       res.status(500).json({ error: "Failed to submit application" });
     }
   });

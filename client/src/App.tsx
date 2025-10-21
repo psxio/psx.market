@@ -16,6 +16,7 @@ import BuilderProfile from "@/pages/builder-profile";
 import Marketplace from "@/pages/marketplace";
 import CategoryPage from "@/pages/category";
 import Apply from "@/pages/apply";
+import BuilderInvite from "@/pages/builder-invite";
 import BecomeClient from "@/pages/become-client";
 import ClientDashboard from "@/pages/client-dashboard";
 import BuilderDashboard from "@/pages/builder-dashboard";
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/builder/:id" component={BuilderProfile} />
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/apply" component={Apply} />
+      <Route path="/builder-invite/:token" component={BuilderInvite} />
       <Route path="/become-client" component={BecomeClient} />
       <Route path="/dashboard" component={ClientDashboard} />
       <Route path="/builder-dashboard" component={BuilderDashboard} />
