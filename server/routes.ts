@@ -13,6 +13,8 @@ import {
 } from "@shared/schema";
 import { requireAdminAuth, requireClientAuth } from "./middleware/auth";
 import { WebSocketServer, WebSocket } from "ws";
+import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
+import { ObjectPermission } from "./objectAcl";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -2273,6 +2275,164 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       next(error);
+    }
+  });
+
+  // Object Storage Routes - File uploads for portfolio images, attachments, deliverables
+  // Referenced from javascript_object_storage blueprint
+
+  // Serve private objects with ACL check (for authenticated users)
+  app.get("/objects/:objectPath(*)", async (req, res) => {
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const objectFile = await objectStorageService.getObjectEntityFile(req.path);
+      
+      // For create.psx, we'll check if user is authenticated (client or admin)
+      // Get user ID from session - could be client wallet address or admin ID
+      let userId: string | undefined;
+      if (req.session.clientAddress) {
+        userId = req.session.clientAddress;
+      } else if (req.session.adminId) {
+        userId = req.session.adminId;
+      }
+
+      const canAccess = await objectStorageService.canAccessObjectEntity({
+        objectFile,
+        userId,
+        requestedPermission: ObjectPermission.READ,
+      });
+
+      if (!canAccess) {
+        return res.sendStatus(401);
+      }
+
+      objectStorageService.downloadObject(objectFile, res);
+    } catch (error) {
+      console.error("Error accessing object:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.sendStatus(404);
+      }
+      return res.sendStatus(500);
+    }
+  });
+
+  // Serve public objects (no authentication required)
+  app.get("/public-objects/:filePath(*)", async (req, res) => {
+    const filePath = req.params.filePath;
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const file = await objectStorageService.searchPublicObject(filePath);
+      if (!file) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      objectStorageService.downloadObject(file, res);
+    } catch (error) {
+      console.error("Error searching for public object:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Get upload URL for file upload (requires authentication)
+  app.post("/api/objects/upload", async (req, res) => {
+    // Require authentication
+    if (!req.session.clientAddress && !req.session.adminId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const uploadURL = await objectStorageService.getObjectEntityUploadURL();
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Error getting upload URL:", error);
+      return res.status(500).json({ error: "Failed to generate upload URL" });
+    }
+  });
+
+  // Set ACL policy for uploaded portfolio image
+  app.put("/api/upload/portfolio-image", async (req, res) => {
+    if (!req.session.clientAddress && !req.session.adminId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (!req.body.imageURL) {
+      return res.status(400).json({ error: "imageURL is required" });
+    }
+
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const userId = req.session.clientAddress || req.session.adminId || "";
+      
+      const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
+        req.body.imageURL,
+        {
+          owner: userId,
+          visibility: "public", // Portfolio images are public
+        }
+      );
+
+      res.status(200).json({ objectPath });
+    } catch (error) {
+      console.error("Error setting portfolio image ACL:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Set ACL policy for uploaded message attachment
+  app.put("/api/upload/message-attachment", async (req, res) => {
+    if (!req.session.clientAddress && !req.session.adminId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (!req.body.fileURL) {
+      return res.status(400).json({ error: "fileURL is required" });
+    }
+
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const userId = req.session.clientAddress || req.session.adminId || "";
+      
+      const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
+        req.body.fileURL,
+        {
+          owner: userId,
+          visibility: "private", // Message attachments are private
+        }
+      );
+
+      res.status(200).json({ objectPath });
+    } catch (error) {
+      console.error("Error setting message attachment ACL:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Set ACL policy for uploaded deliverable file
+  app.put("/api/upload/deliverable", async (req, res) => {
+    if (!req.session.clientAddress && !req.session.adminId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (!req.body.fileURL) {
+      return res.status(400).json({ error: "fileURL is required" });
+    }
+
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const userId = req.session.clientAddress || req.session.adminId || "";
+      
+      const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
+        req.body.fileURL,
+        {
+          owner: userId,
+          visibility: "private", // Deliverables are private
+        }
+      );
+
+      res.status(200).json({ objectPath });
+    } catch (error) {
+      console.error("Error setting deliverable ACL:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 
