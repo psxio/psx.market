@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button";
+import { NotificationCenter } from "./notification-center";
 import { Button } from "@/components/ui/button";
 import { Search, Menu, Shield, MessageCircle, Grid3x3 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -49,12 +50,17 @@ export function Header() {
             </Link>
             
             {client && (
-              <Link href="/messages" className="hidden md:block">
-                <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  Messages
-                </Button>
-              </Link>
+              <>
+                <div className="hidden md:block">
+                  <NotificationCenter userId={client.id} userType="client" />
+                </div>
+                <Link href="/messages" className="hidden md:block">
+                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    Messages
+                  </Button>
+                </Link>
+              </>
             )}
             
             <Link href="/admin/login" className="hidden md:block">
