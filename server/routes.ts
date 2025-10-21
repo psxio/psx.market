@@ -98,6 +98,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/builders/:id/projects", async (req, res) => {
+    try {
+      const projects = await storage.getBuilderProjects(req.params.id);
+      res.json(projects);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch projects" });
+    }
+  });
+
   app.get("/api/services", async (req, res) => {
     try {
       let services = await storage.getServices();

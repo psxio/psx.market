@@ -21,6 +21,82 @@ export const builders = pgTable("builders", {
   portfolioLinks: text("portfolio_links").array(),
   skills: text("skills").array(),
   psxTier: text("psx_tier").notNull().default("bronze"),
+  
+  portfolioMedia: text("portfolio_media").array(),
+  videoShowreel: text("video_showreel"),
+  
+  instagramHandle: text("instagram_handle"),
+  instagramFollowers: integer("instagram_followers"),
+  youtubeChannel: text("youtube_channel"),
+  youtubeSubscribers: integer("youtube_subscribers"),
+  telegramHandle: text("telegram_handle"),
+  telegramMembers: integer("telegram_members"),
+  engagementRate: decimal("engagement_rate", { precision: 5, scale: 2 }),
+  audienceDemographics: text("audience_demographics"),
+  contentNiches: text("content_niches").array(),
+  brandPartnerships: text("brand_partnerships").array(),
+  
+  software3D: text("software_3d").array(),
+  renderEngines: text("render_engines").array(),
+  styleSpecialties: text("style_specialties").array(),
+  animationExpertise: boolean("animation_expertise"),
+  
+  marketingPlatforms: text("marketing_platforms").array(),
+  growthStrategies: text("growth_strategies").array(),
+  caseStudies: text("case_studies").array(),
+  avgROI: decimal("avg_roi", { precision: 5, scale: 2 }),
+  clientIndustries: text("client_industries").array(),
+  
+  programmingLanguages: text("programming_languages").array(),
+  blockchainFrameworks: text("blockchain_frameworks").array(),
+  githubProfile: text("github_profile"),
+  deployedContracts: text("deployed_contracts").array(),
+  auditReports: text("audit_reports").array(),
+  certifications: text("certifications").array(),
+  
+  tradingExperience: integer("trading_experience"),
+  volumeCapabilities: text("volume_capabilities"),
+  dexExpertise: text("dex_expertise").array(),
+  cexExpertise: text("cex_expertise").array(),
+  complianceKnowledge: boolean("compliance_knowledge"),
+  volumeProof: text("volume_proof").array(),
+});
+
+export const builderProjects = pgTable("builder_projects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(),
+  clientName: text("client_name"),
+  projectDate: text("project_date").notNull(),
+  
+  mediaUrls: text("media_urls").array(),
+  videoUrl: text("video_url"),
+  liveUrl: text("live_url"),
+  
+  results: text("results").array(),
+  metricsAchieved: text("metrics_achieved"),
+  
+  twitterReach: integer("twitter_reach"),
+  engagementGenerated: integer("engagement_generated"),
+  followersGained: integer("followers_gained"),
+  impressions: integer("impressions"),
+  
+  roiPercentage: decimal("roi_percentage", { precision: 5, scale: 2 }),
+  revenueGenerated: decimal("revenue_generated", { precision: 12, scale: 2 }),
+  conversionRate: decimal("conversion_rate", { precision: 5, scale: 2 }),
+  
+  contractAddress: text("contract_address"),
+  auditScore: integer("audit_score"),
+  
+  volumeDelivered: decimal("volume_delivered", { precision: 15, scale: 2 }),
+  
+  testimonial: text("testimonial"),
+  testimonialAuthor: text("testimonial_author"),
+  
+  featured: boolean("featured").notNull().default(false),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const services = pgTable("services", {
@@ -108,6 +184,11 @@ export const insertBuilderSchema = createInsertSchema(builders).omit({
   rating: true,
   reviewCount: true,
   completedProjects: true,
+});
+
+export const insertBuilderProjectSchema = createInsertSchema(builderProjects).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertServiceSchema = createInsertSchema(services).omit({
@@ -314,6 +395,9 @@ export const insertReferralSchema = createInsertSchema(referrals).omit({
 
 export type InsertBuilder = z.infer<typeof insertBuilderSchema>;
 export type Builder = typeof builders.$inferSelect;
+
+export type InsertBuilderProject = z.infer<typeof insertBuilderProjectSchema>;
+export type BuilderProject = typeof builderProjects.$inferSelect;
 
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type Service = typeof services.$inferSelect;

@@ -1,6 +1,8 @@
 import {
   type Builder,
   type InsertBuilder,
+  type BuilderProject,
+  type InsertBuilderProject,
   type Service,
   type InsertService,
   type Category,
@@ -32,6 +34,10 @@ export interface IStorage {
   getBuilders(): Promise<Builder[]>;
   getFeaturedBuilders(): Promise<Builder[]>;
   createBuilder(builder: InsertBuilder): Promise<Builder>;
+  
+  getBuilderProjects(builderId: string): Promise<BuilderProject[]>;
+  getBuilderProject(id: string): Promise<BuilderProject | undefined>;
+  createBuilderProject(project: InsertBuilderProject): Promise<BuilderProject>;
 
   getService(id: string): Promise<Service | undefined>;
   getServices(): Promise<Service[]>;
@@ -103,6 +109,7 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private builders: Map<string, Builder>;
+  private builderProjects: Map<string, BuilderProject>;
   private services: Map<string, Service>;
   private categories: Map<string, Category>;
   private reviews: Map<string, Review>;
@@ -117,6 +124,7 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.builders = new Map();
+    this.builderProjects = new Map();
     this.services = new Map();
     this.categories = new Map();
     this.reviews = new Map();
@@ -727,9 +735,82 @@ export class MemStorage implements IStorage {
       portfolioLinks: insertBuilder.portfolioLinks ?? null,
       skills: insertBuilder.skills ?? null,
       psxTier: insertBuilder.psxTier ?? "bronze",
+      portfolioMedia: insertBuilder.portfolioMedia ?? null,
+      videoShowreel: insertBuilder.videoShowreel ?? null,
+      instagramHandle: insertBuilder.instagramHandle ?? null,
+      instagramFollowers: insertBuilder.instagramFollowers ?? null,
+      youtubeChannel: insertBuilder.youtubeChannel ?? null,
+      youtubeSubscribers: insertBuilder.youtubeSubscribers ?? null,
+      telegramHandle: insertBuilder.telegramHandle ?? null,
+      telegramMembers: insertBuilder.telegramMembers ?? null,
+      engagementRate: insertBuilder.engagementRate ?? null,
+      audienceDemographics: insertBuilder.audienceDemographics ?? null,
+      contentNiches: insertBuilder.contentNiches ?? null,
+      brandPartnerships: insertBuilder.brandPartnerships ?? null,
+      software3D: insertBuilder.software3D ?? null,
+      renderEngines: insertBuilder.renderEngines ?? null,
+      styleSpecialties: insertBuilder.styleSpecialties ?? null,
+      animationExpertise: insertBuilder.animationExpertise ?? null,
+      marketingPlatforms: insertBuilder.marketingPlatforms ?? null,
+      growthStrategies: insertBuilder.growthStrategies ?? null,
+      caseStudies: insertBuilder.caseStudies ?? null,
+      avgROI: insertBuilder.avgROI ?? null,
+      clientIndustries: insertBuilder.clientIndustries ?? null,
+      programmingLanguages: insertBuilder.programmingLanguages ?? null,
+      blockchainFrameworks: insertBuilder.blockchainFrameworks ?? null,
+      githubProfile: insertBuilder.githubProfile ?? null,
+      deployedContracts: insertBuilder.deployedContracts ?? null,
+      auditReports: insertBuilder.auditReports ?? null,
+      certifications: insertBuilder.certifications ?? null,
+      tradingExperience: insertBuilder.tradingExperience ?? null,
+      volumeCapabilities: insertBuilder.volumeCapabilities ?? null,
+      dexExpertise: insertBuilder.dexExpertise ?? null,
+      cexExpertise: insertBuilder.cexExpertise ?? null,
+      complianceKnowledge: insertBuilder.complianceKnowledge ?? null,
+      volumeProof: insertBuilder.volumeProof ?? null,
     };
     this.builders.set(id, builder);
     return builder;
+  }
+
+  async getBuilderProjects(builderId: string): Promise<BuilderProject[]> {
+    return Array.from(this.builderProjects.values())
+      .filter((p) => p.builderId === builderId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getBuilderProject(id: string): Promise<BuilderProject | undefined> {
+    return this.builderProjects.get(id);
+  }
+
+  async createBuilderProject(insertProject: InsertBuilderProject): Promise<BuilderProject> {
+    const id = randomUUID();
+    const project: BuilderProject = {
+      ...insertProject,
+      id,
+      clientName: insertProject.clientName ?? null,
+      mediaUrls: insertProject.mediaUrls ?? null,
+      videoUrl: insertProject.videoUrl ?? null,
+      liveUrl: insertProject.liveUrl ?? null,
+      results: insertProject.results ?? null,
+      metricsAchieved: insertProject.metricsAchieved ?? null,
+      twitterReach: insertProject.twitterReach ?? null,
+      engagementGenerated: insertProject.engagementGenerated ?? null,
+      followersGained: insertProject.followersGained ?? null,
+      impressions: insertProject.impressions ?? null,
+      roiPercentage: insertProject.roiPercentage ?? null,
+      revenueGenerated: insertProject.revenueGenerated ?? null,
+      conversionRate: insertProject.conversionRate ?? null,
+      contractAddress: insertProject.contractAddress ?? null,
+      auditScore: insertProject.auditScore ?? null,
+      volumeDelivered: insertProject.volumeDelivered ?? null,
+      testimonial: insertProject.testimonial ?? null,
+      testimonialAuthor: insertProject.testimonialAuthor ?? null,
+      featured: insertProject.featured ?? false,
+      createdAt: new Date().toISOString(),
+    };
+    this.builderProjects.set(id, project);
+    return project;
   }
 
   async getService(id: string): Promise<Service | undefined> {
