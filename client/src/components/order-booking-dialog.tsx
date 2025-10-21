@@ -44,7 +44,7 @@ export function OrderBookingDialog({
       name: "Basic",
       price: service.basicPrice,
       deliveryTime: service.deliveryTime,
-      features: ["Essential features", "Basic delivery", "Professional quality"],
+      features: service.basicDeliverables || ["Essential features", "Basic delivery", "Professional quality"],
       revisions: 0,
     },
     {
@@ -52,7 +52,7 @@ export function OrderBookingDialog({
       name: "Standard",
       price: service.standardPrice || service.basicPrice,
       deliveryTime: service.deliveryTime,
-      features: ["All Basic features", "Priority support", "1 revision included"],
+      features: service.standardDeliverables || ["All Basic features", "Priority support", "1 revision included"],
       revisions: 1,
     },
     {
@@ -60,7 +60,7 @@ export function OrderBookingDialog({
       name: "Premium",
       price: service.premiumPrice || service.basicPrice,
       deliveryTime: service.deliveryTime,
-      features: ["All Standard features", "Premium support", "2 revisions included"],
+      features: service.premiumDeliverables || ["All Standard features", "Premium support", "2 revisions included"],
       revisions: 2,
     },
   ];
