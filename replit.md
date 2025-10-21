@@ -34,7 +34,7 @@ create.psx is built with a clear separation between its frontend and backend, en
     - **Client**: Session-based authentication using `express-session` with wallet connection via Base Account SDK.
 - **Wallet Integration**: Production-ready integration with Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 $PSX token balance checking using `BigInt` for precision.
 - **Data Storage**: Currently uses in-memory storage (`MemStorage`) with seed data for development and demonstration.
-- **Data Models**: Comprehensive schemas for Builders, Builder Projects, Clients, Services, Categories, Reviews, Builder Applications, Admins, Referrals, Orders, Order Revisions, and Order Activities.
+- **Data Models**: Comprehensive schemas for Builders, Builder Projects, Clients, Services, Categories, Reviews, Review Votes, Review Disputes, Builder Applications, Admins, Referrals, Orders, Order Revisions, and Order Activities.
 - **Builder Profile Enhancements**: 
     - **Category-Specific Fields**: Extensive fields for each builder category to showcase expertise and credibility:
         - **KOLs**: Social media metrics (Twitter, Instagram, YouTube, Telegram followers), engagement rates, audience demographics, content niches, brand partnerships
@@ -78,6 +78,18 @@ create.psx is built with a clear separation between its frontend and backend, en
     - **Navigation**: Messages link in header (visible only to authenticated clients) with mobile responsive design
     - **Storage Layer**: 15+ storage methods for CRUD operations on threads, messages, receipts, and attachments
     - **API Routes**: REST endpoints for thread management, message CRUD, read tracking, and attachment handling
+- **Enhanced Review System**: Comprehensive review platform with quality assurance and community moderation:
+    - **Extended Review Schema**: 13 new fields including builder responses, moderation status, on-chain verification, dispute tracking, and helpfulness voting
+    - **Review Tables**: 3 database tables (reviews with 23 fields, reviewVotes, reviewDisputes) for complete review lifecycle management
+    - **Builder Responses**: Builders can publicly respond to client reviews with timestamped responses
+    - **Admin Moderation**: Three-state moderation workflow (pending → approved/rejected) with moderator notes and audit trail
+    - **Community Voting**: Clients can vote reviews as helpful/not helpful with vote count tracking
+    - **Dispute System**: Multi-party dispute creation with evidence submission, status tracking (pending → resolved), and admin arbitration
+    - **On-Chain Verification**: Optional blockchain verification with transaction hash tracking and verification timestamps
+    - **Review Components**: 4 UI components (ReviewSubmissionForm, ReviewCard, BuilderResponseDialog, ReviewModerationPanel)
+    - **Storage Methods**: 15+ storage methods for review CRUD, responses, moderation, voting, and dispute resolution
+    - **API Routes**: 11 endpoints covering review submission, responses, status updates, voting, and dispute management
+    - **Review Workflow**: Client submits → Admin moderates → Builder responds → Community votes → Dispute resolution (if needed)
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
@@ -97,3 +109,9 @@ create.psx is built with a clear separation between its frontend and backend, en
 - **Messaging Infrastructure**: 4 database tables, 15+ storage methods, REST API + WebSocket server
 - **Messages Page**: Dedicated /messages page with conversation list and thread view in responsive layout
 - **Header Navigation**: Added Messages link to header (visible only to authenticated clients)
+- **Review System Enhancements**: Comprehensive review platform with moderation, voting, disputes, and builder responses
+- **Review Schema Extensions**: Added 13 new fields to reviews table including builder responses, moderation tracking, on-chain verification, and helpfulness metrics
+- **Review Tables**: Created reviewVotes and reviewDisputes tables for community voting and dispute management
+- **Review API Routes**: 11 new endpoints for submission, moderation, responses, voting, and dispute resolution
+- **Review Components**: 4 new UI components (ReviewSubmissionForm, ReviewCard, BuilderResponseDialog, ReviewModerationPanel)
+- **Review Storage**: 15+ new storage methods for complete review lifecycle management from submission to resolution
