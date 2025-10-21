@@ -133,42 +133,45 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b bg-muted/30 py-16">
+      <section className="border-b bg-background py-12">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">Browse by Category</h2>
-            <p className="mt-3 text-lg text-muted-foreground">
-              Find specialized Web3 builders across all categories
-            </p>
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Browse by Category</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Find specialized Web3 builders across all categories
+              </p>
+            </div>
           </div>
 
           {categoriesLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="flex gap-4 overflow-x-auto pb-4">
               {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-48 w-full rounded-lg" />
+                <Skeleton key={i} className="h-32 w-64 flex-shrink-0 rounded-lg" />
               ))}
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="flex gap-4 overflow-x-auto pb-4">
               {categories?.map((category) => {
                 const IconComponent = categoryIcons[category.slug as keyof typeof categoryIcons] || Sparkles;
                 return (
                   <Link key={category.id} href={`/category/${category.slug}`}>
-                    <div className="group relative overflow-hidden rounded-lg border bg-card p-6 transition-all hover-elevate active-elevate-2" data-testid={`category-card-${category.slug}`}>
-                      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/5 blur-2xl transition-all group-hover:bg-primary/10" />
-                      <div className="relative">
-                        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10">
-                          <IconComponent className="h-7 w-7 text-primary" />
+                    <div className="group relative w-64 flex-shrink-0 overflow-hidden rounded-lg border bg-card p-5 transition-all hover-elevate active-elevate-2" data-testid={`category-card-${category.slug}`}>
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                          <IconComponent className="h-6 w-6 text-primary" />
                         </div>
-                        <h3 className="mb-2 text-xl font-semibold">{category.name}</h3>
-                        <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
-                          {category.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm text-muted-foreground">
-                            <span className="font-semibold text-foreground">{category.builderCount}</span> builders
+                        <div className="flex-1 min-w-0">
+                          <h3 className="mb-1 font-semibold text-base">{category.name}</h3>
+                          <p className="mb-2 text-xs text-muted-foreground line-clamp-2">
+                            {category.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs text-muted-foreground">
+                              <span className="font-semibold text-foreground">{category.builderCount}</span> builders
+                            </div>
+                            <ArrowRight className="h-3 w-3 text-muted-foreground transition-transform group-hover:translate-x-1" />
                           </div>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                         </div>
                       </div>
                     </div>
