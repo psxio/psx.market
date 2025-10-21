@@ -1826,5 +1826,322 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.post("/api/builders/:builderId/follow", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { clientId } = req.body;
+      
+      if (!clientId) {
+        return res.status(400).json({ error: "Client ID required" });
+      }
+
+      await storage.followBuilder(clientId, builderId);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/builders/:builderId/unfollow", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { clientId } = req.body;
+      
+      if (!clientId) {
+        return res.status(400).json({ error: "Client ID required" });
+      }
+
+      await storage.unfollowBuilder(clientId, builderId);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/followers", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const followers = await storage.getBuilderFollowers(builderId);
+      const followerCount = followers.length;
+      res.json({ followers, followerCount });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/is-following", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { clientId } = req.query;
+      
+      if (!clientId) {
+        return res.json({ isFollowing: false });
+      }
+
+      const isFollowing = await storage.isFollowingBuilder(clientId as string, builderId);
+      res.json({ isFollowing });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/clients/:clientId/following", async (req, res, next) => {
+    try {
+      const { clientId } = req.params;
+      const following = await storage.getFollowedBuilders(clientId);
+      res.json(following);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/activity", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+      const activities = await storage.getBuilderActivityFeed(builderId, limit);
+      res.json(activities);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/clients/:clientId/activity-feed", async (req, res, next) => {
+    try {
+      const { clientId } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
+      const activities = await storage.getFollowedBuildersActivity(clientId, limit);
+      res.json(activities);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/builders/:builderId/badges", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { badgeType, badgeLabel, badgeIcon, badgeColor } = req.body;
+      
+      if (!badgeType || !badgeLabel) {
+        return res.status(400).json({ error: "Badge type and label required" });
+      }
+
+      await storage.createBuilderBadge({ builderId, badgeType, badgeLabel, badgeIcon, badgeColor });
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/badges", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const badges = await storage.getBuilderBadges(builderId);
+      res.json(badges);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.delete("/api/builders/:builderId/badges/:badgeType", async (req, res, next) => {
+    try {
+      const { builderId, badgeType } = req.params;
+      await storage.removeBuilderBadge(builderId, badgeType);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/builders/:builderId/testimonials", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { clientId, content, authorName, authorTitle, rating, orderId } = req.body;
+      
+      if (!clientId || !content || !authorName) {
+        return res.status(400).json({ error: "Client ID, content, and author name required" });
+      }
+
+      await storage.createBuilderTestimonial({ builderId, clientId, content, authorName, authorTitle, rating, orderId });
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/testimonials", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const approvedOnly = req.query.approvedOnly !== "false";
+      const testimonials = await storage.getBuilderTestimonials(builderId, approvedOnly);
+      res.json(testimonials);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/testimonials/:testimonialId/approve", async (req, res, next) => {
+    try {
+      const { testimonialId } = req.params;
+      await storage.approveBuilderTestimonial(testimonialId);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/testimonials/:testimonialId/feature", async (req, res, next) => {
+    try {
+      const { testimonialId } = req.params;
+      const { featured } = req.body;
+      await storage.featureBuilderTestimonial(testimonialId, featured === true);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/builders/:builderId/views", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { viewerId, viewerType } = req.body;
+      await storage.trackBuilderView(builderId, viewerId, viewerType);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/view-stats", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const stats = await storage.getBuilderViewStats(builderId);
+      res.json(stats);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/analytics/platform", async (req, res, next) => {
+    try {
+      const category = req.query.category as string | undefined;
+      await storage.calculatePlatformStatistics();
+      const stats = await storage.getPlatformStatistics(category);
+      res.json(stats);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/analytics/clients/:clientId", async (req, res, next) => {
+    try {
+      const { clientId } = req.params;
+      const analytics = await storage.getClientAnalytics(clientId);
+      res.json(analytics);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/builder-applications/:applicationId/revisions", async (req, res, next) => {
+    try {
+      const { applicationId } = req.params;
+      const { changesRequested, requestedBy } = req.body;
+      
+      if (!changesRequested || !requestedBy) {
+        return res.status(400).json({ error: "Changes requested and requestor required" });
+      }
+
+      await storage.createApplicationRevision(applicationId, changesRequested, requestedBy);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builder-applications/:applicationId/revisions", async (req, res, next) => {
+    try {
+      const { applicationId } = req.params;
+      const revisions = await storage.getApplicationRevisions(applicationId);
+      res.json(revisions);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/builder-applications/revisions/:revisionId/submit", async (req, res, next) => {
+    try {
+      const { revisionId } = req.params;
+      const { submittedData } = req.body;
+      
+      if (!submittedData) {
+        return res.status(400).json({ error: "Submitted data required" });
+      }
+
+      await storage.submitApplicationRevision(revisionId, submittedData);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builder-applications/by-email/:email", async (req, res, next) => {
+    try {
+      const { email } = req.params;
+      const application = await storage.getBuilderApplicationByEmail(email);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/builders/:builderId/onboarding", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const { applicationId } = req.body;
+      
+      if (!applicationId) {
+        return res.status(400).json({ error: "Application ID required" });
+      }
+
+      await storage.createBuilderOnboarding(builderId, applicationId);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/builders/:builderId/onboarding", async (req, res, next) => {
+    try {
+      const { builderId } = req.params;
+      const onboarding = await storage.getBuilderOnboarding(builderId);
+      if (!onboarding) {
+        return res.status(404).json({ error: "Onboarding not found" });
+      }
+      res.json(onboarding);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/builders/:builderId/onboarding/:step", async (req, res, next) => {
+    try {
+      const { builderId, step } = req.params;
+      const { completed } = req.body;
+      
+      if (typeof completed !== "boolean") {
+        return res.status(400).json({ error: "Completed status required" });
+      }
+
+      await storage.updateOnboardingStep(builderId, step, completed);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   return httpServer;
 }
