@@ -30,11 +30,22 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
 ### Technical Implementations
 - **Frontend**: React and TypeScript, TanStack Query for data fetching, custom Auth Contexts.
 - **Backend**: Express and TypeScript, RESTful API structure.
-- **Authentication**: Session-based authentication using `express-session`, `bcrypt` for admin passwords, and Base Account SDK for client wallet connection.
-- **Wallet Integration**: Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 token balance checking for both $CREATE and $PSX tokens.
+- **Authentication**: 
+  - **Admin**: Session-based authentication using `express-session` and `bcrypt` for password hashing
+  - **Unified Wallet System**: RainbowKit integration (@rainbow-me/rainbowkit) with wagmi for all wallet connections
+    - Single wallet connection point in header (WalletConnectButtonNew component)
+    - Automatic user detection: when wallet connects, system checks if address is registered as builder or client
+    - Auto-login: if wallet is registered, user is automatically logged in and routed to their dashboard
+    - Used consistently across: header nav, become-client page, apply page, and all authenticated flows
+    - Supports multiple wallets: Rabby, Phantom, OKX, MetaMask, Coinbase, Rainbow, and more via RainbowKit
+- **Wallet Integration**: RainbowKit + wagmi for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 token balance checking for both $CREATE and $PSX tokens.
   - **$CREATE Token**: Contract address `0x3849cC93e7B71b37885237cd91a215974135cD8D` on Base network
   - **$PSX Token**: Contract address loaded from environment variable `VITE_PSX_TOKEN_ADDRESS`
   - **Token-Gating Logic**: Users need to hold the minimum required amount of EITHER $CREATE OR $PSX (not both). The system checks both balances in parallel and grants access if either token meets the requirement.
+  - **Wallet Auth Hook**: `useWalletAuth` hook provides: wallet address, connection status, registration status (builder/client/none), auto-login functionality
+  - **Backend Endpoints**: 
+    - `GET /api/auth/wallet/:address` - Check if wallet is registered and return user type
+    - `GET /api/wallet-status` - Check current connected wallet status (used for auto-login)
 - **Data Storage**: PostgreSQL database with Drizzle ORM.
 - **Data Models**: Comprehensive schemas for Builders, Clients, Services, Orders, Payments, Reviews, Applications, and various other platform entities.
 - **Order Management System**: Full order booking and management with status workflows, revision tracking, and activity logging.
