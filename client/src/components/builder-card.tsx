@@ -23,7 +23,7 @@ const categoryVisuals = {
     icon: Sparkles,
     gradient: "from-cyan-500/20 via-blue-500/20 to-indigo-500/20",
     borderColor: "border-l-cyan-500",
-    patternClass: "3d-pattern",
+    patternClass: "pattern-3d",
     badgeColor: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20"
   },
   "Marketing": {
