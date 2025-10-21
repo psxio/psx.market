@@ -13,6 +13,7 @@ import CategoryPage from "@/pages/category";
 import Apply from "@/pages/apply";
 import BecomeClient from "@/pages/become-client";
 import ClientDashboard from "@/pages/client-dashboard";
+import BuilderDashboard from "@/pages/builder-dashboard";
 import MessagesPage from "@/pages/messages";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/apply" component={Apply} />
       <Route path="/become-client" component={BecomeClient} />
       <Route path="/dashboard" component={ClientDashboard} />
+      <Route path="/builder-dashboard" component={BuilderDashboard} />
       <Route path="/messages" component={MessagesPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
