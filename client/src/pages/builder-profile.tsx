@@ -12,13 +12,11 @@ import {
   Star,
   CheckCircle2,
   Clock,
-  MapPin,
   Twitter,
   ExternalLink,
   Package,
   MessageCircle,
 } from "lucide-react";
-import { SiBasic } from "react-icons/si";
 import type { Builder, Service, Review } from "@shared/schema";
 
 export default function BuilderProfile() {

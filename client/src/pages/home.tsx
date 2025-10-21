@@ -29,17 +29,17 @@ const categoryIcons = {
 };
 
 export default function Home() {
-  const { data: builders, isLoading: buildersLoading } = useQuery<Builder[]>({
+  const { data: builders, isLoading: buildersLoading, isError: buildersError } = useQuery<Builder[]>({
     queryKey: ["/api/builders/featured"],
   });
 
-  const { data: servicesData, isLoading: servicesLoading } = useQuery<
+  const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery<
     Array<{ builder: Builder; service: Service }>
   >({
     queryKey: ["/api/services/featured"],
   });
 
-  const { data: categories, isLoading: categoriesLoading } = useQuery<Category[]>({
+  const { data: categories, isLoading: categoriesLoading, isError: categoriesError } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
 
@@ -182,6 +182,11 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          ) : servicesError ? (
+            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
+              <h3 className="mb-2 text-lg font-semibold">Failed to load services</h3>
+              <p className="text-sm text-muted-foreground">Please try again later</p>
+            </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {servicesData?.map(({ builder, service }) => (
@@ -218,6 +223,11 @@ export default function Home() {
                   <Skeleton className="h-[260px] w-full rounded-lg" />
                 </div>
               ))}
+            </div>
+          ) : buildersError ? (
+            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
+              <h3 className="mb-2 text-lg font-semibold">Failed to load builders</h3>
+              <p className="text-sm text-muted-foreground">Please try again later</p>
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

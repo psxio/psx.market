@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Wallet, Check } from "lucide-react";
-import { SiBasic } from "react-icons/si";
+import { Wallet, Check, Circle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +43,7 @@ export function WalletConnectButton() {
           className="gap-2"
           data-testid="button-wallet-disconnect"
         >
-          <SiBasic className="h-4 w-4" />
+          <Circle className="h-4 w-4 fill-primary text-primary" />
           <span className="hidden md:inline font-mono text-xs">
             {`${isConnected ? "0x742d...9a3f" : ""}`}
           </span>
@@ -71,7 +70,7 @@ export function WalletConnectButton() {
         <DialogContent data-testid="dialog-wallet-connect">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <SiBasic className="h-5 w-5 text-primary" />
+              <Circle className="h-5 w-5 fill-primary text-primary" />
               Connect to Base Network
             </DialogTitle>
             <DialogDescription>

@@ -26,13 +26,11 @@ import {
 import type { Builder, Service } from "@shared/schema";
 
 const categories = [
-  "KOLs",
-  "3D Content",
-  "Marketing",
-  "Development",
-  "Volume",
-  "Script Development",
-  "Community Management",
+  { name: "KOLs & Influencers", value: "KOLs & Influencers" },
+  { name: "3D Content Creators", value: "3D Content Creators" },
+  { name: "Marketing & Growth", value: "Marketing & Growth" },
+  { name: "Script Development", value: "Script Development" },
+  { name: "Volume Services", value: "Volume Services" },
 ];
 
 const ratings = ["5 Stars", "4+ Stars", "3+ Stars"];
@@ -44,10 +42,19 @@ export default function Marketplace() {
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [sortBy, setSortBy] = useState("relevance");
 
-  const { data: servicesData, isLoading } = useQuery<
+  const buildQueryString = () => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
+    if (sortBy && sortBy !== "relevance") params.set("sortBy", sortBy);
+    const queryString = params.toString();
+    return queryString ? `?${queryString}` : "";
+  };
+
+  const { data: servicesData, isLoading, isError } = useQuery<
     Array<{ builder: Builder; service: Service }>
   >({
-    queryKey: ["/api/services", { search: searchQuery, categories: selectedCategories, sortBy }],
+    queryKey: ["/api/services" + buildQueryString()],
   });
 
   const toggleCategory = (category: string) => {
@@ -64,18 +71,18 @@ export default function Marketplace() {
         <Label className="text-base font-semibold">Categories</Label>
         <div className="space-y-2">
           {categories.map((category) => (
-            <div key={category} className="flex items-center space-x-2">
+            <div key={category.value} className="flex items-center space-x-2">
               <Checkbox
-                id={category}
-                checked={selectedCategories.includes(category)}
-                onCheckedChange={() => toggleCategory(category)}
-                data-testid={`checkbox-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
+                id={category.value}
+                checked={selectedCategories.includes(category.value)}
+                onCheckedChange={() => toggleCategory(category.value)}
+                data-testid={`checkbox-category-${category.value.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')}`}
               />
               <label
-                htmlFor={category}
+                htmlFor={category.value}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
-                {category}
+                {category.name}
               </label>
             </div>
           ))}
@@ -224,6 +231,13 @@ export default function Marketplace() {
                 {[...Array(9)].map((_, i) => (
                   <Skeleton key={i} className="h-[280px] w-full" />
                 ))}
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
+                <h3 className="mb-2 text-lg font-semibold">Failed to load services</h3>
+                <p className="text-sm text-muted-foreground">
+                  Please try again later
+                </p>
               </div>
             ) : servicesData && servicesData.length > 0 ? (
               <>

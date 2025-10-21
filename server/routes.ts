@@ -165,6 +165,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/wallet/verify", async (req, res) => {
+    try {
+      const { walletAddress } = req.body;
+      
+      if (!walletAddress || typeof walletAddress !== "string") {
+        return res.status(400).json({ error: "Invalid wallet address" });
+      }
+
+      const mockPsxBalance = Math.random() > 0.3 ? 10000 : 500;
+      const hasSufficientBalance = mockPsxBalance >= 1000;
+
+      res.json({
+        walletAddress,
+        psxBalance: mockPsxBalance,
+        hasSufficientBalance,
+        tier: mockPsxBalance >= 20000 ? "platinum" : mockPsxBalance >= 10000 ? "gold" : mockPsxBalance >= 5000 ? "silver" : "bronze",
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to verify wallet" });
+    }
+  });
+
+  app.get("/api/wallet/balance/:address", async (req, res) => {
+    try {
+      const mockPsxBalance = Math.random() > 0.3 ? 10000 : 500;
+      
+      res.json({
+        walletAddress: req.params.address,
+        psxBalance: mockPsxBalance,
+        hasSufficientBalance: mockPsxBalance >= 1000,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch balance" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
