@@ -61,6 +61,8 @@ import {
   type InsertNotificationPreferences,
   type PushSubscription,
   type InsertPushSubscription,
+  type BuilderInviteToken,
+  type InsertBuilderInviteToken,
   builders,
   builderProjects,
   services,
@@ -100,6 +102,7 @@ import {
   notifications,
   notificationPreferences,
   pushSubscriptions,
+  builderInviteTokens,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -359,6 +362,11 @@ export interface IStorage {
   createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
   getPushSubscriptions(userId: string, userType: string): Promise<PushSubscription[]>;
   deletePushSubscription(endpoint: string): Promise<void>;
+  
+  createBuilderInviteToken(adminId: string, adminName: string, email?: string, notes?: string, expiresIn?: number): Promise<BuilderInviteToken>;
+  getBuilderInviteTokens(): Promise<BuilderInviteToken[]>;
+  getBuilderInviteToken(token: string): Promise<BuilderInviteToken | undefined>;
+  useBuilderInviteToken(token: string, builderId: string, builderName: string): Promise<BuilderInviteToken>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -1853,6 +1861,46 @@ export class PostgresStorage implements IStorage {
 
   async deletePushSubscription(endpoint: string): Promise<void> {
     await db.delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint));
+  }
+  
+  async createBuilderInviteToken(adminId: string, adminName: string, email?: string, notes?: string, expiresIn?: number): Promise<BuilderInviteToken> {
+    const token = randomUUID().replace(/-/g, '');
+    const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000).toISOString() : undefined;
+    
+    const result = await db.insert(builderInviteTokens).values({
+      token,
+      createdBy: adminId,
+      createdByName: adminName,
+      email,
+      notes,
+      expiresAt,
+      used: false,
+    }).returning();
+    
+    return result[0];
+  }
+  
+  async getBuilderInviteTokens(): Promise<BuilderInviteToken[]> {
+    return await db.select().from(builderInviteTokens).orderBy(desc(builderInviteTokens.createdAt));
+  }
+  
+  async getBuilderInviteToken(token: string): Promise<BuilderInviteToken | undefined> {
+    const result = await db.select().from(builderInviteTokens).where(eq(builderInviteTokens.token, token));
+    return result[0];
+  }
+  
+  async useBuilderInviteToken(token: string, builderId: string, builderName: string): Promise<BuilderInviteToken> {
+    const result = await db.update(builderInviteTokens)
+      .set({
+        used: true,
+        usedBy: builderId,
+        usedByName: builderName,
+        usedAt: new Date().toISOString(),
+      })
+      .where(eq(builderInviteTokens.token, token))
+      .returning();
+    
+    return result[0];
   }
 }
 
