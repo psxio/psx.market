@@ -40,6 +40,7 @@ import {
   ArchiveRestore
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import type { Builder, Order, Service } from "@shared/schema";
 
 export default function BuilderDashboard() {
@@ -71,6 +72,19 @@ export default function BuilderDashboard() {
 
   const { data: services = [], isLoading: servicesLoading } = useQuery<Service[]>({
     queryKey: ["/api/builders", builderId, "services"],
+  });
+
+  const { data: onboardingData } = useQuery<{
+    stepProfileComplete: boolean;
+    stepServicesAdded: boolean;
+    stepPortfolioAdded: boolean;
+    stepPaymentSetup: boolean;
+    stepVerificationComplete: boolean;
+    completionPercentage: number;
+    isComplete: boolean;
+  }>({
+    queryKey: ["/api/builders", builderId, "onboarding"],
+    retry: false,
   });
 
   const toggleAvailabilityMutation = useMutation({
@@ -287,6 +301,10 @@ export default function BuilderDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {onboardingData && !onboardingData.isComplete && (
+        <OnboardingChecklist builderId={builderId} onboardingData={onboardingData} />
+      )}
 
       <Tabs defaultValue="orders" className="space-y-4">
         <TabsList data-testid="tabs-builder-dashboard">
