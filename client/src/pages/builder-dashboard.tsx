@@ -7,6 +7,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NotificationCenter } from "@/components/notification-center";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 import { 
   DollarSign, 
   Package, 
@@ -15,13 +34,19 @@ import {
   CheckCircle,
   AlertCircle,
   Edit,
-  Plus
+  Plus,
+  Trash2,
+  Archive,
+  ArchiveRestore
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Builder, Order, Service } from "@shared/schema";
 
 export default function BuilderDashboard() {
   const [builderId] = useState("1");
+  const { toast } = useToast();
+  const [deleteServiceId, setDeleteServiceId] = useState<string | null>(null);
+  const [archiveServiceId, setArchiveServiceId] = useState<string | null>(null);
 
   const { data: builder, isLoading: builderLoading } = useQuery<Builder>({
     queryKey: ["/api/builders", builderId],
@@ -57,8 +82,60 @@ export default function BuilderDashboard() {
     },
   });
 
+  const deleteServiceMutation = useMutation({
+    mutationFn: async (serviceId: string) => {
+      return apiRequest("DELETE", `/api/builders/${builderId}/services/${serviceId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId, "services"] });
+      toast({
+        title: "Service deleted",
+        description: "Your service has been successfully deleted",
+      });
+      setDeleteServiceId(null);
+    },
+    onError: () => {
+      toast({
+        title: "Delete failed",
+        description: "Failed to delete service",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const archiveServiceMutation = useMutation({
+    mutationFn: async ({ serviceId, active }: { serviceId: string; active: boolean }) => {
+      return apiRequest("PATCH", `/api/builders/${builderId}/services/${serviceId}/archive`, { active });
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId, "services"] });
+      toast({
+        title: variables.active ? "Service activated" : "Service archived",
+        description: variables.active 
+          ? "Your service is now active and visible to clients"
+          : "Your service has been archived and is no longer visible to clients",
+      });
+      setArchiveServiceId(null);
+    },
+    onError: () => {
+      toast({
+        title: "Archive failed",
+        description: "Failed to update service status",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleAvailabilityToggle = (checked: boolean) => {
     toggleAvailabilityMutation.mutate(checked);
+  };
+
+  const handleDeleteService = (serviceId: string) => {
+    deleteServiceMutation.mutate(serviceId);
+  };
+
+  const handleArchiveService = (serviceId: string, active: boolean) => {
+    archiveServiceMutation.mutate({ serviceId, active });
   };
 
   if (builderLoading || analyticsLoading) {
@@ -324,10 +401,37 @@ export default function BuilderDashboard() {
                         <span className="text-sm font-medium">{service.deliveryTime}</span>
                       </div>
                     </div>
-                    <div className="mt-4 flex gap-2">
+                    <div className="mt-4 flex flex-wrap gap-2">
                       <Button size="sm" variant="outline" data-testid={`button-edit-service-${service.id}`}>
                         <Edit className="w-3 h-3 mr-1" />
                         Edit
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleArchiveService(service.id, !(service.active ?? true))}
+                        data-testid={`button-archive-service-${service.id}`}
+                      >
+                        {service.active === false ? (
+                          <>
+                            <ArchiveRestore className="w-3 h-3 mr-1" />
+                            Activate
+                          </>
+                        ) : (
+                          <>
+                            <Archive className="w-3 h-3 mr-1" />
+                            Archive
+                          </>
+                        )}
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive"
+                        onClick={() => setDeleteServiceId(service.id)}
+                        data-testid={`button-delete-service-${service.id}`}
+                      >
+                        <Trash2 className="w-3 h-3 mr-1" />
+                        Delete
                       </Button>
                     </div>
                   </CardContent>
@@ -354,6 +458,28 @@ export default function BuilderDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!deleteServiceId} onOpenChange={(open) => !open && setDeleteServiceId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Service</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this service? This action cannot be undone.
+              All associated data will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteServiceId && handleDeleteService(deleteServiceId)}
+              className="bg-destructive text-destructive-foreground hover-elevate"
+              data-testid="button-confirm-delete"
+            >
+              Delete Service
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
