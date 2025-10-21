@@ -142,6 +142,18 @@ export interface IStorage {
 
   updateBuilder(id: string, data: Partial<Builder>): Promise<Builder>;
   deleteBuilder(id: string): Promise<void>;
+  toggleBuilderAvailability(builderId: string, accepting: boolean): Promise<Builder>;
+  updateBuilderActivity(builderId: string): Promise<Builder>;
+  getBuilderAnalytics(builderId: string): Promise<{
+    totalEarnings: string;
+    availableBalance: string;
+    pendingPayouts: string;
+    activeOrders: number;
+    completedOrders: number;
+    successRate: string;
+    avgResponseTime: number;
+    onTimeDeliveryRate: string;
+  }>;
   updateService(id: string, data: Partial<Service>): Promise<Service>;
   deleteService(id: string): Promise<void>;
   updateClient(id: string, data: Partial<Client>): Promise<Client>;
@@ -1653,6 +1665,81 @@ export class MemStorage implements IStorage {
     Array.from(this.services.values())
       .filter((service) => service.builderId === id)
       .forEach((service) => this.services.delete(service.id));
+  }
+
+  async toggleBuilderAvailability(builderId: string, accepting: boolean): Promise<Builder> {
+    const builder = this.builders.get(builderId);
+    if (!builder) {
+      throw new Error("Builder not found");
+    }
+
+    const updatedBuilder = { 
+      ...builder, 
+      acceptingOrders: accepting,
+      updatedAt: new Date().toISOString()
+    };
+    this.builders.set(builderId, updatedBuilder);
+    return updatedBuilder;
+  }
+
+  async updateBuilderActivity(builderId: string): Promise<Builder> {
+    const builder = this.builders.get(builderId);
+    if (!builder) {
+      throw new Error("Builder not found");
+    }
+
+    const updatedBuilder = { 
+      ...builder, 
+      lastActiveAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    this.builders.set(builderId, updatedBuilder);
+    return updatedBuilder;
+  }
+
+  async getBuilderAnalytics(builderId: string): Promise<{
+    totalEarnings: string;
+    availableBalance: string;
+    pendingPayouts: string;
+    activeOrders: number;
+    completedOrders: number;
+    successRate: string;
+    avgResponseTime: number;
+    onTimeDeliveryRate: string;
+  }> {
+    const builder = this.builders.get(builderId);
+    if (!builder) {
+      throw new Error("Builder not found");
+    }
+
+    const orders = Array.from(this.orders.values()).filter(o => o.builderId === builderId);
+    const activeOrders = orders.filter(o => 
+      o.status === "accepted" || o.status === "in_progress"
+    ).length;
+    const completedOrders = orders.filter(o => o.status === "completed").length;
+
+    const payouts = Array.from(this.payouts.values())
+      .filter(p => p.builderId === builderId);
+    const totalEarnings = payouts
+      .filter(p => p.status === "completed")
+      .reduce((sum, p) => sum + parseFloat(p.amount), 0)
+      .toFixed(2);
+    
+    const pendingPayouts = payouts
+      .filter(p => p.status === "pending" || p.status === "processing")
+      .reduce((sum, p) => sum + parseFloat(p.amount), 0)
+      .toFixed(2);
+
+    return {
+      totalEarnings: builder.totalEarnings || "0",
+      availableBalance: builder.availableBalance || "0",
+      pendingPayouts: builder.pendingPayouts || "0",
+      activeOrders,
+      completedOrders,
+      successRate: builder.successRate || "100",
+      avgResponseTime: builder.avgResponseTimeHours || 24,
+      onTimeDeliveryRate: builder.onTimeDeliveryRate || "100",
+    };
   }
 
   async updateService(id: string, data: Partial<Service>): Promise<Service> {

@@ -60,6 +60,19 @@ export const builders = pgTable("builders", {
   cexExpertise: text("cex_expertise").array(),
   complianceKnowledge: boolean("compliance_knowledge"),
   volumeProof: text("volume_proof").array(),
+  
+  acceptingOrders: boolean("accepting_orders").notNull().default(true),
+  isActive: boolean("is_active").notNull().default(true),
+  avgResponseTimeHours: integer("avg_response_time_hours").default(24),
+  totalEarnings: decimal("total_earnings", { precision: 10, scale: 2 }).default("0"),
+  availableBalance: decimal("available_balance", { precision: 10, scale: 2 }).default("0"),
+  pendingPayouts: decimal("pending_payouts", { precision: 10, scale: 2 }).default("0"),
+  successRate: decimal("success_rate", { precision: 5, scale: 2 }).default("100"),
+  onTimeDeliveryRate: decimal("on_time_delivery_rate", { precision: 5, scale: 2 }).default("100"),
+  activeOrders: integer("active_orders").notNull().default(0),
+  lastActiveAt: text("last_active_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const builderProjects = pgTable("builder_projects", {
@@ -228,6 +241,15 @@ export const insertBuilderSchema = createInsertSchema(builders).omit({
   rating: true,
   reviewCount: true,
   completedProjects: true,
+  totalEarnings: true,
+  availableBalance: true,
+  pendingPayouts: true,
+  successRate: true,
+  onTimeDeliveryRate: true,
+  activeOrders: true,
+  lastActiveAt: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const insertBuilderProjectSchema = createInsertSchema(builderProjects).omit({
