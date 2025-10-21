@@ -748,6 +748,317 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/payments", async (req, res) => {
+    try {
+      const platformFeePercentage = Number(req.body.platformFeePercentage) || 2.5;
+      const amount = Number(req.body.amount);
+      const platformFee = (amount * platformFeePercentage) / 100;
+      const builderAmount = amount - platformFee;
+
+      const payment = await storage.createPayment({
+        ...req.body,
+        platformFee: platformFee.toString(),
+        platformFeePercentage: platformFeePercentage.toString(),
+        builderAmount: builderAmount.toString(),
+      });
+
+      const invoiceNumber = `INV-${Date.now()}-${payment.id.slice(0, 8).toUpperCase()}`;
+      const invoice = await storage.createInvoice({
+        invoiceNumber,
+        paymentId: payment.id,
+        orderId: payment.orderId,
+        clientId: payment.clientId,
+        builderId: payment.builderId,
+        amount: payment.amount,
+        platformFee: payment.platformFee,
+        builderAmount: payment.builderAmount,
+        billingEmail: req.body.payerEmail,
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      });
+
+      res.json({ payment, invoice });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create payment" });
+    }
+  });
+
+  app.get("/api/payments", async (_req, res) => {
+    try {
+      const payments = await storage.getPayments();
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payments" });
+    }
+  });
+
+  app.get("/api/payments/:id", async (req, res) => {
+    try {
+      const payment = await storage.getPayment(req.params.id);
+      if (!payment) {
+        return res.status(404).json({ error: "Payment not found" });
+      }
+      res.json(payment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payment" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/payments", async (req, res) => {
+    try {
+      const payments = await storage.getPaymentsByOrder(req.params.orderId);
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payments" });
+    }
+  });
+
+  app.get("/api/clients/:clientId/payments", async (req, res) => {
+    try {
+      const payments = await storage.getPaymentsByClient(req.params.clientId);
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payments" });
+    }
+  });
+
+  app.get("/api/builders/:builderId/payments", async (req, res) => {
+    try {
+      const payments = await storage.getPaymentsByBuilder(req.params.builderId);
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payments" });
+    }
+  });
+
+  app.patch("/api/payments/:id", async (req, res) => {
+    try {
+      const payment = await storage.updatePayment(req.params.id, req.body);
+      res.json(payment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update payment" });
+    }
+  });
+
+  app.post("/api/payments/:id/confirm", async (req, res) => {
+    try {
+      const { transactionHash, blockNumber } = req.body;
+      const payment = await storage.updatePayment(req.params.id, {
+        status: "completed",
+        transactionHash,
+        blockNumber,
+        paidAt: new Date().toISOString(),
+      });
+
+      const invoice = await storage.getInvoiceByPayment(payment.id);
+      if (invoice) {
+        await storage.updateInvoice(invoice.id, {
+          status: "paid",
+          paidAt: new Date().toISOString(),
+        });
+      }
+
+      res.json(payment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to confirm payment" });
+    }
+  });
+
+  app.post("/api/milestone-payments", async (req, res) => {
+    try {
+      const milestonePayment = await storage.createMilestonePayment(req.body);
+      res.json(milestonePayment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create milestone payment" });
+    }
+  });
+
+  app.get("/api/payments/:paymentId/milestones", async (req, res) => {
+    try {
+      const milestonePayments = await storage.getMilestonePaymentsByPayment(req.params.paymentId);
+      res.json(milestonePayments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch milestone payments" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/milestone-payments", async (req, res) => {
+    try {
+      const milestonePayments = await storage.getMilestonePaymentsByOrder(req.params.orderId);
+      res.json(milestonePayments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch milestone payments" });
+    }
+  });
+
+  app.post("/api/milestone-payments/:id/release", async (req, res) => {
+    try {
+      const { transactionHash } = req.body;
+      const milestonePayment = await storage.releaseMilestonePayment(req.params.id, transactionHash);
+      res.json(milestonePayment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to release milestone payment" });
+    }
+  });
+
+  app.post("/api/payouts", async (req, res) => {
+    try {
+      const payout = await storage.createPayout(req.body);
+      res.json(payout);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create payout" });
+    }
+  });
+
+  app.get("/api/payouts", async (_req, res) => {
+    try {
+      const payouts = await storage.getPayouts();
+      res.json(payouts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payouts" });
+    }
+  });
+
+  app.get("/api/builders/:builderId/payouts", async (req, res) => {
+    try {
+      const payouts = await storage.getPayoutsByBuilder(req.params.builderId);
+      res.json(payouts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payouts" });
+    }
+  });
+
+  app.post("/api/payouts/:id/process", async (req, res) => {
+    try {
+      const { transactionHash } = req.body;
+      const payout = await storage.processPayout(req.params.id, transactionHash);
+      res.json(payout);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to process payout" });
+    }
+  });
+
+  app.post("/api/disputes", async (req, res) => {
+    try {
+      const dispute = await storage.createDispute(req.body);
+      res.json(dispute);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create dispute" });
+    }
+  });
+
+  app.get("/api/disputes", async (_req, res) => {
+    try {
+      const disputes = await storage.getDisputes();
+      res.json(disputes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch disputes" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/disputes", async (req, res) => {
+    try {
+      const disputes = await storage.getDisputesByOrder(req.params.orderId);
+      res.json(disputes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch disputes" });
+    }
+  });
+
+  app.post("/api/disputes/:id/resolve", async (req, res) => {
+    try {
+      const { resolution, resolvedBy, refundAmount } = req.body;
+      const dispute = await storage.resolveDispute(req.params.id, resolution, resolvedBy, refundAmount);
+      res.json(dispute);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to resolve dispute" });
+    }
+  });
+
+  app.post("/api/refunds", async (req, res) => {
+    try {
+      const refund = await storage.createRefund(req.body);
+      res.json(refund);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create refund" });
+    }
+  });
+
+  app.get("/api/refunds", async (_req, res) => {
+    try {
+      const refunds = await storage.getRefunds();
+      res.json(refunds);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch refunds" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/refunds", async (req, res) => {
+    try {
+      const refunds = await storage.getRefundsByOrder(req.params.orderId);
+      res.json(refunds);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch refunds" });
+    }
+  });
+
+  app.post("/api/refunds/:id/process", async (req, res) => {
+    try {
+      const { transactionHash } = req.body;
+      const refund = await storage.processRefund(req.params.id, transactionHash);
+      res.json(refund);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to process refund" });
+    }
+  });
+
+  app.get("/api/invoices", async (_req, res) => {
+    try {
+      const invoices = await storage.getInvoices();
+      res.json(invoices);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch invoices" });
+    }
+  });
+
+  app.get("/api/invoices/:id", async (req, res) => {
+    try {
+      const invoice = await storage.getInvoice(req.params.id);
+      if (!invoice) {
+        return res.status(404).json({ error: "Invoice not found" });
+      }
+      res.json(invoice);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch invoice" });
+    }
+  });
+
+  app.get("/api/clients/:clientId/invoices", async (req, res) => {
+    try {
+      const invoices = await storage.getInvoicesByClient(req.params.clientId);
+      res.json(invoices);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch invoices" });
+    }
+  });
+
+  app.get("/api/builders/:builderId/invoices", async (req, res) => {
+    try {
+      const invoices = await storage.getInvoicesByBuilder(req.params.builderId);
+      res.json(invoices);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch invoices" });
+    }
+  });
+
+  app.patch("/api/invoices/:id", async (req, res) => {
+    try {
+      const invoice = await storage.updateInvoice(req.params.id, req.body);
+      res.json(invoice);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update invoice" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
