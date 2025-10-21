@@ -17,16 +17,46 @@ The application is fully functional with all core features implemented:
 
 ## Recent Changes (2025-10-21)
 
+### Comprehensive Builder Profile Editor (Production-Ready ✅)
+- **Full-featured builder creation and editing interface** in admin dashboard
+- Complete form with all builder fields:
+  - Basic info: Name, wallet address, bio (all required)
+  - Profile: Avatar URL, Twitter handle
+  - Classification: Category dropdown, rating (0-5), review count
+  - Status toggles: Verified, Featured
+  - Dynamic skills array: Add/remove skills with badge UI
+  - Portfolio items: Array of projects with title, description, image URL
+- **Seamless create/edit workflow**:
+  - "Add Builder" button opens empty form for new builders
+  - Edit button (pencil icon) opens pre-filled form for existing builders
+  - Real-time validation with error toasts
+  - Success toasts and automatic cache invalidation
+  - Dialog-based UI with scrollable content for long forms
+- **Full CRUD operations**: Create, read, update, delete builders via admin API
+- **Tested and verified**: E2E tests confirm all functionality works correctly
+- **Use case**: Creating custom builder profiles for PSX team members and internal builders
+
+### Admin Dashboard Accessibility
+- Added "Admin" link to header navigation (desktop: top-right, mobile: menu bottom)
+- Shield icon for visual distinction
+- Direct navigation to /admin/login from any page
+- Consistent with PSX branding (purple/cyan theme)
+
 ### PSX Agency Promotion Section
 - Added prominent homepage section promoting psx.agency direct B2B talent line
 - Section positioned right after hero for maximum visibility
 - Includes:
   - Handshake badge for "Direct B2B Services"
   - Call-to-action button linking to https://psx.agency
-  - Partnership mention: @BasedCreators (https://x.com/BasedCreators) and thecreators.com
+  - Partnership mention: @BasedCreators linked to https://thecreators.com
   - Description of direct B2B and coin-to-coin business offerings
-  - Secondary CTA button linking to @BasedCreators Twitter
+  - Secondary CTA button linking to @BasedCreators (thecreators.com)
 - Gradient background with card design matching PSX branding
+- **Fixed**: Both @BasedCreators links now correctly point to thecreators.com (not Twitter)
+
+### Code Quality Improvements
+- Fixed React warning in admin-login.tsx (moved setLocation from render to useEffect)
+- Clean console logs with no errors or warnings
 
 ## Earlier Changes (2025-10-21)
 ### Initial Implementation

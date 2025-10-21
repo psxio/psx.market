@@ -150,7 +150,7 @@ export default function Home() {
               </h2>
               <p className="text-muted-foreground md:text-lg">
                 Visit <span className="font-semibold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
-                Proudly partnered with <a href="https://x.com/BasedCreators" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">@BasedCreators</a> and <span className="font-semibold text-foreground">thecreators.com</span>.
+                Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">@BasedCreators</a> and <span className="font-semibold text-foreground">thecreators.com</span>.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -160,7 +160,7 @@ export default function Home() {
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </a>
-              <a href="https://x.com/BasedCreators" target="_blank" rel="noopener noreferrer">
+              <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-based-creators">
                   @BasedCreators
                   <ExternalLink className="h-4 w-4" />
