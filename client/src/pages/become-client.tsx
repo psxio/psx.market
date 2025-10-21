@@ -50,7 +50,7 @@ export default function BecomeClient() {
 
   const checkWalletConnection = async () => {
     const account = await getCurrentAccount();
-    if (account && typeof account === 'object' && 'address' in account) {
+    if (account && typeof account === 'object' && 'address' in account && account.address) {
       setWalletAddress(account.address);
       setIsConnected(true);
     }
