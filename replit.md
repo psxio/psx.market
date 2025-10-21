@@ -64,6 +64,20 @@ create.psx is built with a clear separation between its frontend and backend, en
     - **Payment Components**: 5 UI components (PaymentDialog, PaymentHistory, MilestoneTracker, BuilderPayouts, DisputeResolution)
     - **Transaction Tracking**: Real-time payment status polling with Base Pay SDK getPaymentStatus()
     - **Payment Flow**: payments → milestonePayments → payouts with comprehensive status tracking (pending → processing → completed/failed)
+- **Real-Time Messaging System**: Complete WebSocket-based chat platform for client-builder communication:
+    - **WebSocket Infrastructure**: Real-time bi-directional communication with automatic reconnection and connection status tracking
+    - **Messaging Schema**: 4 database tables (chatThreads, messages, messageReadReceipts, messageAttachments)
+    - **Chat Threading**: Project/order-based conversation threads with title, status, and participant tracking
+    - **Message Types**: Support for text, image, file, and system messages with extensible message type system
+    - **Read Receipts**: Track message read status with timestamp tracking for delivered, read receipts
+    - **File Attachments**: Multi-file attachment support with filename, URL, size, and MIME type tracking
+    - **Message History**: Complete conversation history with pagination support and last message preview
+    - **Real-Time Updates**: WebSocket events for new messages, thread updates, and read receipt synchronization
+    - **UI Components**: ChatList (conversation overview), ChatThread (message view), MessageComposer (input with attachments)
+    - **Custom Hook**: useWebSocket hook for managing WebSocket connections with automatic reconnection
+    - **Navigation**: Messages link in header (visible only to authenticated clients) with mobile responsive design
+    - **Storage Layer**: 15+ storage methods for CRUD operations on threads, messages, receipts, and attachments
+    - **API Routes**: REST endpoints for thread management, message CRUD, read tracking, and attachment handling
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
@@ -79,3 +93,7 @@ create.psx is built with a clear separation between its frontend and backend, en
 - **Payment UI Components**: Created PaymentDialog, PaymentHistory, MilestoneTracker, BuilderPayouts, and DisputeResolution components
 - **Client Dashboard**: Added Payments tab displaying payment history and transaction records
 - **Escrow System**: Implemented milestone-based payment releases with platform fee collection
+- **Real-Time Messaging**: WebSocket-based chat system with ChatList, ChatThread components and useWebSocket hook
+- **Messaging Infrastructure**: 4 database tables, 15+ storage methods, REST API + WebSocket server
+- **Messages Page**: Dedicated /messages page with conversation list and thread view in responsive layout
+- **Header Navigation**: Added Messages link to header (visible only to authenticated clients)
