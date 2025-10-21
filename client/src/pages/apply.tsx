@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -17,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useWalletAuth } from "@/hooks/use-wallet-auth";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import {
   CheckCircle2,
   ArrowRight,
@@ -28,6 +30,7 @@ import {
   BarChart3,
   Plus,
   X,
+  Wallet,
 } from "lucide-react";
 import type { InsertBuilderApplication } from "@shared/schema";
 
@@ -104,9 +107,18 @@ export default function Apply() {
   const [submitted, setSubmitted] = useState(false);
   const [applicationId, setApplicationId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { address, isConnected, isRegistered, userType } = useWalletAuth();
 
   const [portfolioInputs, setPortfolioInputs] = useState<string[]>([""]);
   const [caseStudyInputs, setCaseStudyInputs] = useState<string[]>([""]);
+
+  useEffect(() => {
+    if (isRegistered && userType === "builder") {
+      setLocation("/builder-dashboard");
+    } else if (isRegistered && userType === "client") {
+      setLocation("/dashboard");
+    }
+  }, [isRegistered, userType, setLocation]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -144,10 +156,12 @@ export default function Apply() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: Partial<InsertBuilderApplication>) => {
-      const mockWalletAddress = "0x" + Math.random().toString(16).substring(2, 42);
+      if (!address) {
+        throw new Error("Please connect your wallet first");
+      }
       const response = await apiRequest("POST", "/api/builder-applications", {
         ...data,
-        walletAddress: mockWalletAddress,
+        walletAddress: address.toLowerCase(),
       });
       return response.json();
     },
@@ -289,6 +303,29 @@ export default function Apply() {
               <CardContent className="space-y-6">
                 {step === 1 && (
                   <>
+                    <div className="space-y-4 rounded-lg border bg-muted/50 p-4">
+                      <h3 className="flex items-center gap-2 font-semibold">
+                        <Wallet className="h-4 w-4" />
+                        Wallet Connection
+                      </h3>
+                      {!isConnected ? (
+                        <div>
+                          <p className="mb-3 text-sm text-muted-foreground">
+                            Please connect your wallet to verify your $CREATE or $PSX holdings and submit your application
+                          </p>
+                          <div className="flex justify-center py-2">
+                            <ConnectButton />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 rounded-md border bg-background p-3">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <span className="font-mono text-sm">{address}</span>
+                          <Badge variant="secondary" className="ml-auto">Connected</Badge>
+                        </div>
+                      )}
+                    </div>
+
                     <FormField
                       control={form.control}
                       name="name"
