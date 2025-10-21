@@ -265,6 +265,8 @@ export class MemStorage implements IStorage {
         tags: ["Twitter", "Social Media", "Engagement", "Viral Marketing"],
         psxRequired: "5000",
         featured: true,
+        portfolioMedia: ["https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80"],
+        videoUrls: ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
       },
       {
         id: randomUUID(),
@@ -282,6 +284,8 @@ export class MemStorage implements IStorage {
         tags: ["3D Design", "Logo", "Animation", "Branding"],
         psxRequired: "3000",
         featured: true,
+        portfolioMedia: ["https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80", "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80"],
+        videoUrls: ["https://www.youtube.com/watch?v=example1"],
       },
       {
         id: randomUUID(),
@@ -299,6 +303,8 @@ export class MemStorage implements IStorage {
         tags: ["Marketing", "Strategy", "Growth", "Launch"],
         psxRequired: "10000",
         featured: true,
+        portfolioMedia: ["https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"],
+        videoUrls: null,
       },
       {
         id: randomUUID(),
@@ -316,6 +322,8 @@ export class MemStorage implements IStorage {
         tags: ["Solidity", "Smart Contracts", "Token", "Development"],
         psxRequired: "8000",
         featured: true,
+        portfolioMedia: null,
+        videoUrls: null,
       },
       {
         id: randomUUID(),
@@ -333,6 +341,8 @@ export class MemStorage implements IStorage {
         tags: ["Telegram", "Community", "Growth", "Engagement"],
         psxRequired: "6000",
         featured: false,
+        portfolioMedia: null,
+        videoUrls: null,
       },
       {
         id: randomUUID(),
@@ -350,6 +360,8 @@ export class MemStorage implements IStorage {
         tags: ["NFT", "3D Art", "Collection", "Generative"],
         psxRequired: "20000",
         featured: false,
+        portfolioMedia: null,
+        videoUrls: null,
       },
       {
         id: randomUUID(),
@@ -367,6 +379,8 @@ export class MemStorage implements IStorage {
         tags: ["Liquidity", "Volume", "Market Making", "Trading"],
         psxRequired: "15000",
         featured: true,
+        portfolioMedia: ["https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=800&q=80"],
+        videoUrls: null,
       },
       {
         id: randomUUID(),
@@ -384,6 +398,8 @@ export class MemStorage implements IStorage {
         tags: ["Discord", "Community", "Management", "Bots"],
         psxRequired: "4000",
         featured: false,
+        portfolioMedia: null,
+        videoUrls: null,
       },
     ];
 
@@ -503,6 +519,8 @@ export class MemStorage implements IStorage {
       premiumDescription: insertService.premiumDescription ?? null,
       tags: insertService.tags ?? null,
       featured: insertService.featured ?? false,
+      portfolioMedia: insertService.portfolioMedia ?? null,
+      videoUrls: insertService.videoUrls ?? null,
     };
     this.services.set(id, service);
     return service;
