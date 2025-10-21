@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { insertBuilderApplicationSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/categories", async (_req, res) => {
@@ -198,6 +199,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch balance" });
+    }
+  });
+
+  app.post("/api/builder-applications", async (req, res) => {
+    try {
+      const validatedData = insertBuilderApplicationSchema.parse(req.body);
+      
+      const application = await storage.createBuilderApplication(validatedData);
+      
+      res.status(202).json({
+        id: application.id,
+        status: application.status,
+        message: "Application submitted successfully. We'll review it within 2-3 business days.",
+      });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid application data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to submit application" });
+    }
+  });
+
+  app.get("/api/builder-applications/:id", async (req, res) => {
+    try {
+      const application = await storage.getBuilderApplication(req.params.id);
+      if (!application) {
+        return res.status(404).json({ error: "Application not found" });
+      }
+      res.json(application);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch application" });
     }
   });
 
