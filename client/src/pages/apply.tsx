@@ -246,6 +246,18 @@ export default function Apply() {
           <p className="text-muted-foreground">
             Join create.psx and connect with premium crypto projects
           </p>
+          
+          <div className="mt-4 rounded-lg border border-chart-3/30 bg-chart-3/5 p-4">
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="h-5 w-5 text-chart-3 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-chart-3">🎉 Launch Special: First 50 Builders Get FREE Access!</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  The first 50 approved builders will be whitelisted with FREE platform access — no $CREATE or $PSX tokens required. Apply now to secure your spot!
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="mb-6">

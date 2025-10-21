@@ -158,6 +158,18 @@ export default function BecomeClient() {
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Join the premier Web3 talent marketplace and connect with vetted builders for your memecoin and crypto projects
           </p>
+          
+          <div className="mx-auto mt-6 max-w-2xl rounded-lg border border-chart-3/30 bg-chart-3/5 p-4">
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="h-5 w-5 text-chart-3 flex-shrink-0 mt-0.5" />
+              <div className="text-left">
+                <p className="font-semibold text-chart-3">🎉 Launch Special: First 2 Clients Get FREE Access!</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  The first 2 registered clients will be whitelisted with FREE platform access — no $CREATE or $PSX tokens required. Register now to secure your spot!
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="mb-12 grid gap-6 md:grid-cols-3">

@@ -34,6 +34,10 @@ const faqCategories = [
       {
         q: "What blockchain network does Create.psx use?",
         a: "Create.psx operates on the Base blockchain (both mainnet for production and Sepolia testnet for testing). You'll need a Base-compatible wallet to connect and interact with the platform."
+      },
+      {
+        q: "Is there a way to access the platform without holding tokens?",
+        a: "Yes! As a launch special, the first 50 approved builders and the first 2 registered clients will be automatically whitelisted with FREE platform access - no $CREATE or $PSX tokens required. This is a limited-time promotion to help early adopters get started. Apply or register now to secure your spot!"
       }
     ]
   },
