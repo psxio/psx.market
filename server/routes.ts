@@ -1212,6 +1212,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to delete referral" });
     }
   });
+  
+  app.post("/api/admin/builder-invites", requireAdminAuth, async (req, res) => {
+    try {
+      const adminId = (req.session as any).adminId;
+      if (!adminId) {
+        return res.status(401).json({ error: "Admin not authenticated" });
+      }
+      
+      const admin = await storage.getAdminById(adminId);
+      if (!admin) {
+        return res.status(401).json({ error: "Admin not found" });
+      }
+      
+      const { email, notes, expiresIn } = req.body;
+      const token = await storage.createBuilderInviteToken(
+        admin.id,
+        admin.name || admin.username,
+        email,
+        notes,
+        expiresIn
+      );
+      
+      res.json(token);
+    } catch (error) {
+      console.error("Error creating invite token:", error);
+      res.status(500).json({ error: "Failed to create invite token" });
+    }
+  });
+  
+  app.get("/api/admin/builder-invites", requireAdminAuth, async (_req, res) => {
+    try {
+      const tokens = await storage.getBuilderInviteTokens();
+      res.json(tokens);
+    } catch (error) {
+      console.error("Error fetching invite tokens:", error);
+      res.status(500).json({ error: "Failed to fetch invite tokens" });
+    }
+  });
+  
+  app.get("/api/builder-invites/verify/:token", async (req, res) => {
+    try {
+      const token = await storage.getBuilderInviteToken(req.params.token);
+      
+      if (!token) {
+        return res.status(404).json({ error: "Invalid invite token" });
+      }
+      
+      if (token.used) {
+        return res.status(400).json({ error: "This invite has already been used" });
+      }
+      
+      if (token.expiresAt && new Date(token.expiresAt) < new Date()) {
+        return res.status(400).json({ error: "This invite has expired" });
+      }
+      
+      res.json({ valid: true, email: token.email });
+    } catch (error) {
+      console.error("Error verifying invite token:", error);
+      res.status(500).json({ error: "Failed to verify invite token" });
+    }
+  });
 
   app.post("/api/payments", async (req, res) => {
     try {
