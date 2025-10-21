@@ -50,9 +50,32 @@ The PSX Marketplace is built with a clear separation between its frontend and ba
     - **Order Activities**: Automatic activity timeline logging all order events
     - **Client Dashboard**: Orders list with status filtering, requirement display, and detail navigation
     - **Builder Integration**: Order notifications and management accessible from builder profiles
+- **Payment Integration**: Comprehensive USDC payment system on Base blockchain featuring:
+    - **Base Pay SDK**: Integration with `@base-org/account` for USDC payments on Base mainnet/Sepolia testnet
+    - **Escrow Payments**: Smart contract-based escrow system with milestone-based fund releases
+    - **Payment Schema**: 6 database tables (payments, milestonePayments, payouts, disputes, refunds, invoices)
+    - **Platform Fees**: Configurable percentage-based fee collection (default 2.5%) deducted before builder payouts
+    - **Milestone System**: Split payments into multiple milestones with locked funds released upon approval
+    - **Builder Payouts**: Automated payout tracking with transaction history and earnings dashboard
+    - **Payment History**: Complete transaction records with Base blockchain verification links
+    - **Invoice Generation**: Automatic invoice creation for all payments with downloadable records
+    - **Dispute Resolution**: Multi-party dispute system with evidence tracking and arbitration workflow
+    - **Refund Processing**: Full and partial refund support with automatic transaction reversals
+    - **Payment Components**: 5 UI components (PaymentDialog, PaymentHistory, MilestoneTracker, BuilderPayouts, DisputeResolution)
+    - **Transaction Tracking**: Real-time payment status polling with Base Pay SDK getPaymentStatus()
+    - **Payment Flow**: payments → milestonePayments → payouts with comprehensive status tracking (pending → processing → completed/failed)
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
-- **Wallet SDK**: Base Account SDK (`@base-org/account`)
-- **Token Standard**: ERC-20 (for $PSX token)
+- **Wallet SDK**: Base Account SDK (`@base-org/account`) for wallet connection and payment processing
+- **Payment Token**: USDC (ERC-20) for all marketplace transactions
+- **Token Standard**: ERC-20 (for $PSX token and USDC payments)
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
+
+## Recent Changes (October 21, 2025)
+- **Payment System Implementation**: Complete USDC payment integration with Base Pay SDK
+- **Payment API Routes**: 20+ endpoints for payment processing, milestone management, payouts, disputes, and refunds
+- **Payment Storage**: Added 30+ storage methods for payment CRUD operations
+- **Payment UI Components**: Created PaymentDialog, PaymentHistory, MilestoneTracker, BuilderPayouts, and DisputeResolution components
+- **Client Dashboard**: Added Payments tab displaying payment history and transaction records
+- **Escrow System**: Implemented milestone-based payment releases with platform fee collection
