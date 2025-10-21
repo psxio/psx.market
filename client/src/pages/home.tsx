@@ -17,6 +17,8 @@ import {
   Users,
   CheckCircle2,
   Shield,
+  ExternalLink,
+  Handshake,
 } from "lucide-react";
 import type { Builder, Service, Category } from "@shared/schema";
 
@@ -128,6 +130,42 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b bg-gradient-to-r from-primary/10 via-chart-2/10 to-chart-3/10 py-12">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-6 rounded-xl border bg-card/50 p-8 backdrop-blur-sm lg:flex-row lg:gap-8">
+            <div className="flex flex-1 flex-col gap-3 text-center lg:text-left">
+              <div className="flex items-center justify-center gap-2 lg:justify-start">
+                <Badge variant="outline" className="w-fit gap-1.5 border-chart-2/40 bg-chart-2/10 text-chart-2">
+                  <Handshake className="h-3 w-3" />
+                  Direct B2B Services
+                </Badge>
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+                Need Direct Talent Support?
+              </h2>
+              <p className="text-muted-foreground md:text-lg">
+                Visit <span className="font-semibold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
+                Proudly partnered with <a href="https://x.com/BasedCreators" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">@BasedCreators</a> and <span className="font-semibold text-foreground">thecreators.com</span>.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <a href="https://psx.agency" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="default" className="gap-2 text-base" data-testid="button-visit-agency">
+                  Visit PSX Agency
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </a>
+              <a href="https://x.com/BasedCreators" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-based-creators">
+                  @BasedCreators
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </a>
             </div>
           </div>
         </div>

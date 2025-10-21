@@ -16,6 +16,19 @@ The application is fully functional with all core features implemented:
 - ✅ **Builder application system with multi-step form wizard**
 
 ## Recent Changes (2025-10-21)
+
+### PSX Agency Promotion Section
+- Added prominent homepage section promoting psx.agency direct B2B talent line
+- Section positioned right after hero for maximum visibility
+- Includes:
+  - Handshake badge for "Direct B2B Services"
+  - Call-to-action button linking to https://psx.agency
+  - Partnership mention: @BasedCreators (https://x.com/BasedCreators) and thecreators.com
+  - Description of direct B2B and coin-to-coin business offerings
+  - Secondary CTA button linking to @BasedCreators Twitter
+- Gradient background with card design matching PSX branding
+
+## Earlier Changes (2025-10-21)
 ### Initial Implementation
 - Implemented complete data schema for builders, services, categories, and reviews
 - Built all frontend components with PSX branding (purple/cyan gradient)
