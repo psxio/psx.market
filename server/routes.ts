@@ -886,6 +886,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Builder authentication endpoints
+  app.post("/api/builders/login", async (req, res) => {
+    try {
+      const { walletAddress } = req.body;
+      
+      if (!walletAddress) {
+        return res.status(400).json({ error: "Wallet address required" });
+      }
+
+      const builder = await storage.getBuilderByWallet(walletAddress.toLowerCase());
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found. Please apply first." });
+      }
+
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ error: "Session creation failed" });
+        }
+
+        req.session.builderId = builder.id;
+
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ error: "Session save failed" });
+          }
+          res.json(builder);
+        });
+      });
+    } catch (error) {
+      console.error("Builder login error:", error);
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
+  app.get("/api/builders/me", async (req, res) => {
+    try {
+      if (!req.session.builderId) {
+        return res.status(401).json({ error: "Unauthorized - Builder authentication required" });
+      }
+      
+      const builder = await storage.getBuilder(req.session.builderId);
+      if (!builder) {
+        req.session.destroy(() => {});
+        return res.status(404).json({ error: "Builder not found" });
+      }
+      res.json(builder);
+    } catch (error) {
+      console.error("Failed to fetch builder:", error);
+      res.status(500).json({ error: "Failed to fetch builder" });
+    }
+  });
+
+  app.post("/api/builders/logout", async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Logout failed" });
+      }
+      res.json({ success: true });
+    });
+  });
+
   app.get("/api/auth/wallet/:address", async (req, res) => {
     try {
       const { address } = req.params;

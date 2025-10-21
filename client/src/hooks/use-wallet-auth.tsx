@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
 import { useClientAuth } from "./use-client-auth";
+import { useBuilderAuth } from "./use-builder-auth";
 import { useLocation } from "wouter";
 
 interface WalletStatus {
@@ -17,6 +18,7 @@ interface WalletStatus {
 export function useWalletAuth() {
   const { address, isConnected } = useAccount();
   const { client, login: clientLogin, isAuthenticated: isClientAuthenticated } = useClientAuth();
+  const { builder, login: builderLogin, isAuthenticated: isBuilderAuthenticated } = useBuilderAuth();
   const [, setLocation] = useLocation();
   const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false);
 
@@ -30,7 +32,15 @@ export function useWalletAuth() {
 
   // Auto-login when wallet connects
   useEffect(() => {
-    if (!address || !walletStatus || hasAttemptedLogin || isClientAuthenticated) {
+    if (!address || !walletStatus || hasAttemptedLogin) {
+      return;
+    }
+
+    // Skip if already authenticated as the correct type
+    if (walletStatus.type === "client" && isClientAuthenticated) {
+      return;
+    }
+    if (walletStatus.type === "builder" && isBuilderAuthenticated) {
       return;
     }
 
@@ -40,8 +50,8 @@ export function useWalletAuth() {
           await clientLogin(address);
           setHasAttemptedLogin(true);
           setLocation("/dashboard");
-        } else if (walletStatus.type === "builder") {
-          // For builders, just redirect to their dashboard
+        } else if (walletStatus.type === "builder" && !isBuilderAuthenticated) {
+          await builderLogin(address);
           setHasAttemptedLogin(true);
           setLocation("/builder-dashboard");
         }
@@ -51,7 +61,7 @@ export function useWalletAuth() {
     };
 
     attemptAutoLogin();
-  }, [address, walletStatus, hasAttemptedLogin, isClientAuthenticated, clientLogin, setLocation]);
+  }, [address, walletStatus, hasAttemptedLogin, isClientAuthenticated, isBuilderAuthenticated, clientLogin, builderLogin, setLocation]);
 
   // Reset when wallet disconnects
   useEffect(() => {
@@ -70,5 +80,7 @@ export function useWalletAuth() {
     isClient: walletStatus?.type === "client",
     isBuilder: walletStatus?.type === "builder",
     client,
+    builder,
+    isAuthenticated: isClientAuthenticated || isBuilderAuthenticated,
   };
 }

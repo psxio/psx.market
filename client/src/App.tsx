@@ -10,6 +10,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdminAuthProvider } from "@/hooks/use-admin-auth";
 import { ClientAuthProvider } from "@/hooks/use-client-auth";
+import { BuilderAuthProvider } from "@/hooks/use-builder-auth";
 import { InstallPWAPrompt } from "@/components/install-pwa-prompt";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
@@ -70,11 +71,13 @@ function App() {
           <ThemeProvider defaultTheme="dark">
             <AdminAuthProvider>
               <ClientAuthProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  <InstallPWAPrompt />
-                  <Router />
-                </TooltipProvider>
+                <BuilderAuthProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    <InstallPWAPrompt />
+                    <Router />
+                  </TooltipProvider>
+                </BuilderAuthProvider>
               </ClientAuthProvider>
             </AdminAuthProvider>
           </ThemeProvider>

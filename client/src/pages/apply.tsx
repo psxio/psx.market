@@ -18,7 +18,6 @@ import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import {
   CheckCircle2,
   ArrowRight,
@@ -309,13 +308,13 @@ export default function Apply() {
                         Wallet Connection
                       </h3>
                       {!isConnected ? (
-                        <div>
-                          <p className="mb-3 text-sm text-muted-foreground">
-                            Please connect your wallet to verify your $CREATE or $PSX holdings and submit your application
+                        <div className="rounded-md border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950/30">
+                          <p className="text-sm font-medium text-yellow-900 dark:text-yellow-200">
+                            ⚠️ Wallet Not Connected
                           </p>
-                          <div className="flex justify-center py-2">
-                            <ConnectButton />
-                          </div>
+                          <p className="mt-1 text-sm text-yellow-800 dark:text-yellow-300">
+                            Please connect your wallet using the "Connect Wallet" button in the top-right corner of the header to continue your application
+                          </p>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 rounded-md border bg-background p-3">
