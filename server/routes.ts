@@ -99,6 +99,212 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/reviews/:id", async (req, res) => {
+    try {
+      const review = await storage.getReview(req.params.id);
+      if (!review) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+      res.json(review);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch review" });
+    }
+  });
+
+  app.post("/api/reviews", requireClientAuth, async (req, res) => {
+    try {
+      const clientId = (req.session as any).clientId;
+      if (!clientId) {
+        return res.status(401).json({ error: "Client not authenticated" });
+      }
+
+      const client = await storage.getClient(clientId);
+      if (!client) {
+        return res.status(404).json({ error: "Client not found" });
+      }
+
+      const reviewData = {
+        ...req.body,
+        clientId,
+        clientName: client.name,
+        clientWallet: client.walletAddress,
+      };
+
+      const review = await storage.createReview(reviewData);
+      res.json(review);
+    } catch (error) {
+      console.error("Error creating review:", error);
+      res.status(500).json({ error: "Failed to create review" });
+    }
+  });
+
+  app.post("/api/reviews/:id/response", async (req, res) => {
+    try {
+      const { response } = req.body;
+      if (!response || typeof response !== "string") {
+        return res.status(400).json({ error: "Response text is required" });
+      }
+
+      const review = await storage.addBuilderResponse(req.params.id, response);
+      res.json(review);
+    } catch (error) {
+      console.error("Error adding builder response:", error);
+      res.status(500).json({ error: "Failed to add response" });
+    }
+  });
+
+  app.patch("/api/reviews/:id/status", requireAdminAuth, async (req, res) => {
+    try {
+      const adminId = (req.session as any).adminId;
+      if (!adminId) {
+        return res.status(401).json({ error: "Admin not authenticated" });
+      }
+
+      const { status, notes } = req.body;
+      if (!status || typeof status !== "string") {
+        return res.status(400).json({ error: "Status is required" });
+      }
+
+      const review = await storage.updateReviewStatus(
+        req.params.id,
+        status,
+        adminId,
+        notes
+      );
+      res.json(review);
+    } catch (error) {
+      console.error("Error updating review status:", error);
+      res.status(500).json({ error: "Failed to update review status" });
+    }
+  });
+
+  app.post("/api/reviews/:id/vote", requireClientAuth, async (req, res) => {
+    try {
+      const clientId = (req.session as any).clientId;
+      if (!clientId) {
+        return res.status(401).json({ error: "Client not authenticated" });
+      }
+
+      const { voteType } = req.body;
+      if (!voteType || (voteType !== "helpful" && voteType !== "not_helpful")) {
+        return res.status(400).json({ error: "Invalid vote type" });
+      }
+
+      const existingVote = await storage.getReviewVote(req.params.id, clientId);
+      if (existingVote) {
+        if (existingVote.voteType === voteType) {
+          return res.status(400).json({ error: "You have already voted this way" });
+        }
+        await storage.deleteReviewVote(req.params.id, clientId);
+      }
+
+      const vote = await storage.createReviewVote({
+        reviewId: req.params.id,
+        voterId: clientId,
+        voterType: "client",
+        voteType,
+      });
+
+      const updatedReview = await storage.getReview(req.params.id);
+      res.json({ vote, review: updatedReview });
+    } catch (error) {
+      console.error("Error voting on review:", error);
+      res.status(500).json({ error: "Failed to vote on review" });
+    }
+  });
+
+  app.delete("/api/reviews/:id/vote", requireClientAuth, async (req, res) => {
+    try {
+      const clientId = (req.session as any).clientId;
+      if (!clientId) {
+        return res.status(401).json({ error: "Client not authenticated" });
+      }
+
+      await storage.deleteReviewVote(req.params.id, clientId);
+      const updatedReview = await storage.getReview(req.params.id);
+      res.json({ review: updatedReview });
+    } catch (error) {
+      console.error("Error removing vote:", error);
+      res.status(500).json({ error: "Failed to remove vote" });
+    }
+  });
+
+  app.post("/api/reviews/:id/dispute", requireClientAuth, async (req, res) => {
+    try {
+      const clientId = (req.session as any).clientId;
+      if (!clientId) {
+        return res.status(401).json({ error: "Client not authenticated" });
+      }
+
+      const review = await storage.getReview(req.params.id);
+      if (!review) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+
+      const existingDispute = await storage.getReviewDispute(req.params.id);
+      if (existingDispute) {
+        return res.status(400).json({ error: "This review already has a dispute" });
+      }
+
+      const { reason, disputedBy, evidence } = req.body;
+      if (!reason || !disputedBy) {
+        return res.status(400).json({ error: "Reason and disputedBy are required" });
+      }
+
+      const dispute = await storage.createReviewDispute({
+        reviewId: req.params.id,
+        disputedBy,
+        reason,
+        evidence: evidence || null,
+      });
+
+      res.json(dispute);
+    } catch (error) {
+      console.error("Error creating dispute:", error);
+      res.status(500).json({ error: "Failed to create dispute" });
+    }
+  });
+
+  app.get("/api/reviews/disputes", requireAdminAuth, async (_req, res) => {
+    try {
+      const disputes = await storage.getReviewDisputes();
+      const disputesWithReviews = await Promise.all(
+        disputes.map(async (dispute) => {
+          const review = await storage.getReview(dispute.reviewId);
+          return { ...dispute, review };
+        })
+      );
+      res.json(disputesWithReviews);
+    } catch (error) {
+      console.error("Error fetching disputes:", error);
+      res.status(500).json({ error: "Failed to fetch disputes" });
+    }
+  });
+
+  app.patch("/api/reviews/disputes/:id/resolve", requireAdminAuth, async (req, res) => {
+    try {
+      const adminId = (req.session as any).adminId;
+      if (!adminId) {
+        return res.status(401).json({ error: "Admin not authenticated" });
+      }
+
+      const { resolution } = req.body;
+      if (!resolution || typeof resolution !== "string") {
+        return res.status(400).json({ error: "Resolution is required" });
+      }
+
+      const dispute = await storage.resolveReviewDispute(
+        req.params.id,
+        resolution,
+        adminId
+      );
+      res.json(dispute);
+    } catch (error) {
+      console.error("Error resolving dispute:", error);
+      res.status(500).json({ error: "Failed to resolve dispute" });
+    }
+  });
+
   app.get("/api/builders/:id/projects", async (req, res) => {
     try {
       const projects = await storage.getBuilderProjects(req.params.id);
