@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { WalletConnectButton } from "./wallet-connect-button";
+import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
 import { Button } from "@/components/ui/button";
 import { Search, Menu, Shield, MessageCircle, Grid3x3 } from "lucide-react";
