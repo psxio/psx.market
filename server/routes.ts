@@ -385,7 +385,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let services = await storage.getServices();
       
-      const { search, categories, sortBy } = req.query;
+      const { search, categories, sortBy, minPrice, maxPrice, minRating, deliveryTime } = req.query;
 
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
@@ -425,6 +425,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }
 
+      if (minPrice && typeof minPrice === "string") {
+        const minPriceNum = parseFloat(minPrice);
+        filteredResults = filteredResults.filter(({ service }) => 
+          parseFloat(service.basicPrice) >= minPriceNum
+        );
+      }
+
+      if (maxPrice && typeof maxPrice === "string") {
+        const maxPriceNum = parseFloat(maxPrice);
+        filteredResults = filteredResults.filter(({ service }) => 
+          parseFloat(service.basicPrice) <= maxPriceNum
+        );
+      }
+
+      if (minRating && typeof minRating === "string") {
+        const minRatingNum = parseFloat(minRating);
+        filteredResults = filteredResults.filter(({ builder }) => 
+          builder && parseFloat(builder.rating || "0") >= minRatingNum
+        );
+      }
+
+      if (deliveryTime && typeof deliveryTime === "string") {
+        const timeMap: Record<string, number> = {
+          "24 hours": 1,
+          "3 days": 3,
+          "7 days": 7,
+          "14 days": 14,
+        };
+        const maxDays = timeMap[deliveryTime];
+        if (maxDays) {
+          filteredResults = filteredResults.filter(({ service }) => {
+            const deliveryDays = parseInt(service.deliveryTime);
+            return !isNaN(deliveryDays) && deliveryDays <= maxDays;
+          });
+        }
+      }
+
       if (sortBy) {
         switch (sortBy) {
           case "price-low":
@@ -435,6 +472,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           case "price-high":
             filteredResults.sort(
               (a, b) => parseFloat(b.service.basicPrice) - parseFloat(a.service.basicPrice)
+            );
+            break;
+          case "rating":
+            filteredResults.sort(
+              (a, b) => {
+                const ratingA = parseFloat(a.builder?.rating || "0");
+                const ratingB = parseFloat(b.builder?.rating || "0");
+                return ratingB - ratingA;
+              }
+            );
+            break;
+          case "recent":
+            filteredResults.sort(
+              (a, b) => new Date(b.service.createdAt || 0).getTime() - new Date(a.service.createdAt || 0).getTime()
             );
             break;
           default:

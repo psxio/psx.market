@@ -41,12 +41,31 @@ export default function Marketplace() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [sortBy, setSortBy] = useState("relevance");
+  const [selectedRating, setSelectedRating] = useState<string | null>(null);
+  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState<string | null>(null);
 
   const buildQueryString = () => {
     const params = new URLSearchParams();
     if (searchQuery) params.set("search", searchQuery);
     if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
     if (sortBy && sortBy !== "relevance") params.set("sortBy", sortBy);
+    
+    if (priceRange[0] > 0) params.set("minPrice", priceRange[0].toString());
+    if (priceRange[1] < 10000) params.set("maxPrice", priceRange[1].toString());
+    
+    if (selectedRating) {
+      const ratingMap: Record<string, string> = {
+        "5 Stars": "5",
+        "4+ Stars": "4",
+        "3+ Stars": "3",
+      };
+      params.set("minRating", ratingMap[selectedRating]);
+    }
+    
+    if (selectedDeliveryTime) {
+      params.set("deliveryTime", selectedDeliveryTime);
+    }
+    
     const queryString = params.toString();
     return queryString ? `?${queryString}` : "";
   };
@@ -108,7 +127,12 @@ export default function Marketplace() {
         <div className="space-y-2">
           {ratings.map((rating) => (
             <div key={rating} className="flex items-center space-x-2">
-              <Checkbox id={rating} />
+              <Checkbox 
+                id={rating}
+                checked={selectedRating === rating}
+                onCheckedChange={(checked) => setSelectedRating(checked ? rating : null)}
+                data-testid={`checkbox-rating-${rating.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus')}`}
+              />
               <label
                 htmlFor={rating}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
@@ -125,7 +149,12 @@ export default function Marketplace() {
         <div className="space-y-2">
           {deliveryTimes.map((time) => (
             <div key={time} className="flex items-center space-x-2">
-              <Checkbox id={time} />
+              <Checkbox 
+                id={time}
+                checked={selectedDeliveryTime === time}
+                onCheckedChange={(checked) => setSelectedDeliveryTime(checked ? time : null)}
+                data-testid={`checkbox-delivery-${time.toLowerCase().replace(/\s+/g, '-')}`}
+              />
               <label
                 htmlFor={time}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
