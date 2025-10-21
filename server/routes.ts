@@ -2,8 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
-import { insertBuilderApplicationSchema, insertClientSchema } from "@shared/schema";
+import { insertBuilderApplicationSchema, insertClientSchema, insertMessageSchema, insertMessageAttachmentSchema } from "@shared/schema";
 import { requireAdminAuth, requireClientAuth } from "./middleware/auth";
+import { WebSocketServer, WebSocket } from "ws";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -1059,7 +1060,282 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/chat/threads", async (req, res) => {
+    try {
+      const { userId, userType } = req.query;
+      
+      if (!userId || !userType) {
+        return res.status(400).json({ error: "userId and userType are required" });
+      }
+
+      const threads = userType === "client" 
+        ? await storage.getChatThreadsByClient(userId as string)
+        : await storage.getChatThreadsByBuilder(userId as string);
+
+      const threadsWithDetails = await Promise.all(
+        threads.map(async (thread) => {
+          const builder = await storage.getBuilder(thread.builderId);
+          const client = await storage.getClient(thread.clientId);
+          const order = thread.orderId ? await storage.getOrder(thread.orderId) : null;
+          
+          return {
+            ...thread,
+            builder,
+            client,
+            order,
+          };
+        })
+      );
+
+      res.json(threadsWithDetails);
+    } catch (error) {
+      console.error("Failed to fetch chat threads:", error);
+      res.status(500).json({ error: "Failed to fetch chat threads" });
+    }
+  });
+
+  app.get("/api/chat/threads/:threadId", async (req, res) => {
+    try {
+      const thread = await storage.getChatThread(req.params.threadId);
+      if (!thread) {
+        return res.status(404).json({ error: "Thread not found" });
+      }
+
+      const builder = await storage.getBuilder(thread.builderId);
+      const client = await storage.getClient(thread.clientId);
+      const order = thread.orderId ? await storage.getOrder(thread.orderId) : null;
+
+      res.json({ ...thread, builder, client, order });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch thread" });
+    }
+  });
+
+  app.post("/api/chat/threads", async (req, res) => {
+    try {
+      const { clientId, builderId, orderId } = req.body;
+      
+      if (!clientId || !builderId) {
+        return res.status(400).json({ error: "clientId and builderId are required" });
+      }
+
+      const thread = await storage.findOrCreateChatThread(clientId, builderId, orderId);
+      const builder = await storage.getBuilder(thread.builderId);
+      const client = await storage.getClient(thread.clientId);
+      const order = thread.orderId ? await storage.getOrder(thread.orderId) : null;
+
+      res.json({ ...thread, builder, client, order });
+    } catch (error) {
+      console.error("Failed to create thread:", error);
+      res.status(500).json({ error: "Failed to create thread" });
+    }
+  });
+
+  app.patch("/api/chat/threads/:threadId/archive", async (req, res) => {
+    try {
+      const { userType } = req.body;
+      const thread = await storage.archiveChatThread(req.params.threadId, userType);
+      res.json(thread);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to archive thread" });
+    }
+  });
+
+  app.post("/api/chat/threads/:threadId/mark-read", async (req, res) => {
+    try {
+      const { readerId, readerType } = req.body;
+      await storage.markThreadAsRead(req.params.threadId, readerId, readerType);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to mark thread as read:", error);
+      res.status(500).json({ error: "Failed to mark thread as read" });
+    }
+  });
+
+  app.get("/api/chat/threads/:threadId/messages", async (req, res) => {
+    try {
+      const messages = await storage.getMessagesByThread(req.params.threadId);
+      
+      const messagesWithAttachments = await Promise.all(
+        messages.map(async (message) => {
+          const attachments = await storage.getMessageAttachmentsByMessage(message.id);
+          return { ...message, attachments };
+        })
+      );
+
+      res.json(messagesWithAttachments);
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+      res.status(500).json({ error: "Failed to fetch messages" });
+    }
+  });
+
+  app.post("/api/chat/messages", async (req, res) => {
+    try {
+      const result = insertMessageSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: result.error.errors });
+      }
+
+      const message = await storage.createMessage(result.data);
+      const attachments: any[] = [];
+
+      res.json({ ...message, attachments });
+    } catch (error) {
+      console.error("Failed to create message:", error);
+      res.status(500).json({ error: "Failed to create message" });
+    }
+  });
+
+  app.patch("/api/chat/messages/:messageId", async (req, res) => {
+    try {
+      const { content } = req.body;
+      const message = await storage.updateMessage(req.params.messageId, { content });
+      res.json(message);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update message" });
+    }
+  });
+
+  app.delete("/api/chat/messages/:messageId", async (req, res) => {
+    try {
+      const message = await storage.deleteMessage(req.params.messageId);
+      res.json(message);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete message" });
+    }
+  });
+
+  app.post("/api/chat/messages/:messageId/attachments", async (req, res) => {
+    try {
+      const result = insertMessageAttachmentSchema.safeParse({
+        ...req.body,
+        messageId: req.params.messageId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ error: result.error.errors });
+      }
+
+      const attachment = await storage.createMessageAttachment(result.data);
+      res.json(attachment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create attachment" });
+    }
+  });
+
   const httpServer = createServer(app);
+
+  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+
+  interface WSClient extends WebSocket {
+    userId?: string;
+    userType?: string;
+    threadId?: string;
+  }
+
+  wss.on("connection", (ws: WSClient, req) => {
+    console.log("WebSocket client connected");
+
+    ws.on("message", async (data) => {
+      try {
+        const message = JSON.parse(data.toString());
+
+        switch (message.type) {
+          case "auth":
+            ws.userId = message.userId;
+            ws.userType = message.userType;
+            ws.threadId = message.threadId;
+            ws.send(JSON.stringify({ type: "auth_success" }));
+            break;
+
+          case "message":
+            const newMessage = await storage.createMessage({
+              threadId: message.threadId,
+              senderId: message.senderId,
+              senderType: message.senderType,
+              content: message.content,
+              messageType: message.messageType || "text",
+              replyToId: message.replyToId || null,
+            });
+
+            const attachments = await storage.getMessageAttachmentsByMessage(newMessage.id);
+            const messageWithAttachments = { ...newMessage, attachments };
+
+            wss.clients.forEach((client: WebSocket) => {
+              const wsClient = client as WSClient;
+              if (
+                wsClient.readyState === WebSocket.OPEN &&
+                wsClient.threadId === message.threadId
+              ) {
+                wsClient.send(
+                  JSON.stringify({
+                    type: "message",
+                    data: messageWithAttachments,
+                  })
+                );
+              }
+            });
+            break;
+
+          case "typing":
+            wss.clients.forEach((client: WebSocket) => {
+              const wsClient = client as WSClient;
+              if (
+                wsClient.readyState === WebSocket.OPEN &&
+                wsClient.threadId === message.threadId &&
+                wsClient.userId !== message.userId
+              ) {
+                wsClient.send(
+                  JSON.stringify({
+                    type: "typing",
+                    userId: message.userId,
+                    userType: message.userType,
+                  })
+                );
+              }
+            });
+            break;
+
+          case "read_receipt":
+            await storage.createMessageReadReceipt({
+              messageId: message.messageId,
+              threadId: message.threadId,
+              readerId: message.readerId,
+              readerType: message.readerType,
+            });
+
+            wss.clients.forEach((client: WebSocket) => {
+              const wsClient = client as WSClient;
+              if (
+                wsClient.readyState === WebSocket.OPEN &&
+                wsClient.threadId === message.threadId
+              ) {
+                wsClient.send(
+                  JSON.stringify({
+                    type: "read_receipt",
+                    messageId: message.messageId,
+                    readerId: message.readerId,
+                  })
+                );
+              }
+            });
+            break;
+        }
+      } catch (error) {
+        console.error("WebSocket message error:", error);
+        ws.send(JSON.stringify({ type: "error", error: "Failed to process message" }));
+      }
+    });
+
+    ws.on("close", () => {
+      console.log("WebSocket client disconnected");
+    });
+
+    ws.on("error", (error) => {
+      console.error("WebSocket error:", error);
+    });
+  });
 
   return httpServer;
 }
