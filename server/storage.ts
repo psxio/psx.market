@@ -11,8 +11,12 @@ import {
   type InsertBuilderApplication,
   type Client,
   type InsertClient,
-  type Project,
-  type InsertProject,
+  type Order,
+  type InsertOrder,
+  type OrderRevision,
+  type InsertOrderRevision,
+  type OrderActivity,
+  type InsertOrderActivity,
   type Milestone,
   type InsertMilestone,
   type Admin,
@@ -53,11 +57,20 @@ export interface IStorage {
   getClients(): Promise<Client[]>;
   createClient(client: InsertClient): Promise<Client>;
 
-  getProject(id: string): Promise<Project | undefined>;
-  getProjectsByClient(clientId: string): Promise<Project[]>;
-  getProjectsByBuilder(builderId: string): Promise<Project[]>;
-  createProject(project: InsertProject): Promise<Project>;
-  updateProjectStatus(id: string, status: string): Promise<Project>;
+  getOrder(id: string): Promise<Order | undefined>;
+  getOrders(): Promise<Order[]>;
+  getOrdersByClient(clientId: string): Promise<Order[]>;
+  getOrdersByBuilder(builderId: string): Promise<Order[]>;
+  createOrder(order: InsertOrder): Promise<Order>;
+  updateOrder(id: string, data: Partial<Order>): Promise<Order>;
+  cancelOrder(id: string, reason: string, refundAmount?: number): Promise<Order>;
+  
+  getOrderRevisions(orderId: string): Promise<OrderRevision[]>;
+  createOrderRevision(revision: InsertOrderRevision): Promise<OrderRevision>;
+  updateOrderRevision(id: string, data: Partial<OrderRevision>): Promise<OrderRevision>;
+  
+  getOrderActivities(orderId: string): Promise<OrderActivity[]>;
+  createOrderActivity(activity: InsertOrderActivity): Promise<OrderActivity>;
 
   getMilestonesByProject(projectId: string): Promise<Milestone[]>;
   createMilestone(milestone: InsertMilestone): Promise<Milestone>;
@@ -95,7 +108,9 @@ export class MemStorage implements IStorage {
   private reviews: Map<string, Review>;
   private builderApplications: Map<string, BuilderApplication>;
   private clients: Map<string, Client>;
-  private projects: Map<string, Project>;
+  private orders: Map<string, Order>;
+  private orderRevisions: Map<string, OrderRevision>;
+  private orderActivities: Map<string, OrderActivity>;
   private milestones: Map<string, Milestone>;
   private admins: Map<string, Admin>;
   private referrals: Map<string, Referral>;
@@ -107,7 +122,9 @@ export class MemStorage implements IStorage {
     this.reviews = new Map();
     this.builderApplications = new Map();
     this.clients = new Map();
-    this.projects = new Map();
+    this.orders = new Map();
+    this.orderRevisions = new Map();
+    this.orderActivities = new Map();
     this.milestones = new Map();
     this.admins = new Map();
     this.referrals = new Map();
@@ -901,53 +918,188 @@ export class MemStorage implements IStorage {
     return client;
   }
 
-  async getProject(id: string): Promise<Project | undefined> {
-    return this.projects.get(id);
+  async getOrder(id: string): Promise<Order | undefined> {
+    return this.orders.get(id);
   }
 
-  async getProjectsByClient(clientId: string): Promise<Project[]> {
-    return Array.from(this.projects.values()).filter(
-      (p) => p.clientId === clientId
+  async getOrders(): Promise<Order[]> {
+    return Array.from(this.orders.values());
+  }
+
+  async getOrdersByClient(clientId: string): Promise<Order[]> {
+    return Array.from(this.orders.values()).filter(
+      (o) => o.clientId === clientId
     );
   }
 
-  async getProjectsByBuilder(builderId: string): Promise<Project[]> {
-    return Array.from(this.projects.values()).filter(
-      (p) => p.builderId === builderId
+  async getOrdersByBuilder(builderId: string): Promise<Order[]> {
+    return Array.from(this.orders.values()).filter(
+      (o) => o.builderId === builderId
     );
   }
 
-  async createProject(insertProject: InsertProject): Promise<Project> {
+  async createOrder(insertOrder: InsertOrder): Promise<Order> {
     const id = randomUUID();
-    const project: Project = {
-      ...insertProject,
+    const now = new Date().toISOString();
+    const order: Order = {
+      ...insertOrder,
       id,
       status: "pending",
-      createdAt: new Date().toISOString(),
+      revisionCount: 0,
+      acceptedAt: null,
       startedAt: null,
+      deliveredAt: null,
       completedAt: null,
-      contractTerms: insertProject.contractTerms ?? null,
+      cancelledAt: null,
+      cancellationReason: null,
+      refundAmount: null,
+      refundStatus: null,
+      deliveryUrl: null,
+      deliveryNotes: null,
+      createdAt: now,
+      updatedAt: now,
     };
-    this.projects.set(id, project);
-    return project;
+    this.orders.set(id, order);
+    
+    await this.createOrderActivity({
+      orderId: id,
+      actorId: insertOrder.clientId,
+      actorType: "client",
+      activityType: "order_created",
+      description: "Order was created",
+      metadata: null,
+    });
+    
+    return order;
   }
 
-  async updateProjectStatus(id: string, status: string): Promise<Project> {
-    const project = await this.getProject(id);
-    if (!project) {
-      throw new Error("Project not found");
+  async updateOrder(id: string, data: Partial<Order>): Promise<Order> {
+    const order = await this.getOrder(id);
+    if (!order) {
+      throw new Error("Order not found");
     }
 
-    project.status = status;
-    if (status === "in_progress" && !project.startedAt) {
-      project.startedAt = new Date().toISOString();
-    }
-    if (status === "completed" && !project.completedAt) {
-      project.completedAt = new Date().toISOString();
+    const updatedOrder = {
+      ...order,
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    this.orders.set(id, updatedOrder);
+    return updatedOrder;
+  }
+
+  async cancelOrder(id: string, reason: string, refundAmount?: number): Promise<Order> {
+    const order = await this.getOrder(id);
+    if (!order) {
+      throw new Error("Order not found");
     }
 
-    this.projects.set(id, project);
-    return project;
+    const updatedOrder = {
+      ...order,
+      status: "cancelled",
+      cancelledAt: new Date().toISOString(),
+      cancellationReason: reason,
+      refundAmount: refundAmount ? String(refundAmount) : null,
+      refundStatus: refundAmount ? "pending" : null,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    this.orders.set(id, updatedOrder);
+    
+    await this.createOrderActivity({
+      orderId: id,
+      actorId: order.clientId,
+      actorType: "client",
+      activityType: "order_cancelled",
+      description: `Order was cancelled: ${reason}`,
+      metadata: refundAmount ? JSON.stringify({ refundAmount }) : null,
+    });
+    
+    return updatedOrder;
+  }
+
+  async getOrderRevisions(orderId: string): Promise<OrderRevision[]> {
+    return Array.from(this.orderRevisions.values()).filter(
+      (r) => r.orderId === orderId
+    );
+  }
+
+  async createOrderRevision(insertRevision: InsertOrderRevision): Promise<OrderRevision> {
+    const id = randomUUID();
+    const revision: OrderRevision = {
+      ...insertRevision,
+      id,
+      status: "pending",
+      deliveryUrl: null,
+      deliveryNotes: null,
+      deliveredAt: null,
+      createdAt: new Date().toISOString(),
+    };
+    this.orderRevisions.set(id, revision);
+    
+    const order = await this.getOrder(insertRevision.orderId);
+    if (order) {
+      order.revisionCount = (order.revisionCount || 0) + 1;
+      order.updatedAt = new Date().toISOString();
+      this.orders.set(order.id, order);
+    }
+    
+    await this.createOrderActivity({
+      orderId: insertRevision.orderId,
+      actorId: insertRevision.requestedBy,
+      actorType: "client",
+      activityType: "revision_requested",
+      description: `Revision #${insertRevision.revisionNumber} requested`,
+      metadata: JSON.stringify({ revisionId: id }),
+    });
+    
+    return revision;
+  }
+
+  async updateOrderRevision(id: string, data: Partial<OrderRevision>): Promise<OrderRevision> {
+    const revision = this.orderRevisions.get(id);
+    if (!revision) {
+      throw new Error("Order revision not found");
+    }
+
+    const updatedRevision = {
+      ...revision,
+      ...data,
+    };
+    
+    this.orderRevisions.set(id, updatedRevision);
+    
+    if (data.status === "delivered" && data.deliveredAt) {
+      await this.createOrderActivity({
+        orderId: revision.orderId,
+        actorId: "builder",
+        actorType: "builder",
+        activityType: "revision_delivered",
+        description: `Revision #${revision.revisionNumber} delivered`,
+        metadata: JSON.stringify({ revisionId: id }),
+      });
+    }
+    
+    return updatedRevision;
+  }
+
+  async getOrderActivities(orderId: string): Promise<OrderActivity[]> {
+    return Array.from(this.orderActivities.values())
+      .filter((a) => a.orderId === orderId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createOrderActivity(insertActivity: InsertOrderActivity): Promise<OrderActivity> {
+    const id = randomUUID();
+    const activity: OrderActivity = {
+      ...insertActivity,
+      id,
+      metadata: insertActivity.metadata ?? null,
+      createdAt: new Date().toISOString(),
+    };
+    this.orderActivities.set(id, activity);
+    return activity;
   }
 
   async getMilestonesByProject(projectId: string): Promise<Milestone[]> {

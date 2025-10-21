@@ -149,19 +149,67 @@ export const clients = pgTable("clients", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const projects = pgTable("projects", {
+export const orders = pgTable("orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   clientId: varchar("client_id").notNull(),
   builderId: varchar("builder_id").notNull(),
   serviceId: varchar("service_id").notNull(),
+  
+  packageType: text("package_type").notNull(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
+  requirements: text("requirements").notNull(),
   budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
+  deliveryDays: integer("delivery_days").notNull(),
+  
   status: text("status").notNull().default("pending"),
-  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  
+  acceptedAt: text("accepted_at"),
   startedAt: text("started_at"),
+  deliveredAt: text("delivered_at"),
   completedAt: text("completed_at"),
-  contractTerms: text("contract_terms"),
+  cancelledAt: text("cancelled_at"),
+  
+  cancellationReason: text("cancellation_reason"),
+  refundAmount: decimal("refund_amount", { precision: 10, scale: 2 }),
+  refundStatus: text("refund_status"),
+  
+  revisionCount: integer("revision_count").notNull().default(0),
+  maxRevisions: integer("max_revisions").notNull().default(2),
+  
+  deliveryUrl: text("delivery_url"),
+  deliveryNotes: text("delivery_notes"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const orderRevisions = pgTable("order_revisions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  requestedBy: varchar("requested_by").notNull(),
+  
+  revisionNumber: integer("revision_number").notNull(),
+  requestDetails: text("request_details").notNull(),
+  status: text("status").notNull().default("pending"),
+  
+  deliveryUrl: text("delivery_url"),
+  deliveryNotes: text("delivery_notes"),
+  deliveredAt: text("delivered_at"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const orderActivities = pgTable("order_activities", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  actorId: varchar("actor_id").notNull(),
+  actorType: text("actor_type").notNull(),
+  
+  activityType: text("activity_type").notNull(),
+  description: text("description").notNull(),
+  metadata: text("metadata"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const milestones = pgTable("milestones", {
@@ -190,12 +238,34 @@ export const insertClientSchema = createInsertSchema(clients).omit({
   createdAt: true,
 });
 
-export const insertProjectSchema = createInsertSchema(projects).omit({
+export const insertOrderSchema = createInsertSchema(orders).omit({
   id: true,
   status: true,
   createdAt: true,
+  updatedAt: true,
+  acceptedAt: true,
   startedAt: true,
+  deliveredAt: true,
   completedAt: true,
+  cancelledAt: true,
+  cancellationReason: true,
+  refundAmount: true,
+  refundStatus: true,
+  revisionCount: true,
+  deliveryUrl: true,
+  deliveryNotes: true,
+});
+
+export const insertOrderRevisionSchema = createInsertSchema(orderRevisions).omit({
+  id: true,
+  status: true,
+  createdAt: true,
+  deliveredAt: true,
+});
+
+export const insertOrderActivitySchema = createInsertSchema(orderActivities).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertMilestoneSchema = createInsertSchema(milestones).omit({
@@ -260,8 +330,14 @@ export type BuilderApplication = typeof builderApplications.$inferSelect;
 export type InsertClient = z.infer<typeof insertClientSchema>;
 export type Client = typeof clients.$inferSelect;
 
-export type InsertProject = z.infer<typeof insertProjectSchema>;
-export type Project = typeof projects.$inferSelect;
+export type InsertOrder = z.infer<typeof insertOrderSchema>;
+export type Order = typeof orders.$inferSelect;
+
+export type InsertOrderRevision = z.infer<typeof insertOrderRevisionSchema>;
+export type OrderRevision = typeof orderRevisions.$inferSelect;
+
+export type InsertOrderActivity = z.infer<typeof insertOrderActivitySchema>;
+export type OrderActivity = typeof orderActivities.$inferSelect;
 
 export type InsertMilestone = z.infer<typeof insertMilestoneSchema>;
 export type Milestone = typeof milestones.$inferSelect;
