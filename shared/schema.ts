@@ -123,11 +123,55 @@ export const reviews = pgTable("reviews", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   builderId: varchar("builder_id").notNull(),
   serviceId: varchar("service_id"),
+  orderId: varchar("order_id"),
+  clientId: varchar("client_id").notNull(),
   clientName: text("client_name").notNull(),
   clientWallet: text("client_wallet").notNull(),
   rating: integer("rating").notNull(),
   comment: text("comment").notNull(),
   projectTitle: text("project_title"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  
+  builderResponse: text("builder_response"),
+  builderResponseAt: text("builder_response_at"),
+  
+  status: text("status").notNull().default("pending"),
+  moderatedBy: varchar("moderated_by"),
+  moderatedAt: text("moderated_at"),
+  moderatorNotes: text("moderator_notes"),
+  
+  onchainTxHash: text("onchain_tx_hash"),
+  onchainVerified: boolean("onchain_verified").notNull().default(false),
+  onchainVerifiedAt: text("onchain_verified_at"),
+  
+  isDisputed: boolean("is_disputed").notNull().default(false),
+  disputeStatus: text("dispute_status"),
+  
+  helpfulCount: integer("helpful_count").notNull().default(0),
+  notHelpfulCount: integer("not_helpful_count").notNull().default(0),
+});
+
+export const reviewVotes = pgTable("review_votes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  reviewId: varchar("review_id").notNull(),
+  voterId: varchar("voter_id").notNull(),
+  voterType: text("voter_type").notNull(),
+  voteType: text("vote_type").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const reviewDisputes = pgTable("review_disputes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  reviewId: varchar("review_id").notNull(),
+  disputedBy: varchar("disputed_by").notNull(),
+  disputedByType: text("disputed_by_type").notNull(),
+  reason: text("reason").notNull(),
+  details: text("details").notNull(),
+  evidence: text("evidence").array(),
+  status: text("status").notNull().default("pending"),
+  resolution: text("resolution"),
+  resolvedBy: varchar("resolved_by"),
+  resolvedAt: text("resolved_at"),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
@@ -198,6 +242,32 @@ export const insertServiceSchema = createInsertSchema(services).omit({
 export const insertReviewSchema = createInsertSchema(reviews).omit({
   id: true,
   createdAt: true,
+  builderResponse: true,
+  builderResponseAt: true,
+  status: true,
+  moderatedBy: true,
+  moderatedAt: true,
+  moderatorNotes: true,
+  onchainTxHash: true,
+  onchainVerified: true,
+  onchainVerifiedAt: true,
+  isDisputed: true,
+  disputeStatus: true,
+  helpfulCount: true,
+  notHelpfulCount: true,
+});
+
+export const insertReviewVoteSchema = createInsertSchema(reviewVotes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertReviewDisputeSchema = createInsertSchema(reviewDisputes).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  resolvedBy: true,
+  resolvedAt: true,
 });
 
 export const insertCategorySchema = createInsertSchema(categories).omit({
@@ -706,6 +776,12 @@ export type Service = typeof services.$inferSelect;
 
 export type InsertReview = z.infer<typeof insertReviewSchema>;
 export type Review = typeof reviews.$inferSelect;
+
+export type InsertReviewVote = z.infer<typeof insertReviewVoteSchema>;
+export type ReviewVote = typeof reviewVotes.$inferSelect;
+
+export type InsertReviewDispute = z.infer<typeof insertReviewDisputeSchema>;
+export type ReviewDispute = typeof reviewDisputes.$inferSelect;
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type Category = typeof categories.$inferSelect;
