@@ -410,7 +410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               builder.category.toLowerCase().includes(searchLower) ||
               builder.skills?.some((skill) => skill.toLowerCase().includes(searchLower)) ||
               builder.bio?.toLowerCase().includes(searchLower) ||
-              builder.title?.toLowerCase().includes(searchLower)
+              builder.headline?.toLowerCase().includes(searchLower)
             ) : false;
 
             return serviceMatch || builderMatch;
