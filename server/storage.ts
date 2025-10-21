@@ -9,6 +9,10 @@ import {
   type InsertCategory,
   type Review,
   type InsertReview,
+  type ReviewVote,
+  type InsertReviewVote,
+  type ReviewDispute,
+  type InsertReviewDispute,
   type BuilderApplication,
   type InsertBuilderApplication,
   type Client,
@@ -71,7 +75,20 @@ export interface IStorage {
   createCategory(category: InsertCategory): Promise<Category>;
 
   getReviewsByBuilder(builderId: string): Promise<Review[]>;
+  getReview(id: string): Promise<Review | undefined>;
   createReview(review: InsertReview): Promise<Review>;
+  addBuilderResponse(reviewId: string, response: string): Promise<Review>;
+  updateReviewStatus(reviewId: string, status: string, moderatorId: string, notes?: string): Promise<Review>;
+  
+  getReviewVote(reviewId: string, voterId: string): Promise<ReviewVote | undefined>;
+  createReviewVote(vote: InsertReviewVote): Promise<ReviewVote>;
+  deleteReviewVote(reviewId: string, voterId: string): Promise<void>;
+  updateReviewVoteCount(reviewId: string): Promise<Review>;
+  
+  getReviewDispute(reviewId: string): Promise<ReviewDispute | undefined>;
+  getReviewDisputes(): Promise<ReviewDispute[]>;
+  createReviewDispute(dispute: InsertReviewDispute): Promise<ReviewDispute>;
+  resolveReviewDispute(disputeId: string, resolution: string, resolvedBy: string): Promise<ReviewDispute>;
 
   getBuilderApplication(id: string): Promise<BuilderApplication | undefined>;
   getBuilderApplications(): Promise<BuilderApplication[]>;
@@ -204,6 +221,8 @@ export class MemStorage implements IStorage {
   private services: Map<string, Service>;
   private categories: Map<string, Category>;
   private reviews: Map<string, Review>;
+  private reviewVotes: Map<string, ReviewVote>;
+  private reviewDisputes: Map<string, ReviewDispute>;
   private builderApplications: Map<string, BuilderApplication>;
   private clients: Map<string, Client>;
   private orders: Map<string, Order>;
@@ -229,6 +248,8 @@ export class MemStorage implements IStorage {
     this.services = new Map();
     this.categories = new Map();
     this.reviews = new Map();
+    this.reviewVotes = new Map();
+    this.reviewDisputes = new Map();
     this.builderApplications = new Map();
     this.clients = new Map();
     this.orders = new Map();
@@ -991,6 +1012,10 @@ export class MemStorage implements IStorage {
     );
   }
 
+  async getReview(id: string): Promise<Review | undefined> {
+    return this.reviews.get(id);
+  }
+
   async createReview(insertReview: InsertReview): Promise<Review> {
     const id = randomUUID();
     const review: Review = {
@@ -999,9 +1024,139 @@ export class MemStorage implements IStorage {
       createdAt: new Date().toISOString(),
       serviceId: insertReview.serviceId ?? null,
       projectTitle: insertReview.projectTitle ?? null,
+      orderId: insertReview.orderId ?? null,
+      builderResponse: null,
+      builderResponseAt: null,
+      status: "pending",
+      moderatedBy: null,
+      moderatedAt: null,
+      moderatorNotes: null,
+      onchainTxHash: null,
+      onchainVerified: false,
+      onchainVerifiedAt: null,
+      isDisputed: false,
+      disputeStatus: null,
+      helpfulCount: 0,
+      notHelpfulCount: 0,
     };
     this.reviews.set(id, review);
     return review;
+  }
+
+  async addBuilderResponse(reviewId: string, response: string): Promise<Review> {
+    const review = this.reviews.get(reviewId);
+    if (!review) {
+      throw new Error("Review not found");
+    }
+    review.builderResponse = response;
+    review.builderResponseAt = new Date().toISOString();
+    this.reviews.set(reviewId, review);
+    return review;
+  }
+
+  async updateReviewStatus(reviewId: string, status: string, moderatorId: string, notes?: string): Promise<Review> {
+    const review = this.reviews.get(reviewId);
+    if (!review) {
+      throw new Error("Review not found");
+    }
+    review.status = status;
+    review.moderatedBy = moderatorId;
+    review.moderatedAt = new Date().toISOString();
+    review.moderatorNotes = notes ?? null;
+    this.reviews.set(reviewId, review);
+    return review;
+  }
+
+  async getReviewVote(reviewId: string, voterId: string): Promise<ReviewVote | undefined> {
+    return Array.from(this.reviewVotes.values()).find(
+      (v) => v.reviewId === reviewId && v.voterId === voterId
+    );
+  }
+
+  async createReviewVote(vote: InsertReviewVote): Promise<ReviewVote> {
+    const id = randomUUID();
+    const reviewVote: ReviewVote = {
+      ...vote,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.reviewVotes.set(id, reviewVote);
+    await this.updateReviewVoteCount(vote.reviewId);
+    return reviewVote;
+  }
+
+  async deleteReviewVote(reviewId: string, voterId: string): Promise<void> {
+    const vote = await this.getReviewVote(reviewId, voterId);
+    if (vote) {
+      this.reviewVotes.delete(vote.id);
+      await this.updateReviewVoteCount(reviewId);
+    }
+  }
+
+  async updateReviewVoteCount(reviewId: string): Promise<Review> {
+    const review = this.reviews.get(reviewId);
+    if (!review) {
+      throw new Error("Review not found");
+    }
+    const votes = Array.from(this.reviewVotes.values()).filter((v) => v.reviewId === reviewId);
+    review.helpfulCount = votes.filter((v) => v.voteType === "helpful").length;
+    review.notHelpfulCount = votes.filter((v) => v.voteType === "not_helpful").length;
+    this.reviews.set(reviewId, review);
+    return review;
+  }
+
+  async getReviewDispute(reviewId: string): Promise<ReviewDispute | undefined> {
+    return Array.from(this.reviewDisputes.values()).find(
+      (d) => d.reviewId === reviewId
+    );
+  }
+
+  async getReviewDisputes(): Promise<ReviewDispute[]> {
+    return Array.from(this.reviewDisputes.values());
+  }
+
+  async createReviewDispute(dispute: InsertReviewDispute): Promise<ReviewDispute> {
+    const id = randomUUID();
+    const reviewDispute: ReviewDispute = {
+      ...dispute,
+      id,
+      createdAt: new Date().toISOString(),
+      status: "pending",
+      resolution: null,
+      resolvedBy: null,
+      resolvedAt: null,
+      evidence: dispute.evidence ?? null,
+    };
+    this.reviewDisputes.set(id, reviewDispute);
+    
+    const review = this.reviews.get(dispute.reviewId);
+    if (review) {
+      review.isDisputed = true;
+      review.disputeStatus = "pending";
+      this.reviews.set(dispute.reviewId, review);
+    }
+    
+    return reviewDispute;
+  }
+
+  async resolveReviewDispute(disputeId: string, resolution: string, resolvedBy: string): Promise<ReviewDispute> {
+    const dispute = this.reviewDisputes.get(disputeId);
+    if (!dispute) {
+      throw new Error("Dispute not found");
+    }
+    dispute.status = "resolved";
+    dispute.resolution = resolution;
+    dispute.resolvedBy = resolvedBy;
+    dispute.resolvedAt = new Date().toISOString();
+    this.reviewDisputes.set(disputeId, dispute);
+    
+    const review = this.reviews.get(dispute.reviewId);
+    if (review) {
+      review.disputeStatus = "resolved";
+      this.reviews.set(dispute.reviewId, review);
+    }
+    
+    return dispute;
   }
 
   async getBuilderApplication(id: string): Promise<BuilderApplication | undefined> {
