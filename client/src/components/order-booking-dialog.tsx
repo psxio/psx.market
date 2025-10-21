@@ -133,10 +133,10 @@ export function OrderBookingDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl">{service.title}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl sm:text-2xl">{service.title}</DialogTitle>
+          <DialogDescription className="text-sm">
             Book a service with {builder.name}
           </DialogDescription>
         </DialogHeader>
@@ -147,7 +147,7 @@ export function OrderBookingDialog({
             <RadioGroup
               value={selectedPackage}
               onValueChange={(value: any) => setSelectedPackage(value)}
-              className="grid gap-4 md:grid-cols-3"
+              className="grid gap-3 grid-cols-1 sm:grid-cols-3"
             >
               {packages.map((pkg) => (
                 <Card
@@ -159,21 +159,21 @@ export function OrderBookingDialog({
                   }`}
                   onClick={() => setSelectedPackage(pkg.id as any)}
                 >
-                  <CardContent className="p-4 space-y-3">
+                  <CardContent className="p-4 sm:p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <RadioGroupItem
                         value={pkg.id}
                         id={pkg.id}
                         className="sr-only"
                       />
-                      <Label htmlFor={pkg.id} className="text-lg font-semibold cursor-pointer">
+                      <Label htmlFor={pkg.id} className="text-base sm:text-lg font-semibold cursor-pointer">
                         {pkg.name}
                       </Label>
                       {selectedPackage === pkg.id && (
                         <CheckCircle2 className="h-5 w-5 text-primary" />
                       )}
                     </div>
-                    <div className="text-3xl font-bold text-primary">
+                    <div className="text-2xl sm:text-3xl font-bold text-primary">
                       ${pkg.price}
                     </div>
                     <div className="space-y-2 text-sm">

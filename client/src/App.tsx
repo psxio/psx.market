@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdminAuthProvider } from "@/hooks/use-admin-auth";
 import { ClientAuthProvider } from "@/hooks/use-client-auth";
+import { InstallPWAPrompt } from "@/components/install-pwa-prompt";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
 import Marketplace from "@/pages/marketplace";
@@ -47,6 +48,7 @@ function App() {
           <ClientAuthProvider>
             <TooltipProvider>
               <Toaster />
+              <InstallPWAPrompt />
               <Router />
             </TooltipProvider>
           </ClientAuthProvider>
