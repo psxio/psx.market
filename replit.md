@@ -1,13 +1,15 @@
 # create.psx
 
 ## Overview
-create.psx is a token-gated Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. Its core purpose is quality assurance, achieved by requiring $PSX token holdings for access. The platform features builder profiles, service listings, category-based browsing, and an administrative dashboard. The long-term vision is to become the leading platform for Web3 talent, incorporating secure on-chain payments and robust project management.
+create.psx is a token-gated Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. Its core purpose is quality assurance, achieved by requiring $PSX token holdings for access. The platform features builder profiles, service listings, category-based browsing, administrative dashboard, comprehensive legal compliance pages, and builder onboarding system. The long-term vision is to become the leading platform for Web3 talent, incorporating secure on-chain payments and robust project management.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
 - Design system follows design_guidelines.md
 - Mobile-first responsive design
 - Professional Web3 aesthetic
+- **Typography**: Orbitron font loaded from Google Fonts, applied site-wide via CSS variable --font-sans
+- **Animations**: Scroll-triggered reveal animations throughout (fadeInUp, fadeInLeft, fadeInRight, fadeInScale, slideInUp, zoomIn, bounceIn)
 
 ## System Architecture
 create.psx is built with a clear separation between its frontend and backend for scalability and maintainability.
@@ -86,6 +88,28 @@ create.psx is built with a clear separation between its frontend and backend for
   - **Confirmation Dialogs**: AlertDialog for destructive operations (deletion) to prevent accidental data loss
   - **Toast Notifications**: Success/error notifications for all profile and service management operations
   - **Database Schema**: Services table includes `active` boolean field for archive functionality and `createdAt` timestamp
+- **Legal & Compliance Pages**: Comprehensive legal documentation for regulatory compliance and transparency:
+  - **Terms of Service** (`/terms-of-service`): Platform terms covering account requirements, $PSX token holdings, payment terms, escrow system, intellectual property, dispute resolution, limitation of liability, governing law, and termination policies
+  - **Privacy Policy** (`/privacy-policy`): GDPR and CCPA compliant privacy policy detailing data collection practices, wallet address handling, blockchain data permanence, user rights (access, correction, deletion), security measures, data retention, international transfers, and cookie usage
+  - **Cookie Policy** (`/cookie-policy`): Detailed explanation of cookie usage including types (Essential, Functional, Analytics, Marketing), local storage, third-party cookies, lifespan, user controls, Do Not Track (DNT) support, and browser settings guidance
+  - **FAQ Page** (`/faq`): Comprehensive FAQ with 40+ questions across 8 categories (Getting Started, Wallet & Tokens, Payments & Escrow, Services & Orders, Communication & Support, Builder-Specific, Technical & Security, Disputes & Resolution). Features real-time search filtering using shadcn Accordion components
+  - **Footer Integration**: Legal pages linked in homepage footer with hover effects and proper routing
+- **Builder Onboarding System**: Visual onboarding checklist guiding new builders through platform setup:
+  - **OnboardingChecklist Component**: Card-based UI component displaying 5 tracked steps with progress bar, completion indicators (CheckCircle2/Circle icons), and action buttons for incomplete steps
+  - **Tracked Steps**: 
+    1. Complete Your Profile (bio, headline, skills, profile image)
+    2. Add Your First Service (service listing with pricing)
+    3. Showcase Your Portfolio (portfolio links or project examples)
+    4. Set Up Payment (wallet connection for USDC payments)
+    5. Complete Verification (social accounts or GitHub verification)
+  - **Progress Tracking**: Displays completion percentage (0-100%) calculated from completed steps, automatically hidden when onboarding is complete
+  - **Database Integration**: Uses `builderOnboarding` table with boolean fields for each step, completion percentage, and completion timestamp
+  - **API Endpoints**: 
+    - `GET /api/builders/:builderId/onboarding` - Fetch onboarding status
+    - `POST /api/builders/:builderId/onboarding` - Create onboarding record
+    - `PATCH /api/builders/:builderId/onboarding/:step` - Update step completion
+  - **Dashboard Integration**: Checklist prominently displayed in Builder Dashboard between stats cards and tabs section, visible only when onboarding incomplete
+  - **Visual Design**: Primary-bordered card with step-by-step breakdown, action buttons linking to relevant setup pages, encouraging message when 60%+ complete
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
