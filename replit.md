@@ -74,6 +74,18 @@ create.psx is built with a clear separation between its frontend and backend for
   - **Combined Filtering**: All filters work together and can be combined for precise results
   - **Query-Based State**: Filter state persisted in URL query parameters for sharing and bookmarking
   - **Responsive UI**: Mobile-friendly filter sheet with all desktop functionality
+- **Profile & Service Management**: Complete management tools for builders and clients with:
+  - **Builder Profile Editing**: Full profile editing capability with support for name, bio, headline, skills, category, portfolio URLs, GitHub, Twitter, profile/cover images via `PATCH /api/builders/:id/profile`
+  - **Client Profile Editing**: Comprehensive client profile management including name, email, company name, bio, and profile image via `PUT /api/clients/me` with form validation and real-time updates
+  - **Service Creation**: Create new services with multi-tier pricing, category selection, tags, delivery times, and portfolio media
+  - **Service Editing**: Edit all service details via `PUT /api/builders/:builderId/services/:id` with ownership verification
+  - **Service Deletion**: Permanent service deletion via `DELETE /api/builders/:builderId/services/:id` with confirmation dialog
+  - **Service Archiving**: Non-destructive service hiding/showing via `PATCH /api/builders/:builderId/services/:id/archive` - archived services hidden from marketplace but can be reactivated anytime
+  - **Ownership Verification**: All service management operations verify builder ownership (403 error if attempting to manage another builder's services)
+  - **UI Components**: Builder Dashboard Services tab with Edit, Archive/Activate, and Delete buttons for each service
+  - **Confirmation Dialogs**: AlertDialog for destructive operations (deletion) to prevent accidental data loss
+  - **Toast Notifications**: Success/error notifications for all profile and service management operations
+  - **Database Schema**: Services table includes `active` boolean field for archive functionality and `createdAt` timestamp
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
