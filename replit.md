@@ -32,7 +32,14 @@ The PSX Marketplace is built with a clear separation between its frontend and ba
     - **Client**: Session-based authentication using `express-session` with wallet connection via Base Account SDK.
 - **Wallet Integration**: Production-ready integration with Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 $PSX token balance checking using `BigInt` for precision.
 - **Data Storage**: Currently uses in-memory storage (`MemStorage`) with seed data for development and demonstration.
-- **Data Models**: Comprehensive schemas for Builders, Clients, Services, Categories, Reviews, Builder Applications, Admins, and Referrals.
+- **Data Models**: Comprehensive schemas for Builders, Clients, Services, Categories, Reviews, Builder Applications, Admins, Referrals, Orders, Order Revisions, and Order Activities.
+- **Order Management System**: Complete order booking and management system featuring:
+    - **Order Placement**: Clients can book services with package selection (basic/standard/premium), requirements input, and instant order creation
+    - **Order Tracking**: Orders have status workflow (pending → accepted → in_progress → delivered → completed) with timestamps
+    - **Order Revisions**: Support for revision requests with tracking and delivery management
+    - **Order Activities**: Automatic activity timeline logging all order events
+    - **Client Dashboard**: Orders list with status filtering, requirement display, and detail navigation
+    - **Builder Integration**: Order notifications and management accessible from builder profiles
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)

@@ -123,9 +123,10 @@ export function OrderBookingDialog({
       serviceId: service.id,
       builderId: builder.id,
       packageType: selectedPackage,
+      title: service.title,
       requirements: requirements.trim(),
-      price: String(selectedPkg?.price || 0),
-      estimatedDelivery: selectedPkg?.deliveryTime || "",
+      budget: String(selectedPkg?.price || 0),
+      deliveryDays: parseInt(selectedPkg?.deliveryTime?.match(/\d+/)?.[0] || "7"),
       revisionsIncluded: selectedPkg?.revisions || 0,
     });
   };

@@ -370,10 +370,10 @@ function OrdersList() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" />
-                      <span>{order.estimatedDelivery}</span>
+                      <span>{order.deliveryDays} days</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-primary">${order.price}</span>
+                      <span className="font-semibold text-primary">${order.budget}</span>
                     </div>
                   </div>
                 </div>
