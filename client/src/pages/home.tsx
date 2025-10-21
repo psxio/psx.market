@@ -6,6 +6,7 @@ import { CategoryPill } from "@/components/category-pill";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   Megaphone,
   Box,
@@ -45,6 +46,11 @@ export default function Home() {
   const { data: categories, isLoading: categoriesLoading, isError: categoriesError } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
+
+  const agencySection = useScrollReveal();
+  const categoriesSection = useScrollReveal();
+  const servicesSection = useScrollReveal();
+  const buildersSection = useScrollReveal();
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,9 +146,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b bg-gradient-to-r from-primary/10 via-chart-2/10 to-chart-3/10 py-12">
+      <section ref={agencySection.ref as any} className={`border-b bg-gradient-to-r from-primary/10 via-chart-2/10 to-chart-3/10 py-12 ${agencySection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 rounded-xl border bg-card/50 p-8 backdrop-blur-sm lg:flex-row lg:gap-8">
+          <div className="flex flex-col items-center justify-between gap-6 rounded-xl border bg-card/50 p-8 backdrop-blur-sm lg:flex-row lg:gap-8 hover-lift">
             <div className="flex flex-1 flex-col gap-3 text-center lg:text-left">
               <div className="flex items-center justify-center gap-2 lg:justify-start">
                 <Badge variant="outline" className="w-fit gap-1.5 border-chart-2/40 bg-chart-2/10 text-chart-2">
@@ -176,7 +182,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b bg-background py-12">
+      <section ref={categoriesSection.ref as any} className={`border-b bg-background py-12 ${categoriesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="mb-6 flex items-center justify-between">
             <div>
@@ -228,7 +234,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section ref={servicesSection.ref as any} className={`py-16 ${servicesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
             <div>
@@ -272,7 +278,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-t bg-muted/30 py-16">
+      <section ref={buildersSection.ref as any} className={`border-t bg-muted/30 py-16 ${buildersSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
             <div>

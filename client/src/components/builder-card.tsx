@@ -64,7 +64,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
   return (
     <Link href={`/builder/${builder.id}`}>
       <Card 
-        className={`group hover-elevate active-elevate-2 h-full cursor-pointer overflow-hidden transition-all border-l-4 ${visual.borderColor}`}
+        className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-hidden transition-all border-l-4 ${visual.borderColor}`}
         data-testid={`card-builder-${builder.id}`}
       >
         {/* Animated background pattern */}
@@ -74,7 +74,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
 
         {/* Category indicator badge in top right */}
         <div className="absolute top-3 right-3 z-10">
-          <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-transform group-hover:scale-110`}>
+          <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
             <CategoryIcon className="h-4 w-4" />
           </div>
         </div>
