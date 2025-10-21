@@ -42,28 +42,35 @@ The application is fully functional with all core features implemented:
   - **Volume**: Trading experience, volume capabilities, compliance knowledge
 - Fixed all TypeScript LSP errors and React controlled input warnings
 
-### Base Pay Integration (Latest)
+### Base Pay Integration (Production-Ready ✅)
 - **Replaced mock wallet with real Base Account SDK** (`@base-org/account`)
-- Implemented production-ready wallet connection flow:
+- **Production-ready wallet connection flow**:
   - Real Base network integration (mainnet + Sepolia testnet support)
-  - Automatic chain verification and switching to Base network
+  - Automatic chain verification and switching to Base network on all balance operations
   - EIP-1193 compliant error handling (code 4001 for user rejection, 4902 for chain addition)
-  - Provider event listeners for account/chain changes
-- **Enhanced $PSX token balance checking**:
+  - Provider event listeners for account/chain changes with proper lifecycle management
+  - Listeners properly removed on disconnect and reset on reconnect
+- **Production-ready $PSX token balance checking**:
   - Proper ERC-20 ABI encoding for `balanceOf` and `decimals` calls
-  - BigInt-based arithmetic to prevent precision loss
+  - BigInt-based arithmetic throughout to prevent precision loss
   - Dynamic decimals detection via `decimals()` function call
+  - Loop-based divisor construction (no Number intermediate values)
+  - Handles edge cases (decimals === 0, zero-address guard)
   - Returns '0' on error (removed fake balance fallback for security)
-- **Added security features**:
+  - Chain verification before every balance query
+- **Token-gating utilities**:
+  - `getPSXBalance()`: Formatted balance as string with proper decimals
+  - `getRawPSXBalance()`: Returns {value: bigint, decimals: number} for precise comparisons
+  - `hasMinPSXBalancePrecise()`: BigInt-safe comparison using actual token decimals
   - Environment variable for PSX token address (`VITE_PSX_TOKEN_ADDRESS`)
-  - `hasMinPSXBalance()` helper for token-gating enforcement
   - Network verification before all operations
   - Graceful handling of missing token configuration
-- **UI improvements**:
+- **UI/UX enhancements**:
   - Provider event handling (account/chain changes trigger state updates)
-  - Loading states and error toasts
+  - Loading states and error toasts with user-friendly messages
   - Automatic reconnection on page load if previously connected
   - Real wallet address formatting (0x1234...5678)
+  - Network switching guidance in error messages
 
 ## Project Architecture
 
