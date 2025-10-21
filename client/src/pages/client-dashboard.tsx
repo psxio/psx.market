@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { useClientAuth } from "@/hooks/use-client-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/header";
-import { User, LogOut, Shield, Wallet, Mail, Building2 } from "lucide-react";
+import { User, LogOut, Shield, Wallet, Mail, Building2, Clock, Package, Calendar, ArrowRight } from "lucide-react";
+import type { Order } from "@shared/schema";
 
 export default function ClientDashboard() {
   const { client, isAuthenticated, logout, updateProfile } = useClientAuth();
@@ -249,24 +252,7 @@ export default function ClientDashboard() {
               </TabsContent>
 
               <TabsContent value="projects" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Your Projects</CardTitle>
-                    <CardDescription>View and manage your active projects</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12 text-muted-foreground">
-                      <p>No projects yet. Browse the marketplace to get started!</p>
-                      <Button
-                        variant="link"
-                        onClick={() => setLocation("/marketplace")}
-                        className="mt-2"
-                      >
-                        Browse Services
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <OrdersList />
               </TabsContent>
 
               <TabsContent value="activity" className="space-y-4">
@@ -287,5 +273,125 @@ export default function ClientDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+function OrdersList() {
+  const [, setLocation] = useLocation();
+  const { data: orders, isLoading } = useQuery<Order[]>({
+    queryKey: ["/api/clients/me/orders"],
+  });
+
+  const statusColors = {
+    pending: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+    accepted: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    in_progress: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+    delivered: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+    completed: "bg-green-500/10 text-green-500 border-green-500/20",
+    cancelled: "bg-red-500/10 text-red-500 border-red-500/20",
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-32 w-full" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!orders || orders.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Orders</CardTitle>
+          <CardDescription>View and manage your service orders</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12 text-muted-foreground">
+            <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="mb-2">No orders yet</p>
+            <p className="text-sm mb-4">Browse the marketplace to find services and place your first order!</p>
+            <Button
+              variant="default"
+              onClick={() => setLocation("/marketplace")}
+              data-testid="button-browse-marketplace"
+            >
+              Browse Marketplace
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const sortedOrders = [...orders].sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Your Orders</CardTitle>
+        <CardDescription>
+          {orders.length} order{orders.length !== 1 ? "s" : ""} total
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {sortedOrders.map((order) => (
+          <Card key={order.id} className="hover-elevate" data-testid={`card-order-${order.id}`}>
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex-1 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className={statusColors[order.status as keyof typeof statusColors]}
+                    >
+                      {order.status.replace("_", " ")}
+                    </Badge>
+                    <Badge variant="secondary" className="capitalize">
+                      {order.packageType}
+                    </Badge>
+                  </div>
+                  
+                  <div>
+                    <p className="font-medium">Order #{order.id.slice(0, 8)}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {order.requirements}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>{order.estimatedDelivery}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-primary">${order.price}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline"
+                  className="gap-2 sm:self-center"
+                  onClick={() => setLocation(`/order/${order.id}`)}
+                  data-testid={`button-view-order-${order.id}`}
+                >
+                  View Details
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
