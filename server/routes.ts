@@ -2,7 +2,15 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
-import { insertBuilderApplicationSchema, insertClientSchema, insertMessageSchema, insertMessageAttachmentSchema } from "@shared/schema";
+import { 
+  insertBuilderApplicationSchema, 
+  insertClientSchema, 
+  insertMessageSchema, 
+  insertMessageAttachmentSchema,
+  insertProjectDeliverableSchema,
+  insertProgressUpdateSchema,
+  insertProjectDocumentSchema,
+} from "@shared/schema";
 import { requireAdminAuth, requireClientAuth } from "./middleware/auth";
 import { WebSocketServer, WebSocket } from "ws";
 
@@ -1429,6 +1437,224 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(attachment);
     } catch (error) {
       res.status(500).json({ error: "Failed to create attachment" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/deliverables", async (req, res) => {
+    try {
+      const deliverables = await storage.getProjectDeliverablesByOrder(req.params.orderId);
+      res.json(deliverables);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch deliverables" });
+    }
+  });
+
+  app.get("/api/milestones/:milestoneId/deliverables", async (req, res) => {
+    try {
+      const deliverables = await storage.getProjectDeliverablesByMilestone(req.params.milestoneId);
+      res.json(deliverables);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch deliverables" });
+    }
+  });
+
+  app.get("/api/deliverables/:id", async (req, res) => {
+    try {
+      const deliverable = await storage.getProjectDeliverable(req.params.id);
+      if (!deliverable) {
+        return res.status(404).json({ error: "Deliverable not found" });
+      }
+      res.json(deliverable);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch deliverable" });
+    }
+  });
+
+  app.post("/api/orders/:orderId/deliverables", async (req, res) => {
+    try {
+      const result = insertProjectDeliverableSchema.safeParse({
+        ...req.body,
+        orderId: req.params.orderId,
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ error: result.error.errors });
+      }
+
+      const deliverable = await storage.createProjectDeliverable(result.data);
+      res.json(deliverable);
+    } catch (error) {
+      console.error("Failed to create deliverable:", error);
+      res.status(500).json({ error: "Failed to create deliverable" });
+    }
+  });
+
+  app.patch("/api/deliverables/:id", async (req, res) => {
+    try {
+      const deliverable = await storage.updateProjectDeliverable(req.params.id, req.body);
+      res.json(deliverable);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update deliverable" });
+    }
+  });
+
+  app.post("/api/deliverables/:id/review", async (req, res) => {
+    try {
+      const { reviewedBy, reviewNotes, accepted, rejectionReason } = req.body;
+      const deliverable = await storage.reviewProjectDeliverable(
+        req.params.id,
+        reviewedBy,
+        reviewNotes,
+        accepted,
+        rejectionReason
+      );
+      res.json(deliverable);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to review deliverable" });
+    }
+  });
+
+  app.post("/api/deliverables/:id/request-revision", async (req, res) => {
+    try {
+      const { reviewNotes } = req.body;
+      const deliverable = await storage.requestDeliverableRevision(req.params.id, reviewNotes);
+      res.json(deliverable);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to request revision" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/progress", async (req, res) => {
+    try {
+      const updates = await storage.getProgressUpdatesByOrder(req.params.orderId);
+      res.json(updates);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch progress updates" });
+    }
+  });
+
+  app.get("/api/builders/:builderId/progress", async (req, res) => {
+    try {
+      const updates = await storage.getProgressUpdatesByBuilder(req.params.builderId);
+      res.json(updates);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch progress updates" });
+    }
+  });
+
+  app.get("/api/progress/:id", async (req, res) => {
+    try {
+      const update = await storage.getProgressUpdate(req.params.id);
+      if (!update) {
+        return res.status(404).json({ error: "Progress update not found" });
+      }
+      res.json(update);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch progress update" });
+    }
+  });
+
+  app.post("/api/orders/:orderId/progress", async (req, res) => {
+    try {
+      const result = insertProgressUpdateSchema.safeParse({
+        ...req.body,
+        orderId: req.params.orderId,
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ error: result.error.errors });
+      }
+
+      const update = await storage.createProgressUpdate(result.data);
+      res.json(update);
+    } catch (error) {
+      console.error("Failed to create progress update:", error);
+      res.status(500).json({ error: "Failed to create progress update" });
+    }
+  });
+
+  app.patch("/api/progress/:id", async (req, res) => {
+    try {
+      const update = await storage.updateProgressUpdate(req.params.id, req.body);
+      res.json(update);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update progress update" });
+    }
+  });
+
+  app.delete("/api/progress/:id", async (req, res) => {
+    try {
+      await storage.deleteProgressUpdate(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete progress update" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/documents", async (req, res) => {
+    try {
+      const documents = await storage.getProjectDocumentsByOrder(req.params.orderId);
+      res.json(documents);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch documents" });
+    }
+  });
+
+  app.get("/api/documents/:id", async (req, res) => {
+    try {
+      const document = await storage.getProjectDocument(req.params.id);
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      res.json(document);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch document" });
+    }
+  });
+
+  app.get("/api/orders/:orderId/documents/:documentName/versions", async (req, res) => {
+    try {
+      const versions = await storage.getProjectDocumentVersions(req.params.orderId, req.params.documentName);
+      res.json(versions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch document versions" });
+    }
+  });
+
+  app.post("/api/orders/:orderId/documents", async (req, res) => {
+    try {
+      const result = insertProjectDocumentSchema.safeParse({
+        ...req.body,
+        orderId: req.params.orderId,
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ error: result.error.errors });
+      }
+
+      const document = await storage.createProjectDocument(result.data);
+      res.json(document);
+    } catch (error) {
+      console.error("Failed to create document:", error);
+      res.status(500).json({ error: "Failed to create document" });
+    }
+  });
+
+  app.patch("/api/documents/:id", async (req, res) => {
+    try {
+      const document = await storage.updateProjectDocument(req.params.id, req.body);
+      res.json(document);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update document" });
+    }
+  });
+
+  app.delete("/api/documents/:id", async (req, res) => {
+    try {
+      await storage.deleteProjectDocument(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete document" });
     }
   });
 
