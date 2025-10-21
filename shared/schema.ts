@@ -1220,3 +1220,26 @@ export type NotificationPreferences = typeof notificationPreferences.$inferSelec
 
 export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+
+export const builderInviteTokens = pgTable("builder_invite_tokens", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  token: varchar("token", { length: 64 }).notNull().unique(),
+  createdBy: varchar("created_by").notNull(),
+  createdByName: text("created_by_name").notNull(),
+  email: text("email"),
+  notes: text("notes"),
+  used: boolean("used").notNull().default(false),
+  usedBy: varchar("used_by"),
+  usedByName: text("used_by_name"),
+  usedAt: text("used_at"),
+  expiresAt: text("expires_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const insertBuilderInviteTokenSchema = createInsertSchema(builderInviteTokens).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertBuilderInviteToken = z.infer<typeof insertBuilderInviteTokenSchema>;
+export type BuilderInviteToken = typeof builderInviteTokens.$inferSelect;
