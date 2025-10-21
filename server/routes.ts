@@ -61,10 +61,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/builders", async (_req, res) => {
+  app.get("/api/builders", async (req, res) => {
     try {
-      const builders = await storage.getBuilders();
-      res.json(builders);
+      let builders = await storage.getBuilders();
+      
+      const { search, categories, sortBy, minRating, psxTier, verified } = req.query;
+
+      let filteredResults = builders;
+
+      if (search && typeof search === "string") {
+        const searchLower = search.toLowerCase();
+        filteredResults = filteredResults.filter((builder) => 
+          builder.name.toLowerCase().includes(searchLower) ||
+          builder.category.toLowerCase().includes(searchLower) ||
+          builder.skills?.some((skill) => skill.toLowerCase().includes(searchLower)) ||
+          builder.bio?.toLowerCase().includes(searchLower) ||
+          builder.headline?.toLowerCase().includes(searchLower)
+        );
+      }
+
+      if (categories && typeof categories === "string") {
+        const categoryList = categories.split(",");
+        filteredResults = filteredResults.filter((builder) => 
+          categoryList.includes(builder.category)
+        );
+      }
+
+      if (minRating && typeof minRating === "string") {
+        const minRatingNum = parseFloat(minRating);
+        filteredResults = filteredResults.filter((builder) => 
+          parseFloat(builder.rating || "0") >= minRatingNum
+        );
+      }
+
+      if (psxTier && typeof psxTier === "string") {
+        filteredResults = filteredResults.filter((builder) => 
+          builder.psxTier === psxTier
+        );
+      }
+
+      if (verified === "true") {
+        filteredResults = filteredResults.filter((builder) => builder.verified);
+      }
+
+      if (sortBy) {
+        switch (sortBy) {
+          case "rating":
+            filteredResults.sort((a, b) => {
+              const ratingA = parseFloat(a.rating || "0");
+              const ratingB = parseFloat(b.rating || "0");
+              return ratingB - ratingA;
+            });
+            break;
+          case "projects":
+            filteredResults.sort((a, b) => b.completedProjects - a.completedProjects);
+            break;
+          case "recent":
+            filteredResults.sort((a, b) => 
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            break;
+          default:
+            break;
+        }
+      }
+
+      res.json(filteredResults);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch builders" });
     }
