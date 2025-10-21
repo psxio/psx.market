@@ -1,214 +1,7 @@
 # PSX Marketplace
 
 ## Overview
-PSX Marketplace is a token-gated Web3 marketplace connecting premium builders with clients in the memecoin and crypto space. Users must hold $PSX tokens to access services, ensuring quality assurance on both sides of the marketplace.
-
-## Current State (MVP Complete)
-The application is fully functional with all core features implemented:
-- ✅ Token-gated marketplace with Base network wallet connection
-- ✅ Builder profiles with portfolios, services, and reviews
-- ✅ Service listings with tiered pricing packages
-- ✅ Category-based browsing (KOLs, 3D Content, Marketing, Development, Volume)
-- ✅ Search and filtering functionality
-- ✅ Featured builders and services sections
-- ✅ Mock wallet verification and PSX balance checking
-- ✅ Responsive design with dark mode (purple/cyan branding)
-- ✅ **Builder application system with multi-step form wizard**
-
-## Recent Changes (2025-10-21)
-
-### Comprehensive Builder Profile Editor (Production-Ready ✅)
-- **Full-featured builder creation and editing interface** in admin dashboard
-- Complete form with all builder fields:
-  - Basic info: Name, wallet address, bio (all required)
-  - Profile: Avatar URL, Twitter handle
-  - Classification: Category dropdown, rating (0-5), review count
-  - Status toggles: Verified, Featured
-  - Dynamic skills array: Add/remove skills with badge UI
-  - Portfolio items: Array of projects with title, description, image URL
-- **Seamless create/edit workflow**:
-  - "Add Builder" button opens empty form for new builders
-  - Edit button (pencil icon) opens pre-filled form for existing builders
-  - Real-time validation with error toasts
-  - Success toasts and automatic cache invalidation
-  - Dialog-based UI with scrollable content for long forms
-- **Full CRUD operations**: Create, read, update, delete builders via admin API
-- **Tested and verified**: E2E tests confirm all functionality works correctly
-- **Use case**: Creating custom builder profiles for PSX team members and internal builders
-
-### Admin Dashboard Accessibility
-- Added "Admin" link to header navigation (desktop: top-right, mobile: menu bottom)
-- Shield icon for visual distinction
-- Direct navigation to /admin/login from any page
-- Consistent with PSX branding (purple/cyan theme)
-
-### PSX Agency Promotion Section
-- Added prominent homepage section promoting psx.agency direct B2B talent line
-- Section positioned right after hero for maximum visibility
-- Includes:
-  - Handshake badge for "Direct B2B Services"
-  - Call-to-action button linking to https://psx.agency
-  - Partnership mention: @BasedCreators linked to https://thecreators.com
-  - Description of direct B2B and coin-to-coin business offerings
-  - Secondary CTA button linking to @BasedCreators (thecreators.com)
-- Gradient background with card design matching PSX branding
-- **Fixed**: Both @BasedCreators links now correctly point to thecreators.com (not Twitter)
-
-### Code Quality Improvements
-- Fixed React warning in admin-login.tsx (moved setLocation from render to useEffect)
-- Clean console logs with no errors or warnings
-
-## Earlier Changes (2025-10-21)
-### Initial Implementation
-- Implemented complete data schema for builders, services, categories, and reviews
-- Built all frontend components with PSX branding (purple/cyan gradient)
-- Created comprehensive backend with seed data
-- Added wallet verification endpoints for token gating
-- Fixed category matching between frontend and backend
-- Added error handling and loading states throughout
-- Implemented search and filter functionality
-
-### Builder Application System
-- Added complete builder application schema with category-specific fields
-- Created multi-step form wizard (/apply route) with 4 steps:
-  - Step 1: Profile information (name, email, bio, experience)
-  - Step 2: Category selection (KOLs, 3D, Marketing, Development, Volume)
-  - Step 3: Category-specific questions (dynamic fields based on selection)
-  - Step 4: Review and submit
-- Implemented backend API endpoints (POST /api/builder-applications)
-- Added storage layer for builder application management
-- Category-specific fields include:
-  - **KOLs**: Twitter/Instagram/YouTube metrics, engagement rate, content niches
-  - **3D Content**: Software proficiency, render engines, style specialties
-  - **Marketing**: Platforms, growth strategies, case studies
-  - **Development**: Programming languages, blockchain frameworks, GitHub profile
-  - **Volume**: Trading experience, volume capabilities, compliance knowledge
-- Fixed all TypeScript LSP errors and React controlled input warnings
-
-### Admin Dashboard System (Production-Ready ✅)
-- **Complete admin authentication and authorization**:
-  - Session-based authentication using express-session with HttpOnly cookies
-  - Bcrypt password hashing for secure credential storage
-  - Protected API routes with requireAdminAuth middleware
-  - Default admin credentials: username: `admin`, password: `admin123` (should be changed in production)
-  - Session management with automatic expiry (24 hours)
-  - Secure logout with session destruction
-- **Admin dashboard UI with Shadcn sidebar**:
-  - Login page at /admin/login with authentication flow
-  - Full admin dashboard at /admin with protected routes
-  - Responsive sidebar navigation with sections for all entities
-  - Gradient branding consistent with PSX theme
-- **Complete CRUD interfaces**:
-  - **Builders**: View all builders, delete builders, approve builder applications
-  - **Clients**: View all clients, manage client accounts
-  - **Services**: View all services, manage service listings
-  - **Applications**: Review pending builder applications, approve/reject workflow
-  - **Referrals**: Track referral program, manage rewards and statuses
-- **Admin API routes** (all protected with session auth):
-  - Auth: POST /api/admin/login, POST /api/admin/logout
-  - Builders: GET/POST/PUT/DELETE /api/admin/builders
-  - Clients: GET/POST/PUT/DELETE /api/admin/clients
-  - Services: GET/POST/PUT/DELETE /api/admin/services
-  - Applications: GET/PUT/DELETE /api/admin/applications, POST /api/admin/applications/:id/approve
-  - Referrals: GET/POST/PUT/DELETE /api/admin/referrals
-- **Data schemas**:
-  - Admin schema: id, username, passwordHash, email, name, role, lastLogin, createdAt
-  - Referral schema: id, referrerWallet, referredWallet, referrerType, referredType, status, reward, createdAt, completedAt
-- **Statistics dashboard**: Real-time overview of platform metrics (total builders, clients, services, pending applications, active referrals)
-
-### Base Pay Integration (Production-Ready ✅)
-- **Replaced mock wallet with real Base Account SDK** (`@base-org/account`)
-- **Production-ready wallet connection flow**:
-  - Real Base network integration (mainnet + Sepolia testnet support)
-  - Automatic chain verification and switching to Base network on all balance operations
-  - EIP-1193 compliant error handling (code 4001 for user rejection, 4902 for chain addition)
-  - Provider event listeners for account/chain changes with proper lifecycle management
-  - Listeners properly removed on disconnect and reset on reconnect
-- **Production-ready $PSX token balance checking**:
-  - Proper ERC-20 ABI encoding for `balanceOf` and `decimals` calls
-  - BigInt-based arithmetic throughout to prevent precision loss
-  - Dynamic decimals detection via `decimals()` function call
-  - Loop-based divisor construction (no Number intermediate values)
-  - Handles edge cases (decimals === 0, zero-address guard)
-  - Returns '0' on error (removed fake balance fallback for security)
-  - Chain verification before every balance query
-- **Token-gating utilities**:
-  - `getPSXBalance()`: Formatted balance as string with proper decimals
-  - `getRawPSXBalance()`: Returns {value: bigint, decimals: number} for precise comparisons
-  - `hasMinPSXBalancePrecise()`: BigInt-safe comparison using actual token decimals
-  - Environment variable for PSX token address (`VITE_PSX_TOKEN_ADDRESS`)
-  - Network verification before all operations
-  - Graceful handling of missing token configuration
-- **UI/UX enhancements**:
-  - Provider event handling (account/chain changes trigger state updates)
-  - Loading states and error toasts with user-friendly messages
-  - Automatic reconnection on page load if previously connected
-  - Real wallet address formatting (0x1234...5678)
-  - Network switching guidance in error messages
-
-## Project Architecture
-
-### Frontend (React + TypeScript)
-- **Public Pages**: Home, Marketplace, Builder Profile, Category, Apply
-- **Admin Pages**: Login, Dashboard, Builders, Clients, Services, Applications, Referrals
-- **Components**: Header, Wallet Connect, Builder Card, Category Pill, Admin Sidebar
-- **Styling**: Tailwind CSS + Shadcn UI with custom PSX color scheme
-- **State Management**: TanStack Query for data fetching, Admin Auth Context for session management
-
-### Backend (Express + TypeScript)
-- **Storage**: In-memory storage with seed data (MemStorage)
-- **Authentication**: Express-session with MemoryStore, bcrypt password hashing
-- **Middleware**: requireAdminAuth for protecting admin routes
-- **Public API Routes**: 
-  - Categories: GET /api/categories, GET /api/categories/:slug
-  - Builders: GET /api/builders, GET /api/builders/featured, GET /api/builders/:id
-  - Services: GET /api/services (with search/filter), GET /api/services/featured
-  - Reviews: GET /api/builders/:id/reviews
-  - Wallet: POST /api/wallet/verify, GET /api/wallet/balance/:address
-  - Builder Applications: POST /api/builder-applications, GET /api/builder-applications/:id
-- **Protected Admin API Routes**: (require session authentication)
-  - Auth: POST /api/admin/login, POST /api/admin/logout
-  - Builders: GET/POST/PUT/DELETE /api/admin/builders/:id?
-  - Clients: GET/POST/PUT/DELETE /api/admin/clients/:id?
-  - Services: GET/POST/PUT/DELETE /api/admin/services/:id?
-  - Applications: GET/PUT/DELETE /api/admin/applications/:id, POST /api/admin/applications/:id/approve
-  - Referrals: GET/POST/PUT/DELETE /api/admin/referrals/:id?
-
-### Data Model
-- **Builders**: Wallet address, name, bio, verified status, category, rating, skills, portfolio
-- **Clients**: Wallet address, name, email, bio, verified status, PSX tier, company name
-- **Services**: Tiered pricing (basic/standard/premium), delivery time, PSX requirements
-- **Categories**: KOLs, 3D Content, Marketing, Development, Volume
-- **Reviews**: Client reviews with ratings and project details
-- **Builder Applications**: Submitted applications with status (pending/approved/rejected), category-specific fields, and reviewer notes
-- **Admins**: Username, password hash, email, name, role, last login timestamp
-- **Referrals**: Referrer/referred wallets, types, status (pending/completed/cancelled), reward amounts
-
-## Key Features
-
-### Token Gating
-- **Real Base Pay wallet connection** using Base Account SDK
-- Automatic network verification and switching to Base (mainnet/testnet)
-- **Production-ready $PSX token balance verification**:
-  - Proper ERC-20 contract calls with correct ABI encoding
-  - Dynamic decimals detection
-  - BigInt-based calculations for precision
-- Tier system (Bronze, Silver, Gold, Platinum) based on holdings
-- Provider event handling for account/chain changes
-- Environment-based token address configuration (`VITE_PSX_TOKEN_ADDRESS`)
-
-### Builder Profiles
-- Comprehensive profiles with portfolios and past work
-- Service offerings with multiple pricing tiers
-- Review and rating system
-- Twitter integration for KOL verification
-
-### Marketplace
-- Advanced search and filtering
-- Category browsing
-- Price range filtering
-- Sort by price, rating, relevance
-- Featured builders and services
+PSX Marketplace is a token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its primary purpose is to ensure quality assurance on both sides by requiring users to hold $PSX tokens for access to services. The platform features builder profiles, service listings, category-based browsing, and an administrative dashboard for managing the marketplace. The long-term vision is to become the leading platform for Web3 talent, incorporating secure on-chain payments and robust project management tools.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -216,16 +9,33 @@ The application is fully functional with all core features implemented:
 - Mobile-first responsive design
 - Professional Web3 aesthetic
 
-## Next Phase Features (Not Yet Implemented)
-- On-chain payment processing with Base Pay (`pay` function for USDC transfers)
-- Escrow smart contracts for secure payments
-- Real-time messaging between clients and builders
-- On-chain review verification
-- Client onboarding with "Become a Client" button and registration flow
-- Project milestone tracking with payment integration
-- Admin dashboard for reviewing and approving builder applications
-- Builder approval workflow (converting approved applications to active builder profiles)
+## System Architecture
+The PSX Marketplace is built with a clear separation between its frontend and backend, ensuring scalability and maintainability.
 
-## Configuration Required
-To enable full token-gating functionality, set the following environment variable:
-- `VITE_PSX_TOKEN_ADDRESS`: The deployed PSX ERC-20 token contract address on Base network
+### UI/UX Decisions
+- **Branding**: Consistent purple/cyan gradient theme across the application.
+- **Design System**: Utilizes Tailwind CSS and Shadcn UI components for a modern, responsive, and mobile-first design.
+- **Key Features**:
+    - **Token-Gated Access**: Requires $PSX token holdings for marketplace access and client tier assignment.
+    - **Builder Profiles**: Comprehensive profiles with portfolios, services, reviews, and dynamic skill arrays.
+    - **Service Listings**: Detailed service offerings with tiered pricing.
+    - **Marketplace Browsing**: Advanced search, filtering, and category-based navigation (KOLs, 3D Content, Marketing, Development, Volume).
+    - **Admin & Client Dashboards**: Dedicated interfaces for marketplace administration and client project management, including secure authentication and profile editing.
+    - **Builder Application System**: A multi-step form wizard for builders to apply, including category-specific questions.
+    - **PSX Agency Promotion**: A dedicated homepage section to promote direct B2B services.
+
+### Technical Implementations
+- **Frontend**: Developed with React and TypeScript, leveraging TanStack Query for data fetching and custom Auth Contexts for session management.
+- **Backend**: Built using Express and TypeScript, designed with a RESTful API structure.
+- **Authentication**:
+    - **Admin**: Session-based authentication with `express-session`, `bcrypt` for password hashing, and `requireAdminAuth` middleware for protected routes.
+    - **Client**: Session-based authentication using `express-session` with wallet connection via Base Account SDK.
+- **Wallet Integration**: Production-ready integration with Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 $PSX token balance checking using `BigInt` for precision.
+- **Data Storage**: Currently uses in-memory storage (`MemStorage`) with seed data for development and demonstration.
+- **Data Models**: Comprehensive schemas for Builders, Clients, Services, Categories, Reviews, Builder Applications, Admins, and Referrals.
+
+## External Dependencies
+- **Blockchain Network**: Base (mainnet and Sepolia testnet)
+- **Wallet SDK**: Base Account SDK (`@base-org/account`)
+- **Token Standard**: ERC-20 (for $PSX token)
+- **Styling Frameworks**: Tailwind CSS, Shadcn UI
