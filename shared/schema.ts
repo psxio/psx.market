@@ -376,6 +376,84 @@ export const milestones = pgTable("milestones", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const projectDeliverables = pgTable("project_deliverables", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  milestoneId: varchar("milestone_id"),
+  
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  deliveryType: text("delivery_type").notNull(),
+  
+  fileUrls: text("file_urls").array(),
+  previewUrls: text("preview_urls").array(),
+  fileNames: text("file_names").array(),
+  fileSizes: text("file_sizes").array(),
+  
+  status: text("status").notNull().default("pending"),
+  submittedBy: varchar("submitted_by").notNull(),
+  submittedAt: text("submitted_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  
+  reviewedBy: varchar("reviewed_by"),
+  reviewedAt: text("reviewed_at"),
+  reviewNotes: text("review_notes"),
+  revisionRequested: boolean("revision_requested").notNull().default(false),
+  
+  acceptedAt: text("accepted_at"),
+  rejectedAt: text("rejected_at"),
+  rejectionReason: text("rejection_reason"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const progressUpdates = pgTable("progress_updates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  progressPercentage: integer("progress_percentage").notNull().default(0),
+  
+  milestone: text("milestone"),
+  nextSteps: text("next_steps"),
+  blockers: text("blockers"),
+  
+  attachmentUrls: text("attachment_urls").array(),
+  attachmentNames: text("attachment_names").array(),
+  
+  isVisible: boolean("is_visible").notNull().default(true),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const projectDocuments = pgTable("project_documents", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  
+  documentName: text("document_name").notNull(),
+  documentType: text("document_type").notNull(),
+  documentUrl: text("document_url").notNull(),
+  fileSize: text("file_size").notNull(),
+  mimeType: text("mime_type").notNull(),
+  
+  uploadedBy: varchar("uploaded_by").notNull(),
+  uploaderType: text("uploader_type").notNull(),
+  
+  description: text("description"),
+  category: text("category"),
+  tags: text("tags").array(),
+  
+  isShared: boolean("is_shared").notNull().default(true),
+  accessLevel: text("access_level").notNull().default("both"),
+  
+  version: integer("version").notNull().default(1),
+  previousVersionId: varchar("previous_version_id"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const insertBuilderApplicationSchema = createInsertSchema(builderApplications).omit({
   id: true,
   status: true,
@@ -425,6 +503,31 @@ export const insertMilestoneSchema = createInsertSchema(milestones).omit({
   completedAt: true,
   createdAt: true,
   transactionHash: true,
+});
+
+export const insertProjectDeliverableSchema = createInsertSchema(projectDeliverables).omit({
+  id: true,
+  status: true,
+  createdAt: true,
+  submittedAt: true,
+  reviewedBy: true,
+  reviewedAt: true,
+  reviewNotes: true,
+  revisionRequested: true,
+  acceptedAt: true,
+  rejectedAt: true,
+  rejectionReason: true,
+});
+
+export const insertProgressUpdateSchema = createInsertSchema(progressUpdates).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertProjectDocumentSchema = createInsertSchema(projectDocuments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const admins = pgTable("admins", {
@@ -839,3 +942,12 @@ export type MessageAttachment = typeof messageAttachments.$inferSelect;
 
 export type InsertMessageReadReceipt = z.infer<typeof insertMessageReadReceiptSchema>;
 export type MessageReadReceipt = typeof messageReadReceipts.$inferSelect;
+
+export type InsertProjectDeliverable = z.infer<typeof insertProjectDeliverableSchema>;
+export type ProjectDeliverable = typeof projectDeliverables.$inferSelect;
+
+export type InsertProgressUpdate = z.infer<typeof insertProgressUpdateSchema>;
+export type ProgressUpdate = typeof progressUpdates.$inferSelect;
+
+export type InsertProjectDocument = z.infer<typeof insertProjectDocumentSchema>;
+export type ProjectDocument = typeof projectDocuments.$inferSelect;
