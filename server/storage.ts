@@ -37,6 +37,14 @@ import {
   type InsertRefund,
   type Invoice,
   type InsertInvoice,
+  type ChatThread,
+  type InsertChatThread,
+  type Message,
+  type InsertMessage,
+  type MessageAttachment,
+  type InsertMessageAttachment,
+  type MessageReadReceipt,
+  type InsertMessageReadReceipt,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -163,6 +171,31 @@ export interface IStorage {
   getInvoiceByPayment(paymentId: string): Promise<Invoice | undefined>;
   createInvoice(invoice: InsertInvoice): Promise<Invoice>;
   updateInvoice(id: string, data: Partial<Invoice>): Promise<Invoice>;
+
+  getChatThread(id: string): Promise<ChatThread | undefined>;
+  getChatThreadsByClient(clientId: string): Promise<ChatThread[]>;
+  getChatThreadsByBuilder(builderId: string): Promise<ChatThread[]>;
+  getChatThreadByOrder(orderId: string): Promise<ChatThread | undefined>;
+  findOrCreateChatThread(clientId: string, builderId: string, orderId?: string): Promise<ChatThread>;
+  createChatThread(thread: InsertChatThread): Promise<ChatThread>;
+  updateChatThread(id: string, data: Partial<ChatThread>): Promise<ChatThread>;
+  archiveChatThread(id: string, userType: string): Promise<ChatThread>;
+  updateThreadUnreadCount(threadId: string, userType: string, increment: boolean): Promise<ChatThread>;
+
+  getMessage(id: string): Promise<Message | undefined>;
+  getMessagesByThread(threadId: string): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+  updateMessage(id: string, data: Partial<Message>): Promise<Message>;
+  deleteMessage(id: string): Promise<Message>;
+
+  getMessageAttachment(id: string): Promise<MessageAttachment | undefined>;
+  getMessageAttachmentsByMessage(messageId: string): Promise<MessageAttachment[]>;
+  createMessageAttachment(attachment: InsertMessageAttachment): Promise<MessageAttachment>;
+
+  getMessageReadReceipt(messageId: string, readerId: string): Promise<MessageReadReceipt | undefined>;
+  getMessageReadReceiptsByThread(threadId: string, readerId: string): Promise<MessageReadReceipt[]>;
+  createMessageReadReceipt(receipt: InsertMessageReadReceipt): Promise<MessageReadReceipt>;
+  markThreadAsRead(threadId: string, readerId: string, readerType: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -185,6 +218,10 @@ export class MemStorage implements IStorage {
   private disputes: Map<string, Dispute>;
   private refunds: Map<string, Refund>;
   private invoices: Map<string, Invoice>;
+  private chatThreads: Map<string, ChatThread>;
+  private messages: Map<string, Message>;
+  private messageAttachments: Map<string, MessageAttachment>;
+  private messageReadReceipts: Map<string, MessageReadReceipt>;
 
   constructor() {
     this.builders = new Map();
@@ -206,6 +243,10 @@ export class MemStorage implements IStorage {
     this.disputes = new Map();
     this.refunds = new Map();
     this.invoices = new Map();
+    this.chatThreads = new Map();
+    this.messages = new Map();
+    this.messageAttachments = new Map();
+    this.messageReadReceipts = new Map();
     this.seedData();
   }
 
@@ -1786,6 +1827,251 @@ export class MemStorage implements IStorage {
     const updatedInvoice = { ...invoice, ...data, updatedAt: new Date().toISOString() };
     this.invoices.set(id, updatedInvoice);
     return updatedInvoice;
+  }
+
+  async getChatThread(id: string): Promise<ChatThread | undefined> {
+    return this.chatThreads.get(id);
+  }
+
+  async getChatThreadsByClient(clientId: string): Promise<ChatThread[]> {
+    return Array.from(this.chatThreads.values())
+      .filter(t => t.clientId === clientId && !t.archivedByClient)
+      .sort((a, b) => {
+        const aTime = a.lastMessageAt || a.createdAt;
+        const bTime = b.lastMessageAt || b.createdAt;
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
+      });
+  }
+
+  async getChatThreadsByBuilder(builderId: string): Promise<ChatThread[]> {
+    return Array.from(this.chatThreads.values())
+      .filter(t => t.builderId === builderId && !t.archivedByBuilder)
+      .sort((a, b) => {
+        const aTime = a.lastMessageAt || a.createdAt;
+        const bTime = b.lastMessageAt || b.createdAt;
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
+      });
+  }
+
+  async getChatThreadByOrder(orderId: string): Promise<ChatThread | undefined> {
+    return Array.from(this.chatThreads.values()).find(t => t.orderId === orderId);
+  }
+
+  async findOrCreateChatThread(clientId: string, builderId: string, orderId?: string): Promise<ChatThread> {
+    if (orderId) {
+      const existingThread = await this.getChatThreadByOrder(orderId);
+      if (existingThread) {
+        return existingThread;
+      }
+    }
+
+    const existingThread = Array.from(this.chatThreads.values()).find(
+      t => t.clientId === clientId && t.builderId === builderId && !t.orderId
+    );
+
+    if (existingThread) {
+      return existingThread;
+    }
+
+    const builder = await this.getBuilder(builderId);
+    const order = orderId ? await this.getOrder(orderId) : null;
+    
+    const title = order 
+      ? `Order #${order.id.substring(0, 8)} - ${order.serviceTitle}`
+      : `Chat with ${builder?.name || 'Builder'}`;
+
+    return this.createChatThread({
+      clientId,
+      builderId,
+      orderId: orderId || null,
+      title,
+    });
+  }
+
+  async createChatThread(thread: InsertChatThread): Promise<ChatThread> {
+    const newThread: ChatThread = {
+      ...thread,
+      id: randomUUID(),
+      status: "active",
+      lastMessageAt: null,
+      lastMessagePreview: null,
+      clientUnreadCount: 0,
+      builderUnreadCount: 0,
+      archivedByClient: false,
+      archivedByBuilder: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.chatThreads.set(newThread.id, newThread);
+    return newThread;
+  }
+
+  async updateChatThread(id: string, data: Partial<ChatThread>): Promise<ChatThread> {
+    const thread = this.chatThreads.get(id);
+    if (!thread) {
+      throw new Error("Chat thread not found");
+    }
+
+    const updatedThread = { ...thread, ...data, updatedAt: new Date().toISOString() };
+    this.chatThreads.set(id, updatedThread);
+    return updatedThread;
+  }
+
+  async archiveChatThread(id: string, userType: string): Promise<ChatThread> {
+    const thread = this.chatThreads.get(id);
+    if (!thread) {
+      throw new Error("Chat thread not found");
+    }
+
+    const updates: Partial<ChatThread> = userType === "client"
+      ? { archivedByClient: true }
+      : { archivedByBuilder: true };
+
+    return this.updateChatThread(id, updates);
+  }
+
+  async updateThreadUnreadCount(threadId: string, userType: string, increment: boolean): Promise<ChatThread> {
+    const thread = this.chatThreads.get(threadId);
+    if (!thread) {
+      throw new Error("Chat thread not found");
+    }
+
+    const field = userType === "client" ? "clientUnreadCount" : "builderUnreadCount";
+    const currentCount = thread[field];
+    const newCount = increment ? currentCount + 1 : 0;
+
+    return this.updateChatThread(threadId, { [field]: newCount });
+  }
+
+  async getMessage(id: string): Promise<Message | undefined> {
+    return this.messages.get(id);
+  }
+
+  async getMessagesByThread(threadId: string): Promise<Message[]> {
+    return Array.from(this.messages.values())
+      .filter(m => m.threadId === threadId && !m.deleted)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
+    const newMessage: Message = {
+      ...message,
+      id: randomUUID(),
+      edited: false,
+      editedAt: null,
+      deleted: false,
+      deletedAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.messages.set(newMessage.id, newMessage);
+
+    const preview = newMessage.content.length > 50 
+      ? newMessage.content.substring(0, 50) + "..."
+      : newMessage.content;
+
+    const recipientType = newMessage.senderType === "client" ? "builder" : "client";
+    await this.updateChatThread(newMessage.threadId, {
+      lastMessageAt: newMessage.createdAt,
+      lastMessagePreview: preview,
+    });
+    await this.updateThreadUnreadCount(newMessage.threadId, recipientType, true);
+
+    return newMessage;
+  }
+
+  async updateMessage(id: string, data: Partial<Message>): Promise<Message> {
+    const message = this.messages.get(id);
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    const updatedMessage = { 
+      ...message, 
+      ...data, 
+      edited: true,
+      editedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString() 
+    };
+    this.messages.set(id, updatedMessage);
+    return updatedMessage;
+  }
+
+  async deleteMessage(id: string): Promise<Message> {
+    const message = this.messages.get(id);
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    const updatedMessage = { 
+      ...message, 
+      deleted: true,
+      deletedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    this.messages.set(id, updatedMessage);
+    return updatedMessage;
+  }
+
+  async getMessageAttachment(id: string): Promise<MessageAttachment | undefined> {
+    return this.messageAttachments.get(id);
+  }
+
+  async getMessageAttachmentsByMessage(messageId: string): Promise<MessageAttachment[]> {
+    return Array.from(this.messageAttachments.values())
+      .filter(a => a.messageId === messageId);
+  }
+
+  async createMessageAttachment(attachment: InsertMessageAttachment): Promise<MessageAttachment> {
+    const newAttachment: MessageAttachment = {
+      ...attachment,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    this.messageAttachments.set(newAttachment.id, newAttachment);
+    return newAttachment;
+  }
+
+  async getMessageReadReceipt(messageId: string, readerId: string): Promise<MessageReadReceipt | undefined> {
+    return Array.from(this.messageReadReceipts.values())
+      .find(r => r.messageId === messageId && r.readerId === readerId);
+  }
+
+  async getMessageReadReceiptsByThread(threadId: string, readerId: string): Promise<MessageReadReceipt[]> {
+    return Array.from(this.messageReadReceipts.values())
+      .filter(r => r.threadId === threadId && r.readerId === readerId);
+  }
+
+  async createMessageReadReceipt(receipt: InsertMessageReadReceipt): Promise<MessageReadReceipt> {
+    const existing = await this.getMessageReadReceipt(receipt.messageId, receipt.readerId);
+    if (existing) {
+      return existing;
+    }
+
+    const newReceipt: MessageReadReceipt = {
+      ...receipt,
+      id: randomUUID(),
+      readAt: new Date().toISOString(),
+    };
+    this.messageReadReceipts.set(newReceipt.id, newReceipt);
+    return newReceipt;
+  }
+
+  async markThreadAsRead(threadId: string, readerId: string, readerType: string): Promise<void> {
+    const messages = await this.getMessagesByThread(threadId);
+    
+    for (const message of messages) {
+      if (message.senderId !== readerId) {
+        await this.createMessageReadReceipt({
+          messageId: message.id,
+          threadId,
+          readerId,
+          readerType,
+        });
+      }
+    }
+
+    await this.updateThreadUnreadCount(threadId, readerType, false);
   }
 }
 
