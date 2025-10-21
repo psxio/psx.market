@@ -356,10 +356,22 @@ export default function Home() {
 
             <div className="space-y-4">
               <h3 className="font-semibold">Legal</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Terms of Service</li>
-                <li>Privacy Policy</li>
-                <li>Cookie Policy</li>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/terms-of-service" className="text-muted-foreground hover:text-foreground transition-colors">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/cookie-policy" className="text-muted-foreground hover:text-foreground transition-colors">
+                    Cookie Policy
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
