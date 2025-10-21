@@ -1,8 +1,9 @@
 import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, Shield } from "lucide-react";
+import { Search, Menu, Shield, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useClientAuth } from "@/hooks/use-client-auth";
 import {
   Sheet,
   SheetContent,
@@ -20,6 +21,8 @@ const categories = [
 ];
 
 export function Header() {
+  const { client } = useClientAuth();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -63,6 +66,15 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            {client && (
+              <Link href="/messages" className="hidden md:block">
+                <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Messages
+                </Button>
+              </Link>
+            )}
+            
             <Link href="/admin/login" className="hidden md:block">
               <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-admin">
                 <Shield className="h-3.5 w-3.5" />
@@ -112,6 +124,19 @@ export function Header() {
                   </nav>
 
                   <div className="border-t pt-4 mt-4">
+                    {client && (
+                      <Link href="/messages">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-2 hover-elevate mb-2"
+                          data-testid="link-messages-mobile"
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                          Messages
+                        </Button>
+                      </Link>
+                    )}
+                    
                     <Link href="/admin/login">
                       <Button
                         variant="ghost"
