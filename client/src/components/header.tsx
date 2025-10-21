@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { Button } from "@/components/ui/button";
-import { Search, Menu } from "lucide-react";
+import { Search, Menu, Shield } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
@@ -63,6 +63,13 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link href="/admin/login" className="hidden md:block">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-admin">
+                <Shield className="h-3.5 w-3.5" />
+                Admin
+              </Button>
+            </Link>
+            
             <div className="hidden md:flex">
               <WalletConnectButton />
             </div>
@@ -103,6 +110,19 @@ export function Header() {
                       </Link>
                     ))}
                   </nav>
+
+                  <div className="border-t pt-4 mt-4">
+                    <Link href="/admin/login">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 hover-elevate"
+                        data-testid="link-admin-mobile"
+                      >
+                        <Shield className="h-4 w-4" />
+                        Admin Dashboard
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
