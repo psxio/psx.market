@@ -23,7 +23,7 @@ export async function sendNotification(options: NotificationOptions): Promise<vo
     title,
     message,
     actionUrl: actionUrl || null,
-    metadata: metadata || null,
+    metadata: metadata ? JSON.stringify(metadata) : null,
   };
 
   if (!preferences || preferences.inAppOrderUpdates) {
