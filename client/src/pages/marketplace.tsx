@@ -23,6 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import type { Builder, Service } from "@shared/schema";
 
 const categories = [
@@ -43,6 +44,9 @@ export default function Marketplace() {
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState<string | null>(null);
+  
+  const headerSection = useScrollReveal();
+  const servicesGrid = useScrollReveal();
 
   const buildQueryString = () => {
     const params = new URLSearchParams();
@@ -173,7 +177,7 @@ export default function Marketplace() {
       <Header />
 
       <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
-        <div className="mb-8 space-y-4">
+        <div ref={headerSection.ref as any} className={`mb-8 space-y-4 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Browse Services</h1>
@@ -269,7 +273,7 @@ export default function Marketplace() {
                 </p>
               </div>
             ) : servicesData && servicesData.length > 0 ? (
-              <>
+              <div ref={servicesGrid.ref as any} className={servicesGrid.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}>
                 <div className="mb-4 text-sm text-muted-foreground">
                   Showing {servicesData.length} results
                 </div>
@@ -282,7 +286,7 @@ export default function Marketplace() {
                     />
                   ))}
                 </div>
-              </>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
                 <Search className="mb-4 h-12 w-12 text-muted-foreground" />

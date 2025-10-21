@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrderBookingDialog } from "@/components/order-booking-dialog";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   Star,
   CheckCircle2,
@@ -42,6 +43,10 @@ export default function BuilderProfile() {
   const builderId = params?.id;
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  
+  const servicesSection = useScrollReveal();
+  const reviewsSection = useScrollReveal();
+  const projectsSection = useScrollReveal();
 
   const { data: builder, isLoading: builderLoading } = useQuery<Builder>({
     queryKey: ["/api/builders", builderId],
@@ -934,7 +939,7 @@ export default function BuilderProfile() {
                 ))}
               </div>
             ) : services && services.length > 0 ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div ref={servicesSection.ref as any} className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${servicesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
                 {services.map((service) => (
                   <Card key={service.id} className="hover-elevate active-elevate-2" data-testid={`card-service-${service.id}`}>
                     <CardHeader>
@@ -1001,7 +1006,7 @@ export default function BuilderProfile() {
                 ))}
               </div>
             ) : reviews && reviews.length > 0 ? (
-              <div className="space-y-4">
+              <div ref={reviewsSection.ref as any} className={`space-y-4 ${reviewsSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
                 {reviews.map((review) => (
                   <Card key={review.id} data-testid={`card-review-${review.id}`}>
                     <CardHeader>
