@@ -23,13 +23,15 @@ import {
   Share2, 
   LayoutDashboard,
   LogOut,
-  Shield
+  Shield,
+  Mail
 } from "lucide-react";
 import AdminBuilders from "./admin/builders";
 import AdminClients from "./admin/clients";
 import AdminServices from "./admin/services";
 import AdminApplications from "./admin/applications";
 import AdminReferrals from "./admin/referrals";
+import AdminBuilderInvites from "./admin/builder-invites";
 import AdminHome from "./admin/home";
 
 const menuItems = [
@@ -57,6 +59,11 @@ const menuItems = [
     title: "Applications",
     url: "/admin/applications",
     icon: FileText,
+  },
+  {
+    title: "Builder Invites",
+    url: "/admin/builder-invites",
+    icon: Mail,
   },
   {
     title: "Referrals",
@@ -155,6 +162,7 @@ export default function AdminDashboard() {
               <Route path="/admin/clients" component={AdminClients} />
               <Route path="/admin/services" component={AdminServices} />
               <Route path="/admin/applications" component={AdminApplications} />
+              <Route path="/admin/builder-invites" component={AdminBuilderInvites} />
               <Route path="/admin/referrals" component={AdminReferrals} />
             </Switch>
           </main>
