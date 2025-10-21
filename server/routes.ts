@@ -1,7 +1,17 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
 import { insertBuilderApplicationSchema } from "@shared/schema";
+import { requireAdminAuth } from "./middleware/auth";
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { error: "Too many login attempts, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/categories", async (_req, res) => {
@@ -233,7 +243,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/login", async (req, res) => {
+  app.post("/api/admin/login", loginLimiter, async (req, res) => {
     try {
       const { username, password } = req.body;
       
@@ -248,19 +258,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       await storage.updateLastLogin(username);
 
-      res.json({
-        id: admin.id,
-        username: admin.username,
-        email: admin.email,
-        name: admin.name,
-        role: admin.role,
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ error: "Session creation failed" });
+        }
+
+        req.session.adminId = admin.id;
+
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ error: "Session save failed" });
+          }
+
+          res.json({
+            id: admin.id,
+            username: admin.username,
+            email: admin.email,
+            name: admin.name,
+            role: admin.role,
+          });
+        });
       });
     } catch (error) {
       res.status(500).json({ error: "Login failed" });
     }
   });
 
-  app.get("/api/admin/builders", async (_req, res) => {
+  app.post("/api/admin/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Logout failed" });
+      }
+      res.json({ success: true });
+    });
+  });
+
+  app.get("/api/admin/builders", requireAdminAuth, async (_req, res) => {
     try {
       const builders = await storage.getBuilders();
       res.json(builders);
@@ -269,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/builders", async (req, res) => {
+  app.post("/api/admin/builders", requireAdminAuth, async (req, res) => {
     try {
       const builder = await storage.createBuilder(req.body);
       res.json(builder);
@@ -278,7 +311,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/builders/:id", async (req, res) => {
+  app.put("/api/admin/builders/:id", requireAdminAuth, async (req, res) => {
     try {
       const builder = await storage.updateBuilder(req.params.id, req.body);
       res.json(builder);
@@ -287,7 +320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/builders/:id", async (req, res) => {
+  app.delete("/api/admin/builders/:id", requireAdminAuth, async (req, res) => {
     try {
       await storage.deleteBuilder(req.params.id);
       res.json({ success: true });
@@ -296,7 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/clients", async (_req, res) => {
+  app.get("/api/admin/clients", requireAdminAuth, async (_req, res) => {
     try {
       const clients = await storage.getClients();
       res.json(clients);
@@ -305,7 +338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/clients", async (req, res) => {
+  app.post("/api/admin/clients", requireAdminAuth, async (req, res) => {
     try {
       const client = await storage.createClient(req.body);
       res.json(client);
@@ -314,7 +347,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/clients/:id", async (req, res) => {
+  app.put("/api/admin/clients/:id", requireAdminAuth, async (req, res) => {
     try {
       const client = await storage.updateClient(req.params.id, req.body);
       res.json(client);
@@ -323,7 +356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/clients/:id", async (req, res) => {
+  app.delete("/api/admin/clients/:id", requireAdminAuth, async (req, res) => {
     try {
       await storage.deleteClient(req.params.id);
       res.json({ success: true });
@@ -332,7 +365,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/services", async (_req, res) => {
+  app.get("/api/admin/services", requireAdminAuth, async (_req, res) => {
     try {
       const services = await storage.getServices();
       res.json(services);
@@ -341,7 +374,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/services", async (req, res) => {
+  app.post("/api/admin/services", requireAdminAuth, async (req, res) => {
     try {
       const service = await storage.createService(req.body);
       res.json(service);
@@ -350,7 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/services/:id", async (req, res) => {
+  app.put("/api/admin/services/:id", requireAdminAuth, async (req, res) => {
     try {
       const service = await storage.updateService(req.params.id, req.body);
       res.json(service);
@@ -359,7 +392,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/services/:id", async (req, res) => {
+  app.delete("/api/admin/services/:id", requireAdminAuth, async (req, res) => {
     try {
       await storage.deleteService(req.params.id);
       res.json({ success: true });
@@ -368,7 +401,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/applications", async (_req, res) => {
+  app.get("/api/admin/applications", requireAdminAuth, async (_req, res) => {
     try {
       const applications = await storage.getBuilderApplications();
       res.json(applications);
@@ -377,7 +410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/applications/:id", async (req, res) => {
+  app.put("/api/admin/applications/:id", requireAdminAuth, async (req, res) => {
     try {
       const application = await storage.updateBuilderApplication(req.params.id, req.body);
       res.json(application);
@@ -386,7 +419,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/applications/:id/approve", async (req, res) => {
+  app.post("/api/admin/applications/:id/approve", requireAdminAuth, async (req, res) => {
     try {
       const builder = await storage.approveBuilderApplication(req.params.id);
       res.json(builder);
@@ -395,7 +428,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/applications/:id", async (req, res) => {
+  app.delete("/api/admin/applications/:id", requireAdminAuth, async (req, res) => {
     try {
       await storage.deleteBuilderApplication(req.params.id);
       res.json({ success: true });
@@ -404,7 +437,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/referrals", async (_req, res) => {
+  app.get("/api/admin/referrals", requireAdminAuth, async (_req, res) => {
     try {
       const referrals = await storage.getReferrals();
       res.json(referrals);
@@ -413,7 +446,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/referrals", async (req, res) => {
+  app.post("/api/admin/referrals", requireAdminAuth, async (req, res) => {
     try {
       const referral = await storage.createReferral(req.body);
       res.json(referral);
@@ -422,7 +455,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/referrals/:id", async (req, res) => {
+  app.put("/api/admin/referrals/:id", requireAdminAuth, async (req, res) => {
     try {
       const referral = await storage.updateReferralStatus(req.params.id, req.body.status);
       res.json(referral);
@@ -431,7 +464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/referrals/:id", async (req, res) => {
+  app.delete("/api/admin/referrals/:id", requireAdminAuth, async (req, res) => {
     try {
       await storage.deleteReferral(req.params.id);
       res.json({ success: true });

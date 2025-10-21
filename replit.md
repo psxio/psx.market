@@ -42,6 +42,37 @@ The application is fully functional with all core features implemented:
   - **Volume**: Trading experience, volume capabilities, compliance knowledge
 - Fixed all TypeScript LSP errors and React controlled input warnings
 
+### Admin Dashboard System (Production-Ready ✅)
+- **Complete admin authentication and authorization**:
+  - Session-based authentication using express-session with HttpOnly cookies
+  - Bcrypt password hashing for secure credential storage
+  - Protected API routes with requireAdminAuth middleware
+  - Default admin credentials: username: `admin`, password: `admin123` (should be changed in production)
+  - Session management with automatic expiry (24 hours)
+  - Secure logout with session destruction
+- **Admin dashboard UI with Shadcn sidebar**:
+  - Login page at /admin/login with authentication flow
+  - Full admin dashboard at /admin with protected routes
+  - Responsive sidebar navigation with sections for all entities
+  - Gradient branding consistent with PSX theme
+- **Complete CRUD interfaces**:
+  - **Builders**: View all builders, delete builders, approve builder applications
+  - **Clients**: View all clients, manage client accounts
+  - **Services**: View all services, manage service listings
+  - **Applications**: Review pending builder applications, approve/reject workflow
+  - **Referrals**: Track referral program, manage rewards and statuses
+- **Admin API routes** (all protected with session auth):
+  - Auth: POST /api/admin/login, POST /api/admin/logout
+  - Builders: GET/POST/PUT/DELETE /api/admin/builders
+  - Clients: GET/POST/PUT/DELETE /api/admin/clients
+  - Services: GET/POST/PUT/DELETE /api/admin/services
+  - Applications: GET/PUT/DELETE /api/admin/applications, POST /api/admin/applications/:id/approve
+  - Referrals: GET/POST/PUT/DELETE /api/admin/referrals
+- **Data schemas**:
+  - Admin schema: id, username, passwordHash, email, name, role, lastLogin, createdAt
+  - Referral schema: id, referrerWallet, referredWallet, referrerType, referredType, status, reward, createdAt, completedAt
+- **Statistics dashboard**: Real-time overview of platform metrics (total builders, clients, services, pending applications, active referrals)
+
 ### Base Pay Integration (Production-Ready ✅)
 - **Replaced mock wallet with real Base Account SDK** (`@base-org/account`)
 - **Production-ready wallet connection flow**:
@@ -75,27 +106,40 @@ The application is fully functional with all core features implemented:
 ## Project Architecture
 
 ### Frontend (React + TypeScript)
-- **Pages**: Home, Marketplace, Builder Profile, Category
-- **Components**: Header, Wallet Connect, Builder Card, Category Pill
+- **Public Pages**: Home, Marketplace, Builder Profile, Category, Apply
+- **Admin Pages**: Login, Dashboard, Builders, Clients, Services, Applications, Referrals
+- **Components**: Header, Wallet Connect, Builder Card, Category Pill, Admin Sidebar
 - **Styling**: Tailwind CSS + Shadcn UI with custom PSX color scheme
-- **State Management**: TanStack Query for data fetching
+- **State Management**: TanStack Query for data fetching, Admin Auth Context for session management
 
 ### Backend (Express + TypeScript)
 - **Storage**: In-memory storage with seed data (MemStorage)
-- **API Routes**: 
+- **Authentication**: Express-session with MemoryStore, bcrypt password hashing
+- **Middleware**: requireAdminAuth for protecting admin routes
+- **Public API Routes**: 
   - Categories: GET /api/categories, GET /api/categories/:slug
   - Builders: GET /api/builders, GET /api/builders/featured, GET /api/builders/:id
   - Services: GET /api/services (with search/filter), GET /api/services/featured
   - Reviews: GET /api/builders/:id/reviews
   - Wallet: POST /api/wallet/verify, GET /api/wallet/balance/:address
   - Builder Applications: POST /api/builder-applications, GET /api/builder-applications/:id
+- **Protected Admin API Routes**: (require session authentication)
+  - Auth: POST /api/admin/login, POST /api/admin/logout
+  - Builders: GET/POST/PUT/DELETE /api/admin/builders/:id?
+  - Clients: GET/POST/PUT/DELETE /api/admin/clients/:id?
+  - Services: GET/POST/PUT/DELETE /api/admin/services/:id?
+  - Applications: GET/PUT/DELETE /api/admin/applications/:id, POST /api/admin/applications/:id/approve
+  - Referrals: GET/POST/PUT/DELETE /api/admin/referrals/:id?
 
 ### Data Model
 - **Builders**: Wallet address, name, bio, verified status, category, rating, skills, portfolio
+- **Clients**: Wallet address, name, email, bio, verified status, PSX tier, company name
 - **Services**: Tiered pricing (basic/standard/premium), delivery time, PSX requirements
 - **Categories**: KOLs, 3D Content, Marketing, Development, Volume
 - **Reviews**: Client reviews with ratings and project details
 - **Builder Applications**: Submitted applications with status (pending/approved/rejected), category-specific fields, and reviewer notes
+- **Admins**: Username, password hash, email, name, role, last login timestamp
+- **Referrals**: Referrer/referred wallets, types, status (pending/completed/cancelled), reward amounts
 
 ## Key Features
 
