@@ -74,8 +74,8 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="text-lg text-muted-foreground md:text-xl">
-                  The token-gated marketplace connecting premium builders with memecoin
-                  and crypto projects. Quality assured through $PSX holdings.
+                  The dual token-gated marketplace connecting premium builders with memecoin
+                  and crypto projects. Quality assured through $CREATE and $PSX holdings.
                 </p>
               </div>
 
@@ -116,7 +116,7 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-chart-2" />
                   <div>
-                    <div className="font-semibold">$PSX Token Gated</div>
+                    <div className="font-semibold">$CREATE & $PSX Gated</div>
                     <div className="text-muted-foreground">Quality guaranteed</div>
                   </div>
                 </div>
@@ -161,6 +161,7 @@ export default function Home() {
               </h2>
               <p className="text-muted-foreground md:text-lg">
                 Visit <span className="font-semibold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
+                Powered by <span className="font-semibold text-primary">Create</span> and <span className="font-semibold text-primary">PSX</span> tokens. 
                 Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
               </p>
             </div>
@@ -324,12 +325,12 @@ export default function Home() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
-                  P
+                  C
                 </div>
-                <span className="text-lg font-bold">create.psx</span>
+                <span className="text-lg font-bold">Create.psx</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Token-gated marketplace for premium Web3 services
+                Dual token-gated marketplace powered by $CREATE and $PSX
               </p>
             </div>
 

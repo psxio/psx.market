@@ -14,6 +14,7 @@ import {
   connectWallet,
   getCurrentAccount,
   getPSXBalance,
+  getCREATEBalance,
   formatAddress,
   disconnectWallet,
 } from "@/lib/baseAccount";
@@ -22,6 +23,7 @@ export function WalletConnectButton() {
   const [isConnected, setIsConnected] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [psxBalance, setPsxBalance] = useState<string | null>(null);
+  const [createBalance, setCreateBalance] = useState<string | null>(null);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
@@ -34,14 +36,21 @@ export function WalletConnectButton() {
     const handleDisconnect = () => {
       setIsConnected(false);
       setPsxBalance(null);
+      setCreateBalance(null);
       setWalletAddress("");
     };
     
     const handleAccountChanged = (event: any) => {
       const newAddress = event.detail.address;
       setWalletAddress(newAddress);
-      // Refresh PSX balance for new account
-      getPSXBalance(newAddress).then(setPsxBalance);
+      // Refresh token balances for new account
+      Promise.all([
+        getPSXBalance(newAddress),
+        getCREATEBalance(newAddress)
+      ]).then(([psx, create]) => {
+        setPsxBalance(psx);
+        setCreateBalance(create);
+      });
     };
     
     window.addEventListener('wallet-disconnected', handleDisconnect);
@@ -60,21 +69,26 @@ export function WalletConnectButton() {
         setWalletAddress(account.address);
         setIsConnected(true);
         
-        // Fetch PSX balance (getPSXBalance will handle chain verification internally)
+        // Fetch token balances (functions will handle chain verification internally)
         try {
-          const balance = await getPSXBalance(account.address);
-          setPsxBalance(balance);
+          const [psx, create] = await Promise.all([
+            getPSXBalance(account.address),
+            getCREATEBalance(account.address)
+          ]);
+          setPsxBalance(psx);
+          setCreateBalance(create);
         } catch (balanceError: any) {
           console.error('Error fetching balance on existing connection:', balanceError);
           // Show toast if wrong network or other issue
           if (balanceError.message?.includes('switch to Base network')) {
             toast({
               title: "Wrong Network",
-              description: "Please switch to Base network to view your PSX balance",
+              description: "Please switch to Base network to view your token balances",
               variant: "destructive",
             });
           }
           setPsxBalance('0');
+          setCreateBalance('0');
         }
       }
     } catch (error) {
@@ -91,9 +105,13 @@ export function WalletConnectButton() {
       const address = await connectWallet();
       setWalletAddress(address);
       
-      // Fetch PSX balance
-      const balance = await getPSXBalance(address);
-      setPsxBalance(balance);
+      // Fetch token balances
+      const [psx, create] = await Promise.all([
+        getPSXBalance(address),
+        getCREATEBalance(address)
+      ]);
+      setPsxBalance(psx);
+      setCreateBalance(create);
       
       setIsConnected(true);
       setShowDialog(false);
@@ -121,6 +139,7 @@ export function WalletConnectButton() {
       await disconnectWallet();
       setIsConnected(false);
       setPsxBalance(null);
+      setCreateBalance(null);
       setWalletAddress("");
       
       toast({
@@ -132,13 +151,21 @@ export function WalletConnectButton() {
     }
   };
 
-  if (isConnected && psxBalance) {
+  if (isConnected && (psxBalance || createBalance)) {
     return (
       <div className="flex items-center gap-2">
-        <Badge variant="secondary" className="px-3 py-1.5 font-mono">
-          <span className="text-chart-4 font-semibold">{psxBalance}</span>
-          <span className="ml-1 text-muted-foreground">$PSX</span>
-        </Badge>
+        {createBalance && (
+          <Badge variant="secondary" className="px-3 py-1.5 font-mono">
+            <span className="text-chart-2 font-semibold">{createBalance}</span>
+            <span className="ml-1 text-muted-foreground">$CREATE</span>
+          </Badge>
+        )}
+        {psxBalance && (
+          <Badge variant="secondary" className="px-3 py-1.5 font-mono">
+            <span className="text-chart-4 font-semibold">{psxBalance}</span>
+            <span className="ml-1 text-muted-foreground">$PSX</span>
+          </Badge>
+        )}
         <Button
           variant="outline"
           size="default"
@@ -178,7 +205,7 @@ export function WalletConnectButton() {
               Connect to Base Network
             </DialogTitle>
             <DialogDescription>
-              Connecting your wallet to access create.psx. Please approve
+              Connecting your wallet to access Create.psx. Please approve
               the connection in your wallet extension or app.
             </DialogDescription>
           </DialogHeader>

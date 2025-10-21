@@ -5,8 +5,9 @@ const BASE_SEPOLIA_CHAIN_ID = 84532;
 const BASE_MAINNET_HEX = '0x2105';
 const BASE_SEPOLIA_HEX = '0x14a34';
 
-// PSX Token contract address on Base - load from environment
+// Token contract addresses on Base
 const PSX_TOKEN_ADDRESS = import.meta.env.VITE_PSX_TOKEN_ADDRESS || '0x0000000000000000000000000000000000000000';
+const CREATE_TOKEN_ADDRESS = '0x3849cC93e7B71b37885237cd91a215974135cD8D';
 
 interface BaseAccountManager {
   sdk: any;
@@ -20,7 +21,7 @@ export function initializeBaseAccount() {
   if (accountManager) return accountManager;
 
   const sdk = createBaseAccountSDK({
-    appName: 'create.psx',
+    appName: 'Create.psx - Token-Gated Marketplace',
     appLogoUrl: `${window.location.origin}/logo.png`,
     appChainIds: [BASE_MAINNET_CHAIN_ID, BASE_SEPOLIA_CHAIN_ID],
     preference: {
@@ -316,6 +317,130 @@ export async function hasMinPSXBalancePrecise(address: string, minRequired: stri
   } catch (error) {
     console.error('Error in precise balance comparison:', error);
     return false;
+  }
+}
+
+// CREATE Token balance functions
+export async function getCREATEBalance(address: string): Promise<string> {
+  const manager = initializeBaseAccount();
+  
+  try {
+    // Ensure we're on Base network before fetching balance
+    await ensureBaseNetwork(manager.provider);
+
+    // Get token decimals first
+    const decimals = await getTokenDecimals(manager.provider, CREATE_TOKEN_ADDRESS);
+    
+    // ERC-20 balanceOf function signature: 0x70a08231
+    const addressWithoutPrefix = address.slice(2);
+    const balanceOfCalldata = '0x70a08231' + addressWithoutPrefix.toLowerCase().padStart(64, '0');
+    
+    const result = await manager.provider.request({
+      method: 'eth_call',
+      params: [
+        {
+          to: CREATE_TOKEN_ADDRESS,
+          data: balanceOfCalldata
+        },
+        'latest'
+      ]
+    });
+
+    // Parse the result using BigInt to avoid precision loss
+    const balanceWei = BigInt(result);
+    
+    // Handle edge case: decimals === 0 (no fractional part)
+    if (decimals === 0) {
+      return balanceWei.toLocaleString('en-US');
+    }
+    
+    // Convert using BigInt division to maintain precision
+    let divisor = BigInt(1);
+    for (let i = 0; i < decimals; i++) {
+      divisor = divisor * BigInt(10);
+    }
+    
+    const balanceWhole = balanceWei / divisor;
+    const balanceRemainder = balanceWei % divisor;
+    
+    // Format with decimals (show up to 2 decimal places)
+    const remainderStr = balanceRemainder.toString().padStart(decimals, '0');
+    const decimalPart = remainderStr.slice(0, Math.min(2, decimals));
+    
+    const wholeFormatted = balanceWhole.toLocaleString('en-US');
+    
+    // Only show decimal part if it's non-zero
+    if (decimalPart && BigInt(decimalPart) > BigInt(0)) {
+      return wholeFormatted + '.' + decimalPart;
+    }
+    
+    return wholeFormatted;
+  } catch (error) {
+    console.error('Error fetching CREATE balance:', error);
+    return '0';
+  }
+}
+
+export async function getRawCREATEBalance(address: string): Promise<{ value: bigint, decimals: number } | null> {
+  const manager = initializeBaseAccount();
+  
+  try {
+    // Ensure we're on Base network before fetching balance
+    await ensureBaseNetwork(manager.provider);
+
+    // Get token decimals first
+    const decimals = await getTokenDecimals(manager.provider, CREATE_TOKEN_ADDRESS);
+    
+    // ERC-20 balanceOf function call
+    const addressWithoutPrefix = address.slice(2);
+    const balanceOfCalldata = '0x70a08231' + addressWithoutPrefix.toLowerCase().padStart(64, '0');
+    
+    const result = await manager.provider.request({
+      method: 'eth_call',
+      params: [
+        {
+          to: CREATE_TOKEN_ADDRESS,
+          data: balanceOfCalldata
+        },
+        'latest'
+      ]
+    });
+
+    return {
+      value: BigInt(result),
+      decimals
+    };
+  } catch (error) {
+    console.error('Error fetching raw CREATE balance:', error);
+    return null;
+  }
+}
+
+// Check if user has required balance of EITHER PSX or CREATE token
+export async function hasRequiredTokenBalance(address: string, minRequired: string): Promise<{ hasAccess: boolean; psxBalance: string; createBalance: string }> {
+  try {
+    // Fetch both token balances in parallel
+    const [psxBalance, createBalance] = await Promise.all([
+      getPSXBalance(address),
+      getCREATEBalance(address)
+    ]);
+
+    // User needs to hold at least the minimum of EITHER token
+    const hasPSX = hasMinPSXBalance(psxBalance, minRequired);
+    const hasCREATE = hasMinPSXBalance(createBalance, minRequired); // Reuse comparison logic
+
+    return {
+      hasAccess: hasPSX || hasCREATE,
+      psxBalance,
+      createBalance
+    };
+  } catch (error) {
+    console.error('Error checking token balances:', error);
+    return {
+      hasAccess: false,
+      psxBalance: '0',
+      createBalance: '0'
+    };
   }
 }
 
