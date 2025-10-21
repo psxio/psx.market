@@ -49,6 +49,12 @@ import {
   type InsertMessageAttachment,
   type MessageReadReceipt,
   type InsertMessageReadReceipt,
+  type ProjectDeliverable,
+  type InsertProjectDeliverable,
+  type ProgressUpdate,
+  type InsertProgressUpdate,
+  type ProjectDocument,
+  type InsertProjectDocument,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -213,6 +219,28 @@ export interface IStorage {
   getMessageReadReceiptsByThread(threadId: string, readerId: string): Promise<MessageReadReceipt[]>;
   createMessageReadReceipt(receipt: InsertMessageReadReceipt): Promise<MessageReadReceipt>;
   markThreadAsRead(threadId: string, readerId: string, readerType: string): Promise<void>;
+
+  getProjectDeliverable(id: string): Promise<ProjectDeliverable | undefined>;
+  getProjectDeliverablesByOrder(orderId: string): Promise<ProjectDeliverable[]>;
+  getProjectDeliverablesByMilestone(milestoneId: string): Promise<ProjectDeliverable[]>;
+  createProjectDeliverable(deliverable: InsertProjectDeliverable): Promise<ProjectDeliverable>;
+  updateProjectDeliverable(id: string, data: Partial<ProjectDeliverable>): Promise<ProjectDeliverable>;
+  reviewProjectDeliverable(id: string, reviewedBy: string, reviewNotes: string, accepted: boolean, rejectionReason?: string): Promise<ProjectDeliverable>;
+  requestDeliverableRevision(id: string, reviewNotes: string): Promise<ProjectDeliverable>;
+
+  getProgressUpdate(id: string): Promise<ProgressUpdate | undefined>;
+  getProgressUpdatesByOrder(orderId: string): Promise<ProgressUpdate[]>;
+  getProgressUpdatesByBuilder(builderId: string): Promise<ProgressUpdate[]>;
+  createProgressUpdate(update: InsertProgressUpdate): Promise<ProgressUpdate>;
+  updateProgressUpdate(id: string, data: Partial<ProgressUpdate>): Promise<ProgressUpdate>;
+  deleteProgressUpdate(id: string): Promise<void>;
+
+  getProjectDocument(id: string): Promise<ProjectDocument | undefined>;
+  getProjectDocumentsByOrder(orderId: string): Promise<ProjectDocument[]>;
+  createProjectDocument(document: InsertProjectDocument): Promise<ProjectDocument>;
+  updateProjectDocument(id: string, data: Partial<ProjectDocument>): Promise<ProjectDocument>;
+  deleteProjectDocument(id: string): Promise<void>;
+  getProjectDocumentVersions(orderId: string, documentName: string): Promise<ProjectDocument[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -241,6 +269,9 @@ export class MemStorage implements IStorage {
   private messages: Map<string, Message>;
   private messageAttachments: Map<string, MessageAttachment>;
   private messageReadReceipts: Map<string, MessageReadReceipt>;
+  private projectDeliverables: Map<string, ProjectDeliverable>;
+  private progressUpdates: Map<string, ProgressUpdate>;
+  private projectDocuments: Map<string, ProjectDocument>;
 
   constructor() {
     this.builders = new Map();
@@ -268,6 +299,9 @@ export class MemStorage implements IStorage {
     this.messages = new Map();
     this.messageAttachments = new Map();
     this.messageReadReceipts = new Map();
+    this.projectDeliverables = new Map();
+    this.progressUpdates = new Map();
+    this.projectDocuments = new Map();
     this.seedData();
   }
 
@@ -2227,6 +2261,184 @@ export class MemStorage implements IStorage {
     }
 
     await this.updateThreadUnreadCount(threadId, readerType, false);
+  }
+
+  async getProjectDeliverable(id: string): Promise<ProjectDeliverable | undefined> {
+    return this.projectDeliverables.get(id);
+  }
+
+  async getProjectDeliverablesByOrder(orderId: string): Promise<ProjectDeliverable[]> {
+    return Array.from(this.projectDeliverables.values())
+      .filter(d => d.orderId === orderId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getProjectDeliverablesByMilestone(milestoneId: string): Promise<ProjectDeliverable[]> {
+    return Array.from(this.projectDeliverables.values())
+      .filter(d => d.milestoneId === milestoneId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createProjectDeliverable(deliverable: InsertProjectDeliverable): Promise<ProjectDeliverable> {
+    const newDeliverable: ProjectDeliverable = {
+      ...deliverable,
+      id: randomUUID(),
+      status: "pending",
+      revisionRequested: false,
+      reviewedBy: null,
+      reviewedAt: null,
+      reviewNotes: null,
+      acceptedAt: null,
+      rejectedAt: null,
+      rejectionReason: null,
+      submittedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+    this.projectDeliverables.set(newDeliverable.id, newDeliverable);
+    return newDeliverable;
+  }
+
+  async updateProjectDeliverable(id: string, data: Partial<ProjectDeliverable>): Promise<ProjectDeliverable> {
+    const deliverable = this.projectDeliverables.get(id);
+    if (!deliverable) {
+      throw new Error("Project deliverable not found");
+    }
+
+    const updatedDeliverable = { ...deliverable, ...data };
+    this.projectDeliverables.set(id, updatedDeliverable);
+    return updatedDeliverable;
+  }
+
+  async reviewProjectDeliverable(id: string, reviewedBy: string, reviewNotes: string, accepted: boolean, rejectionReason?: string): Promise<ProjectDeliverable> {
+    const deliverable = this.projectDeliverables.get(id);
+    if (!deliverable) {
+      throw new Error("Project deliverable not found");
+    }
+
+    const now = new Date().toISOString();
+    const updatedDeliverable: ProjectDeliverable = {
+      ...deliverable,
+      reviewedBy,
+      reviewedAt: now,
+      reviewNotes,
+      status: accepted ? "accepted" : "rejected",
+      acceptedAt: accepted ? now : null,
+      rejectedAt: accepted ? null : now,
+      rejectionReason: accepted ? null : rejectionReason,
+      revisionRequested: false,
+    };
+    this.projectDeliverables.set(id, updatedDeliverable);
+    return updatedDeliverable;
+  }
+
+  async requestDeliverableRevision(id: string, reviewNotes: string): Promise<ProjectDeliverable> {
+    const deliverable = this.projectDeliverables.get(id);
+    if (!deliverable) {
+      throw new Error("Project deliverable not found");
+    }
+
+    const updatedDeliverable: ProjectDeliverable = {
+      ...deliverable,
+      status: "revision_requested",
+      revisionRequested: true,
+      reviewNotes,
+      reviewedAt: new Date().toISOString(),
+    };
+    this.projectDeliverables.set(id, updatedDeliverable);
+    return updatedDeliverable;
+  }
+
+  async getProgressUpdate(id: string): Promise<ProgressUpdate | undefined> {
+    return this.progressUpdates.get(id);
+  }
+
+  async getProgressUpdatesByOrder(orderId: string): Promise<ProgressUpdate[]> {
+    return Array.from(this.progressUpdates.values())
+      .filter(u => u.orderId === orderId && u.isVisible)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getProgressUpdatesByBuilder(builderId: string): Promise<ProgressUpdate[]> {
+    return Array.from(this.progressUpdates.values())
+      .filter(u => u.builderId === builderId && u.isVisible)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createProgressUpdate(update: InsertProgressUpdate): Promise<ProgressUpdate> {
+    const newUpdate: ProgressUpdate = {
+      ...update,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    this.progressUpdates.set(newUpdate.id, newUpdate);
+    return newUpdate;
+  }
+
+  async updateProgressUpdate(id: string, data: Partial<ProgressUpdate>): Promise<ProgressUpdate> {
+    const update = this.progressUpdates.get(id);
+    if (!update) {
+      throw new Error("Progress update not found");
+    }
+
+    const updatedUpdate = { ...update, ...data };
+    this.progressUpdates.set(id, updatedUpdate);
+    return updatedUpdate;
+  }
+
+  async deleteProgressUpdate(id: string): Promise<void> {
+    const update = this.progressUpdates.get(id);
+    if (!update) {
+      throw new Error("Progress update not found");
+    }
+
+    const updatedUpdate = { ...update, isVisible: false };
+    this.progressUpdates.set(id, updatedUpdate);
+  }
+
+  async getProjectDocument(id: string): Promise<ProjectDocument | undefined> {
+    return this.projectDocuments.get(id);
+  }
+
+  async getProjectDocumentsByOrder(orderId: string): Promise<ProjectDocument[]> {
+    return Array.from(this.projectDocuments.values())
+      .filter(d => d.orderId === orderId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async createProjectDocument(document: InsertProjectDocument): Promise<ProjectDocument> {
+    const newDocument: ProjectDocument = {
+      ...document,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.projectDocuments.set(newDocument.id, newDocument);
+    return newDocument;
+  }
+
+  async updateProjectDocument(id: string, data: Partial<ProjectDocument>): Promise<ProjectDocument> {
+    const document = this.projectDocuments.get(id);
+    if (!document) {
+      throw new Error("Project document not found");
+    }
+
+    const updatedDocument = { 
+      ...document, 
+      ...data,
+      updatedAt: new Date().toISOString() 
+    };
+    this.projectDocuments.set(id, updatedDocument);
+    return updatedDocument;
+  }
+
+  async deleteProjectDocument(id: string): Promise<void> {
+    this.projectDocuments.delete(id);
+  }
+
+  async getProjectDocumentVersions(orderId: string, documentName: string): Promise<ProjectDocument[]> {
+    return Array.from(this.projectDocuments.values())
+      .filter(d => d.orderId === orderId && d.documentName === documentName)
+      .sort((a, b) => b.version - a.version);
   }
 }
 
