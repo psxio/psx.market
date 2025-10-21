@@ -2159,5 +2159,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/notifications", async (req, res, next) => {
+    try {
+      const notification = await storage.createNotification(req.body);
+      res.status(201).json(notification);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/notifications/:recipientType/:recipientId", async (req, res, next) => {
+    try {
+      const { recipientId, recipientType } = req.params;
+      const { limit, unreadOnly } = req.query;
+      
+      const notifications = await storage.getNotifications(
+        recipientId,
+        recipientType,
+        limit ? parseInt(limit as string) : undefined,
+        unreadOnly === "true"
+      );
+      
+      res.json(notifications);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/notifications/:recipientType/:recipientId/unread-count", async (req, res, next) => {
+    try {
+      const { recipientId, recipientType } = req.params;
+      const count = await storage.getUnreadNotificationCount(recipientId, recipientType);
+      res.json({ count });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const notification = await storage.markNotificationAsRead(id);
+      res.json(notification);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.patch("/api/notifications/:recipientType/:recipientId/mark-all-read", async (req, res, next) => {
+    try {
+      const { recipientId, recipientType } = req.params;
+      await storage.markAllNotificationsAsRead(recipientId, recipientType);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.delete("/api/notifications/:id", async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteNotification(id);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/notification-preferences/:userType/:userId", async (req, res, next) => {
+    try {
+      const { userId, userType } = req.params;
+      const preferences = await storage.getNotificationPreferences(userId, userType);
+      res.json(preferences);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.put("/api/notification-preferences/:userType/:userId", async (req, res, next) => {
+    try {
+      const { userId, userType } = req.params;
+      const preferences = await storage.updateNotificationPreferences(userId, userType, req.body);
+      res.json(preferences);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/push-subscriptions", async (req, res, next) => {
+    try {
+      const subscription = await storage.createPushSubscription(req.body);
+      res.status(201).json(subscription);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/push-subscriptions/:userType/:userId", async (req, res, next) => {
+    try {
+      const { userId, userType } = req.params;
+      const subscriptions = await storage.getPushSubscriptions(userId, userType);
+      res.json(subscriptions);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.delete("/api/push-subscriptions/:endpoint", async (req, res, next) => {
+    try {
+      const { endpoint } = req.params;
+      const decodedEndpoint = decodeURIComponent(endpoint);
+      await storage.deletePushSubscription(decodedEndpoint);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   return httpServer;
 }
