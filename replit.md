@@ -1,5 +1,5 @@
 ## Overview
-create.psx is a token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its primary goal is to ensure quality by requiring $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, comprehensive legal compliance pages, and a robust builder onboarding system. The long-term vision is to establish itself as the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management tools.
+Create.psx is a dual token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its primary goal is to ensure quality by requiring either $CREATE or $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, comprehensive legal compliance pages, and a robust builder onboarding system. The long-term vision is to establish itself as the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management tools.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -10,13 +10,13 @@ create.psx is a token-gated Web3 marketplace designed to connect premium builder
 - **Animations**: Scroll-triggered reveal animations throughout (fadeInUp, fadeInLeft, fadeInRight, fadeInScale, slideInUp, zoomIn, bounceIn)
 
 ## System Architecture
-create.psx employs a decoupled frontend and backend architecture for enhanced scalability and maintainability.
+Create.psx employs a decoupled frontend and backend architecture for enhanced scalability and maintainability.
 
 ### UI/UX Decisions
-- **Branding**: Consistent purple/cyan gradient theme.
+- **Branding**: Consistent purple/cyan gradient theme with equal prominence for both Create and PSX brands.
 - **Design System**: Utilizes Tailwind CSS and Shadcn UI for a modern, responsive, and mobile-first design.
 - **Key Features**:
-    - **Token-Gated Access**: $PSX token required for marketplace access and client tier assignment.
+    - **Dual Token-Gated Access**: Either $CREATE or $PSX token required for marketplace access and client tier assignment. Users only need to hold ONE of these tokens to gain access.
     - **Builder Profiles**: Comprehensive profiles with portfolios, services, reviews, dynamic skill arrays, and category-specific showcases.
     - **Previous Projects Showcase**: Detailed case studies with results, metrics, media, and testimonials.
     - **Service Listings**: Detailed service offerings with tiered pricing.
@@ -31,7 +31,10 @@ create.psx employs a decoupled frontend and backend architecture for enhanced sc
 - **Frontend**: React and TypeScript, TanStack Query for data fetching, custom Auth Contexts.
 - **Backend**: Express and TypeScript, RESTful API structure.
 - **Authentication**: Session-based authentication using `express-session`, `bcrypt` for admin passwords, and Base Account SDK for client wallet connection.
-- **Wallet Integration**: Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 $PSX token balance checking.
+- **Wallet Integration**: Base Account SDK for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 token balance checking for both $CREATE and $PSX tokens.
+  - **$CREATE Token**: Contract address `0x3849cC93e7B71b37885237cd91a215974135cD8D` on Base network
+  - **$PSX Token**: Contract address loaded from environment variable `VITE_PSX_TOKEN_ADDRESS`
+  - **Token-Gating Logic**: Users need to hold the minimum required amount of EITHER $CREATE OR $PSX (not both). The system checks both balances in parallel and grants access if either token meets the requirement.
 - **Data Storage**: PostgreSQL database with Drizzle ORM.
 - **Data Models**: Comprehensive schemas for Builders, Clients, Services, Orders, Payments, Reviews, Applications, and various other platform entities.
 - **Order Management System**: Full order booking and management with status workflows, revision tracking, and activity logging.
@@ -53,6 +56,7 @@ create.psx employs a decoupled frontend and backend architecture for enhanced sc
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
 - **Wallet SDK**: Base Account SDK (`@base-org/account`)
 - **Payment Token**: USDC (ERC-20)
-- **Token Standard**: ERC-20 (for $PSX token and USDC)
+- **Access Tokens**: $CREATE (0x3849cC93e7B71b37885237cd91a215974135cD8D) and $PSX (ERC-20 tokens on Base)
+- **Token Standard**: ERC-20 (for $CREATE, $PSX, and USDC)
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
