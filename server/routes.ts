@@ -2,8 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
-import { insertBuilderApplicationSchema } from "@shared/schema";
-import { requireAdminAuth } from "./middleware/auth";
+import { insertBuilderApplicationSchema, insertClientSchema } from "@shared/schema";
+import { requireAdminAuth, requireClientAuth } from "./middleware/auth";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -241,6 +241,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch application" });
     }
+  });
+
+  app.post("/api/clients/register", async (req, res) => {
+    try {
+      const validatedData = insertClientSchema.parse(req.body);
+      
+      const existingClient = await storage.getClientByWallet(validatedData.walletAddress);
+      if (existingClient) {
+        return res.status(400).json({ error: "Client with this wallet address already exists" });
+      }
+
+      const client = await storage.createClient(validatedData);
+      
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ error: "Session creation failed" });
+        }
+
+        req.session.clientId = client.id;
+
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ error: "Session save failed" });
+          }
+
+          res.status(201).json({
+            id: client.id,
+            walletAddress: client.walletAddress,
+            name: client.name,
+            email: client.email,
+            companyName: client.companyName,
+            bio: client.bio,
+            profileImage: client.profileImage,
+            verified: client.verified,
+            psxTier: client.psxTier,
+          });
+        });
+      });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ error: "Invalid client data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to register client" });
+    }
+  });
+
+  app.post("/api/clients/login", async (req, res) => {
+    try {
+      const { walletAddress } = req.body;
+      
+      if (!walletAddress) {
+        return res.status(400).json({ error: "Wallet address required" });
+      }
+
+      const client = await storage.getClientByWallet(walletAddress);
+      if (!client) {
+        return res.status(404).json({ error: "Client not found. Please register first." });
+      }
+
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ error: "Session creation failed" });
+        }
+
+        req.session.clientId = client.id;
+
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ error: "Session save failed" });
+          }
+
+          res.json({
+            id: client.id,
+            walletAddress: client.walletAddress,
+            name: client.name,
+            email: client.email,
+            companyName: client.companyName,
+            bio: client.bio,
+            profileImage: client.profileImage,
+            verified: client.verified,
+            psxTier: client.psxTier,
+          });
+        });
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
+  app.get("/api/clients/me", requireClientAuth, async (req, res) => {
+    try {
+      const client = await storage.getClient(req.session.clientId!);
+      if (!client) {
+        return res.status(404).json({ error: "Client not found" });
+      }
+      res.json(client);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch client" });
+    }
+  });
+
+  app.put("/api/clients/me", requireClientAuth, async (req, res) => {
+    try {
+      const { walletAddress, ...updateData } = req.body;
+      const client = await storage.updateClient(req.session.clientId!, updateData);
+      res.json(client);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update client" });
+    }
+  });
+
+  app.post("/api/clients/logout", requireClientAuth, async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Logout failed" });
+      }
+      res.json({ success: true });
+    });
   });
 
   app.post("/api/admin/login", loginLimiter, async (req, res) => {
