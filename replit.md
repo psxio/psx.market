@@ -1,7 +1,7 @@
-# PSX Marketplace
+# create.psx
 
 ## Overview
-PSX Marketplace is a token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its primary purpose is to ensure quality assurance on both sides by requiring users to hold $PSX tokens for access to services. The platform features builder profiles, service listings, category-based browsing, and an administrative dashboard for managing the marketplace. The long-term vision is to become the leading platform for Web3 talent, incorporating secure on-chain payments and robust project management tools.
+create.psx is a token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its primary purpose is to ensure quality assurance on both sides by requiring users to hold $PSX tokens for access to services. The platform features builder profiles, service listings, category-based browsing, and an administrative dashboard for managing the marketplace. The long-term vision is to become the leading platform for Web3 talent, incorporating secure on-chain payments and robust project management tools.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -10,7 +10,7 @@ PSX Marketplace is a token-gated Web3 marketplace designed to connect premium bu
 - Professional Web3 aesthetic
 
 ## System Architecture
-The PSX Marketplace is built with a clear separation between its frontend and backend, ensuring scalability and maintainability.
+create.psx is built with a clear separation between its frontend and backend, ensuring scalability and maintainability.
 
 ### UI/UX Decisions
 - **Branding**: Consistent purple/cyan gradient theme across the application.

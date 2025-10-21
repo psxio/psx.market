@@ -30,7 +30,7 @@ export function Header() {
                 P
               </div>
               <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
-                PSX Marketplace
+                Create x PSX Marketplace
               </span>
             </Link>
 

@@ -220,7 +220,7 @@ export default function Apply() {
               </p>
               <p className="text-sm">
                 We'll notify you via email once your application has been reviewed. If approved,
-                you'll be able to create your builder profile and start offering services on PSX Marketplace.
+                you'll be able to create your builder profile and start offering services on create.psx.
               </p>
             </CardContent>
             <CardFooter className="flex justify-center gap-3">
@@ -244,7 +244,7 @@ export default function Apply() {
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold">Become a Builder</h1>
           <p className="text-muted-foreground">
-            Join PSX Marketplace and connect with premium crypto projects
+            Join create.psx and connect with premium crypto projects
           </p>
         </div>
 

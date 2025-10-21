@@ -20,7 +20,7 @@ export function initializeBaseAccount() {
   if (accountManager) return accountManager;
 
   const sdk = createBaseAccountSDK({
-    appName: 'PSX Marketplace',
+    appName: 'create.psx',
     appLogoUrl: `${window.location.origin}/logo.png`,
     appChainIds: [BASE_MAINNET_CHAIN_ID, BASE_SEPOLIA_CHAIN_ID],
     preference: {

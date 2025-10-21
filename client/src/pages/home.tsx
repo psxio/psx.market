@@ -320,7 +320,7 @@ export default function Home() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
                   P
                 </div>
-                <span className="text-lg font-bold">PSX Marketplace</span>
+                <span className="text-lg font-bold">create.psx</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Token-gated marketplace for premium Web3 services

@@ -178,7 +178,7 @@ export function WalletConnectButton() {
               Connect to Base Network
             </DialogTitle>
             <DialogDescription>
-              Connecting your wallet to access the PSX Marketplace. Please approve
+              Connecting your wallet to access create.psx. Please approve
               the connection in your wallet extension or app.
             </DialogDescription>
           </DialogHeader>

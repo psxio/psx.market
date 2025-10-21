@@ -119,7 +119,7 @@ export default function BecomeClient() {
 
       toast({
         title: "Registration successful",
-        description: "Welcome to PSX Marketplace!",
+        description: "Welcome to create.psx!",
       });
 
       setLocation("/dashboard");

@@ -144,7 +144,7 @@ export default function AdminDashboard() {
           <header className="flex items-center justify-between p-4 border-b">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
             <h1 className="text-lg font-semibold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              PSX Marketplace Admin
+              create.psx Admin
             </h1>
             <div className="w-10"></div>
           </header>
