@@ -134,6 +134,18 @@ export const clients = pgTable("clients", {
   profileImage: text("profile_image"),
   verified: boolean("verified").notNull().default(false),
   psxTier: text("psx_tier").notNull().default("bronze"),
+  
+  projectType: text("project_type"),
+  budgetRange: text("budget_range"),
+  interestedCategories: text("interested_categories").array(),
+  projectTimeline: text("project_timeline"),
+  projectDescription: text("project_description"),
+  experienceLevel: text("experience_level"),
+  referralSource: text("referral_source"),
+  websiteUrl: text("website_url"),
+  twitterHandle: text("twitter_handle"),
+  telegramHandle: text("telegram_handle"),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 

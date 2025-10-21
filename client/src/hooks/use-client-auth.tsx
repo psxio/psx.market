@@ -30,9 +30,10 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     }
   }, [data]);
 
-  const registerMutation = useMutation({
+  const registerMutation = useMutation<Client, Error, InsertClient>({
     mutationFn: async (data: InsertClient) => {
-      return await apiRequest("POST", "/api/clients/register", data);
+      const response = await apiRequest("POST", "/api/clients/register", data);
+      return await response.json();
     },
     onSuccess: (data) => {
       setClient(data);
@@ -40,9 +41,10 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const loginMutation = useMutation({
+  const loginMutation = useMutation<Client, Error, string>({
     mutationFn: async (walletAddress: string) => {
-      return await apiRequest("POST", "/api/clients/login", { walletAddress });
+      const response = await apiRequest("POST", "/api/clients/login", { walletAddress });
+      return await response.json();
     },
     onSuccess: (data) => {
       setClient(data);
@@ -50,7 +52,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const logoutMutation = useMutation({
+  const logoutMutation = useMutation<void, Error, void>({
     mutationFn: async () => {
       await apiRequest("POST", "/api/clients/logout", {});
     },
@@ -61,9 +63,10 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const updateProfileMutation = useMutation({
+  const updateProfileMutation = useMutation<Client, Error, Partial<Client>>({
     mutationFn: async (data: Partial<Client>) => {
-      return await apiRequest("PUT", "/api/clients/me", data);
+      const response = await apiRequest("PUT", "/api/clients/me", data);
+      return await response.json();
     },
     onSuccess: (data) => {
       setClient(data);
