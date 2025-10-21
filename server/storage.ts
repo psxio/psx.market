@@ -253,6 +253,49 @@ export interface IStorage {
   updateProjectDocument(id: string, data: Partial<ProjectDocument>): Promise<ProjectDocument>;
   deleteProjectDocument(id: string): Promise<void>;
   getProjectDocumentVersions(orderId: string, documentName: string): Promise<ProjectDocument[]>;
+
+  followBuilder(clientId: string, builderId: string): Promise<void>;
+  unfollowBuilder(clientId: string, builderId: string): Promise<void>;
+  isFollowingBuilder(clientId: string, builderId: string): Promise<boolean>;
+  getBuilderFollowers(builderId: string): Promise<string[]>;
+  getFollowedBuilders(clientId: string): Promise<string[]>;
+  getBuilderFollowerCount(builderId: string): Promise<number>;
+
+  createBuilderActivity(activity: { builderId: string; activityType: string; activityData?: string; metadata?: string }): Promise<void>;
+  getBuilderActivityFeed(builderId: string, limit?: number): Promise<any[]>;
+  getFollowedBuildersActivity(clientId: string, limit?: number): Promise<any[]>;
+
+  createBuilderBadge(badge: { builderId: string; badgeType: string; badgeLabel: string; badgeIcon?: string; badgeColor?: string }): Promise<void>;
+  getBuilderBadges(builderId: string): Promise<any[]>;
+  removeBuilderBadge(builderId: string, badgeType: string): Promise<void>;
+
+  createBuilderTestimonial(testimonial: { builderId: string; clientId: string; content: string; authorName: string; authorTitle?: string; rating?: string; orderId?: string }): Promise<void>;
+  getBuilderTestimonials(builderId: string, approvedOnly?: boolean): Promise<any[]>;
+  approveBuilderTestimonial(testimonialId: string): Promise<void>;
+  featureBuilderTestimonial(testimonialId: string, featured: boolean): Promise<void>;
+
+  trackBuilderView(builderId: string, viewerId?: string, viewerType?: string): Promise<void>;
+  getBuilderViewCount(builderId: string, period?: string): Promise<number>;
+  getBuilderViewStats(builderId: string): Promise<{ totalViews: number; uniqueViewers: number; last30Days: number }>;
+
+  calculatePlatformStatistics(): Promise<void>;
+  getPlatformStatistics(category?: string): Promise<any[]>;
+  getClientAnalytics(clientId: string): Promise<{
+    totalSpent: number;
+    projectsCompleted: number;
+    activeProjects: number;
+    averageRating: number;
+    favoriteCategories: string[];
+  }>;
+
+  createApplicationRevision(applicationId: string, changesRequested: string, requestedBy: string): Promise<void>;
+  getApplicationRevisions(applicationId: string): Promise<any[]>;
+  submitApplicationRevision(revisionId: string, submittedData: string): Promise<void>;
+  getBuilderApplicationByEmail(email: string): Promise<BuilderApplication | undefined>;
+
+  createBuilderOnboarding(builderId: string, applicationId: string): Promise<void>;
+  getBuilderOnboarding(builderId: string): Promise<any | undefined>;
+  updateOnboardingStep(builderId: string, step: string, completed: boolean): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -284,6 +327,14 @@ export class MemStorage implements IStorage {
   private projectDeliverables: Map<string, ProjectDeliverable>;
   private progressUpdates: Map<string, ProgressUpdate>;
   private projectDocuments: Map<string, ProjectDocument>;
+  private builderFollows: Map<string, any>;
+  private builderActivityFeed: Map<string, any>;
+  private builderBadges: Map<string, any>;
+  private builderTestimonials: Map<string, any>;
+  private builderViews: Map<string, any>;
+  private platformStatistics: Map<string, any>;
+  private builderApplicationRevisions: Map<string, any>;
+  private builderOnboarding: Map<string, any>;
 
   constructor() {
     this.builders = new Map();
@@ -314,6 +365,14 @@ export class MemStorage implements IStorage {
     this.projectDeliverables = new Map();
     this.progressUpdates = new Map();
     this.projectDocuments = new Map();
+    this.builderFollows = new Map();
+    this.builderActivityFeed = new Map();
+    this.builderBadges = new Map();
+    this.builderTestimonials = new Map();
+    this.builderViews = new Map();
+    this.platformStatistics = new Map();
+    this.builderApplicationRevisions = new Map();
+    this.builderOnboarding = new Map();
     this.seedData();
   }
 
@@ -2590,6 +2649,348 @@ export class MemStorage implements IStorage {
     return Array.from(this.projectDocuments.values())
       .filter(d => d.orderId === orderId && d.documentName === documentName)
       .sort((a, b) => b.version - a.version);
+  }
+
+  async followBuilder(clientId: string, builderId: string): Promise<void> {
+    const id = randomUUID();
+    const follow = {
+      id,
+      clientId,
+      builderId,
+      followedAt: new Date().toISOString(),
+    };
+    this.builderFollows.set(`${clientId}-${builderId}`, follow);
+    await this.createBuilderActivity({
+      builderId,
+      activityType: "new_follower",
+      activityData: JSON.stringify({ clientId }),
+    });
+  }
+
+  async unfollowBuilder(clientId: string, builderId: string): Promise<void> {
+    this.builderFollows.delete(`${clientId}-${builderId}`);
+  }
+
+  async isFollowingBuilder(clientId: string, builderId: string): Promise<boolean> {
+    return this.builderFollows.has(`${clientId}-${builderId}`);
+  }
+
+  async getBuilderFollowers(builderId: string): Promise<string[]> {
+    return Array.from(this.builderFollows.values())
+      .filter((f: any) => f.builderId === builderId)
+      .map((f: any) => f.clientId);
+  }
+
+  async getFollowedBuilders(clientId: string): Promise<string[]> {
+    return Array.from(this.builderFollows.values())
+      .filter((f: any) => f.clientId === clientId)
+      .map((f: any) => f.builderId);
+  }
+
+  async getBuilderFollowerCount(builderId: string): Promise<number> {
+    return Array.from(this.builderFollows.values())
+      .filter((f: any) => f.builderId === builderId).length;
+  }
+
+  async createBuilderActivity(activity: { builderId: string; activityType: string; activityData?: string; metadata?: string }): Promise<void> {
+    const id = randomUUID();
+    const activityRecord = {
+      id,
+      ...activity,
+      isPublic: true,
+      createdAt: new Date().toISOString(),
+    };
+    this.builderActivityFeed.set(id, activityRecord);
+  }
+
+  async getBuilderActivityFeed(builderId: string, limit = 20): Promise<any[]> {
+    return Array.from(this.builderActivityFeed.values())
+      .filter((a: any) => a.builderId === builderId && a.isPublic)
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, limit);
+  }
+
+  async getFollowedBuildersActivity(clientId: string, limit = 50): Promise<any[]> {
+    const followedBuilders = await this.getFollowedBuilders(clientId);
+    return Array.from(this.builderActivityFeed.values())
+      .filter((a: any) => followedBuilders.includes(a.builderId) && a.isPublic)
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, limit);
+  }
+
+  async createBuilderBadge(badge: { builderId: string; badgeType: string; badgeLabel: string; badgeIcon?: string; badgeColor?: string }): Promise<void> {
+    const id = randomUUID();
+    const badgeRecord = {
+      id,
+      ...badge,
+      earnedAt: new Date().toISOString(),
+      expiresAt: null,
+      isActive: true,
+    };
+    this.builderBadges.set(id, badgeRecord);
+  }
+
+  async getBuilderBadges(builderId: string): Promise<any[]> {
+    return Array.from(this.builderBadges.values())
+      .filter((b: any) => b.builderId === builderId && b.isActive);
+  }
+
+  async removeBuilderBadge(builderId: string, badgeType: string): Promise<void> {
+    const badges = Array.from(this.builderBadges.entries());
+    badges.forEach(([id, badge]) => {
+      if (badge.builderId === builderId && badge.badgeType === badgeType) {
+        this.builderBadges.delete(id);
+      }
+    });
+  }
+
+  async createBuilderTestimonial(testimonial: { builderId: string; clientId: string; content: string; authorName: string; authorTitle?: string; rating?: string; orderId?: string }): Promise<void> {
+    const id = randomUUID();
+    const testimonialRecord = {
+      id,
+      ...testimonial,
+      authorImage: null,
+      isFeatured: false,
+      isApproved: false,
+      createdAt: new Date().toISOString(),
+    };
+    this.builderTestimonials.set(id, testimonialRecord);
+  }
+
+  async getBuilderTestimonials(builderId: string, approvedOnly = true): Promise<any[]> {
+    return Array.from(this.builderTestimonials.values())
+      .filter((t: any) => t.builderId === builderId && (!approvedOnly || t.isApproved))
+      .sort((a: any, b: any) => {
+        if (a.isFeatured !== b.isFeatured) return b.isFeatured ? 1 : -1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+  }
+
+  async approveBuilderTestimonial(testimonialId: string): Promise<void> {
+    const testimonial = this.builderTestimonials.get(testimonialId);
+    if (testimonial) {
+      testimonial.isApproved = true;
+      this.builderTestimonials.set(testimonialId, testimonial);
+    }
+  }
+
+  async featureBuilderTestimonial(testimonialId: string, featured: boolean): Promise<void> {
+    const testimonial = this.builderTestimonials.get(testimonialId);
+    if (testimonial) {
+      testimonial.isFeatured = featured;
+      this.builderTestimonials.set(testimonialId, testimonial);
+    }
+  }
+
+  async trackBuilderView(builderId: string, viewerId?: string, viewerType?: string): Promise<void> {
+    const id = randomUUID();
+    const view = {
+      id,
+      builderId,
+      viewerId,
+      viewerType,
+      ipAddress: null,
+      userAgent: null,
+      referrer: null,
+      viewedAt: new Date().toISOString(),
+    };
+    this.builderViews.set(id, view);
+  }
+
+  async getBuilderViewCount(builderId: string, period?: string): Promise<number> {
+    const views = Array.from(this.builderViews.values())
+      .filter((v: any) => v.builderId === builderId);
+    
+    if (period === "30days") {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return views.filter((v: any) => new Date(v.viewedAt) > thirtyDaysAgo).length;
+    }
+    
+    return views.length;
+  }
+
+  async getBuilderViewStats(builderId: string): Promise<{ totalViews: number; uniqueViewers: number; last30Days: number }> {
+    const views = Array.from(this.builderViews.values())
+      .filter((v: any) => v.builderId === builderId);
+    
+    const uniqueViewers = new Set(views.filter((v: any) => v.viewerId).map((v: any) => v.viewerId)).size;
+    
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const last30Days = views.filter((v: any) => new Date(v.viewedAt) > thirtyDaysAgo).length;
+    
+    return {
+      totalViews: views.length,
+      uniqueViewers,
+      last30Days,
+    };
+  }
+
+  async calculatePlatformStatistics(): Promise<void> {
+    const stats = [
+      { name: "total_builders", value: this.builders.size.toString(), type: "count", category: "builders" },
+      { name: "total_services", value: this.services.size.toString(), type: "count", category: "services" },
+      { name: "total_orders", value: this.orders.size.toString(), type: "count", category: "orders" },
+      { name: "total_clients", value: this.clients.size.toString(), type: "count", category: "clients" },
+      { name: "total_revenue", value: Array.from(this.payments.values()).reduce((sum: number, p: any) => sum + parseFloat(p.amount || 0), 0).toFixed(2), type: "currency", category: "revenue" },
+    ];
+
+    stats.forEach(stat => {
+      const id = randomUUID();
+      this.platformStatistics.set(id, {
+        id,
+        metricName: stat.name,
+        metricValue: stat.value,
+        metricType: stat.type,
+        category: stat.category,
+        period: "all_time",
+        periodStart: null,
+        periodEnd: null,
+        calculatedAt: new Date().toISOString(),
+      });
+    });
+  }
+
+  async getPlatformStatistics(category?: string): Promise<any[]> {
+    const stats = Array.from(this.platformStatistics.values());
+    if (category) {
+      return stats.filter((s: any) => s.category === category);
+    }
+    return stats;
+  }
+
+  async getClientAnalytics(clientId: string): Promise<{
+    totalSpent: number;
+    projectsCompleted: number;
+    activeProjects: number;
+    averageRating: number;
+    favoriteCategories: string[];
+  }> {
+    const orders = Array.from(this.orders.values()).filter((o: any) => o.clientId === clientId);
+    const payments = Array.from(this.payments.values()).filter((p: any) => p.clientId === clientId);
+    const reviews = Array.from(this.reviews.values()).filter((r: any) => r.clientId === clientId);
+
+    const totalSpent = payments
+      .filter((p: any) => p.status === "completed")
+      .reduce((sum, p: any) => sum + parseFloat(p.amount || 0), 0);
+
+    const projectsCompleted = orders.filter((o: any) => o.status === "completed").length;
+    const activeProjects = orders.filter((o: any) => ["accepted", "in_progress"].includes(o.status)).length;
+
+    const averageRating = reviews.length > 0
+      ? reviews.reduce((sum, r: any) => sum + parseFloat(r.rating || 0), 0) / reviews.length
+      : 0;
+
+    const services = await Promise.all(
+      orders.map(async (o: any) => {
+        const service = await this.getService(o.serviceId);
+        return service?.category;
+      })
+    );
+    const categoryCounts = services.reduce((acc: any, cat) => {
+      if (cat) acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {});
+    const favoriteCategories = Object.entries(categoryCounts)
+      .sort((a: any, b: any) => b[1] - a[1])
+      .slice(0, 3)
+      .map((e: any) => e[0]);
+
+    return {
+      totalSpent,
+      projectsCompleted,
+      activeProjects,
+      averageRating,
+      favoriteCategories,
+    };
+  }
+
+  async createApplicationRevision(applicationId: string, changesRequested: string, requestedBy: string): Promise<void> {
+    const revisions = Array.from(this.builderApplicationRevisions.values())
+      .filter((r: any) => r.applicationId === applicationId);
+    const revisionNumber = revisions.length + 1;
+
+    const id = randomUUID();
+    const revision = {
+      id,
+      applicationId,
+      revisionNumber,
+      changesRequested,
+      revisionNotes: null,
+      submittedData: null,
+      status: "pending",
+      requestedBy,
+      requestedAt: new Date().toISOString(),
+      resubmittedAt: null,
+      reviewedAt: null,
+    };
+    this.builderApplicationRevisions.set(id, revision);
+  }
+
+  async getApplicationRevisions(applicationId: string): Promise<any[]> {
+    return Array.from(this.builderApplicationRevisions.values())
+      .filter((r: any) => r.applicationId === applicationId)
+      .sort((a: any, b: any) => a.revisionNumber - b.revisionNumber);
+  }
+
+  async submitApplicationRevision(revisionId: string, submittedData: string): Promise<void> {
+    const revision = this.builderApplicationRevisions.get(revisionId);
+    if (revision) {
+      revision.submittedData = submittedData;
+      revision.resubmittedAt = new Date().toISOString();
+      revision.status = "resubmitted";
+      this.builderApplicationRevisions.set(revisionId, revision);
+    }
+  }
+
+  async getBuilderApplicationByEmail(email: string): Promise<BuilderApplication | undefined> {
+    return Array.from(this.builderApplications.values())
+      .find((app: any) => app.email === email);
+  }
+
+  async createBuilderOnboarding(builderId: string, applicationId: string): Promise<void> {
+    const id = randomUUID();
+    const onboarding = {
+      id,
+      builderId,
+      applicationId,
+      stepProfileComplete: false,
+      stepServicesAdded: false,
+      stepPortfolioAdded: false,
+      stepPaymentSetup: false,
+      stepVerificationComplete: false,
+      completionPercentage: 0,
+      isComplete: false,
+      completedAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.builderOnboarding.set(builderId, onboarding);
+  }
+
+  async getBuilderOnboarding(builderId: string): Promise<any | undefined> {
+    return this.builderOnboarding.get(builderId);
+  }
+
+  async updateOnboardingStep(builderId: string, step: string, completed: boolean): Promise<void> {
+    const onboarding = this.builderOnboarding.get(builderId);
+    if (onboarding) {
+      const stepField = `step${step.charAt(0).toUpperCase() + step.slice(1)}`;
+      onboarding[stepField] = completed;
+      
+      const steps = ["stepProfileComplete", "stepServicesAdded", "stepPortfolioAdded", "stepPaymentSetup", "stepVerificationComplete"];
+      const completedSteps = steps.filter(s => onboarding[s]).length;
+      onboarding.completionPercentage = Math.round((completedSteps / steps.length) * 100);
+      
+      if (completedSteps === steps.length && !onboarding.isComplete) {
+        onboarding.isComplete = true;
+        onboarding.completedAt = new Date().toISOString();
+      }
+      
+      onboarding.updatedAt = new Date().toISOString();
+      this.builderOnboarding.set(builderId, onboarding);
+    }
   }
 }
 

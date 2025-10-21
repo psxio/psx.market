@@ -476,6 +476,106 @@ export const projectDocuments = pgTable("project_documents", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const builderFollows = pgTable("builder_follows", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  followedAt: text("followed_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderActivityFeed = pgTable("builder_activity_feed", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  activityType: text("activity_type").notNull(),
+  activityData: text("activity_data"),
+  metadata: text("metadata"),
+  isPublic: boolean("is_public").notNull().default(true),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderBadges = pgTable("builder_badges", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  badgeType: text("badge_type").notNull(),
+  badgeLabel: text("badge_label").notNull(),
+  badgeIcon: text("badge_icon"),
+  badgeColor: text("badge_color"),
+  earnedAt: text("earned_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  expiresAt: text("expires_at"),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
+export const builderTestimonials = pgTable("builder_testimonials", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  orderId: varchar("order_id"),
+  content: text("content").notNull(),
+  authorName: text("author_name").notNull(),
+  authorTitle: text("author_title"),
+  authorImage: text("author_image"),
+  rating: decimal("rating", { precision: 3, scale: 2 }),
+  isFeatured: boolean("is_featured").notNull().default(false),
+  isApproved: boolean("is_approved").notNull().default(false),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderViews = pgTable("builder_views", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  viewerId: varchar("viewer_id"),
+  viewerType: text("viewer_type"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  viewedAt: text("viewed_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const platformStatistics = pgTable("platform_statistics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  metricName: text("metric_name").notNull(),
+  metricValue: text("metric_value").notNull(),
+  metricType: text("metric_type").notNull(),
+  category: text("category"),
+  period: text("period"),
+  periodStart: text("period_start"),
+  periodEnd: text("period_end"),
+  calculatedAt: text("calculated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderApplicationRevisions = pgTable("builder_application_revisions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  applicationId: varchar("application_id").notNull(),
+  revisionNumber: integer("revision_number").notNull(),
+  changesRequested: text("changes_requested").notNull(),
+  revisionNotes: text("revision_notes"),
+  submittedData: text("submitted_data"),
+  status: text("status").notNull().default("pending"),
+  requestedBy: varchar("requested_by").notNull(),
+  requestedAt: text("requested_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  resubmittedAt: text("resubmitted_at"),
+  reviewedAt: text("reviewed_at"),
+});
+
+export const builderOnboarding = pgTable("builder_onboarding", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  applicationId: varchar("application_id").notNull(),
+  
+  stepProfileComplete: boolean("step_profile_complete").notNull().default(false),
+  stepServicesAdded: boolean("step_services_added").notNull().default(false),
+  stepPortfolioAdded: boolean("step_portfolio_added").notNull().default(false),
+  stepPaymentSetup: boolean("step_payment_setup").notNull().default(false),
+  stepVerificationComplete: boolean("step_verification_complete").notNull().default(false),
+  
+  completionPercentage: integer("completion_percentage").notNull().default(0),
+  isComplete: boolean("is_complete").notNull().default(false),
+  completedAt: text("completed_at"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const insertBuilderApplicationSchema = createInsertSchema(builderApplications).omit({
   id: true,
   status: true,
@@ -973,3 +1073,68 @@ export type ProgressUpdate = typeof progressUpdates.$inferSelect;
 
 export type InsertProjectDocument = z.infer<typeof insertProjectDocumentSchema>;
 export type ProjectDocument = typeof projectDocuments.$inferSelect;
+
+export const insertBuilderFollowSchema = createInsertSchema(builderFollows).omit({
+  id: true,
+  followedAt: true,
+});
+
+export const insertBuilderActivitySchema = createInsertSchema(builderActivityFeed).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBuilderBadgeSchema = createInsertSchema(builderBadges).omit({
+  id: true,
+  earnedAt: true,
+});
+
+export const insertBuilderTestimonialSchema = createInsertSchema(builderTestimonials).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBuilderViewSchema = createInsertSchema(builderViews).omit({
+  id: true,
+  viewedAt: true,
+});
+
+export const insertPlatformStatisticSchema = createInsertSchema(platformStatistics).omit({
+  id: true,
+  calculatedAt: true,
+});
+
+export const insertBuilderApplicationRevisionSchema = createInsertSchema(builderApplicationRevisions).omit({
+  id: true,
+  requestedAt: true,
+});
+
+export const insertBuilderOnboardingSchema = createInsertSchema(builderOnboarding).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertBuilderFollow = z.infer<typeof insertBuilderFollowSchema>;
+export type BuilderFollow = typeof builderFollows.$inferSelect;
+
+export type InsertBuilderActivity = z.infer<typeof insertBuilderActivitySchema>;
+export type BuilderActivity = typeof builderActivityFeed.$inferSelect;
+
+export type InsertBuilderBadge = z.infer<typeof insertBuilderBadgeSchema>;
+export type BuilderBadge = typeof builderBadges.$inferSelect;
+
+export type InsertBuilderTestimonial = z.infer<typeof insertBuilderTestimonialSchema>;
+export type BuilderTestimonial = typeof builderTestimonials.$inferSelect;
+
+export type InsertBuilderView = z.infer<typeof insertBuilderViewSchema>;
+export type BuilderView = typeof builderViews.$inferSelect;
+
+export type InsertPlatformStatistic = z.infer<typeof insertPlatformStatisticSchema>;
+export type PlatformStatistic = typeof platformStatistics.$inferSelect;
+
+export type InsertBuilderApplicationRevision = z.infer<typeof insertBuilderApplicationRevisionSchema>;
+export type BuilderApplicationRevision = typeof builderApplicationRevisions.$inferSelect;
+
+export type InsertBuilderOnboarding = z.infer<typeof insertBuilderOnboardingSchema>;
+export type BuilderOnboarding = typeof builderOnboarding.$inferSelect;
