@@ -1141,3 +1141,78 @@ export type BuilderApplicationRevision = typeof builderApplicationRevisions.$inf
 
 export type InsertBuilderOnboarding = z.infer<typeof insertBuilderOnboardingSchema>;
 export type BuilderOnboarding = typeof builderOnboarding.$inferSelect;
+
+export const notifications = pgTable("notifications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  recipientId: varchar("recipient_id").notNull(),
+  recipientType: text("recipient_type").notNull(),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  actionUrl: text("action_url"),
+  relatedEntityId: varchar("related_entity_id"),
+  relatedEntityType: text("related_entity_type"),
+  isRead: boolean("is_read").notNull().default(false),
+  readAt: text("read_at"),
+  emailSent: boolean("email_sent").notNull().default(false),
+  pushSent: boolean("push_sent").notNull().default(false),
+  metadata: text("metadata"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const notificationPreferences = pgTable("notification_preferences", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique(),
+  userType: text("user_type").notNull(),
+  emailOrderUpdates: boolean("email_order_updates").notNull().default(true),
+  emailMessages: boolean("email_messages").notNull().default(true),
+  emailReviews: boolean("email_reviews").notNull().default(true),
+  emailPayments: boolean("email_payments").notNull().default(true),
+  emailMarketing: boolean("email_marketing").notNull().default(false),
+  pushOrderUpdates: boolean("push_order_updates").notNull().default(true),
+  pushMessages: boolean("push_messages").notNull().default(true),
+  pushReviews: boolean("push_reviews").notNull().default(true),
+  pushPayments: boolean("push_payments").notNull().default(true),
+  inAppOrderUpdates: boolean("in_app_order_updates").notNull().default(true),
+  inAppMessages: boolean("in_app_messages").notNull().default(true),
+  inAppReviews: boolean("in_app_reviews").notNull().default(true),
+  inAppPayments: boolean("in_app_payments").notNull().default(true),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  userType: text("user_type").notNull(),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  userAgent: text("user_agent"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertNotificationPreferencesSchema = createInsertSchema(notificationPreferences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type Notification = typeof notifications.$inferSelect;
+
+export type InsertNotificationPreferences = z.infer<typeof insertNotificationPreferencesSchema>;
+export type NotificationPreferences = typeof notificationPreferences.$inferSelect;
+
+export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
