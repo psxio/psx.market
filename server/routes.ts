@@ -588,6 +588,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/builders/:builderId/services/:id", async (req, res) => {
+    try {
+      const service = await storage.getService(req.params.id);
+      if (!service) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      if (service.builderId !== req.params.builderId) {
+        return res.status(403).json({ error: "Unauthorized - You can only edit your own services" });
+      }
+
+      const updatedService = await storage.updateService(req.params.id, req.body);
+      res.json(updatedService);
+    } catch (error) {
+      console.error("Error updating service:", error);
+      res.status(500).json({ error: "Failed to update service" });
+    }
+  });
+
+  app.delete("/api/builders/:builderId/services/:id", async (req, res) => {
+    try {
+      const service = await storage.getService(req.params.id);
+      if (!service) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      if (service.builderId !== req.params.builderId) {
+        return res.status(403).json({ error: "Unauthorized - You can only delete your own services" });
+      }
+
+      await storage.deleteService(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      res.status(500).json({ error: "Failed to delete service" });
+    }
+  });
+
+  app.patch("/api/builders/:builderId/services/:id/archive", async (req, res) => {
+    try {
+      const { active } = req.body;
+      if (typeof active !== "boolean") {
+        return res.status(400).json({ error: "Active must be a boolean" });
+      }
+
+      const service = await storage.getService(req.params.id);
+      if (!service) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      if (service.builderId !== req.params.builderId) {
+        return res.status(403).json({ error: "Unauthorized - You can only archive your own services" });
+      }
+
+      const updatedService = await storage.updateService(req.params.id, { active });
+      res.json(updatedService);
+    } catch (error) {
+      console.error("Error archiving service:", error);
+      res.status(500).json({ error: "Failed to archive service" });
+    }
+  });
+
   app.post("/api/wallet/verify", async (req, res) => {
     try {
       const { walletAddress } = req.body;

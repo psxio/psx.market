@@ -133,6 +133,8 @@ export const services = pgTable("services", {
   featured: boolean("featured").notNull().default(false),
   portfolioMedia: text("portfolio_media").array(),
   videoUrls: text("video_urls").array(),
+  active: boolean("active").notNull().default(true),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const reviews = pgTable("reviews", {
