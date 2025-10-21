@@ -1,5 +1,18 @@
 import { storage } from "./storage";
 import type { InsertNotification } from "@shared/schema";
+import { getEmailService } from "./email/service";
+import {
+  orderUpdateEmail,
+  newMessageEmail,
+  paymentReceivedEmail,
+  newReviewEmail,
+  milestoneUpdateEmail,
+  type OrderNotificationData,
+  type MessageNotificationData,
+  type PaymentNotificationData,
+  type ReviewNotificationData,
+  type MilestoneNotificationData,
+} from "./email/templates/notifications";
 
 interface NotificationOptions {
   recipientId: string;
@@ -31,7 +44,7 @@ export async function sendNotification(options: NotificationOptions): Promise<vo
   }
 
   if (preferences?.emailOrderUpdates && shouldSendEmailForType(type, preferences)) {
-    await sendEmailNotification(recipientId, recipientType, title, message, actionUrl);
+    await sendEmailNotification(recipientId, recipientType, title, message, actionUrl, metadata);
   }
 
   if (preferences?.pushOrderUpdates && shouldSendPushForType(type, preferences)) {
@@ -74,14 +87,51 @@ async function sendEmailNotification(
   recipientType: string,
   title: string,
   message: string,
-  actionUrl?: string
+  actionUrl?: string,
+  metadata?: Record<string, any>
 ): Promise<void> {
-  console.log("[Email Notification]", {
-    to: `${recipientType}:${recipientId}`,
-    subject: title,
-    body: message,
-    link: actionUrl,
-  });
+  try {
+    const emailService = getEmailService();
+    
+    // Get recipient email and name
+    let recipientEmail: string | undefined;
+    let recipientName: string | undefined;
+    
+    if (recipientType === "client") {
+      const client = await storage.getClient(recipientId);
+      recipientEmail = client?.email;
+      recipientName = client?.name || "User";
+    } else if (recipientType === "builder") {
+      const builder = await storage.getBuilder(recipientId);
+      // Builders don't have email in schema - they use wallet-based auth
+      // For future: could add optional email field to builders table
+      recipientEmail = undefined;
+      recipientName = builder?.name || "Builder";
+    }
+    
+    if (!recipientEmail) {
+      console.log("[Email] Recipient email not found:", recipientType, recipientId);
+      return;
+    }
+    
+    // Send basic email (can be enhanced with specific templates later)
+    await emailService.send({
+      to: { email: recipientEmail, name: recipientName },
+      subject: title,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>${title}</h2>
+          <p>${message}</p>
+          ${actionUrl ? `<p><a href="${actionUrl}" style="display: inline-block; padding: 12px 24px; background-color: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; margin-top: 16px;">View Details</a></p>` : ''}
+        </div>
+      `,
+      text: `${title}\n\n${message}${actionUrl ? `\n\nView: ${actionUrl}` : ''}`,
+    });
+    
+    console.log(`[Email] Sent to ${recipientEmail}: ${title}`);
+  } catch (error) {
+    console.error("[Email] Failed to send:", error);
+  }
 }
 
 async function sendPushNotification(
