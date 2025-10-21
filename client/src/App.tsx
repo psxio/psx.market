@@ -16,6 +16,7 @@ import BecomeClient from "@/pages/become-client";
 import ClientDashboard from "@/pages/client-dashboard";
 import BuilderDashboard from "@/pages/builder-dashboard";
 import MessagesPage from "@/pages/messages";
+import NotificationSettings from "@/pages/notification-settings";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import NotFound from "@/pages/not-found";
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/dashboard" component={ClientDashboard} />
       <Route path="/builder-dashboard" component={BuilderDashboard} />
       <Route path="/messages" component={MessagesPage} />
+      <Route path="/settings/notifications" component={NotificationSettings} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/:rest*" component={AdminDashboard} />
