@@ -246,15 +246,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "This review already has a dispute" });
       }
 
-      const { reason, disputedBy, evidence } = req.body;
-      if (!reason || !disputedBy) {
-        return res.status(400).json({ error: "Reason and disputedBy are required" });
+      const { reason, details, disputedBy, disputedByType, evidence } = req.body;
+      if (!reason || !details || !disputedBy || !disputedByType) {
+        return res.status(400).json({ error: "Reason, details, disputedBy, and disputedByType are required" });
       }
 
       const dispute = await storage.createReviewDispute({
         reviewId: req.params.id,
         disputedBy,
+        disputedByType,
         reason,
+        details,
         evidence: evidence || null,
       });
 
