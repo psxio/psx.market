@@ -15,8 +15,13 @@ import {
   type InsertProject,
   type Milestone,
   type InsertMilestone,
+  type Admin,
+  type InsertAdmin,
+  type Referral,
+  type InsertReferral,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import * as bcrypt from "bcryptjs";
 
 export interface IStorage {
   getBuilder(id: string): Promise<Builder | undefined>;
@@ -57,6 +62,30 @@ export interface IStorage {
   getMilestonesByProject(projectId: string): Promise<Milestone[]>;
   createMilestone(milestone: InsertMilestone): Promise<Milestone>;
   updateMilestoneStatus(id: string, status: string, transactionHash?: string): Promise<Milestone>;
+
+  getAdmin(username: string): Promise<Admin | undefined>;
+  getAdmins(): Promise<Admin[]>;
+  createAdmin(admin: InsertAdmin): Promise<Admin>;
+  updateAdmin(id: string, data: Partial<Admin>): Promise<Admin>;
+  deleteAdmin(id: string): Promise<void>;
+  verifyAdminPassword(username: string, password: string): Promise<Admin | null>;
+  updateLastLogin(username: string): Promise<void>;
+
+  getReferral(id: string): Promise<Referral | undefined>;
+  getReferrals(): Promise<Referral[]>;
+  getReferralsByWallet(wallet: string): Promise<Referral[]>;
+  createReferral(referral: InsertReferral): Promise<Referral>;
+  updateReferralStatus(id: string, status: string): Promise<Referral>;
+  deleteReferral(id: string): Promise<void>;
+
+  updateBuilder(id: string, data: Partial<Builder>): Promise<Builder>;
+  deleteBuilder(id: string): Promise<void>;
+  updateService(id: string, data: Partial<Service>): Promise<Service>;
+  deleteService(id: string): Promise<void>;
+  updateClient(id: string, data: Partial<Client>): Promise<Client>;
+  deleteClient(id: string): Promise<void>;
+  updateBuilderApplication(id: string, data: Partial<BuilderApplication>): Promise<BuilderApplication>;
+  deleteBuilderApplication(id: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -68,6 +97,8 @@ export class MemStorage implements IStorage {
   private clients: Map<string, Client>;
   private projects: Map<string, Project>;
   private milestones: Map<string, Milestone>;
+  private admins: Map<string, Admin>;
+  private referrals: Map<string, Referral>;
 
   constructor() {
     this.builders = new Map();
@@ -78,6 +109,8 @@ export class MemStorage implements IStorage {
     this.clients = new Map();
     this.projects = new Map();
     this.milestones = new Map();
+    this.admins = new Map();
+    this.referrals = new Map();
     this.seedData();
   }
 
@@ -632,6 +665,18 @@ export class MemStorage implements IStorage {
     ];
 
     reviews.forEach((review) => this.reviews.set(review.id, review));
+
+    const defaultAdmin: Admin = {
+      id: randomUUID(),
+      username: "admin",
+      passwordHash: bcrypt.hashSync("admin123", 10),
+      email: "admin@psxmarketplace.com",
+      name: "Admin User",
+      role: "admin",
+      lastLogin: null,
+      createdAt: new Date().toISOString(),
+    };
+    this.admins.set(defaultAdmin.id, defaultAdmin);
   }
 
   async getBuilder(id: string): Promise<Builder | undefined> {
@@ -946,6 +991,180 @@ export class MemStorage implements IStorage {
 
     this.milestones.set(id, milestone);
     return milestone;
+  }
+
+  async getAdmin(username: string): Promise<Admin | undefined> {
+    return Array.from(this.admins.values()).find(
+      (admin) => admin.username === username
+    );
+  }
+
+  async getAdmins(): Promise<Admin[]> {
+    return Array.from(this.admins.values());
+  }
+
+  async createAdmin(admin: InsertAdmin): Promise<Admin> {
+    const passwordHash = await bcrypt.hash(admin.passwordHash, 10);
+    const newAdmin: Admin = {
+      id: randomUUID(),
+      ...admin,
+      passwordHash,
+      role: admin.role || "admin",
+      lastLogin: null,
+      createdAt: new Date().toISOString(),
+    };
+    this.admins.set(newAdmin.id, newAdmin);
+    return newAdmin;
+  }
+
+  async updateAdmin(id: string, data: Partial<Admin>): Promise<Admin> {
+    const admin = this.admins.get(id);
+    if (!admin) {
+      throw new Error("Admin not found");
+    }
+
+    if (data.passwordHash) {
+      data.passwordHash = await bcrypt.hash(data.passwordHash, 10);
+    }
+
+    const updatedAdmin = { ...admin, ...data };
+    this.admins.set(id, updatedAdmin);
+    return updatedAdmin;
+  }
+
+  async deleteAdmin(id: string): Promise<void> {
+    this.admins.delete(id);
+  }
+
+  async verifyAdminPassword(username: string, password: string): Promise<Admin | null> {
+    const admin = await this.getAdmin(username);
+    if (!admin) {
+      return null;
+    }
+
+    const isValid = await bcrypt.compare(password, admin.passwordHash);
+    if (!isValid) {
+      return null;
+    }
+
+    return admin;
+  }
+
+  async updateLastLogin(username: string): Promise<void> {
+    const admin = await this.getAdmin(username);
+    if (admin) {
+      admin.lastLogin = new Date().toISOString();
+      this.admins.set(admin.id, admin);
+    }
+  }
+
+  async getReferral(id: string): Promise<Referral | undefined> {
+    return this.referrals.get(id);
+  }
+
+  async getReferrals(): Promise<Referral[]> {
+    return Array.from(this.referrals.values());
+  }
+
+  async getReferralsByWallet(wallet: string): Promise<Referral[]> {
+    return Array.from(this.referrals.values()).filter(
+      (ref) => ref.referrerWallet === wallet || ref.referredWallet === wallet
+    );
+  }
+
+  async createReferral(referral: InsertReferral): Promise<Referral> {
+    const newReferral: Referral = {
+      id: randomUUID(),
+      ...referral,
+      reward: referral.reward || null,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+    };
+    this.referrals.set(newReferral.id, newReferral);
+    return newReferral;
+  }
+
+  async updateReferralStatus(id: string, status: string): Promise<Referral> {
+    const referral = this.referrals.get(id);
+    if (!referral) {
+      throw new Error("Referral not found");
+    }
+
+    referral.status = status;
+    if (status === "completed" && !referral.completedAt) {
+      referral.completedAt = new Date().toISOString();
+    }
+
+    this.referrals.set(id, referral);
+    return referral;
+  }
+
+  async deleteReferral(id: string): Promise<void> {
+    this.referrals.delete(id);
+  }
+
+  async updateBuilder(id: string, data: Partial<Builder>): Promise<Builder> {
+    const builder = this.builders.get(id);
+    if (!builder) {
+      throw new Error("Builder not found");
+    }
+
+    const updatedBuilder = { ...builder, ...data };
+    this.builders.set(id, updatedBuilder);
+    return updatedBuilder;
+  }
+
+  async deleteBuilder(id: string): Promise<void> {
+    this.builders.delete(id);
+    Array.from(this.services.values())
+      .filter((service) => service.builderId === id)
+      .forEach((service) => this.services.delete(service.id));
+  }
+
+  async updateService(id: string, data: Partial<Service>): Promise<Service> {
+    const service = this.services.get(id);
+    if (!service) {
+      throw new Error("Service not found");
+    }
+
+    const updatedService = { ...service, ...data };
+    this.services.set(id, updatedService);
+    return updatedService;
+  }
+
+  async deleteService(id: string): Promise<void> {
+    this.services.delete(id);
+  }
+
+  async updateClient(id: string, data: Partial<Client>): Promise<Client> {
+    const client = this.clients.get(id);
+    if (!client) {
+      throw new Error("Client not found");
+    }
+
+    const updatedClient = { ...client, ...data };
+    this.clients.set(id, updatedClient);
+    return updatedClient;
+  }
+
+  async deleteClient(id: string): Promise<void> {
+    this.clients.delete(id);
+  }
+
+  async updateBuilderApplication(id: string, data: Partial<BuilderApplication>): Promise<BuilderApplication> {
+    const application = this.builderApplications.get(id);
+    if (!application) {
+      throw new Error("Builder application not found");
+    }
+
+    const updatedApplication = { ...application, ...data };
+    this.builderApplications.set(id, updatedApplication);
+    return updatedApplication;
+  }
+
+  async deleteBuilderApplication(id: string): Promise<void> {
+    this.builderApplications.delete(id);
   }
 }
 

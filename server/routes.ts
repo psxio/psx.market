@@ -233,6 +233,213 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: "Username and password required" });
+      }
+
+      const admin = await storage.verifyAdminPassword(username, password);
+      if (!admin) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      await storage.updateLastLogin(username);
+
+      res.json({
+        id: admin.id,
+        username: admin.username,
+        email: admin.email,
+        name: admin.name,
+        role: admin.role,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
+  app.get("/api/admin/builders", async (_req, res) => {
+    try {
+      const builders = await storage.getBuilders();
+      res.json(builders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch builders" });
+    }
+  });
+
+  app.post("/api/admin/builders", async (req, res) => {
+    try {
+      const builder = await storage.createBuilder(req.body);
+      res.json(builder);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create builder" });
+    }
+  });
+
+  app.put("/api/admin/builders/:id", async (req, res) => {
+    try {
+      const builder = await storage.updateBuilder(req.params.id, req.body);
+      res.json(builder);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update builder" });
+    }
+  });
+
+  app.delete("/api/admin/builders/:id", async (req, res) => {
+    try {
+      await storage.deleteBuilder(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete builder" });
+    }
+  });
+
+  app.get("/api/admin/clients", async (_req, res) => {
+    try {
+      const clients = await storage.getClients();
+      res.json(clients);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch clients" });
+    }
+  });
+
+  app.post("/api/admin/clients", async (req, res) => {
+    try {
+      const client = await storage.createClient(req.body);
+      res.json(client);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create client" });
+    }
+  });
+
+  app.put("/api/admin/clients/:id", async (req, res) => {
+    try {
+      const client = await storage.updateClient(req.params.id, req.body);
+      res.json(client);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update client" });
+    }
+  });
+
+  app.delete("/api/admin/clients/:id", async (req, res) => {
+    try {
+      await storage.deleteClient(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete client" });
+    }
+  });
+
+  app.get("/api/admin/services", async (_req, res) => {
+    try {
+      const services = await storage.getServices();
+      res.json(services);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch services" });
+    }
+  });
+
+  app.post("/api/admin/services", async (req, res) => {
+    try {
+      const service = await storage.createService(req.body);
+      res.json(service);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create service" });
+    }
+  });
+
+  app.put("/api/admin/services/:id", async (req, res) => {
+    try {
+      const service = await storage.updateService(req.params.id, req.body);
+      res.json(service);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update service" });
+    }
+  });
+
+  app.delete("/api/admin/services/:id", async (req, res) => {
+    try {
+      await storage.deleteService(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete service" });
+    }
+  });
+
+  app.get("/api/admin/applications", async (_req, res) => {
+    try {
+      const applications = await storage.getBuilderApplications();
+      res.json(applications);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch applications" });
+    }
+  });
+
+  app.put("/api/admin/applications/:id", async (req, res) => {
+    try {
+      const application = await storage.updateBuilderApplication(req.params.id, req.body);
+      res.json(application);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update application" });
+    }
+  });
+
+  app.post("/api/admin/applications/:id/approve", async (req, res) => {
+    try {
+      const builder = await storage.approveBuilderApplication(req.params.id);
+      res.json(builder);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to approve application" });
+    }
+  });
+
+  app.delete("/api/admin/applications/:id", async (req, res) => {
+    try {
+      await storage.deleteBuilderApplication(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete application" });
+    }
+  });
+
+  app.get("/api/admin/referrals", async (_req, res) => {
+    try {
+      const referrals = await storage.getReferrals();
+      res.json(referrals);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch referrals" });
+    }
+  });
+
+  app.post("/api/admin/referrals", async (req, res) => {
+    try {
+      const referral = await storage.createReferral(req.body);
+      res.json(referral);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create referral" });
+    }
+  });
+
+  app.put("/api/admin/referrals/:id", async (req, res) => {
+    try {
+      const referral = await storage.updateReferralStatus(req.params.id, req.body.status);
+      res.json(referral);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update referral" });
+    }
+  });
+
+  app.delete("/api/admin/referrals/:id", async (req, res) => {
+    try {
+      await storage.deleteReferral(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete referral" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

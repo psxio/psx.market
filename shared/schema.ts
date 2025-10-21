@@ -194,6 +194,42 @@ export const insertMilestoneSchema = createInsertSchema(milestones).omit({
   transactionHash: true,
 });
 
+export const admins = pgTable("admins", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  role: text("role").notNull().default("admin"),
+  lastLogin: text("last_login"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const referrals = pgTable("referrals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  referrerWallet: text("referrer_wallet").notNull(),
+  referredWallet: text("referred_wallet").notNull(),
+  referrerType: text("referrer_type").notNull(),
+  referredType: text("referred_type").notNull(),
+  status: text("status").notNull().default("pending"),
+  reward: decimal("reward", { precision: 10, scale: 2 }),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  completedAt: text("completed_at"),
+});
+
+export const insertAdminSchema = createInsertSchema(admins).omit({
+  id: true,
+  lastLogin: true,
+  createdAt: true,
+});
+
+export const insertReferralSchema = createInsertSchema(referrals).omit({
+  id: true,
+  status: true,
+  createdAt: true,
+  completedAt: true,
+});
+
 export type InsertBuilder = z.infer<typeof insertBuilderSchema>;
 export type Builder = typeof builders.$inferSelect;
 
@@ -217,3 +253,9 @@ export type Project = typeof projects.$inferSelect;
 
 export type InsertMilestone = z.infer<typeof insertMilestoneSchema>;
 export type Milestone = typeof milestones.$inferSelect;
+
+export type InsertAdmin = z.infer<typeof insertAdminSchema>;
+export type Admin = typeof admins.$inferSelect;
+
+export type InsertReferral = z.infer<typeof insertReferralSchema>;
+export type Referral = typeof referrals.$inferSelect;
