@@ -71,6 +71,7 @@ export const builders = pgTable("builders", {
   onTimeDeliveryRate: decimal("on_time_delivery_rate", { precision: 5, scale: 2 }).default("100"),
   activeOrders: integer("active_orders").notNull().default(0),
   lastActiveAt: text("last_active_at"),
+  tokenGateWhitelisted: boolean("token_gate_whitelisted").notNull().default(false),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -324,6 +325,7 @@ export const clients = pgTable("clients", {
   twitterHandle: text("twitter_handle"),
   telegramHandle: text("telegram_handle"),
   
+  tokenGateWhitelisted: boolean("token_gate_whitelisted").notNull().default(false),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 

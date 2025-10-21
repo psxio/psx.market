@@ -660,6 +660,11 @@ export class PostgresStorage implements IStorage {
       throw new Error('Application not found');
     }
 
+    // Check if this is one of the first 50 approved builders for whitelist
+    const currentBuilderCount = await db.select({ count: sqlFunc<number>`count(*)` }).from(builders);
+    const builderNum = Number(currentBuilderCount[0]?.count || 0) + 1;
+    const shouldWhitelist = builderNum <= 50;
+
     const builder = await this.createBuilder({
       walletAddress: application.walletAddress,
       name: application.name,
@@ -687,6 +692,7 @@ export class PostgresStorage implements IStorage {
       tradingExperience: application.tradingExperience,
       volumeCapabilities: application.volumeCapabilities,
       complianceKnowledge: application.complianceKnowledge,
+      tokenGateWhitelisted: shouldWhitelist,
     });
 
     await db.update(builderApplications)
@@ -711,7 +717,15 @@ export class PostgresStorage implements IStorage {
   }
 
   async createClient(client: InsertClient): Promise<Client> {
-    const result = await db.insert(clients).values(client).returning();
+    // Check if this is one of the first 2 clients for whitelist
+    const currentClientCount = await db.select({ count: sqlFunc<number>`count(*)` }).from(clients);
+    const clientNum = Number(currentClientCount[0]?.count || 0) + 1;
+    const shouldWhitelist = clientNum <= 2;
+
+    const result = await db.insert(clients).values({
+      ...client,
+      tokenGateWhitelisted: shouldWhitelist
+    }).returning();
     return result[0];
   }
 

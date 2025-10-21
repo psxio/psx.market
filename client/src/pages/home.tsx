@@ -63,10 +63,16 @@ export default function Home() {
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col justify-center space-y-8">
               <div className="space-y-4">
-                <Badge variant="outline" className="w-fit gap-1.5 border-primary/40 bg-primary/10 text-primary">
-                  <Shield className="h-3 w-3" />
-                  Token-Gated Premium Services
-                </Badge>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className="w-fit gap-1.5 border-primary/40 bg-primary/10 text-primary">
+                    <Shield className="h-3 w-3" />
+                    Token-Gated Premium Services
+                  </Badge>
+                  <Badge variant="default" className="w-fit gap-1.5 animate-pulse">
+                    <Sparkles className="h-3 w-3" />
+                    First 50 Builders + 2 Clients FREE
+                  </Badge>
+                </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                   Web3 Talent
                   <span className="block bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
@@ -77,6 +83,11 @@ export default function Home() {
                   The dual token-gated marketplace connecting premium builders with memecoin
                   and crypto projects. Quality assured through $CREATE and $PSX holdings.
                 </p>
+                <div className="rounded-lg border border-chart-3/30 bg-chart-3/5 p-4">
+                  <p className="text-sm font-medium text-chart-3">
+                    🎉 Launch Special: The first 50 approved builders and first 2 clients get FREE whitelisted access — no tokens required!
+                  </p>
+                </div>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
