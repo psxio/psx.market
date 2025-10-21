@@ -20,7 +20,7 @@ create.psx is built with a clear separation between its frontend and backend for
     - **Builder Profiles**: Comprehensive profiles with portfolios, services, reviews, dynamic skill arrays, and category-specific showcases (KOL social metrics, 3D visuals, marketing ROI, development GitHub, volume trading proof).
     - **Previous Projects Showcase**: Detailed case studies with results, metrics, media, and testimonials.
     - **Service Listings**: Detailed service offerings with tiered pricing.
-    - **Marketplace Browsing**: Advanced search, filtering, and category-based navigation (KOLs, 3D Content, Marketing, Development, Volume).
+    - **Marketplace Browsing**: Comprehensive search and filtering system with full-text search across services and builders, multi-select category filtering, price range slider, rating filters (3+, 4+, 5 stars), delivery time filters (24h, 3d, 7d, 14d), multiple sort options (price, rating, recent), builder-specific search endpoint with PSX tier and verification filters, active filter management with removable pills, and mobile-responsive filter sheet.
     - **Admin & Client Dashboards**: Dedicated interfaces for administration and project management with secure authentication.
     - **Builder Application System**: Multi-step form wizard with category-specific questions.
     - **PSX Agency Promotion**: Dedicated homepage section for B2B services.
@@ -63,6 +63,17 @@ create.psx is built with a clear separation between its frontend and backend for
   - **Authentication Integration**: File uploads require authentication (client wallet or admin session)
   - **File Metadata**: Automatic content-type detection, cache control headers, and proper file streaming
   - **Size Limits**: Configurable file size limits (default 10MB) with client-side validation
+- **Advanced Search & Filtering**: Comprehensive marketplace search functionality with:
+  - **Full-Text Search**: Searches across service titles, descriptions, tags, builder names, categories, skills, bios, and headlines
+  - **Category Filters**: Multi-select category filtering with active filter pills
+  - **Price Range**: Slider-based price filtering ($0-$10,000)
+  - **Rating Filters**: Minimum rating filters (3+ Stars, 4+ Stars, 5 Stars)
+  - **Delivery Time Filters**: Maximum delivery time options (24 hours, 3 days, 7 days, 14 days)
+  - **Sort Options**: Multiple sorting methods including price (low/high), rating (top-rated), and recent (newest first)
+  - **Builder Search**: Dedicated builder search endpoint with additional filters for PSX tier (bronze/silver/gold/platinum) and verified status
+  - **Combined Filtering**: All filters work together and can be combined for precise results
+  - **Query-Based State**: Filter state persisted in URL query parameters for sharing and bookmarking
+  - **Responsive UI**: Mobile-friendly filter sheet with all desktop functionality
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
