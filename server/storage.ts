@@ -25,6 +25,18 @@ import {
   type InsertAdmin,
   type Referral,
   type InsertReferral,
+  type Payment,
+  type InsertPayment,
+  type MilestonePayment,
+  type InsertMilestonePayment,
+  type Payout,
+  type InsertPayout,
+  type Dispute,
+  type InsertDispute,
+  type Refund,
+  type InsertRefund,
+  type Invoice,
+  type InsertInvoice,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -105,6 +117,52 @@ export interface IStorage {
   deleteClient(id: string): Promise<void>;
   updateBuilderApplication(id: string, data: Partial<BuilderApplication>): Promise<BuilderApplication>;
   deleteBuilderApplication(id: string): Promise<void>;
+
+  getPayment(id: string): Promise<Payment | undefined>;
+  getPayments(): Promise<Payment[]>;
+  getPaymentsByOrder(orderId: string): Promise<Payment[]>;
+  getPaymentsByClient(clientId: string): Promise<Payment[]>;
+  getPaymentsByBuilder(builderId: string): Promise<Payment[]>;
+  createPayment(payment: InsertPayment): Promise<Payment>;
+  updatePayment(id: string, data: Partial<Payment>): Promise<Payment>;
+
+  getMilestonePayment(id: string): Promise<MilestonePayment | undefined>;
+  getMilestonePaymentsByPayment(paymentId: string): Promise<MilestonePayment[]>;
+  getMilestonePaymentsByOrder(orderId: string): Promise<MilestonePayment[]>;
+  createMilestonePayment(milestonePayment: InsertMilestonePayment): Promise<MilestonePayment>;
+  updateMilestonePayment(id: string, data: Partial<MilestonePayment>): Promise<MilestonePayment>;
+  releaseMilestonePayment(id: string, transactionHash: string): Promise<MilestonePayment>;
+
+  getPayout(id: string): Promise<Payout | undefined>;
+  getPayouts(): Promise<Payout[]>;
+  getPayoutsByBuilder(builderId: string): Promise<Payout[]>;
+  createPayout(payout: InsertPayout): Promise<Payout>;
+  updatePayout(id: string, data: Partial<Payout>): Promise<Payout>;
+  processPayout(id: string, transactionHash: string): Promise<Payout>;
+
+  getDispute(id: string): Promise<Dispute | undefined>;
+  getDisputes(): Promise<Dispute[]>;
+  getDisputesByOrder(orderId: string): Promise<Dispute[]>;
+  getDisputesByPayment(paymentId: string): Promise<Dispute[]>;
+  createDispute(dispute: InsertDispute): Promise<Dispute>;
+  updateDispute(id: string, data: Partial<Dispute>): Promise<Dispute>;
+  resolveDispute(id: string, resolution: string, resolvedBy: string, refundAmount?: number): Promise<Dispute>;
+
+  getRefund(id: string): Promise<Refund | undefined>;
+  getRefunds(): Promise<Refund[]>;
+  getRefundsByOrder(orderId: string): Promise<Refund[]>;
+  getRefundsByPayment(paymentId: string): Promise<Refund[]>;
+  createRefund(refund: InsertRefund): Promise<Refund>;
+  updateRefund(id: string, data: Partial<Refund>): Promise<Refund>;
+  processRefund(id: string, transactionHash: string): Promise<Refund>;
+
+  getInvoice(id: string): Promise<Invoice | undefined>;
+  getInvoices(): Promise<Invoice[]>;
+  getInvoicesByClient(clientId: string): Promise<Invoice[]>;
+  getInvoicesByBuilder(builderId: string): Promise<Invoice[]>;
+  getInvoiceByPayment(paymentId: string): Promise<Invoice | undefined>;
+  createInvoice(invoice: InsertInvoice): Promise<Invoice>;
+  updateInvoice(id: string, data: Partial<Invoice>): Promise<Invoice>;
 }
 
 export class MemStorage implements IStorage {
@@ -121,6 +179,12 @@ export class MemStorage implements IStorage {
   private milestones: Map<string, Milestone>;
   private admins: Map<string, Admin>;
   private referrals: Map<string, Referral>;
+  private payments: Map<string, Payment>;
+  private milestonePayments: Map<string, MilestonePayment>;
+  private payouts: Map<string, Payout>;
+  private disputes: Map<string, Dispute>;
+  private refunds: Map<string, Refund>;
+  private invoices: Map<string, Invoice>;
 
   constructor() {
     this.builders = new Map();
@@ -136,6 +200,12 @@ export class MemStorage implements IStorage {
     this.milestones = new Map();
     this.admins = new Map();
     this.referrals = new Map();
+    this.payments = new Map();
+    this.milestonePayments = new Map();
+    this.payouts = new Map();
+    this.disputes = new Map();
+    this.refunds = new Map();
+    this.invoices = new Map();
     this.seedData();
   }
 
@@ -1398,6 +1468,324 @@ export class MemStorage implements IStorage {
 
   async deleteBuilderApplication(id: string): Promise<void> {
     this.builderApplications.delete(id);
+  }
+
+  async getPayment(id: string): Promise<Payment | undefined> {
+    return this.payments.get(id);
+  }
+
+  async getPayments(): Promise<Payment[]> {
+    return Array.from(this.payments.values());
+  }
+
+  async getPaymentsByOrder(orderId: string): Promise<Payment[]> {
+    return Array.from(this.payments.values()).filter(p => p.orderId === orderId);
+  }
+
+  async getPaymentsByClient(clientId: string): Promise<Payment[]> {
+    return Array.from(this.payments.values()).filter(p => p.clientId === clientId);
+  }
+
+  async getPaymentsByBuilder(builderId: string): Promise<Payment[]> {
+    return Array.from(this.payments.values()).filter(p => p.builderId === builderId);
+  }
+
+  async createPayment(payment: InsertPayment): Promise<Payment> {
+    const newPayment: Payment = {
+      ...payment,
+      id: randomUUID(),
+      status: "pending",
+      paidAt: null,
+      releasedAt: null,
+      refundedAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.payments.set(newPayment.id, newPayment);
+    return newPayment;
+  }
+
+  async updatePayment(id: string, data: Partial<Payment>): Promise<Payment> {
+    const payment = this.payments.get(id);
+    if (!payment) {
+      throw new Error("Payment not found");
+    }
+
+    const updatedPayment = { ...payment, ...data, updatedAt: new Date().toISOString() };
+    this.payments.set(id, updatedPayment);
+    return updatedPayment;
+  }
+
+  async getMilestonePayment(id: string): Promise<MilestonePayment | undefined> {
+    return this.milestonePayments.get(id);
+  }
+
+  async getMilestonePaymentsByPayment(paymentId: string): Promise<MilestonePayment[]> {
+    return Array.from(this.milestonePayments.values()).filter(mp => mp.paymentId === paymentId);
+  }
+
+  async getMilestonePaymentsByOrder(orderId: string): Promise<MilestonePayment[]> {
+    return Array.from(this.milestonePayments.values()).filter(mp => mp.orderId === orderId);
+  }
+
+  async createMilestonePayment(milestonePayment: InsertMilestonePayment): Promise<MilestonePayment> {
+    const newMilestonePayment: MilestonePayment = {
+      ...milestonePayment,
+      id: randomUUID(),
+      status: "locked",
+      transactionHash: null,
+      releasedAt: null,
+      createdAt: new Date().toISOString(),
+    };
+    this.milestonePayments.set(newMilestonePayment.id, newMilestonePayment);
+    return newMilestonePayment;
+  }
+
+  async updateMilestonePayment(id: string, data: Partial<MilestonePayment>): Promise<MilestonePayment> {
+    const milestonePayment = this.milestonePayments.get(id);
+    if (!milestonePayment) {
+      throw new Error("Milestone payment not found");
+    }
+
+    const updatedMilestonePayment = { ...milestonePayment, ...data };
+    this.milestonePayments.set(id, updatedMilestonePayment);
+    return updatedMilestonePayment;
+  }
+
+  async releaseMilestonePayment(id: string, transactionHash: string): Promise<MilestonePayment> {
+    const milestonePayment = this.milestonePayments.get(id);
+    if (!milestonePayment) {
+      throw new Error("Milestone payment not found");
+    }
+
+    const updatedMilestonePayment = { 
+      ...milestonePayment, 
+      status: "released",
+      transactionHash,
+      releasedAt: new Date().toISOString()
+    };
+    this.milestonePayments.set(id, updatedMilestonePayment);
+    return updatedMilestonePayment;
+  }
+
+  async getPayout(id: string): Promise<Payout | undefined> {
+    return this.payouts.get(id);
+  }
+
+  async getPayouts(): Promise<Payout[]> {
+    return Array.from(this.payouts.values());
+  }
+
+  async getPayoutsByBuilder(builderId: string): Promise<Payout[]> {
+    return Array.from(this.payouts.values()).filter(p => p.builderId === builderId);
+  }
+
+  async createPayout(payout: InsertPayout): Promise<Payout> {
+    const newPayout: Payout = {
+      ...payout,
+      id: randomUUID(),
+      status: "pending",
+      transactionHash: null,
+      processedAt: null,
+      failureReason: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.payouts.set(newPayout.id, newPayout);
+    return newPayout;
+  }
+
+  async updatePayout(id: string, data: Partial<Payout>): Promise<Payout> {
+    const payout = this.payouts.get(id);
+    if (!payout) {
+      throw new Error("Payout not found");
+    }
+
+    const updatedPayout = { ...payout, ...data, updatedAt: new Date().toISOString() };
+    this.payouts.set(id, updatedPayout);
+    return updatedPayout;
+  }
+
+  async processPayout(id: string, transactionHash: string): Promise<Payout> {
+    const payout = this.payouts.get(id);
+    if (!payout) {
+      throw new Error("Payout not found");
+    }
+
+    const updatedPayout = { 
+      ...payout, 
+      status: "completed",
+      transactionHash,
+      processedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    this.payouts.set(id, updatedPayout);
+    return updatedPayout;
+  }
+
+  async getDispute(id: string): Promise<Dispute | undefined> {
+    return this.disputes.get(id);
+  }
+
+  async getDisputes(): Promise<Dispute[]> {
+    return Array.from(this.disputes.values());
+  }
+
+  async getDisputesByOrder(orderId: string): Promise<Dispute[]> {
+    return Array.from(this.disputes.values()).filter(d => d.orderId === orderId);
+  }
+
+  async getDisputesByPayment(paymentId: string): Promise<Dispute[]> {
+    return Array.from(this.disputes.values()).filter(d => d.paymentId === paymentId);
+  }
+
+  async createDispute(dispute: InsertDispute): Promise<Dispute> {
+    const newDispute: Dispute = {
+      ...dispute,
+      id: randomUUID(),
+      status: "open",
+      resolution: null,
+      resolvedBy: null,
+      resolvedAt: null,
+      refundAmount: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.disputes.set(newDispute.id, newDispute);
+    return newDispute;
+  }
+
+  async updateDispute(id: string, data: Partial<Dispute>): Promise<Dispute> {
+    const dispute = this.disputes.get(id);
+    if (!dispute) {
+      throw new Error("Dispute not found");
+    }
+
+    const updatedDispute = { ...dispute, ...data, updatedAt: new Date().toISOString() };
+    this.disputes.set(id, updatedDispute);
+    return updatedDispute;
+  }
+
+  async resolveDispute(id: string, resolution: string, resolvedBy: string, refundAmount?: number): Promise<Dispute> {
+    const dispute = this.disputes.get(id);
+    if (!dispute) {
+      throw new Error("Dispute not found");
+    }
+
+    const updatedDispute = { 
+      ...dispute, 
+      status: "resolved",
+      resolution,
+      resolvedBy,
+      refundAmount: refundAmount !== undefined ? refundAmount.toString() : null,
+      resolvedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    this.disputes.set(id, updatedDispute);
+    return updatedDispute;
+  }
+
+  async getRefund(id: string): Promise<Refund | undefined> {
+    return this.refunds.get(id);
+  }
+
+  async getRefunds(): Promise<Refund[]> {
+    return Array.from(this.refunds.values());
+  }
+
+  async getRefundsByOrder(orderId: string): Promise<Refund[]> {
+    return Array.from(this.refunds.values()).filter(r => r.orderId === orderId);
+  }
+
+  async getRefundsByPayment(paymentId: string): Promise<Refund[]> {
+    return Array.from(this.refunds.values()).filter(r => r.paymentId === paymentId);
+  }
+
+  async createRefund(refund: InsertRefund): Promise<Refund> {
+    const newRefund: Refund = {
+      ...refund,
+      id: randomUUID(),
+      status: "pending",
+      transactionHash: null,
+      processedAt: null,
+      failureReason: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.refunds.set(newRefund.id, newRefund);
+    return newRefund;
+  }
+
+  async updateRefund(id: string, data: Partial<Refund>): Promise<Refund> {
+    const refund = this.refunds.get(id);
+    if (!refund) {
+      throw new Error("Refund not found");
+    }
+
+    const updatedRefund = { ...refund, ...data, updatedAt: new Date().toISOString() };
+    this.refunds.set(id, updatedRefund);
+    return updatedRefund;
+  }
+
+  async processRefund(id: string, transactionHash: string): Promise<Refund> {
+    const refund = this.refunds.get(id);
+    if (!refund) {
+      throw new Error("Refund not found");
+    }
+
+    const updatedRefund = { 
+      ...refund, 
+      status: "completed",
+      transactionHash,
+      processedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    this.refunds.set(id, updatedRefund);
+    return updatedRefund;
+  }
+
+  async getInvoice(id: string): Promise<Invoice | undefined> {
+    return this.invoices.get(id);
+  }
+
+  async getInvoices(): Promise<Invoice[]> {
+    return Array.from(this.invoices.values());
+  }
+
+  async getInvoicesByClient(clientId: string): Promise<Invoice[]> {
+    return Array.from(this.invoices.values()).filter(i => i.clientId === clientId);
+  }
+
+  async getInvoicesByBuilder(builderId: string): Promise<Invoice[]> {
+    return Array.from(this.invoices.values()).filter(i => i.builderId === builderId);
+  }
+
+  async getInvoiceByPayment(paymentId: string): Promise<Invoice | undefined> {
+    return Array.from(this.invoices.values()).find(i => i.paymentId === paymentId);
+  }
+
+  async createInvoice(invoice: InsertInvoice): Promise<Invoice> {
+    const newInvoice: Invoice = {
+      ...invoice,
+      id: randomUUID(),
+      status: "draft",
+      paidAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.invoices.set(newInvoice.id, newInvoice);
+    return newInvoice;
+  }
+
+  async updateInvoice(id: string, data: Partial<Invoice>): Promise<Invoice> {
+    const invoice = this.invoices.get(id);
+    if (!invoice) {
+      throw new Error("Invoice not found");
+    }
+
+    const updatedInvoice = { ...invoice, ...data, updatedAt: new Date().toISOString() };
+    this.invoices.set(id, updatedInvoice);
+    return updatedInvoice;
   }
 }
 
