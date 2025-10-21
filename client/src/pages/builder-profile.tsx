@@ -18,8 +18,24 @@ import {
   ExternalLink,
   Package,
   MessageCircle,
+  Instagram,
+  Youtube,
+  Send,
+  TrendingUp,
+  Users,
+  Eye,
+  Code,
+  Github,
+  FileCheck,
+  BarChart3,
+  Target,
+  DollarSign,
+  Zap,
+  Shield,
+  PlayCircle,
+  ImageIcon,
 } from "lucide-react";
-import type { Builder, Service, Review } from "@shared/schema";
+import type { Builder, Service, Review, BuilderProject } from "@shared/schema";
 
 export default function BuilderProfile() {
   const [, params] = useRoute("/builder/:id");
@@ -39,6 +55,11 @@ export default function BuilderProfile() {
 
   const { data: reviews, isLoading: reviewsLoading } = useQuery<Review[]>({
     queryKey: ["/api/builders", builderId, "reviews"],
+    enabled: !!builderId,
+  });
+
+  const { data: projects, isLoading: projectsLoading } = useQuery<BuilderProject[]>({
+    queryKey: ["/api/builders", builderId, "projects"],
     enabled: !!builderId,
   });
 
@@ -160,8 +181,12 @@ export default function BuilderProfile() {
 
       <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         <Tabs defaultValue="about" className="space-y-8">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsList className="grid w-full max-w-3xl grid-cols-5">
             <TabsTrigger value="about" data-testid="tab-about">About</TabsTrigger>
+            <TabsTrigger value="portfolio" data-testid="tab-portfolio">Portfolio</TabsTrigger>
+            <TabsTrigger value="projects" data-testid="tab-projects">
+              Projects ({projects?.length || 0})
+            </TabsTrigger>
             <TabsTrigger value="services" data-testid="tab-services">
               Services ({services?.length || 0})
             </TabsTrigger>
@@ -205,7 +230,7 @@ export default function BuilderProfile() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Stats</CardTitle>
+                <CardTitle>Stats & Metrics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -227,9 +252,678 @@ export default function BuilderProfile() {
                       {builder.psxTier}
                     </Badge>
                   </div>
+                  
+                  {builder.category === "KOLs" && (
+                    <>
+                      {builder.twitterFollowers && (
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Twitter className="h-3 w-3" /> Twitter Followers
+                          </p>
+                          <p className="text-2xl font-bold">{builder.twitterFollowers.toLocaleString()}</p>
+                        </div>
+                      )}
+                      {builder.instagramFollowers && (
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Instagram className="h-3 w-3" /> Instagram Followers
+                          </p>
+                          <p className="text-2xl font-bold">{builder.instagramFollowers.toLocaleString()}</p>
+                        </div>
+                      )}
+                      {builder.engagementRate && (
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <TrendingUp className="h-3 w-3" /> Engagement Rate
+                          </p>
+                          <p className="text-2xl font-bold">{builder.engagementRate}%</p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  
+                  {builder.category === "Marketing" && builder.avgROI && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Target className="h-3 w-3" /> Average ROI
+                      </p>
+                      <p className="text-2xl font-bold text-chart-3">{builder.avgROI}%</p>
+                    </div>
+                  )}
+                  
+                  {builder.category === "Development" && builder.deployedContracts && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Code className="h-3 w-3" /> Deployed Contracts
+                      </p>
+                      <p className="text-2xl font-bold">{builder.deployedContracts}</p>
+                    </div>
+                  )}
+                  
+                  {builder.category === "Volume" && builder.tradingExperience && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <BarChart3 className="h-3 w-3" /> Years Trading
+                      </p>
+                      <p className="text-2xl font-bold">{builder.tradingExperience}</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="portfolio" className="space-y-6">
+            {builder.category === "KOLs" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Social Presence & Influence</CardTitle>
+                  <CardDescription>Verified reach across multiple platforms</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {builder.twitterHandle && (
+                      <div className="flex items-start gap-3 p-4 rounded-md border">
+                        <Twitter className="h-5 w-5 text-primary mt-0.5" />
+                        <div className="flex-1 space-y-1">
+                          <p className="font-semibold">Twitter</p>
+                          <p className="text-sm text-muted-foreground">@{builder.twitterHandle}</p>
+                          <p className="text-lg font-bold">{builder.twitterFollowers?.toLocaleString()} followers</p>
+                        </div>
+                      </div>
+                    )}
+                    {builder.instagramHandle && (
+                      <div className="flex items-start gap-3 p-4 rounded-md border">
+                        <Instagram className="h-5 w-5 text-primary mt-0.5" />
+                        <div className="flex-1 space-y-1">
+                          <p className="font-semibold">Instagram</p>
+                          <p className="text-sm text-muted-foreground">@{builder.instagramHandle}</p>
+                          <p className="text-lg font-bold">{builder.instagramFollowers?.toLocaleString()} followers</p>
+                        </div>
+                      </div>
+                    )}
+                    {builder.youtubeChannel && (
+                      <div className="flex items-start gap-3 p-4 rounded-md border">
+                        <Youtube className="h-5 w-5 text-primary mt-0.5" />
+                        <div className="flex-1 space-y-1">
+                          <p className="font-semibold">YouTube</p>
+                          <p className="text-sm text-muted-foreground">{builder.youtubeChannel}</p>
+                          <p className="text-lg font-bold">{builder.youtubeSubscribers?.toLocaleString()} subscribers</p>
+                        </div>
+                      </div>
+                    )}
+                    {builder.telegramHandle && (
+                      <div className="flex items-start gap-3 p-4 rounded-md border">
+                        <Send className="h-5 w-5 text-primary mt-0.5" />
+                        <div className="flex-1 space-y-1">
+                          <p className="font-semibold">Telegram</p>
+                          <p className="text-sm text-muted-foreground">@{builder.telegramHandle}</p>
+                          <p className="text-lg font-bold">{builder.telegramMembers?.toLocaleString()} members</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {(builder.engagementRate || builder.audienceDemographics) && (
+                    <>
+                      <Separator />
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {builder.engagementRate && (
+                          <div className="space-y-2">
+                            <p className="text-sm font-semibold flex items-center gap-1">
+                              <TrendingUp className="h-4 w-4" /> Engagement Rate
+                            </p>
+                            <p className="text-3xl font-bold text-chart-3">{builder.engagementRate}%</p>
+                          </div>
+                        )}
+                        {builder.audienceDemographics && (
+                          <div className="space-y-2">
+                            <p className="text-sm font-semibold flex items-center gap-1">
+                              <Users className="h-4 w-4" /> Audience
+                            </p>
+                            <p className="text-sm text-muted-foreground">{builder.audienceDemographics}</p>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  
+                  {builder.contentNiches && builder.contentNiches.length > 0 && (
+                    <>
+                      <Separator />
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">Content Niches</p>
+                        <div className="flex flex-wrap gap-2">
+                          {builder.contentNiches.map((niche, i) => (
+                            <Badge key={i} variant="secondary">{niche}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {builder.brandPartnerships && builder.brandPartnerships.length > 0 && (
+                    <>
+                      <Separator />
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">Brand Partnerships</p>
+                        <div className="flex flex-wrap gap-2">
+                          {builder.brandPartnerships.map((brand, i) => (
+                            <Badge key={i} variant="outline">{brand}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
+            {builder.category === "3D Content" && (
+              <>
+                {(builder.portfolioMedia && builder.portfolioMedia.length > 0) || builder.videoShowreel ? (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Visual Portfolio</CardTitle>
+                      <CardDescription>Showcasing previous work and creative capabilities</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {builder.videoShowreel && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-semibold flex items-center gap-1">
+                            <PlayCircle className="h-4 w-4" /> Video Showreel
+                          </p>
+                          <a
+                            href={builder.videoShowreel}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-primary hover:underline"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            View Showreel
+                          </a>
+                        </div>
+                      )}
+                      
+                      {builder.portfolioMedia && builder.portfolioMedia.length > 0 && (
+                        <>
+                          <Separator />
+                          <div className="space-y-2">
+                            <p className="text-sm font-semibold flex items-center gap-1">
+                              <ImageIcon className="h-4 w-4" /> Portfolio Media
+                            </p>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                              {builder.portfolioMedia.map((media, i) => (
+                                <a
+                                  key={i}
+                                  href={media}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="aspect-video rounded-md border hover-elevate overflow-hidden"
+                                >
+                                  <img
+                                    src={media}
+                                    alt={`Portfolio ${i + 1}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                ) : null}
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Technical Skills</CardTitle>
+                    <CardDescription>Software and expertise</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {builder.software3D && builder.software3D.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">3D Software</p>
+                        <div className="flex flex-wrap gap-2">
+                          {builder.software3D.map((software, i) => (
+                            <Badge key={i} variant="secondary">{software}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {builder.renderEngines && builder.renderEngines.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">Render Engines</p>
+                        <div className="flex flex-wrap gap-2">
+                          {builder.renderEngines.map((engine, i) => (
+                            <Badge key={i} variant="outline">{engine}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {builder.styleSpecialties && builder.styleSpecialties.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">Style Specialties</p>
+                        <div className="flex flex-wrap gap-2">
+                          {builder.styleSpecialties.map((style, i) => (
+                            <Badge key={i}>{style}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {builder.animationExpertise && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold">Animation Expertise</p>
+                        <p className="text-sm text-muted-foreground">{builder.animationExpertise}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            )}
+            
+            {builder.category === "Marketing" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Marketing Expertise</CardTitle>
+                  <CardDescription>Platforms, strategies, and proven results</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {builder.avgROI && (
+                    <div className="flex items-center gap-3 p-4 rounded-md border bg-chart-3/10">
+                      <Target className="h-8 w-8 text-chart-3" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Average ROI Delivered</p>
+                        <p className="text-3xl font-bold text-chart-3">{builder.avgROI}%</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.marketingPlatforms && builder.marketingPlatforms.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Marketing Platforms</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.marketingPlatforms.map((platform, i) => (
+                          <Badge key={i} variant="secondary">{platform}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.growthStrategies && builder.growthStrategies.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Growth Strategies</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.growthStrategies.map((strategy, i) => (
+                          <Badge key={i}>{strategy}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.clientIndustries && builder.clientIndustries.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Client Industries</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.clientIndustries.map((industry, i) => (
+                          <Badge key={i} variant="outline">{industry}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
+            {builder.category === "Development" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Development Expertise</CardTitle>
+                  <CardDescription>Languages, frameworks, and blockchain experience</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {builder.githubProfile && (
+                    <div className="flex items-center gap-3 p-4 rounded-md border">
+                      <Github className="h-6 w-6" />
+                      <div className="flex-1">
+                        <p className="font-semibold">GitHub Profile</p>
+                        <a
+                          href={builder.githubProfile}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:underline flex items-center gap-1"
+                        >
+                          {builder.githubProfile.replace("https://github.com/", "")}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {builder.deployedContracts && (
+                      <div className="space-y-1">
+                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Code className="h-3 w-3" /> Deployed Contracts
+                        </p>
+                        <p className="text-2xl font-bold">{builder.deployedContracts}</p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {builder.programmingLanguages && builder.programmingLanguages.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Programming Languages</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.programmingLanguages.map((lang, i) => (
+                          <Badge key={i} variant="secondary">{lang}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.blockchainFrameworks && builder.blockchainFrameworks.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Blockchain Frameworks</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.blockchainFrameworks.map((framework, i) => (
+                          <Badge key={i}>{framework}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.certifications && builder.certifications.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold flex items-center gap-1">
+                        <FileCheck className="h-4 w-4" /> Certifications
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.certifications.map((cert, i) => (
+                          <Badge key={i} variant="outline">{cert}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.auditReports && builder.auditReports.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold flex items-center gap-1">
+                        <Shield className="h-4 w-4" /> Security Audits
+                      </p>
+                      <div className="space-y-1">
+                        {builder.auditReports.map((audit, i) => (
+                          <a
+                            key={i}
+                            href={audit}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-primary hover:underline"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View Audit Report {i + 1}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
+            {builder.category === "Volume" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Volume Trading Experience</CardTitle>
+                  <CardDescription>Expertise, capabilities, and compliance</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {builder.tradingExperience && (
+                      <div className="space-y-1">
+                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <BarChart3 className="h-3 w-3" /> Years of Experience
+                        </p>
+                        <p className="text-2xl font-bold">{builder.tradingExperience}</p>
+                      </div>
+                    )}
+                    {builder.complianceKnowledge && (
+                      <div className="flex items-center gap-2">
+                        <Shield className="h-5 w-5 text-chart-3" />
+                        <div>
+                          <p className="text-sm font-semibold">Compliance Knowledge</p>
+                          <p className="text-xs text-muted-foreground">Regulatory aware</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {builder.volumeCapabilities && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold flex items-center gap-1">
+                        <Zap className="h-4 w-4" /> Volume Capabilities
+                      </p>
+                      <p className="text-sm text-muted-foreground">{builder.volumeCapabilities}</p>
+                    </div>
+                  )}
+                  
+                  {builder.dexExpertise && builder.dexExpertise.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">DEX Expertise</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.dexExpertise.map((dex, i) => (
+                          <Badge key={i} variant="secondary">{dex}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.cexExpertise && builder.cexExpertise.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">CEX Expertise</p>
+                      <div className="flex flex-wrap gap-2">
+                        {builder.cexExpertise.map((cex, i) => (
+                          <Badge key={i}>{cex}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {builder.volumeProof && builder.volumeProof.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold flex items-center gap-1">
+                        <FileCheck className="h-4 w-4" /> Volume Proof
+                      </p>
+                      <div className="space-y-1">
+                        {builder.volumeProof.map((proof, i) => (
+                          <a
+                            key={i}
+                            href={proof}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-primary hover:underline"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View Proof {i + 1}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
+            {(!builder.category || !["KOLs", "3D Content", "Marketing", "Development", "Volume"].includes(builder.category)) && (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">Portfolio information not available</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="projects" className="space-y-6">
+            {projectsLoading ? (
+              <div className="grid gap-6">
+                {[...Array(2)].map((_, i) => (
+                  <Skeleton key={i} className="h-64 w-full" />
+                ))}
+              </div>
+            ) : projects && projects.length > 0 ? (
+              <div className="grid gap-6">
+                {projects.map((project) => (
+                  <Card key={project.id} data-testid={`card-project-${project.id}`}>
+                    <CardHeader>
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div className="space-y-1">
+                          <CardTitle className="text-xl">{project.title}</CardTitle>
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                            {project.clientName && <span>{project.clientName}</span>}
+                            {project.clientName && <span>•</span>}
+                            <span>{project.projectDate}</span>
+                          </div>
+                        </div>
+                        <Badge variant="secondary">{project.category}</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <p className="text-muted-foreground">{project.description}</p>
+                      
+                      {project.results && project.results.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-semibold">Key Results</p>
+                          <ul className="space-y-1">
+                            {project.results.map((result, i) => (
+                              <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                                <CheckCircle2 className="h-4 w-4 text-chart-3 mt-0.5 flex-shrink-0" />
+                                {result}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {(project.twitterReach || project.engagementGenerated || project.followersGained || project.roiPercentage || project.revenueGenerated || project.volumeDelivered) && (
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                          {project.twitterReach && (
+                            <div className="space-y-1 p-3 rounded-md border">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Eye className="h-3 w-3" /> Twitter Reach
+                              </p>
+                              <p className="text-xl font-bold">{project.twitterReach.toLocaleString()}</p>
+                            </div>
+                          )}
+                          {project.engagementGenerated && (
+                            <div className="space-y-1 p-3 rounded-md border">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <TrendingUp className="h-3 w-3" /> Engagement
+                              </p>
+                              <p className="text-xl font-bold">{project.engagementGenerated.toLocaleString()}</p>
+                            </div>
+                          )}
+                          {project.followersGained && (
+                            <div className="space-y-1 p-3 rounded-md border">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Users className="h-3 w-3" /> Followers Gained
+                              </p>
+                              <p className="text-xl font-bold">{project.followersGained.toLocaleString()}</p>
+                            </div>
+                          )}
+                          {project.roiPercentage && (
+                            <div className="space-y-1 p-3 rounded-md border bg-chart-3/10">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Target className="h-3 w-3" /> ROI
+                              </p>
+                              <p className="text-xl font-bold text-chart-3">{project.roiPercentage}%</p>
+                            </div>
+                          )}
+                          {project.revenueGenerated && (
+                            <div className="space-y-1 p-3 rounded-md border">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <DollarSign className="h-3 w-3" /> Revenue Generated
+                              </p>
+                              <p className="text-xl font-bold">${parseFloat(project.revenueGenerated).toLocaleString()}</p>
+                            </div>
+                          )}
+                          {project.volumeDelivered && (
+                            <div className="space-y-1 p-3 rounded-md border">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <BarChart3 className="h-3 w-3" /> Volume Delivered
+                              </p>
+                              <p className="text-xl font-bold">${parseFloat(project.volumeDelivered).toLocaleString()}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {project.mediaUrls && project.mediaUrls.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-semibold">Project Media</p>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {project.mediaUrls.map((url, i) => (
+                              <a
+                                key={i}
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="aspect-video rounded-md border hover-elevate overflow-hidden"
+                              >
+                                <img
+                                  src={url}
+                                  alt={`Project media ${i + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {(project.liveUrl || project.contractAddress) && (
+                        <div className="flex flex-wrap gap-3">
+                          {project.liveUrl && (
+                            <Button variant="outline" size="sm" asChild className="hover-elevate">
+                              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                View Live Project
+                              </a>
+                            </Button>
+                          )}
+                          {project.contractAddress && (
+                            <Button variant="outline" size="sm" asChild className="hover-elevate">
+                              <a href={`https://etherscan.io/address/${project.contractAddress}`} target="_blank" rel="noopener noreferrer">
+                                <Code className="h-3 w-3 mr-1" />
+                                View Contract
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                      
+                      {project.testimonial && (
+                        <div className="p-4 rounded-md border bg-muted/30">
+                          <p className="text-sm italic text-muted-foreground mb-2">"{project.testimonial}"</p>
+                          {project.testimonialAuthor && (
+                            <p className="text-xs font-semibold">— {project.testimonialAuthor}</p>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground">No previous projects showcased yet</p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="services" className="space-y-6">
