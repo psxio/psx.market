@@ -41,6 +41,8 @@ create.psx is built with a clear separation between its frontend and backend for
 - **Social & Community Features**: Builder follow system allowing clients to follow their favorite builders, activity feed tracking for builder updates, community badges (verified, top-rated, fast-response), testimonials with admin approval, and profile view tracking with analytics.
 - **Analytics & Insights**: Platform-wide statistics dashboard with market insights, client analytics showing spending patterns and project history, builder performance metrics, category performance tracking, and comprehensive view statistics.
 - **Enhanced Builder Application System**: Application status tracking, revision request workflow with admin feedback, applicant resubmission portal, automated onboarding checklist after approval (profile setup, service listing, portfolio addition, payment configuration, verification), and progress tracking.
+- **Progressive Web App (PWA)**: Full PWA implementation with service worker for offline functionality, app manifest for installability, app icons (192x192, 512x512), mobile-optimized meta tags, install prompt component with iOS/Android support, and cache-first strategy for static assets. Users can install create.psx as a standalone app on mobile and desktop devices.
+- **Mobile Optimization**: Enhanced responsive design with touch-friendly spacing, mobile-specific layouts for complex components (order booking dialog with single-column grid on mobile), adaptive font sizes, and viewport optimization for various screen sizes.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
