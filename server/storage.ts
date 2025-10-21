@@ -55,6 +55,12 @@ import {
   type InsertProgressUpdate,
   type ProjectDocument,
   type InsertProjectDocument,
+  type Notification,
+  type InsertNotification,
+  type NotificationPreferences,
+  type InsertNotificationPreferences,
+  type PushSubscription,
+  type InsertPushSubscription,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -296,6 +302,22 @@ export interface IStorage {
   createBuilderOnboarding(builderId: string, applicationId: string): Promise<void>;
   getBuilderOnboarding(builderId: string): Promise<any | undefined>;
   updateOnboardingStep(builderId: string, step: string, completed: boolean): Promise<void>;
+
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  getNotifications(recipientId: string, recipientType: string, limit?: number, unreadOnly?: boolean): Promise<Notification[]>;
+  getNotification(id: string): Promise<Notification | undefined>;
+  markNotificationAsRead(id: string): Promise<Notification>;
+  markAllNotificationsAsRead(recipientId: string, recipientType: string): Promise<void>;
+  deleteNotification(id: string): Promise<void>;
+  getUnreadNotificationCount(recipientId: string, recipientType: string): Promise<number>;
+  
+  getNotificationPreferences(userId: string, userType: string): Promise<NotificationPreferences | undefined>;
+  createNotificationPreferences(preferences: InsertNotificationPreferences): Promise<NotificationPreferences>;
+  updateNotificationPreferences(userId: string, userType: string, data: Partial<NotificationPreferences>): Promise<NotificationPreferences>;
+  
+  createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
+  getPushSubscriptions(userId: string, userType: string): Promise<PushSubscription[]>;
+  deletePushSubscription(endpoint: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -335,6 +357,9 @@ export class MemStorage implements IStorage {
   private platformStatistics: Map<string, any>;
   private builderApplicationRevisions: Map<string, any>;
   private builderOnboarding: Map<string, any>;
+  private notifications: Map<string, Notification>;
+  private notificationPreferences: Map<string, NotificationPreferences>;
+  private pushSubscriptions: Map<string, PushSubscription>;
 
   constructor() {
     this.builders = new Map();
@@ -373,6 +398,9 @@ export class MemStorage implements IStorage {
     this.platformStatistics = new Map();
     this.builderApplicationRevisions = new Map();
     this.builderOnboarding = new Map();
+    this.notifications = new Map();
+    this.notificationPreferences = new Map();
+    this.pushSubscriptions = new Map();
     this.seedData();
   }
 
@@ -3064,6 +3092,149 @@ export class MemStorage implements IStorage {
       onboarding.updatedAt = new Date().toISOString();
       this.builderOnboarding.set(builderId, onboarding);
     }
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const id = randomUUID();
+    const newNotification: Notification = {
+      id,
+      ...notification,
+      isRead: false,
+      readAt: null,
+      emailSent: false,
+      pushSent: false,
+      createdAt: new Date().toISOString(),
+    };
+    this.notifications.set(id, newNotification);
+    return newNotification;
+  }
+
+  async getNotifications(
+    recipientId: string,
+    recipientType: string,
+    limit?: number,
+    unreadOnly?: boolean
+  ): Promise<Notification[]> {
+    const allNotifications = Array.from(this.notifications.values())
+      .filter((n) => n.recipientId === recipientId && n.recipientType === recipientType)
+      .filter((n) => !unreadOnly || !n.isRead)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    return limit ? allNotifications.slice(0, limit) : allNotifications;
+  }
+
+  async getNotification(id: string): Promise<Notification | undefined> {
+    return this.notifications.get(id);
+  }
+
+  async markNotificationAsRead(id: string): Promise<Notification> {
+    const notification = this.notifications.get(id);
+    if (!notification) {
+      throw new Error("Notification not found");
+    }
+    notification.isRead = true;
+    notification.readAt = new Date().toISOString();
+    this.notifications.set(id, notification);
+    return notification;
+  }
+
+  async markAllNotificationsAsRead(recipientId: string, recipientType: string): Promise<void> {
+    const notifications = await this.getNotifications(recipientId, recipientType);
+    const now = new Date().toISOString();
+    notifications.forEach((notification) => {
+      notification.isRead = true;
+      notification.readAt = now;
+      this.notifications.set(notification.id, notification);
+    });
+  }
+
+  async deleteNotification(id: string): Promise<void> {
+    this.notifications.delete(id);
+  }
+
+  async getUnreadNotificationCount(recipientId: string, recipientType: string): Promise<number> {
+    const unreadNotifications = await this.getNotifications(recipientId, recipientType, undefined, true);
+    return unreadNotifications.length;
+  }
+
+  async getNotificationPreferences(
+    userId: string,
+    userType: string
+  ): Promise<NotificationPreferences | undefined> {
+    const key = `${userId}-${userType}`;
+    return this.notificationPreferences.get(key);
+  }
+
+  async createNotificationPreferences(
+    preferences: InsertNotificationPreferences
+  ): Promise<NotificationPreferences> {
+    const id = randomUUID();
+    const key = `${preferences.userId}-${preferences.userType}`;
+    const newPreferences: NotificationPreferences = {
+      id,
+      ...preferences,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.notificationPreferences.set(key, newPreferences);
+    return newPreferences;
+  }
+
+  async updateNotificationPreferences(
+    userId: string,
+    userType: string,
+    data: Partial<NotificationPreferences>
+  ): Promise<NotificationPreferences> {
+    const key = `${userId}-${userType}`;
+    let preferences = this.notificationPreferences.get(key);
+    
+    if (!preferences) {
+      preferences = await this.createNotificationPreferences({
+        userId,
+        userType,
+        emailOrderUpdates: true,
+        emailMessages: true,
+        emailReviews: true,
+        emailPayments: true,
+        emailMarketing: false,
+        pushOrderUpdates: true,
+        pushMessages: true,
+        pushReviews: true,
+        pushPayments: true,
+        inAppOrderUpdates: true,
+        inAppMessages: true,
+        inAppReviews: true,
+        inAppPayments: true,
+      });
+    }
+
+    const updatedPreferences = {
+      ...preferences,
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    this.notificationPreferences.set(key, updatedPreferences);
+    return updatedPreferences;
+  }
+
+  async createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription> {
+    const id = randomUUID();
+    const newSubscription: PushSubscription = {
+      id,
+      ...subscription,
+      createdAt: new Date().toISOString(),
+    };
+    this.pushSubscriptions.set(newSubscription.endpoint, newSubscription);
+    return newSubscription;
+  }
+
+  async getPushSubscriptions(userId: string, userType: string): Promise<PushSubscription[]> {
+    return Array.from(this.pushSubscriptions.values())
+      .filter((s) => s.userId === userId && s.userType === userType);
+  }
+
+  async deletePushSubscription(endpoint: string): Promise<void> {
+    this.pushSubscriptions.delete(endpoint);
   }
 }
 
