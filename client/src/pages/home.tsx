@@ -156,16 +156,18 @@ export default function Home() {
                 const IconComponent = categoryIcons[category.slug as keyof typeof categoryIcons] || Sparkles;
                 return (
                   <Link key={category.id} href={`/category/${category.slug}`}>
-                    <div className="group relative w-64 flex-shrink-0 overflow-hidden rounded-lg border bg-card p-5 transition-all hover-elevate active-elevate-2" data-testid={`category-card-${category.slug}`}>
-                      <div className="flex items-start gap-4">
+                    <div className="group relative h-32 w-64 flex-shrink-0 overflow-hidden rounded-lg border bg-card p-5 transition-all hover-elevate active-elevate-2" data-testid={`category-card-${category.slug}`}>
+                      <div className="flex h-full items-start gap-4">
                         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
                           <IconComponent className="h-6 w-6 text-primary" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="mb-1 font-semibold text-base">{category.name}</h3>
-                          <p className="mb-2 text-xs text-muted-foreground line-clamp-2">
-                            {category.description}
-                          </p>
+                        <div className="flex flex-1 min-w-0 flex-col justify-between h-full">
+                          <div>
+                            <h3 className="mb-1 font-semibold text-base">{category.name}</h3>
+                            <p className="text-xs text-muted-foreground line-clamp-2">
+                              {category.description}
+                            </p>
+                          </div>
                           <div className="flex items-center justify-between">
                             <div className="text-xs text-muted-foreground">
                               <span className="font-semibold text-foreground">{category.builderCount}</span> builders
