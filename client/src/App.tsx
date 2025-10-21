@@ -23,6 +23,7 @@ function Router() {
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/apply" component={Apply} />
       <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/:rest*" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>

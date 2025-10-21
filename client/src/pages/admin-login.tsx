@@ -71,6 +71,7 @@ export default function AdminLogin() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="username"
                 data-testid="input-username"
               />
             </div>
@@ -84,6 +85,7 @@ export default function AdminLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="current-password"
                 data-testid="input-password"
               />
             </div>
