@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
 import { CategoryPill } from "@/components/category-pill";
@@ -71,10 +72,12 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Button size="lg" className="gap-2 text-base" data-testid="button-browse-services">
-                  Browse Services
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                <Link href="/marketplace">
+                  <Button size="lg" className="gap-2 text-base" data-testid="button-browse-services">
+                    Browse Services
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
                 <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-become-builder">
                   Become a Builder
                 </Button>
@@ -168,10 +171,12 @@ export default function Home() {
                 Top-rated builders ready to bring your project to life
               </p>
             </div>
-            <Button variant="ghost" className="gap-2 hover-elevate" data-testid="button-view-all-services">
-              View All
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <Link href="/marketplace">
+              <Button variant="ghost" className="gap-2 hover-elevate" data-testid="button-view-all-services">
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
 
           {servicesLoading ? (
@@ -210,10 +215,12 @@ export default function Home() {
                 Verified experts with proven track records
               </p>
             </div>
-            <Button variant="ghost" className="gap-2 hover-elevate" data-testid="button-view-all-builders">
-              View All
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <Link href="/marketplace">
+              <Button variant="ghost" className="gap-2 hover-elevate" data-testid="button-view-all-builders">
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
 
           {buildersLoading ? (

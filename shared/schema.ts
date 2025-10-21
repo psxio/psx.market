@@ -62,6 +62,45 @@ export const categories = pgTable("categories", {
   builderCount: integer("builder_count").notNull().default(0),
 });
 
+export const builderApplications = pgTable("builder_applications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  walletAddress: text("wallet_address").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  bio: text("bio").notNull(),
+  category: text("category").notNull(),
+  portfolioLinks: text("portfolio_links").array(),
+  yearsExperience: integer("years_experience").notNull(),
+  status: text("status").notNull().default("pending"),
+  submittedAt: text("submitted_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  reviewerNotes: text("reviewer_notes"),
+  
+  twitterHandle: text("twitter_handle"),
+  twitterFollowers: integer("twitter_followers"),
+  instagramHandle: text("instagram_handle"),
+  instagramFollowers: integer("instagram_followers"),
+  youtubeChannel: text("youtube_channel"),
+  youtubeSubscribers: integer("youtube_subscribers"),
+  engagementRate: decimal("engagement_rate", { precision: 5, scale: 2 }),
+  contentNiches: text("content_niches").array(),
+  
+  software3D: text("software_3d").array(),
+  renderEngines: text("render_engines").array(),
+  styleSpecialties: text("style_specialties").array(),
+  
+  marketingPlatforms: text("marketing_platforms").array(),
+  growthStrategies: text("growth_strategies").array(),
+  caseStudyLinks: text("case_study_links").array(),
+  
+  programmingLanguages: text("programming_languages").array(),
+  blockchainFrameworks: text("blockchain_frameworks").array(),
+  githubProfile: text("github_profile"),
+  
+  tradingExperience: integer("trading_experience"),
+  volumeCapabilities: text("volume_capabilities"),
+  complianceKnowledge: boolean("compliance_knowledge"),
+});
+
 export const insertBuilderSchema = createInsertSchema(builders).omit({
   id: true,
   rating: true,
@@ -83,6 +122,13 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
   builderCount: true,
 });
 
+export const insertBuilderApplicationSchema = createInsertSchema(builderApplications).omit({
+  id: true,
+  status: true,
+  submittedAt: true,
+  reviewerNotes: true,
+});
+
 export type InsertBuilder = z.infer<typeof insertBuilderSchema>;
 export type Builder = typeof builders.$inferSelect;
 
@@ -94,3 +140,6 @@ export type Review = typeof reviews.$inferSelect;
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type Category = typeof categories.$inferSelect;
+
+export type InsertBuilderApplication = z.infer<typeof insertBuilderApplicationSchema>;
+export type BuilderApplication = typeof builderApplications.$inferSelect;

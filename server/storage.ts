@@ -7,6 +7,8 @@ import {
   type InsertCategory,
   type Review,
   type InsertReview,
+  type BuilderApplication,
+  type InsertBuilderApplication,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -29,6 +31,10 @@ export interface IStorage {
 
   getReviewsByBuilder(builderId: string): Promise<Review[]>;
   createReview(review: InsertReview): Promise<Review>;
+
+  getBuilderApplication(id: string): Promise<BuilderApplication | undefined>;
+  getBuilderApplications(): Promise<BuilderApplication[]>;
+  createBuilderApplication(application: InsertBuilderApplication): Promise<BuilderApplication>;
 }
 
 export class MemStorage implements IStorage {
@@ -36,12 +42,14 @@ export class MemStorage implements IStorage {
   private services: Map<string, Service>;
   private categories: Map<string, Category>;
   private reviews: Map<string, Review>;
+  private builderApplications: Map<string, BuilderApplication>;
 
   constructor() {
     this.builders = new Map();
     this.services = new Map();
     this.categories = new Map();
     this.reviews = new Map();
+    this.builderApplications = new Map();
     this.seedData();
   }
 
@@ -485,6 +493,27 @@ export class MemStorage implements IStorage {
     };
     this.reviews.set(id, review);
     return review;
+  }
+
+  async getBuilderApplication(id: string): Promise<BuilderApplication | undefined> {
+    return this.builderApplications.get(id);
+  }
+
+  async getBuilderApplications(): Promise<BuilderApplication[]> {
+    return Array.from(this.builderApplications.values());
+  }
+
+  async createBuilderApplication(insertApplication: InsertBuilderApplication): Promise<BuilderApplication> {
+    const id = randomUUID();
+    const application: BuilderApplication = {
+      ...insertApplication,
+      id,
+      status: "pending",
+      submittedAt: new Date().toISOString(),
+      reviewerNotes: null,
+    };
+    this.builderApplications.set(id, application);
+    return application;
   }
 }
 
