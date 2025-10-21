@@ -380,6 +380,149 @@ export const referrals = pgTable("referrals", {
   completedAt: text("completed_at"),
 });
 
+export const payments = pgTable("payments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("USDC"),
+  
+  paymentMethod: text("payment_method").notNull().default("base_pay"),
+  transactionHash: text("transaction_hash"),
+  blockNumber: integer("block_number"),
+  
+  escrowContractAddress: text("escrow_contract_address"),
+  
+  platformFee: decimal("platform_fee", { precision: 10, scale: 2 }).notNull(),
+  platformFeePercentage: decimal("platform_fee_percentage", { precision: 5, scale: 2 }).notNull().default("2.5"),
+  builderAmount: decimal("builder_amount", { precision: 10, scale: 2 }).notNull(),
+  
+  status: text("status").notNull().default("pending"),
+  
+  paidAt: text("paid_at"),
+  releasedAt: text("released_at"),
+  refundedAt: text("refunded_at"),
+  
+  payerWallet: text("payer_wallet"),
+  payerEmail: text("payer_email"),
+  
+  invoiceId: varchar("invoice_id"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const milestonePayments = pgTable("milestone_payments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  paymentId: varchar("payment_id").notNull(),
+  milestoneId: varchar("milestone_id").notNull(),
+  orderId: varchar("order_id").notNull(),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  percentage: decimal("percentage", { precision: 5, scale: 2 }).notNull(),
+  
+  status: text("status").notNull().default("locked"),
+  
+  transactionHash: text("transaction_hash"),
+  releasedAt: text("released_at"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const payouts = pgTable("payouts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  builderWallet: text("builder_wallet").notNull(),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("USDC"),
+  
+  status: text("status").notNull().default("pending"),
+  
+  transactionHash: text("transaction_hash"),
+  processedAt: text("processed_at"),
+  
+  paymentIds: text("payment_ids").array(),
+  
+  failureReason: text("failure_reason"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const disputes = pgTable("disputes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  paymentId: varchar("payment_id").notNull(),
+  orderId: varchar("order_id").notNull(),
+  
+  raisedBy: varchar("raised_by").notNull(),
+  raisedByType: text("raised_by_type").notNull(),
+  
+  reason: text("reason").notNull(),
+  description: text("description").notNull(),
+  evidence: text("evidence").array(),
+  
+  status: text("status").notNull().default("open"),
+  
+  resolution: text("resolution"),
+  resolvedBy: varchar("resolved_by"),
+  resolvedAt: text("resolved_at"),
+  
+  refundAmount: decimal("refund_amount", { precision: 10, scale: 2 }),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const refunds = pgTable("refunds", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  paymentId: varchar("payment_id").notNull(),
+  orderId: varchar("order_id").notNull(),
+  disputeId: varchar("dispute_id"),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  reason: text("reason").notNull(),
+  
+  status: text("status").notNull().default("pending"),
+  
+  transactionHash: text("transaction_hash"),
+  processedAt: text("processed_at"),
+  
+  failureReason: text("failure_reason"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const invoices = pgTable("invoices", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  invoiceNumber: text("invoice_number").notNull().unique(),
+  paymentId: varchar("payment_id").notNull(),
+  orderId: varchar("order_id").notNull(),
+  
+  clientId: varchar("client_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  platformFee: decimal("platform_fee", { precision: 10, scale: 2 }).notNull(),
+  builderAmount: decimal("builder_amount", { precision: 10, scale: 2 }).notNull(),
+  
+  status: text("status").notNull().default("draft"),
+  
+  dueDate: text("due_date"),
+  paidAt: text("paid_at"),
+  
+  billingEmail: text("billing_email"),
+  billingAddress: text("billing_address"),
+  
+  notes: text("notes"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const insertAdminSchema = createInsertSchema(admins).omit({
   id: true,
   lastLogin: true,
@@ -391,6 +534,63 @@ export const insertReferralSchema = createInsertSchema(referrals).omit({
   status: true,
   createdAt: true,
   completedAt: true,
+});
+
+export const insertPaymentSchema = createInsertSchema(payments).omit({
+  id: true,
+  status: true,
+  paidAt: true,
+  releasedAt: true,
+  refundedAt: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMilestonePaymentSchema = createInsertSchema(milestonePayments).omit({
+  id: true,
+  status: true,
+  transactionHash: true,
+  releasedAt: true,
+  createdAt: true,
+});
+
+export const insertPayoutSchema = createInsertSchema(payouts).omit({
+  id: true,
+  status: true,
+  transactionHash: true,
+  processedAt: true,
+  failureReason: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDisputeSchema = createInsertSchema(disputes).omit({
+  id: true,
+  status: true,
+  resolution: true,
+  resolvedBy: true,
+  resolvedAt: true,
+  refundAmount: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertRefundSchema = createInsertSchema(refunds).omit({
+  id: true,
+  status: true,
+  transactionHash: true,
+  processedAt: true,
+  failureReason: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertInvoiceSchema = createInsertSchema(invoices).omit({
+  id: true,
+  status: true,
+  paidAt: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export type InsertBuilder = z.infer<typeof insertBuilderSchema>;
@@ -431,3 +631,21 @@ export type Admin = typeof admins.$inferSelect;
 
 export type InsertReferral = z.infer<typeof insertReferralSchema>;
 export type Referral = typeof referrals.$inferSelect;
+
+export type InsertPayment = z.infer<typeof insertPaymentSchema>;
+export type Payment = typeof payments.$inferSelect;
+
+export type InsertMilestonePayment = z.infer<typeof insertMilestonePaymentSchema>;
+export type MilestonePayment = typeof milestonePayments.$inferSelect;
+
+export type InsertPayout = z.infer<typeof insertPayoutSchema>;
+export type Payout = typeof payouts.$inferSelect;
+
+export type InsertDispute = z.infer<typeof insertDisputeSchema>;
+export type Dispute = typeof disputes.$inferSelect;
+
+export type InsertRefund = z.infer<typeof insertRefundSchema>;
+export type Refund = typeof refunds.$inferSelect;
+
+export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
+export type Invoice = typeof invoices.$inferSelect;
