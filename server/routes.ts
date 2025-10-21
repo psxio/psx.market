@@ -385,38 +385,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { search, categories, sortBy } = req.query;
 
-      if (search && typeof search === "string") {
-        const searchLower = search.toLowerCase();
-        services = services.filter(
-          (s) =>
-            s.title.toLowerCase().includes(searchLower) ||
-            s.description.toLowerCase().includes(searchLower) ||
-            s.tags?.some((tag) => tag.toLowerCase().includes(searchLower))
-        );
-      }
-
-      if (categories && typeof categories === "string") {
-        const categoryList = categories.split(",");
-        services = services.filter((s) => categoryList.includes(s.category));
-      }
-
-      if (sortBy) {
-        switch (sortBy) {
-          case "price-low":
-            services.sort(
-              (a, b) => parseFloat(a.basicPrice) - parseFloat(b.basicPrice)
-            );
-            break;
-          case "price-high":
-            services.sort(
-              (a, b) => parseFloat(b.basicPrice) - parseFloat(a.basicPrice)
-            );
-            break;
-          default:
-            break;
-        }
-      }
-
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
           const builder = await storage.getBuilder(service.builderId);
@@ -424,7 +392,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         })
       );
 
-      res.json(servicesWithBuilders);
+      let filteredResults = servicesWithBuilders;
+
+      if (search && typeof search === "string") {
+        const searchLower = search.toLowerCase();
+        filteredResults = filteredResults.filter(
+          ({ service, builder }) => {
+            const serviceMatch = 
+              service.title.toLowerCase().includes(searchLower) ||
+              service.description.toLowerCase().includes(searchLower) ||
+              service.tags?.some((tag) => tag.toLowerCase().includes(searchLower));
+            
+            const builderMatch = builder ? (
+              builder.name.toLowerCase().includes(searchLower) ||
+              builder.category.toLowerCase().includes(searchLower) ||
+              builder.skills?.some((skill) => skill.toLowerCase().includes(searchLower)) ||
+              builder.bio?.toLowerCase().includes(searchLower) ||
+              builder.title?.toLowerCase().includes(searchLower)
+            ) : false;
+
+            return serviceMatch || builderMatch;
+          }
+        );
+      }
+
+      if (categories && typeof categories === "string") {
+        const categoryList = categories.split(",");
+        filteredResults = filteredResults.filter(({ service }) => 
+          categoryList.includes(service.category)
+        );
+      }
+
+      if (sortBy) {
+        switch (sortBy) {
+          case "price-low":
+            filteredResults.sort(
+              (a, b) => parseFloat(a.service.basicPrice) - parseFloat(b.service.basicPrice)
+            );
+            break;
+          case "price-high":
+            filteredResults.sort(
+              (a, b) => parseFloat(b.service.basicPrice) - parseFloat(a.service.basicPrice)
+            );
+            break;
+          default:
+            break;
+        }
+      }
+
+      res.json(filteredResults);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch services" });
     }
