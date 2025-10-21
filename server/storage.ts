@@ -176,6 +176,7 @@ export interface IStorage {
   updateMilestoneStatus(id: string, status: string, transactionHash?: string): Promise<Milestone>;
 
   getAdmin(username: string): Promise<Admin | undefined>;
+  getAdminById(id: string): Promise<Admin | undefined>;
   getAdmins(): Promise<Admin[]>;
   createAdmin(admin: InsertAdmin): Promise<Admin>;
   updateAdmin(id: string, data: Partial<Admin>): Promise<Admin>;
@@ -830,6 +831,11 @@ export class PostgresStorage implements IStorage {
 
   async getAdmin(username: string): Promise<Admin | undefined> {
     const result = await db.select().from(admins).where(eq(admins.username, username));
+    return result[0];
+  }
+  
+  async getAdminById(id: string): Promise<Admin | undefined> {
+    const result = await db.select().from(admins).where(eq(admins.id, id));
     return result[0];
   }
 
