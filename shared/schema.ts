@@ -380,6 +380,75 @@ export const referrals = pgTable("referrals", {
   completedAt: text("completed_at"),
 });
 
+export const chatThreads = pgTable("chat_threads", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  orderId: varchar("order_id"),
+  
+  title: text("title").notNull(),
+  status: text("status").notNull().default("active"),
+  
+  lastMessageAt: text("last_message_at"),
+  lastMessagePreview: text("last_message_preview"),
+  
+  clientUnreadCount: integer("client_unread_count").notNull().default(0),
+  builderUnreadCount: integer("builder_unread_count").notNull().default(0),
+  
+  archivedByClient: boolean("archived_by_client").notNull().default(false),
+  archivedByBuilder: boolean("archived_by_builder").notNull().default(false),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const messages = pgTable("messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  threadId: varchar("thread_id").notNull(),
+  
+  senderId: varchar("sender_id").notNull(),
+  senderType: text("sender_type").notNull(),
+  
+  content: text("content").notNull(),
+  messageType: text("message_type").notNull().default("text"),
+  
+  edited: boolean("edited").notNull().default(false),
+  editedAt: text("edited_at"),
+  
+  deleted: boolean("deleted").notNull().default(false),
+  deletedAt: text("deleted_at"),
+  
+  replyToId: varchar("reply_to_id"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const messageAttachments = pgTable("message_attachments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  messageId: varchar("message_id").notNull(),
+  
+  fileName: text("file_name").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileType: text("file_type").notNull(),
+  fileSize: integer("file_size").notNull(),
+  
+  thumbnailUrl: text("thumbnail_url"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const messageReadReceipts = pgTable("message_read_receipts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  messageId: varchar("message_id").notNull(),
+  threadId: varchar("thread_id").notNull(),
+  
+  readerId: varchar("reader_id").notNull(),
+  readerType: text("reader_type").notNull(),
+  
+  readAt: text("read_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const payments = pgTable("payments", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   orderId: varchar("order_id").notNull(),
@@ -593,6 +662,39 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
   updatedAt: true,
 });
 
+export const insertChatThreadSchema = createInsertSchema(chatThreads).omit({
+  id: true,
+  status: true,
+  lastMessageAt: true,
+  lastMessagePreview: true,
+  clientUnreadCount: true,
+  builderUnreadCount: true,
+  archivedByClient: true,
+  archivedByBuilder: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMessageSchema = createInsertSchema(messages).omit({
+  id: true,
+  edited: true,
+  editedAt: true,
+  deleted: true,
+  deletedAt: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMessageAttachmentSchema = createInsertSchema(messageAttachments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMessageReadReceiptSchema = createInsertSchema(messageReadReceipts).omit({
+  id: true,
+  readAt: true,
+});
+
 export type InsertBuilder = z.infer<typeof insertBuilderSchema>;
 export type Builder = typeof builders.$inferSelect;
 
@@ -649,3 +751,15 @@ export type Refund = typeof refunds.$inferSelect;
 
 export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
 export type Invoice = typeof invoices.$inferSelect;
+
+export type InsertChatThread = z.infer<typeof insertChatThreadSchema>;
+export type ChatThread = typeof chatThreads.$inferSelect;
+
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export type Message = typeof messages.$inferSelect;
+
+export type InsertMessageAttachment = z.infer<typeof insertMessageAttachmentSchema>;
+export type MessageAttachment = typeof messageAttachments.$inferSelect;
+
+export type InsertMessageReadReceipt = z.infer<typeof insertMessageReadReceiptSchema>;
+export type MessageReadReceipt = typeof messageReadReceipts.$inferSelect;
