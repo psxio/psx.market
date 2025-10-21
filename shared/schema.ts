@@ -39,6 +39,8 @@ export const services = pgTable("services", {
   tags: text("tags").array(),
   psxRequired: decimal("psx_required", { precision: 10, scale: 2 }).notNull(),
   featured: boolean("featured").notNull().default(false),
+  portfolioMedia: text("portfolio_media").array(),
+  videoUrls: text("video_urls").array(),
 });
 
 export const reviews = pgTable("reviews", {
@@ -122,11 +124,74 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
   builderCount: true,
 });
 
+export const clients = pgTable("clients", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  walletAddress: text("wallet_address").notNull().unique(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  companyName: text("company_name"),
+  bio: text("bio"),
+  profileImage: text("profile_image"),
+  verified: boolean("verified").notNull().default(false),
+  psxTier: text("psx_tier").notNull().default("bronze"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const projects = pgTable("projects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  serviceId: varchar("service_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").notNull().default("pending"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  startedAt: text("started_at"),
+  completedAt: text("completed_at"),
+  contractTerms: text("contract_terms"),
+});
+
+export const milestones = pgTable("milestones", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  dueDate: text("due_date"),
+  status: text("status").notNull().default("pending"),
+  completedAt: text("completed_at"),
+  transactionHash: text("transaction_hash"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const insertBuilderApplicationSchema = createInsertSchema(builderApplications).omit({
   id: true,
   status: true,
   submittedAt: true,
   reviewerNotes: true,
+});
+
+export const insertClientSchema = createInsertSchema(clients).omit({
+  id: true,
+  verified: true,
+  createdAt: true,
+});
+
+export const insertProjectSchema = createInsertSchema(projects).omit({
+  id: true,
+  status: true,
+  createdAt: true,
+  startedAt: true,
+  completedAt: true,
+});
+
+export const insertMilestoneSchema = createInsertSchema(milestones).omit({
+  id: true,
+  status: true,
+  completedAt: true,
+  createdAt: true,
+  transactionHash: true,
 });
 
 export type InsertBuilder = z.infer<typeof insertBuilderSchema>;
@@ -143,3 +208,12 @@ export type Category = typeof categories.$inferSelect;
 
 export type InsertBuilderApplication = z.infer<typeof insertBuilderApplicationSchema>;
 export type BuilderApplication = typeof builderApplications.$inferSelect;
+
+export type InsertClient = z.infer<typeof insertClientSchema>;
+export type Client = typeof clients.$inferSelect;
+
+export type InsertProject = z.infer<typeof insertProjectSchema>;
+export type Project = typeof projects.$inferSelect;
+
+export type InsertMilestone = z.infer<typeof insertMilestoneSchema>;
+export type Milestone = typeof milestones.$inferSelect;

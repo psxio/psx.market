@@ -133,30 +133,46 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b bg-background py-12">
+      <section className="border-b bg-muted/30 py-16">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">Browse Categories</h2>
+          <div className="mb-10 text-center">
+            <h2 className="text-3xl font-bold tracking-tight">Browse by Category</h2>
+            <p className="mt-3 text-lg text-muted-foreground">
+              Find specialized Web3 builders across all categories
+            </p>
           </div>
 
           {categoriesLoading ? (
-            <div className="flex gap-3 overflow-x-auto pb-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-10 w-32 flex-shrink-0" />
+                <Skeleton key={i} className="h-48 w-full rounded-lg" />
               ))}
             </div>
           ) : (
-            <div className="flex gap-3 overflow-x-auto pb-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {categories?.map((category) => {
                 const IconComponent = categoryIcons[category.slug as keyof typeof categoryIcons] || Sparkles;
                 return (
-                  <CategoryPill
-                    key={category.id}
-                    name={category.name}
-                    slug={category.slug}
-                    icon={IconComponent}
-                    count={category.builderCount}
-                  />
+                  <Link key={category.id} href={`/category/${category.slug}`}>
+                    <div className="group relative overflow-hidden rounded-lg border bg-card p-6 transition-all hover-elevate active-elevate-2" data-testid={`category-card-${category.slug}`}>
+                      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/5 blur-2xl transition-all group-hover:bg-primary/10" />
+                      <div className="relative">
+                        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10">
+                          <IconComponent className="h-7 w-7 text-primary" />
+                        </div>
+                        <h3 className="mb-2 text-xl font-semibold">{category.name}</h3>
+                        <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+                          {category.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-muted-foreground">
+                            <span className="font-semibold text-foreground">{category.builderCount}</span> builders
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 );
               })}
             </div>

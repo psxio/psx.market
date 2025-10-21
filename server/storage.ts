@@ -9,6 +9,12 @@ import {
   type InsertReview,
   type BuilderApplication,
   type InsertBuilderApplication,
+  type Client,
+  type InsertClient,
+  type Project,
+  type InsertProject,
+  type Milestone,
+  type InsertMilestone,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -35,6 +41,22 @@ export interface IStorage {
   getBuilderApplication(id: string): Promise<BuilderApplication | undefined>;
   getBuilderApplications(): Promise<BuilderApplication[]>;
   createBuilderApplication(application: InsertBuilderApplication): Promise<BuilderApplication>;
+  approveBuilderApplication(id: string): Promise<Builder>;
+
+  getClient(id: string): Promise<Client | undefined>;
+  getClientByWallet(walletAddress: string): Promise<Client | undefined>;
+  getClients(): Promise<Client[]>;
+  createClient(client: InsertClient): Promise<Client>;
+
+  getProject(id: string): Promise<Project | undefined>;
+  getProjectsByClient(clientId: string): Promise<Project[]>;
+  getProjectsByBuilder(builderId: string): Promise<Project[]>;
+  createProject(project: InsertProject): Promise<Project>;
+  updateProjectStatus(id: string, status: string): Promise<Project>;
+
+  getMilestonesByProject(projectId: string): Promise<Milestone[]>;
+  createMilestone(milestone: InsertMilestone): Promise<Milestone>;
+  updateMilestoneStatus(id: string, status: string, transactionHash?: string): Promise<Milestone>;
 }
 
 export class MemStorage implements IStorage {
@@ -43,6 +65,9 @@ export class MemStorage implements IStorage {
   private categories: Map<string, Category>;
   private reviews: Map<string, Review>;
   private builderApplications: Map<string, BuilderApplication>;
+  private clients: Map<string, Client>;
+  private projects: Map<string, Project>;
+  private milestones: Map<string, Milestone>;
 
   constructor() {
     this.builders = new Map();
@@ -50,6 +75,9 @@ export class MemStorage implements IStorage {
     this.categories = new Map();
     this.reviews = new Map();
     this.builderApplications = new Map();
+    this.clients = new Map();
+    this.projects = new Map();
+    this.milestones = new Map();
     this.seedData();
   }
 
@@ -554,6 +582,162 @@ export class MemStorage implements IStorage {
     };
     this.builderApplications.set(id, application);
     return application;
+  }
+
+  async approveBuilderApplication(id: string): Promise<Builder> {
+    const application = await this.getBuilderApplication(id);
+    if (!application) {
+      throw new Error("Application not found");
+    }
+
+    const builder: Builder = {
+      id: randomUUID(),
+      walletAddress: application.walletAddress,
+      name: application.name,
+      headline: `${application.category} Expert`,
+      bio: application.bio,
+      profileImage: null,
+      verified: true,
+      category: application.category,
+      rating: "0",
+      reviewCount: 0,
+      completedProjects: 0,
+      responseTime: "24 hours",
+      twitterHandle: application.twitterHandle,
+      twitterFollowers: application.twitterFollowers,
+      portfolioLinks: application.portfolioLinks,
+      skills: null,
+      psxTier: "bronze",
+    };
+
+    this.builders.set(builder.id, builder);
+
+    application.status = "approved";
+    this.builderApplications.set(id, application);
+
+    return builder;
+  }
+
+  async getClient(id: string): Promise<Client | undefined> {
+    return this.clients.get(id);
+  }
+
+  async getClientByWallet(walletAddress: string): Promise<Client | undefined> {
+    return Array.from(this.clients.values()).find(
+      (c) => c.walletAddress === walletAddress
+    );
+  }
+
+  async getClients(): Promise<Client[]> {
+    return Array.from(this.clients.values());
+  }
+
+  async createClient(insertClient: InsertClient): Promise<Client> {
+    const id = randomUUID();
+    const client: Client = {
+      ...insertClient,
+      id,
+      verified: false,
+      profileImage: insertClient.profileImage ?? null,
+      companyName: insertClient.companyName ?? null,
+      bio: insertClient.bio ?? null,
+      psxTier: "bronze",
+      createdAt: new Date().toISOString(),
+    };
+    this.clients.set(id, client);
+    return client;
+  }
+
+  async getProject(id: string): Promise<Project | undefined> {
+    return this.projects.get(id);
+  }
+
+  async getProjectsByClient(clientId: string): Promise<Project[]> {
+    return Array.from(this.projects.values()).filter(
+      (p) => p.clientId === clientId
+    );
+  }
+
+  async getProjectsByBuilder(builderId: string): Promise<Project[]> {
+    return Array.from(this.projects.values()).filter(
+      (p) => p.builderId === builderId
+    );
+  }
+
+  async createProject(insertProject: InsertProject): Promise<Project> {
+    const id = randomUUID();
+    const project: Project = {
+      ...insertProject,
+      id,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      startedAt: null,
+      completedAt: null,
+      contractTerms: insertProject.contractTerms ?? null,
+    };
+    this.projects.set(id, project);
+    return project;
+  }
+
+  async updateProjectStatus(id: string, status: string): Promise<Project> {
+    const project = await this.getProject(id);
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    project.status = status;
+    if (status === "in_progress" && !project.startedAt) {
+      project.startedAt = new Date().toISOString();
+    }
+    if (status === "completed" && !project.completedAt) {
+      project.completedAt = new Date().toISOString();
+    }
+
+    this.projects.set(id, project);
+    return project;
+  }
+
+  async getMilestonesByProject(projectId: string): Promise<Milestone[]> {
+    return Array.from(this.milestones.values()).filter(
+      (m) => m.projectId === projectId
+    );
+  }
+
+  async createMilestone(insertMilestone: InsertMilestone): Promise<Milestone> {
+    const id = randomUUID();
+    const milestone: Milestone = {
+      ...insertMilestone,
+      id,
+      status: "pending",
+      completedAt: null,
+      transactionHash: null,
+      createdAt: new Date().toISOString(),
+      dueDate: insertMilestone.dueDate ?? null,
+    };
+    this.milestones.set(id, milestone);
+    return milestone;
+  }
+
+  async updateMilestoneStatus(
+    id: string,
+    status: string,
+    transactionHash?: string
+  ): Promise<Milestone> {
+    const milestone = await this.milestones.get(id);
+    if (!milestone) {
+      throw new Error("Milestone not found");
+    }
+
+    milestone.status = status;
+    if (status === "completed" && !milestone.completedAt) {
+      milestone.completedAt = new Date().toISOString();
+    }
+    if (transactionHash) {
+      milestone.transactionHash = transactionHash;
+    }
+
+    this.milestones.set(id, milestone);
+    return milestone;
   }
 }
 
