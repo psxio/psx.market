@@ -13,8 +13,10 @@ The application is fully functional with all core features implemented:
 - ✅ Featured builders and services sections
 - ✅ Mock wallet verification and PSX balance checking
 - ✅ Responsive design with dark mode (purple/cyan branding)
+- ✅ **Builder application system with multi-step form wizard**
 
 ## Recent Changes (2025-10-21)
+### Initial Implementation
 - Implemented complete data schema for builders, services, categories, and reviews
 - Built all frontend components with PSX branding (purple/cyan gradient)
 - Created comprehensive backend with seed data
@@ -22,6 +24,23 @@ The application is fully functional with all core features implemented:
 - Fixed category matching between frontend and backend
 - Added error handling and loading states throughout
 - Implemented search and filter functionality
+
+### Builder Application System (Latest)
+- Added complete builder application schema with category-specific fields
+- Created multi-step form wizard (/apply route) with 4 steps:
+  - Step 1: Profile information (name, email, bio, experience)
+  - Step 2: Category selection (KOLs, 3D, Marketing, Development, Volume)
+  - Step 3: Category-specific questions (dynamic fields based on selection)
+  - Step 4: Review and submit
+- Implemented backend API endpoints (POST /api/builder-applications)
+- Added storage layer for builder application management
+- Category-specific fields include:
+  - **KOLs**: Twitter/Instagram/YouTube metrics, engagement rate, content niches
+  - **3D Content**: Software proficiency, render engines, style specialties
+  - **Marketing**: Platforms, growth strategies, case studies
+  - **Development**: Programming languages, blockchain frameworks, GitHub profile
+  - **Volume**: Trading experience, volume capabilities, compliance knowledge
+- Fixed all TypeScript LSP errors and React controlled input warnings
 
 ## Project Architecture
 
@@ -39,12 +58,14 @@ The application is fully functional with all core features implemented:
   - Services: GET /api/services (with search/filter), GET /api/services/featured
   - Reviews: GET /api/builders/:id/reviews
   - Wallet: POST /api/wallet/verify, GET /api/wallet/balance/:address
+  - Builder Applications: POST /api/builder-applications, GET /api/builder-applications/:id
 
 ### Data Model
 - **Builders**: Wallet address, name, bio, verified status, category, rating, skills, portfolio
 - **Services**: Tiered pricing (basic/standard/premium), delivery time, PSX requirements
 - **Categories**: KOLs, 3D Content, Marketing, Development, Volume
 - **Reviews**: Client reviews with ratings and project details
+- **Builder Applications**: Submitted applications with status (pending/approved/rejected), category-specific fields, and reviewer notes
 
 ## Key Features
 
@@ -80,5 +101,5 @@ The application is fully functional with all core features implemented:
 - Real-time messaging between clients and builders
 - On-chain review verification
 - Project milestone tracking
-- "Become a Builder" onboarding flow
-- Admin dashboard for platform management
+- Admin dashboard for reviewing and approving builder applications
+- Builder approval workflow (converting approved applications to active builder profiles)
