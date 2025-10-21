@@ -371,6 +371,144 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.post("/api/orders", requireClientAuth, async (req, res) => {
+    try {
+      const orderData = {
+        ...req.body,
+        clientId: req.session.clientId!,
+      };
+      const order = await storage.createOrder(orderData);
+      res.json(order);
+    } catch (error: any) {
+      res.status(500).json({ error: "Failed to create order" });
+    }
+  });
+
+  app.get("/api/orders", async (_req, res) => {
+    try {
+      const orders = await storage.getOrders();
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  app.get("/api/orders/:id", async (req, res) => {
+    try {
+      const order = await storage.getOrder(req.params.id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch order" });
+    }
+  });
+
+  app.get("/api/clients/me/orders", requireClientAuth, async (req, res) => {
+    try {
+      const orders = await storage.getOrdersByClient(req.session.clientId!);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  app.get("/api/builders/:id/orders", async (req, res) => {
+    try {
+      const orders = await storage.getOrdersByBuilder(req.params.id);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  app.patch("/api/orders/:id", async (req, res) => {
+    try {
+      const order = await storage.updateOrder(req.params.id, req.body);
+      res.json(order);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || "Failed to update order" });
+    }
+  });
+
+  app.post("/api/orders/:id/cancel", requireClientAuth, async (req, res) => {
+    try {
+      const { reason, refundAmount } = req.body;
+      if (!reason) {
+        return res.status(400).json({ error: "Cancellation reason required" });
+      }
+      const order = await storage.cancelOrder(req.params.id, reason, refundAmount);
+      res.json(order);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || "Failed to cancel order" });
+    }
+  });
+
+  app.get("/api/orders/:id/revisions", async (req, res) => {
+    try {
+      const revisions = await storage.getOrderRevisions(req.params.id);
+      res.json(revisions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch revisions" });
+    }
+  });
+
+  app.post("/api/orders/:id/revisions", requireClientAuth, async (req, res) => {
+    try {
+      const order = await storage.getOrder(req.params.id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const revisions = await storage.getOrderRevisions(req.params.id);
+      const revisionNumber = revisions.length + 1;
+
+      const revisionData = {
+        orderId: req.params.id,
+        revisionNumber,
+        requestedBy: req.session.clientId!,
+        requestDetails: req.body.requestDetails,
+      };
+
+      const revision = await storage.createOrderRevision(revisionData);
+      res.json(revision);
+    } catch (error: any) {
+      res.status(500).json({ error: "Failed to create revision" });
+    }
+  });
+
+  app.patch("/api/orders/:orderId/revisions/:id", async (req, res) => {
+    try {
+      const revision = await storage.updateOrderRevision(req.params.id, req.body);
+      res.json(revision);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || "Failed to update revision" });
+    }
+  });
+
+  app.get("/api/orders/:id/activities", async (req, res) => {
+    try {
+      const activities = await storage.getOrderActivities(req.params.id);
+      res.json(activities);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch activities" });
+    }
+  });
+
+  app.post("/api/orders/:id/activities", async (req, res) => {
+    try {
+      const activityData = {
+        orderId: req.params.id,
+        ...req.body,
+      };
+      const activity = await storage.createOrderActivity(activityData);
+      res.json(activity);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create activity" });
+    }
+  });
+
   app.post("/api/admin/login", loginLimiter, async (req, res) => {
     try {
       const { username, password } = req.body;

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute } from "wouter";
 import { Header } from "@/components/header";
@@ -8,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OrderBookingDialog } from "@/components/order-booking-dialog";
 import {
   Star,
   CheckCircle2,
@@ -22,6 +24,8 @@ import type { Builder, Service, Review } from "@shared/schema";
 export default function BuilderProfile() {
   const [, params] = useRoute("/builder/:id");
   const builderId = params?.id;
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
 
   const { data: builder, isLoading: builderLoading } = useQuery<Builder>({
     queryKey: ["/api/builders", builderId],
@@ -272,8 +276,15 @@ export default function BuilderProfile() {
                       </div>
                     </CardContent>
                     <CardFooter>
-                      <Button className="w-full" data-testid={`button-view-package-${service.id}`}>
-                        View Packages
+                      <Button
+                        className="w-full"
+                        data-testid={`button-view-package-${service.id}`}
+                        onClick={() => {
+                          setSelectedService(service);
+                          setBookingDialogOpen(true);
+                        }}
+                      >
+                        Book Now
                       </Button>
                     </CardFooter>
                   </Card>
@@ -337,6 +348,15 @@ export default function BuilderProfile() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {selectedService && builder && (
+        <OrderBookingDialog
+          open={bookingDialogOpen}
+          onOpenChange={setBookingDialogOpen}
+          service={selectedService}
+          builder={builder}
+        />
+      )}
     </div>
   );
 }
