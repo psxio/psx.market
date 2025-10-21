@@ -12,8 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/header";
-import { User, LogOut, Shield, Wallet, Mail, Building2, Clock, Package, Calendar, ArrowRight } from "lucide-react";
+import { User, LogOut, Shield, Wallet, Mail, Building2, Clock, Package, Calendar, ArrowRight, CreditCard } from "lucide-react";
 import type { Order } from "@shared/schema";
+import { PaymentHistory } from "@/components/payment-history";
 
 export default function ClientDashboard() {
   const { client, isAuthenticated, logout, updateProfile } = useClientAuth();
@@ -181,9 +182,10 @@ export default function ClientDashboard() {
 
           <div className="lg:col-span-2">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
+                <TabsTrigger value="payments" data-testid="tab-payments">Payments</TabsTrigger>
                 <TabsTrigger value="activity">Activity</TabsTrigger>
               </TabsList>
 
@@ -253,6 +255,10 @@ export default function ClientDashboard() {
 
               <TabsContent value="projects" className="space-y-4">
                 <OrdersList />
+              </TabsContent>
+
+              <TabsContent value="payments" className="space-y-4">
+                <PaymentHistory clientId={client.id} />
               </TabsContent>
 
               <TabsContent value="activity" className="space-y-4">
