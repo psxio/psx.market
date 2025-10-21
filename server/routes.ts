@@ -107,6 +107,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/builders/:id/analytics", async (req, res) => {
+    try {
+      const analytics = await storage.getBuilderAnalytics(req.params.id);
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching builder analytics:", error);
+      res.status(500).json({ error: "Failed to fetch analytics" });
+    }
+  });
+
+  app.patch("/api/builders/:id/availability", async (req, res) => {
+    try {
+      const { accepting } = req.body;
+      if (typeof accepting !== "boolean") {
+        return res.status(400).json({ error: "Accepting must be a boolean" });
+      }
+
+      const builder = await storage.toggleBuilderAvailability(req.params.id, accepting);
+      res.json(builder);
+    } catch (error) {
+      console.error("Error updating builder availability:", error);
+      res.status(500).json({ error: "Failed to update availability" });
+    }
+  });
+
+  app.post("/api/builders/:id/activity", async (req, res) => {
+    try {
+      const builder = await storage.updateBuilderActivity(req.params.id);
+      res.json(builder);
+    } catch (error) {
+      console.error("Error updating builder activity:", error);
+      res.status(500).json({ error: "Failed to update activity" });
+    }
+  });
+
+  app.patch("/api/builders/:id/profile", async (req, res) => {
+    try {
+      const builder = await storage.updateBuilder(req.params.id, req.body);
+      res.json(builder);
+    } catch (error) {
+      console.error("Error updating builder profile:", error);
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  app.get("/api/builders/:id/orders", async (req, res) => {
+    try {
+      const orders = await storage.getOrdersByBuilder(req.params.id);
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching builder orders:", error);
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
   app.get("/api/reviews/:id", async (req, res) => {
     try {
       const review = await storage.getReview(req.params.id);
