@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
 import Marketplace from "@/pages/marketplace";
 import CategoryPage from "@/pages/category";
+import Apply from "@/pages/apply";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/builder/:id" component={BuilderProfile} />
       <Route path="/category/:slug" component={CategoryPage} />
+      <Route path="/apply" component={Apply} />
       <Route component={NotFound} />
     </Switch>
   );

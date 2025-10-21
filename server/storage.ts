@@ -423,6 +423,14 @@ export class MemStorage implements IStorage {
       rating: "0",
       reviewCount: 0,
       completedProjects: 0,
+      verified: insertBuilder.verified ?? false,
+      profileImage: insertBuilder.profileImage ?? null,
+      responseTime: insertBuilder.responseTime ?? "24 hours",
+      twitterHandle: insertBuilder.twitterHandle ?? null,
+      twitterFollowers: insertBuilder.twitterFollowers ?? null,
+      portfolioLinks: insertBuilder.portfolioLinks ?? null,
+      skills: insertBuilder.skills ?? null,
+      psxTier: insertBuilder.psxTier ?? "bronze",
     };
     this.builders.set(id, builder);
     return builder;
@@ -458,7 +466,16 @@ export class MemStorage implements IStorage {
 
   async createService(insertService: InsertService): Promise<Service> {
     const id = randomUUID();
-    const service: Service = { ...insertService, id };
+    const service: Service = { 
+      ...insertService, 
+      id,
+      standardPrice: insertService.standardPrice ?? null,
+      premiumPrice: insertService.premiumPrice ?? null,
+      standardDescription: insertService.standardDescription ?? null,
+      premiumDescription: insertService.premiumDescription ?? null,
+      tags: insertService.tags ?? null,
+      featured: insertService.featured ?? false,
+    };
     this.services.set(id, service);
     return service;
   }
@@ -490,6 +507,8 @@ export class MemStorage implements IStorage {
       ...insertReview,
       id,
       createdAt: new Date().toISOString(),
+      serviceId: insertReview.serviceId ?? null,
+      projectTitle: insertReview.projectTitle ?? null,
     };
     this.reviews.set(id, review);
     return review;
@@ -511,6 +530,27 @@ export class MemStorage implements IStorage {
       status: "pending",
       submittedAt: new Date().toISOString(),
       reviewerNotes: null,
+      portfolioLinks: insertApplication.portfolioLinks ?? null,
+      twitterHandle: insertApplication.twitterHandle ?? null,
+      twitterFollowers: insertApplication.twitterFollowers ?? null,
+      instagramHandle: insertApplication.instagramHandle ?? null,
+      instagramFollowers: insertApplication.instagramFollowers ?? null,
+      youtubeChannel: insertApplication.youtubeChannel ?? null,
+      youtubeSubscribers: insertApplication.youtubeSubscribers ?? null,
+      engagementRate: insertApplication.engagementRate ?? null,
+      contentNiches: insertApplication.contentNiches ?? null,
+      software3D: insertApplication.software3D ?? null,
+      renderEngines: insertApplication.renderEngines ?? null,
+      styleSpecialties: insertApplication.styleSpecialties ?? null,
+      marketingPlatforms: insertApplication.marketingPlatforms ?? null,
+      growthStrategies: insertApplication.growthStrategies ?? null,
+      caseStudyLinks: insertApplication.caseStudyLinks ?? null,
+      programmingLanguages: insertApplication.programmingLanguages ?? null,
+      blockchainFrameworks: insertApplication.blockchainFrameworks ?? null,
+      githubProfile: insertApplication.githubProfile ?? null,
+      tradingExperience: insertApplication.tradingExperience ?? null,
+      volumeCapabilities: insertApplication.volumeCapabilities ?? null,
+      complianceKnowledge: insertApplication.complianceKnowledge ?? null,
     };
     this.builderApplications.set(id, application);
     return application;

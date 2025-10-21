@@ -78,9 +78,11 @@ export default function Home() {
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-become-builder">
-                  Become a Builder
-                </Button>
+                <Link href="/apply">
+                  <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-become-builder">
+                    Become a Builder
+                  </Button>
+                </Link>
               </div>
 
               <div className="flex flex-wrap items-center gap-6 border-t pt-8 text-sm">
