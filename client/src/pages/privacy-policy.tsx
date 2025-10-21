@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
               <p>
-                create.psx ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, 
+                Create.psx ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, 
                 use, disclose, and safeguard your information when you use our Web3 marketplace platform.
               </p>
               <p>
@@ -45,7 +45,7 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Public wallet addresses (Base blockchain)</li>
-                <li>$PSX token balance and transaction history</li>
+                <li>$CREATE and $PSX token balances and transaction history</li>
                 <li>USDC payment transactions</li>
                 <li>Connected wallet provider information</li>
               </ul>
@@ -100,7 +100,7 @@ export default function PrivacyPolicy() {
               <p>We use collected information to:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li><strong>Provide Platform Services:</strong> Enable marketplace functionality, process transactions, and facilitate client-builder interactions</li>
-                <li><strong>Token Verification:</strong> Verify $PSX token holdings for access control and tier assignment</li>
+                <li><strong>Token Verification:</strong> Verify $CREATE and $PSX token holdings for access control and tier assignment</li>
                 <li><strong>Payment Processing:</strong> Facilitate USDC payments through smart contract escrow</li>
                 <li><strong>Communication:</strong> Send notifications about orders, messages, payments, and platform updates</li>
                 <li><strong>Security:</strong> Detect fraud, prevent abuse, and protect user accounts</li>

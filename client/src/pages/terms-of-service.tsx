@@ -25,12 +25,12 @@ export default function TermsOfService() {
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
               <p>
-                By accessing and using create.psx (the "Platform"), you accept and agree to be bound by these Terms of Service ("Terms"). 
+                By accessing and using Create.psx (the "Platform"), you accept and agree to be bound by these Terms of Service ("Terms"). 
                 If you do not agree to these Terms, please do not use our Platform.
               </p>
               <p>
-                create.psx is a token-gated Web3 marketplace connecting premium builders with clients in the cryptocurrency and memecoin space. 
-                Access to certain features requires holding $PSX tokens.
+                Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the cryptocurrency and memecoin space. 
+                Access to certain features requires holding either $CREATE or $PSX tokens.
               </p>
             </CardContent>
           </Card>
@@ -41,8 +41,8 @@ export default function TermsOfService() {
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
               <p>
-                <strong>$PSX Token Requirements:</strong> Access to the marketplace and client tier assignments require holding specific amounts 
-                of $PSX tokens in your connected Base blockchain wallet. Token requirements may change at the platform's discretion.
+                <strong>Token Requirements:</strong> Access to the marketplace and client tier assignments require holding specific amounts 
+                of either $CREATE or $PSX tokens in your connected Base blockchain wallet. Users only need to hold ONE of these tokens to gain access. Token requirements may change at the platform's discretion.
               </p>
               <p>
                 <strong>Wallet Connection:</strong> You must connect a compatible Web3 wallet (Base network) to access platform features. 
@@ -74,7 +74,7 @@ export default function TermsOfService() {
                 <strong>Clients:</strong> Users who book services must:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Hold required $PSX tokens to access the marketplace</li>
+                <li>Hold required $CREATE or $PSX tokens to access the marketplace</li>
                 <li>Provide clear project requirements and expectations</li>
                 <li>Release milestone payments when deliverables are satisfactory</li>
                 <li>Communicate professionally and respectfully</li>
@@ -116,12 +116,12 @@ export default function TermsOfService() {
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
               <p>
-                <strong>Platform IP:</strong> The create.psx platform, including its code, design, branding, and content, is owned by 
-                create.psx and protected by intellectual property laws.
+                <strong>Platform IP:</strong> The Create.psx platform, including its code, design, branding, and content, is owned by 
+                Create.psx and protected by intellectual property laws.
               </p>
               <p>
                 <strong>User Content:</strong> Builders retain ownership of their portfolio work, service descriptions, and deliverables. 
-                By posting content, you grant create.psx a license to display and promote your work on the platform.
+                By posting content, you grant Create.psx a license to display and promote your work on the platform.
               </p>
               <p>
                 <strong>Work Product:</strong> Ownership of deliverables is governed by individual service agreements between builders and clients. 

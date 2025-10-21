@@ -16,24 +16,24 @@ const faqCategories = [
     title: "Getting Started",
     questions: [
       {
-        q: "What is create.psx?",
-        a: "create.psx is a token-gated Web3 marketplace connecting premium builders with clients in the cryptocurrency and memecoin space. The platform requires $PSX token holdings to ensure quality and commitment from all participants."
+        q: "What is Create.psx?",
+        a: "Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the cryptocurrency and memecoin space. The platform requires holding either $CREATE or $PSX tokens to ensure quality and commitment from all participants."
       },
       {
         q: "How do I get started as a client?",
-        a: "To become a client: (1) Connect your Base-compatible wallet, (2) Ensure you hold the required amount of $PSX tokens, (3) Browse the marketplace and find builders that match your needs, (4) Book a service directly through the platform."
+        a: "To become a client: (1) Connect your Base-compatible wallet, (2) Ensure you hold the required amount of either $CREATE or $PSX tokens, (3) Browse the marketplace and find builders that match your needs, (4) Book a service directly through the platform."
       },
       {
-        q: "How do I become a builder on create.psx?",
+        q: "How do I become a builder on Create.psx?",
         a: "To become a builder: (1) Visit the 'Apply' page, (2) Complete the multi-step application form including your skills, portfolio, and category-specific information, (3) Wait for admin approval (typically 2-5 business days), (4) Once approved, complete your profile setup and start listing services."
       },
       {
-        q: "What is the $PSX token and why is it required?",
-        a: "The $PSX token is an ERC-20 token on the Base blockchain that gates access to the platform. Token requirements ensure that all participants have a stake in the platform's success, filtering for serious clients and committed builders. Different token holdings unlock different client tiers with varying benefits."
+        q: "What are the $CREATE and $PSX tokens and why are they required?",
+        a: "Both $CREATE and $PSX are ERC-20 tokens on the Base blockchain that gate access to the platform. Users only need to hold ONE of these tokens to access the marketplace. Token requirements ensure that all participants have a stake in the platform's success, filtering for serious clients and committed builders. Different token holdings unlock different client tiers with varying benefits."
       },
       {
-        q: "What blockchain network does create.psx use?",
-        a: "create.psx operates on the Base blockchain (both mainnet for production and Sepolia testnet for testing). You'll need a Base-compatible wallet to connect and interact with the platform."
+        q: "What blockchain network does Create.psx use?",
+        a: "Create.psx operates on the Base blockchain (both mainnet for production and Sepolia testnet for testing). You'll need a Base-compatible wallet to connect and interact with the platform."
       }
     ]
   },
@@ -42,23 +42,31 @@ const faqCategories = [
     questions: [
       {
         q: "Which wallets are supported?",
-        a: "create.psx supports Base-compatible wallets including Coinbase Wallet, MetaMask (with Base network added), and any wallet compatible with the Base Account SDK. Make sure your wallet is connected to the Base network."
+        a: "Create.psx supports Base-compatible wallets including Coinbase Wallet, MetaMask (with Base network added), and any wallet compatible with the Base Account SDK. Make sure your wallet is connected to the Base network."
       },
       {
-        q: "How much $PSX do I need to hold to access the platform?",
-        a: "Token requirements vary by client tier (Bronze, Silver, Gold, Platinum). Each tier requires progressively more $PSX tokens and unlocks additional benefits. Check the 'Token Requirements' page for current tier thresholds."
+        q: "How many tokens do I need to hold to access the platform?",
+        a: "Token requirements vary by client tier (Bronze, Silver, Gold, Platinum). Each tier requires progressively more tokens and unlocks additional benefits. You only need to hold the required amount of EITHER $CREATE OR $PSX - not both. Check the 'Token Requirements' page for current tier thresholds."
       },
       {
-        q: "What happens if my $PSX balance falls below the requirement?",
-        a: "If your token balance drops below your current tier's requirement, you'll be moved to a lower tier or lose marketplace access entirely. Your existing orders and contracts remain valid, but you won't be able to book new services until you restore the required balance."
+        q: "What happens if my token balance falls below the requirement?",
+        a: "If both your $CREATE and $PSX balances drop below your current tier's requirement, you'll be moved to a lower tier or lose marketplace access entirely. Your existing orders and contracts remain valid, but you won't be able to book new services until you restore the required balance in at least one token."
       },
       {
-        q: "Do I need $PSX to be a builder?",
-        a: "No, builders do not need to hold $PSX tokens. The token-gating applies only to clients accessing the marketplace. Builders are verified through the application and approval process."
+        q: "Do I need tokens to be a builder?",
+        a: "No, builders do not need to hold $CREATE or $PSX tokens. The token-gating applies only to clients accessing the marketplace. Builders are verified through the application and approval process."
       },
       {
         q: "Can I use a different blockchain network?",
-        a: "No, create.psx exclusively operates on the Base blockchain. All token checks, payments, and smart contract interactions occur on Base (mainnet or Sepolia testnet)."
+        a: "No, Create.psx exclusively operates on the Base blockchain. All token checks, payments, and smart contract interactions occur on Base (mainnet or Sepolia testnet)."
+      },
+      {
+        q: "Do I need to hold both $CREATE and $PSX tokens?",
+        a: "No! You only need to hold the required amount of ONE token - either $CREATE or $PSX. The platform checks both balances and grants access if you meet the requirement for either token. This gives you flexibility in choosing which token to hold."
+      },
+      {
+        q: "What is the $CREATE token contract address?",
+        a: "The $CREATE token contract address on Base is: 0x3849cC93e7B71b37885237cd91a215974135cD8D. This is an ERC-20 token that can be held alongside or instead of $PSX for platform access."
       }
     ]
   },
@@ -78,8 +86,8 @@ const faqCategories = [
         a: "Milestones are payment stages defined when booking a service. For example, a service might have milestones at 25%, 50%, and 100% completion. Clients review deliverables and release funds for each milestone. Builders receive payment as they progress through the project."
       },
       {
-        q: "What platform fees does create.psx charge?",
-        a: "create.psx charges a 10% platform fee on completed transactions (subject to change). This fee covers platform maintenance, escrow services, dispute resolution, and ongoing development. Fees may vary based on client tier or promotional programs."
+        q: "What platform fees does Create.psx charge?",
+        a: "Create.psx charges a 10% platform fee on completed transactions (subject to change). This fee covers platform maintenance, escrow services, dispute resolution, and ongoing development. Fees may vary based on client tier or promotional programs."
       },
       {
         q: "How do refunds work?",
