@@ -24,22 +24,21 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import type { Builder, Service } from "@shared/schema";
-
-const categories = [
-  { name: "KOLs & Influencers", value: "KOLs & Influencers" },
-  { name: "3D Content Creators", value: "3D Content Creators" },
-  { name: "Marketing & Growth", value: "Marketing & Growth" },
-  { name: "Script Development", value: "Script Development" },
-  { name: "Volume Services", value: "Volume Services" },
-];
+import type { Builder, Service, Category } from "@shared/schema";
+import { Badge } from "@/components/ui/badge";
 
 const ratings = ["5 Stars", "4+ Stars", "3+ Stars"];
 const deliveryTimes = ["24 hours", "3 days", "7 days", "14 days"];
+const popularTags = [
+  "Photoshop", "Blender", "Solidity", "React", "Twitter",
+  "Discord", "Smart Contracts", "3D Animation", "UI/UX",
+  "Viral Marketing", "Trading Bots", "Music Production"
+];
 
 export default function Marketplace() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
@@ -48,10 +47,15 @@ export default function Marketplace() {
   const headerSection = useScrollReveal();
   const servicesGrid = useScrollReveal();
 
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories"],
+  });
+
   const buildQueryString = () => {
     const params = new URLSearchParams();
     if (searchQuery) params.set("search", searchQuery);
     if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
+    if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
     if (sortBy && sortBy !== "relevance") params.set("sortBy", sortBy);
     
     if (priceRange[0] > 0) params.set("minPrice", priceRange[0].toString());
@@ -88,26 +92,51 @@ export default function Marketplace() {
     );
   };
 
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag)
+        ? prev.filter((t) => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
   const FilterSidebar = () => (
     <div className="space-y-6">
       <div className="space-y-3">
         <Label className="text-base font-semibold">Categories</Label>
         <div className="space-y-2">
-          {categories.map((category) => (
-            <div key={category.value} className="flex items-center space-x-2">
+          {categories && categories.map((category) => (
+            <div key={category.id} className="flex items-center space-x-2">
               <Checkbox
-                id={category.value}
-                checked={selectedCategories.includes(category.value)}
-                onCheckedChange={() => toggleCategory(category.value)}
-                data-testid={`checkbox-category-${category.value.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')}`}
+                id={category.id}
+                checked={selectedCategories.includes(category.name)}
+                onCheckedChange={() => toggleCategory(category.name)}
+                data-testid={`checkbox-category-${category.slug}`}
               />
               <label
-                htmlFor={category.value}
+                htmlFor={category.id}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
                 {category.name}
               </label>
             </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Label className="text-base font-semibold">Skills & Tools</Label>
+        <div className="flex flex-wrap gap-2">
+          {popularTags.map((tag) => (
+            <Badge
+              key={tag}
+              variant={selectedTags.includes(tag) ? "default" : "outline"}
+              className="cursor-pointer no-default-hover-elevate hover-elevate active-elevate-2"
+              onClick={() => toggleTag(tag)}
+              data-testid={`tag-${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              {tag}
+            </Badge>
           ))}
         </div>
       </div>
@@ -231,7 +260,7 @@ export default function Marketplace() {
             </Sheet>
           </div>
 
-          {selectedCategories.length > 0 && (
+          {(selectedCategories.length > 0 || selectedTags.length > 0) && (
             <div className="flex flex-wrap gap-2">
               <span className="text-sm text-muted-foreground">Active filters:</span>
               {selectedCategories.map((category) => (
@@ -241,10 +270,22 @@ export default function Marketplace() {
                   size="sm"
                   onClick={() => toggleCategory(category)}
                   className="gap-1"
+                  data-testid={`active-filter-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   {category}
                   <span className="text-muted-foreground">×</span>
                 </Button>
+              ))}
+              {selectedTags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="cursor-pointer no-default-hover-elevate"
+                  onClick={() => toggleTag(tag)}
+                  data-testid={`active-filter-tag-${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                >
+                  {tag} ×
+                </Badge>
               ))}
             </div>
           )}

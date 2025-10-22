@@ -450,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Filter to only show standalone services (no builder assigned) in marketplace
       services = services.filter(service => !service.builderId || service.builderId === '');
       
-      const { search, categories, sortBy, minPrice, maxPrice, minRating, deliveryTime } = req.query;
+      const { search, categories, tags, sortBy, minPrice, maxPrice, minRating, deliveryTime } = req.query;
 
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
@@ -487,6 +487,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const categoryList = categories.split(",");
         filteredResults = filteredResults.filter(({ service }) => 
           categoryList.includes(service.category)
+        );
+      }
+
+      if (tags && typeof tags === "string") {
+        const tagList = tags.split(",").map(t => t.toLowerCase());
+        filteredResults = filteredResults.filter(({ service }) => 
+          service.tags && service.tags.some(tag => 
+            tagList.some(filterTag => tag.toLowerCase().includes(filterTag))
+          )
         );
       }
 
