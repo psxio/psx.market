@@ -172,10 +172,12 @@ export default function Apply() {
         description: "We'll review your application within 2-3 business days.",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Submission Failed",
-        description: "Please try again or contact support.",
+        description: error.message === "Please connect your wallet first" 
+          ? "Please connect your wallet using the button in the header before submitting."
+          : "Please try again or contact support.",
         variant: "destructive",
       });
     },
@@ -999,10 +1001,10 @@ export default function Apply() {
                 ) : (
                   <Button
                     type="submit"
-                    disabled={submitMutation.isPending}
+                    disabled={submitMutation.isPending || !isConnected}
                     data-testid="button-submit-application"
                   >
-                    {submitMutation.isPending ? "Submitting..." : "Submit Application"}
+                    {submitMutation.isPending ? "Submitting..." : !isConnected ? "Connect Wallet to Submit" : "Submit Application"}
                   </Button>
                 )}
               </CardFooter>
