@@ -53,7 +53,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
   // Handle services without assigned builder - show as generic service card
   if (!builder && service) {
     const categoryKey = service.category as keyof typeof categoryVisuals;
-    const visual = categoryVisuals[categoryKey] || categoryVisuals["Development"];
+    const visual = categoryVisuals[categoryKey] || categoryVisuals["Script Development"];
     const CategoryIcon = visual.icon;
 
     return (
@@ -145,7 +145,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
     .slice(0, 2);
 
   const categoryKey = builder.category as keyof typeof categoryVisuals;
-  const visual = categoryVisuals[categoryKey] || categoryVisuals["Development"];
+  const visual = categoryVisuals[categoryKey] || categoryVisuals["Script Development"];
   const CategoryIcon = visual.icon;
 
   return (
