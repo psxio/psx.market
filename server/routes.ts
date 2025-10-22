@@ -2949,5 +2949,219 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // PARTNER ROUTES
+
+  // Get all partners (public)
+  app.get("/api/partners", async (req, res) => {
+    try {
+      const { category, featured } = req.query;
+      
+      const options: any = { active: true };
+      if (category) options.category = category as string;
+      if (featured) options.featured = featured === 'true';
+      
+      const partners = await storage.getPartners(options);
+      res.json(partners);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch partners" });
+    }
+  });
+
+  // Get single partner (public)
+  app.get("/api/partners/:id", async (req, res) => {
+    try {
+      const partner = await storage.getPartner(req.params.id);
+      if (!partner) {
+        return res.status(404).json({ error: "Partner not found" });
+      }
+      res.json(partner);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch partner" });
+    }
+  });
+
+  // Create partner connection request (requires auth)
+  app.post("/api/partner-connections", async (req, res) => {
+    if (!req.session.clientAddress && !req.session.adminId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    try {
+      let userId: string;
+      let userType: string;
+      let userName: string;
+      let userEmail: string;
+
+      if (req.session.clientAddress) {
+        const client = await storage.getClient(req.session.clientAddress);
+        if (!client) {
+          return res.status(404).json({ error: "Client not found" });
+        }
+        userId = client.id;
+        userType = "client";
+        userName = client.name || "Client";
+        userEmail = client.email || "";
+      } else {
+        const admin = await storage.getAdmin(req.session.adminId!);
+        if (!admin) {
+          return res.status(404).json({ error: "Admin not found" });
+        }
+        userId = admin.id;
+        userType = "admin";
+        userName = admin.username;
+        userEmail = admin.email || "";
+      }
+
+      const connectionRequest = await storage.createPartnerConnectionRequest({
+        partnerId: req.body.partnerId,
+        userId,
+        userType,
+        userName,
+        userEmail,
+        userWallet: req.session.clientAddress || undefined,
+        projectName: req.body.projectName,
+        projectDescription: req.body.projectDescription,
+        budget: req.body.budget,
+        timeline: req.body.timeline,
+        specificNeeds: req.body.specificNeeds,
+        status: "pending",
+      });
+
+      // Send notification to admin
+      await storage.createNotification({
+        recipientId: "admin",
+        recipientType: "admin",
+        type: "system",
+        title: "New Partner Connection Request",
+        message: `${userName} requested connection to a partner for ${req.body.projectName}`,
+        actionUrl: `/admin-dashboard`,
+      });
+
+      res.json(connectionRequest);
+    } catch (error) {
+      console.error("Partner connection request error:", error);
+      res.status(500).json({ error: "Failed to create connection request" });
+    }
+  });
+
+  // Get user's own connection requests
+  app.get("/api/partner-connections/me", async (req, res) => {
+    if (!req.session.clientAddress && !req.session.adminId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    try {
+      let userId: string;
+
+      if (req.session.clientAddress) {
+        const client = await storage.getClient(req.session.clientAddress);
+        if (!client) {
+          return res.status(404).json({ error: "Client not found" });
+        }
+        userId = client.id;
+      } else {
+        const admin = await storage.getAdmin(req.session.adminId!);
+        if (!admin) {
+          return res.status(404).json({ error: "Admin not found" });
+        }
+        userId = admin.id;
+      }
+
+      const requests = await storage.getPartnerConnectionRequests({ userId });
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch connection requests" });
+    }
+  });
+
+  // ADMIN PARTNER ROUTES
+
+  // Get all partners (admin)
+  app.get("/api/admin/partners", requireAdminAuth, async (_req, res) => {
+    try {
+      const partners = await storage.getPartners();
+      res.json(partners);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch partners" });
+    }
+  });
+
+  // Create partner (admin)
+  app.post("/api/admin/partners", requireAdminAuth, async (req, res) => {
+    try {
+      const partner = await storage.createPartner(req.body);
+      res.json(partner);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create partner" });
+    }
+  });
+
+  // Update partner (admin)
+  app.put("/api/admin/partners/:id", requireAdminAuth, async (req, res) => {
+    try {
+      const partner = await storage.updatePartner(req.params.id, req.body);
+      res.json(partner);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update partner" });
+    }
+  });
+
+  // Delete partner (admin)
+  app.delete("/api/admin/partners/:id", requireAdminAuth, async (req, res) => {
+    try {
+      await storage.deletePartner(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete partner" });
+    }
+  });
+
+  // Get all partner connection requests (admin)
+  app.get("/api/admin/partner-connections", requireAdminAuth, async (req, res) => {
+    try {
+      const { partnerId, status } = req.query;
+      const options: any = {};
+      if (partnerId) options.partnerId = partnerId as string;
+      if (status) options.status = status as string;
+
+      const requests = await storage.getPartnerConnectionRequests(options);
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch connection requests" });
+    }
+  });
+
+  // Update partner connection request status (admin)
+  app.put("/api/admin/partner-connections/:id", requireAdminAuth, async (req, res) => {
+    try {
+      const request = await storage.updatePartnerConnectionRequest(req.params.id, req.body);
+
+      // If status changed to connected, send notification to user
+      if (req.body.status === "connected") {
+        await storage.createNotification({
+          recipientId: request.userId,
+          recipientType: request.userType as "client" | "builder" | "admin",
+          type: "system",
+          title: "Partner Connection Approved",
+          message: `Your connection request has been approved! Check your email for next steps.`,
+        });
+      }
+
+      res.json(request);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update connection request" });
+    }
+  });
+
+  // Delete partner connection request (admin)
+  app.delete("/api/admin/partner-connections/:id", requireAdminAuth, async (req, res) => {
+    try {
+      await storage.deletePartnerConnectionRequest(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete connection request" });
+    }
+  });
+
   return httpServer;
 }
