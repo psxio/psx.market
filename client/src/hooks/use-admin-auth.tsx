@@ -22,6 +22,36 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem("admin");
     return stored ? JSON.parse(stored) : null;
   });
+  const [isVerifying, setIsVerifying] = useState(true);
+
+  // Verify session on mount
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const response = await fetch("/api/admin/me", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const adminData = await response.json();
+          setAdmin(adminData);
+          localStorage.setItem("admin", JSON.stringify(adminData));
+        } else {
+          // Backend session invalid, clear frontend state
+          setAdmin(null);
+          localStorage.removeItem("admin");
+        }
+      } catch (error) {
+        console.error("Session verification failed:", error);
+        setAdmin(null);
+        localStorage.removeItem("admin");
+      } finally {
+        setIsVerifying(false);
+      }
+    };
+
+    verifySession();
+  }, []);
 
   const login = async (username: string, password: string) => {
     const response = await fetch("/api/admin/login", {
@@ -52,6 +82,11 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("admin");
     }
   };
+
+  // Show nothing while verifying to prevent flash of login page
+  if (isVerifying) {
+    return null;
+  }
 
   return (
     <AdminAuthContext.Provider

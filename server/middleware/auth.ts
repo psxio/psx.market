@@ -10,7 +10,16 @@ declare module "express-session" {
 }
 
 export function requireAdminAuth(req: Request, res: Response, next: NextFunction) {
+  console.log("[requireAdminAuth] Session check:", {
+    hasSession: !!req.session,
+    adminId: req.session?.adminId,
+    sessionID: req.sessionID,
+    method: req.method,
+    path: req.path,
+  });
+
   if (!req.session.adminId) {
+    console.log("[requireAdminAuth] UNAUTHORIZED - No admin session found");
     return res.status(401).json({ error: "Unauthorized - Admin authentication required" });
   }
   

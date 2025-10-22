@@ -1196,6 +1196,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/admin/me", async (req, res) => {
+    if (!req.session.adminId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const admin = await storage.getAdminById(req.session.adminId);
+      if (!admin) {
+        return res.status(404).json({ error: "Admin not found" });
+      }
+
+      res.json({
+        id: admin.id,
+        username: admin.username,
+        email: admin.email,
+        name: admin.name,
+        role: admin.role,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch admin info" });
+    }
+  });
+
   app.post("/api/admin/logout", (req, res) => {
     req.session.destroy((err) => {
       if (err) {
