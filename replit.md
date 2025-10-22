@@ -23,6 +23,7 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
     - **Marketplace Browsing**: Comprehensive search and filtering system including full-text search, multi-select category filtering, price range, rating, delivery time filters, and mobile-responsive filter sheets.
     - **Admin & Client Dashboards**: Dedicated interfaces for administration and project management with secure authentication.
     - **Builder Application System**: Multi-step form wizard with category-specific questions. Features quiz-to-onboarding integration that pre-fills profile data based on quiz results.
+    - **Builder Invite System**: Admin-managed private invite links that route through the "For Builders" landing page before onboarding. Invite links use format `/builders?invite={token}` to showcase platform benefits before application. Legacy `/builder-invite/{token}` links redirect to new flow for backward compatibility.
     - **PSX Agency Promotion**: Dedicated homepage section for B2B services.
     - **Legal & Compliance Pages**: Comprehensive legal documentation including Terms of Service, Privacy Policy, Cookie Policy, and a searchable FAQ page.
     - **Builder Onboarding System**: A visual checklist guiding new builders through platform setup, profile completion, service listing, portfolio showcase, payment setup, and verification. Features expandable UI with icons, progress tracking, and motivational messaging.
