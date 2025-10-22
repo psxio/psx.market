@@ -111,6 +111,7 @@ import { eq, and, or, desc, count, sql as sqlFunc } from "drizzle-orm";
 
 export interface IStorage {
   getBuilder(id: string): Promise<Builder | undefined>;
+  getBuilderByWallet(walletAddress: string): Promise<Builder | undefined>;
   getBuilders(): Promise<Builder[]>;
   getFeaturedBuilders(): Promise<Builder[]>;
   createBuilder(builder: InsertBuilder): Promise<Builder>;
@@ -484,6 +485,11 @@ export class PostgresStorage implements IStorage {
 
   async getBuilder(id: string): Promise<Builder | undefined> {
     const result = await db.select().from(builders).where(eq(builders.id, id));
+    return result[0];
+  }
+
+  async getBuilderByWallet(walletAddress: string): Promise<Builder | undefined> {
+    const result = await db.select().from(builders).where(eq(builders.walletAddress, walletAddress));
     return result[0];
   }
 
