@@ -16,6 +16,7 @@ import { NotificationToastListener } from "@/components/notification-toast-liste
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
 import ServiceDetail from "@/pages/service-detail";
+import OrderConfirmation from "@/pages/order-confirmation";
 import Marketplace from "@/pages/marketplace";
 import CategoryPage from "@/pages/category";
 import Apply from "@/pages/apply";
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/service/:id" component={ServiceDetail} />
+      <Route path="/order-confirmation/:id" component={OrderConfirmation} />
       <Route path="/builder/:id" component={BuilderProfile} />
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/apply" component={Apply} />

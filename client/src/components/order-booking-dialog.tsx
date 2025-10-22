@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useClientAuth } from "@/hooks/use-client-auth";
 import {
   Dialog,
@@ -35,6 +36,7 @@ export function OrderBookingDialog({
 }: OrderBookingDialogProps) {
   const { client } = useClientAuth();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [selectedPackage, setSelectedPackage] = useState<"basic" | "standard" | "premium">("basic");
   const [requirements, setRequirements] = useState("");
 
@@ -81,15 +83,14 @@ export function OrderBookingDialog({
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (order) => {
       queryClient.invalidateQueries({ queryKey: ["/api/clients/me/orders"] });
-      toast({
-        title: "Order Placed!",
-        description: "Your order has been submitted successfully. The builder will be notified.",
-      });
+      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
       onOpenChange(false);
       setRequirements("");
       setSelectedPackage("basic");
+      // Navigate to order confirmation page
+      navigate(`/order-confirmation/${order.id}`);
     },
     onError: (error: any) => {
       toast({

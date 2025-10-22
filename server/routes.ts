@@ -1040,8 +1040,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         clientId: req.session.clientId!,
       };
       const order = await storage.createOrder(orderData);
+      
+      // Get client and builder details for notifications
+      const client = await storage.getClient(order.clientId);
+      const builder = await storage.getBuilder(order.builderId);
+      
+      if (client && builder) {
+        const { sendNotification } = await import("./notifications");
+        
+        // Send notification to client
+        await sendNotification({
+          recipientId: client.id,
+          recipientType: "client",
+          type: "order_update",
+          title: "Order Placed Successfully",
+          message: `Your order "${order.title}" has been placed. ${builder.name} will review it soon.`,
+          actionUrl: `/order-confirmation/${order.id}`,
+          metadata: { orderId: order.id, orderTitle: order.title },
+        });
+        
+        // Send notification to builder
+        await sendNotification({
+          recipientId: builder.id,
+          recipientType: "builder",
+          type: "order_update",
+          title: "New Order Received",
+          message: `You have a new order from ${client.name} for "${order.title}".`,
+          actionUrl: `/builder-dashboard?order=${order.id}`,
+          metadata: { orderId: order.id, orderTitle: order.title },
+        });
+      }
+      
       res.json(order);
     } catch (error: any) {
+      console.error("Error creating order:", error);
       res.status(500).json({ error: "Failed to create order" });
     }
   });

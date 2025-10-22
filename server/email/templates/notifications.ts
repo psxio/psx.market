@@ -169,6 +169,52 @@ export function newReviewEmail(data: ReviewNotificationData): { html: string; te
   };
 }
 
+export function newOrderEmail(data: OrderNotificationData & { recipientType: 'client' | 'builder' }): { html: string; text: string} {
+  const baseUrl = data.baseUrl || process.env.BASE_URL || 'https://create.psx';
+  
+  const isClient = data.recipientType === 'client';
+  
+  const templateData: EmailTemplateData = {
+    title: isClient ? 'Order Placed Successfully' : 'New Order Received',
+    preheader: isClient 
+      ? `Your order "${data.orderTitle}" has been placed successfully`
+      : `You have a new order from ${data.clientName || 'a client'}`,
+    content: isClient ? `
+      <p>Hi ${data.recipientName},</p>
+      <p>Your order has been placed successfully! 🎉</p>
+      <p><strong>Order Details:</strong></p>
+      <p><strong>Service:</strong> ${data.orderTitle}</p>
+      <p><strong>Order ID:</strong> ${data.orderId}</p>
+      <p><strong>Builder:</strong> ${data.builderName || 'TBD'}</p>
+      <p>The builder will review your requirements and confirm the order. You'll receive a notification once they respond.</p>
+      <p>You can track your order status and communicate with the builder through your dashboard.</p>
+    ` : `
+      <p>Hi ${data.recipientName},</p>
+      <p>Great news! You have a new order. 💼</p>
+      <p><strong>Order Details:</strong></p>
+      <p><strong>Service:</strong> ${data.orderTitle}</p>
+      <p><strong>Order ID:</strong> ${data.orderId}</p>
+      <p><strong>Client:</strong> ${data.clientName || 'Client'}</p>
+      <p>Please review the order requirements and confirm or discuss with the client as soon as possible.</p>
+      <p>The client is waiting to hear from you!</p>
+    `,
+    ctaText: isClient ? 'View Order' : 'Review Order',
+    ctaUrl: isClient 
+      ? `${baseUrl}/dashboard?order=${data.orderId}`
+      : `${baseUrl}/builder-dashboard?order=${data.orderId}`,
+  };
+  
+  return {
+    html: baseEmailTemplate(templateData),
+    text: plainTextTemplate({
+      ...templateData,
+      content: isClient
+        ? `Hi ${data.recipientName},\n\nYour order has been placed successfully!\n\nOrder Details:\nService: ${data.orderTitle}\nOrder ID: ${data.orderId}\nBuilder: ${data.builderName || 'TBD'}\n\nThe builder will review your requirements and confirm the order. You'll receive a notification once they respond.`
+        : `Hi ${data.recipientName},\n\nGreat news! You have a new order.\n\nOrder Details:\nService: ${data.orderTitle}\nOrder ID: ${data.orderId}\nClient: ${data.clientName || 'Client'}\n\nPlease review the order requirements and confirm or discuss with the client as soon as possible.`
+    }),
+  };
+}
+
 export function milestoneUpdateEmail(data: MilestoneNotificationData): { html: string; text: string } {
   const baseUrl = data.baseUrl || process.env.BASE_URL || 'https://create.psx';
   
