@@ -45,6 +45,7 @@ import {
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { useBuilderAuth } from "@/hooks/use-builder-auth";
+import BuilderAnalytics from "@/components/builder-analytics";
 import type { Order, Service } from "@shared/schema";
 
 export default function BuilderDashboard() {
@@ -212,7 +213,7 @@ export default function BuilderDashboard() {
           <p className="text-muted-foreground">Welcome back, {builder.name}</p>
         </div>
         <div className="flex items-center gap-4">
-          <NotificationCenter userId={builderId} userType="builder" />
+          <NotificationCenter userId={builder.id} userType="builder" />
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-chart-3/40 bg-chart-3/5">
             <Switch
               id="live-status"
@@ -346,7 +347,7 @@ export default function BuilderDashboard() {
       </div>
 
       {onboardingData && !onboardingData.isComplete && (
-        <OnboardingChecklist builderId={builderId} onboardingData={onboardingData} />
+        <OnboardingChecklist builderId={builder.id} onboardingData={onboardingData} />
       )}
 
       <Card data-testid="card-quick-actions">
@@ -432,6 +433,7 @@ export default function BuilderDashboard() {
         <TabsList data-testid="tabs-builder-dashboard">
           <TabsTrigger value="orders" data-testid="tab-orders">Orders</TabsTrigger>
           <TabsTrigger value="services" data-testid="tab-services">Services</TabsTrigger>
+          <TabsTrigger value="analytics" data-testid="tab-analytics">Analytics</TabsTrigger>
           <TabsTrigger value="earnings" data-testid="tab-earnings">Earnings</TabsTrigger>
         </TabsList>
 
@@ -579,6 +581,10 @@ export default function BuilderDashboard() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          {builderId && <BuilderAnalytics builderId={builderId} />}
         </TabsContent>
 
         <TabsContent value="earnings" className="space-y-4">
