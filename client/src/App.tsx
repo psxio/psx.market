@@ -13,6 +13,7 @@ import { ClientAuthProvider } from "@/hooks/use-client-auth";
 import { BuilderAuthProvider } from "@/hooks/use-builder-auth";
 import { InstallPWAPrompt } from "@/components/install-pwa-prompt";
 import { NotificationToastListener } from "@/components/notification-toast-listener";
+import { Footer } from "@/components/footer";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
 import ServiceDetail from "@/pages/service-detail";
@@ -91,7 +92,12 @@ function App() {
                     <Toaster />
                     <InstallPWAPrompt />
                     <NotificationToastListener />
-                    <Router />
+                    <div className="flex flex-col min-h-screen">
+                      <main className="flex-1">
+                        <Router />
+                      </main>
+                      <Footer />
+                    </div>
                   </TooltipProvider>
                 </BuilderAuthProvider>
               </ClientAuthProvider>
