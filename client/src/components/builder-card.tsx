@@ -50,7 +50,61 @@ const categoryVisuals = {
 };
 
 export function BuilderCard({ builder, service }: BuilderCardProps) {
-  // Handle null builder (services without assigned builder)
+  // Handle services without assigned builder - show as generic service card
+  if (!builder && service) {
+    const categoryKey = service.category as keyof typeof categoryVisuals;
+    const visual = categoryVisuals[categoryKey] || categoryVisuals["Development"];
+    const CategoryIcon = visual.icon;
+
+    return (
+      <Link href={`/marketplace?categories=${encodeURIComponent(service.category)}`}>
+        <Card 
+          className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-hidden transition-all border-l-4 ${visual.borderColor}`}
+          data-testid={`card-service-${service.id}`}
+        >
+          <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${visual.patternClass}`}>
+            <div className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} animate-gradient`} />
+          </div>
+
+          <div className="absolute top-3 right-3 z-10">
+            <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
+              <CategoryIcon className="h-4 w-4" />
+            </div>
+          </div>
+
+          <div className="relative z-[1]">
+            <CardHeader className="space-y-0 pb-4">
+              <div className="flex items-start justify-between gap-4 pr-10">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-base mb-2">{service.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {service.description}
+                  </p>
+                  <Badge variant="outline" className="mb-2">{service.category}</Badge>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Starting at</span>
+                <span className="font-semibold text-lg">${service.basicPrice}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Delivery</span>
+                <span className="font-medium">{service.deliveryTime}</span>
+              </div>
+              <Button variant="outline" className="w-full mt-2" size="sm">
+                Browse Builders
+              </Button>
+            </CardContent>
+          </div>
+        </Card>
+      </Link>
+    );
+  }
+
+  // Handle null builder without service
   if (!builder) {
     return null;
   }
