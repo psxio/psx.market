@@ -42,72 +42,72 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link href="/marketplace" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-browse">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse">
+              <Link href="/marketplace">
                 <Grid3x3 className="h-3.5 w-3.5" />
                 Browse Services
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/builders" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-for-builders">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-for-builders">
+              <Link href="/builders">
                 <Sparkles className="h-3.5 w-3.5" />
                 For Builders
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/how-it-works" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-how-it-works">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-how-it-works">
+              <Link href="/how-it-works">
                 <MessageCircle className="h-3.5 w-3.5" />
                 How It Works
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/getting-started" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-getting-started">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-getting-started">
+              <Link href="/getting-started">
                 <Rocket className="h-3.5 w-3.5" />
                 Getting Started
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/faq" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-faq">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-faq">
+              <Link href="/faq">
                 <Shield className="h-3.5 w-3.5" />
                 Help
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             
             {(isClient || isBuilder) && (
               <>
-                <Link href={isClient ? "/dashboard" : "/builder-dashboard"} className="hidden md:block">
-                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-dashboard">
+                <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-dashboard">
+                  <Link href={isClient ? "/dashboard" : "/builder-dashboard"}>
                     <LayoutDashboard className="h-3.5 w-3.5" />
                     Dashboard
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
                 {(client || builder) && (
                   <>
                     <NotificationCenter 
                       userId={client?.id || builder?.id || ""} 
                       userType={client ? "client" : "builder"} 
                     />
-                    <Link href="/messages" className="hidden md:block">
-                      <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
+                    <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-messages">
+                      <Link href="/messages">
                         <MessageCircle className="h-3.5 w-3.5" />
                         Messages
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </>
                 )}
               </>
             )}
             
-            <Link href="/admin/login" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-admin">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-admin">
+              <Link href="/admin/login">
                 <Shield className="h-3.5 w-3.5" />
                 Admin
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             
             <div className="hidden md:flex">
               <WalletConnectButton />
@@ -139,97 +139,65 @@ export function Header() {
                   </div>
 
                   <nav className="flex flex-col gap-2">
-                    <Link href="/marketplace">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 hover-elevate"
-                        data-testid="link-browse-mobile"
-                      >
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-mobile">
+                      <Link href="/marketplace">
                         <Grid3x3 className="h-4 w-4" />
                         Browse Services
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
 
-                    <Link href="/builders">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 hover-elevate"
-                        data-testid="link-for-builders-mobile"
-                      >
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-for-builders-mobile">
+                      <Link href="/builders">
                         <Sparkles className="h-4 w-4" />
                         For Builders
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
 
-                    <Link href="/how-it-works">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 hover-elevate"
-                        data-testid="link-how-it-works-mobile"
-                      >
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-how-it-works-mobile">
+                      <Link href="/how-it-works">
                         <MessageCircle className="h-4 w-4" />
                         How It Works
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
 
-                    <Link href="/getting-started">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 hover-elevate"
-                        data-testid="link-getting-started-mobile"
-                      >
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-getting-started-mobile">
+                      <Link href="/getting-started">
                         <Rocket className="h-4 w-4" />
                         Getting Started
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
 
-                    <Link href="/faq">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 hover-elevate"
-                        data-testid="link-faq-mobile"
-                      >
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-faq-mobile">
+                      <Link href="/faq">
                         <Shield className="h-4 w-4" />
                         Help
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                     
                     {(isClient || isBuilder) && (
-                      <Link href={isClient ? "/dashboard" : "/builder-dashboard"}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start gap-2 hover-elevate"
-                          data-testid="link-dashboard-mobile"
-                        >
+                      <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-dashboard-mobile">
+                        <Link href={isClient ? "/dashboard" : "/builder-dashboard"}>
                           <LayoutDashboard className="h-4 w-4" />
                           Dashboard
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     )}
                     
                     {client && (
-                      <Link href="/messages">
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start gap-2 hover-elevate"
-                          data-testid="link-messages-mobile"
-                        >
+                      <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-messages-mobile">
+                        <Link href="/messages">
                           <MessageCircle className="h-4 w-4" />
                           Messages
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     )}
                     
-                    <Link href="/admin/login">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 hover-elevate"
-                        data-testid="link-admin-mobile"
-                      >
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-admin-mobile">
+                      <Link href="/admin/login">
                         <Shield className="h-4 w-4" />
-                        Admin Dashboard
-                      </Button>
-                    </Link>
+                        Admin
+                      </Link>
+                    </Button>
                   </nav>
                 </div>
               </SheetContent>
