@@ -19,6 +19,8 @@ import ServiceDetail from "@/pages/service-detail";
 import OrderConfirmation from "@/pages/order-confirmation";
 import Marketplace from "@/pages/marketplace";
 import CategoryPage from "@/pages/category";
+import BuildersLanding from "@/pages/builders";
+import BuilderQuiz from "@/pages/builder-quiz";
 import Apply from "@/pages/apply";
 import BuilderInvite from "@/pages/builder-invite";
 import BuilderOnboarding from "@/pages/builder-onboarding";
@@ -45,6 +47,8 @@ function Router() {
       <Route path="/order-confirmation/:id" component={OrderConfirmation} />
       <Route path="/builder/:id" component={BuilderProfile} />
       <Route path="/category/:slug" component={CategoryPage} />
+      <Route path="/builders" component={BuildersLanding} />
+      <Route path="/builder-quiz" component={BuilderQuiz} />
       <Route path="/apply" component={Apply} />
       <Route path="/builder-invite/:token" component={BuilderInvite} />
       <Route path="/builder-onboarding/:token?" component={BuilderOnboarding} />

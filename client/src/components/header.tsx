@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard } from "lucide-react";
+import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import {
@@ -46,6 +46,13 @@ export function Header() {
               <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-browse">
                 <Grid3x3 className="h-3.5 w-3.5" />
                 Browse Services
+              </Button>
+            </Link>
+
+            <Link href="/builders" className="hidden md:block">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-for-builders">
+                <Sparkles className="h-3.5 w-3.5" />
+                For Builders
               </Button>
             </Link>
             
@@ -118,6 +125,17 @@ export function Header() {
                       >
                         <Grid3x3 className="h-4 w-4" />
                         Browse Services
+                      </Button>
+                    </Link>
+
+                    <Link href="/builders">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 hover-elevate"
+                        data-testid="link-for-builders-mobile"
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        For Builders
                       </Button>
                     </Link>
                     
