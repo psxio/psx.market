@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, CheckCircle2, Clock, Users, Sparkles, Code, TrendingUp, BarChart3, X, Palette, Music, Network } from "lucide-react";
+import { Star, CheckCircle2, Clock, Users, Sparkles, Code, TrendingUp, BarChart3, X, Palette, Music, Network, Flame, MessageCircle } from "lucide-react";
 import type { Builder, Service } from "@shared/schema";
 
 interface BuilderCardProps {
@@ -302,10 +302,15 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
         </div>
 
         {/* Category indicator badge in top right */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
           <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
             <CategoryIcon className="h-4 w-4" />
           </div>
+          {builder.isTrending && (
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/10 text-orange-500 border-orange-500/20 backdrop-blur-sm border transition-all duration-300 group-hover:scale-125" data-testid="badge-trending">
+              <Flame className="h-4 w-4" />
+            </div>
+          )}
         </div>
 
         <div className="relative z-[1]">
@@ -343,7 +348,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
               </div>
             )}
 
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-3 text-sm flex-wrap">
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-chart-4 text-chart-4" />
                 <span className="font-semibold">{builder.rating || "5.0"}</span>
@@ -355,6 +360,12 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                 <Clock className="h-3.5 w-3.5" />
                 <span>{builder.responseTime}</span>
               </div>
+              {builder.responseRate && parseFloat(builder.responseRate) > 0 && (
+                <div className="flex items-center gap-1" data-testid="response-rate">
+                  <MessageCircle className="h-3.5 w-3.5 text-chart-3" />
+                  <span className="font-medium text-chart-3">{builder.responseRate}%</span>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-1.5">

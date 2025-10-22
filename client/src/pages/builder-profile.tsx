@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useRoute } from "wouter";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,16 @@ export default function BuilderProfile() {
     queryKey: ["/api/builders", builderId, "projects"],
     enabled: !!builderId,
   });
+
+  useEffect(() => {
+    if (builderId) {
+      fetch(`/api/builders/${builderId}/track-view`, {
+        method: "POST"
+      }).catch(() => {
+        // Silently fail view tracking
+      });
+    }
+  }, [builderId]);
 
   if (builderLoading) {
     return (

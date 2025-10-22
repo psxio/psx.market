@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Music, Network } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -34,6 +34,17 @@ const popularTags = [
   "Discord", "Smart Contracts", "3D Animation", "UI/UX",
   "Viral Marketing", "Trading Bots", "Music Production"
 ];
+
+const categoryIcons: Record<string, any> = {
+  "KOLs & Influencers": Users,
+  "3D Content Creation": Sparkles,
+  "Marketing & Growth": TrendingUp,
+  "Script Development": Code,
+  "Volume Services": BarChart3,
+  "Creative & Design": Palette,
+  "Audio & Production": Music,
+  "Connectors & Network": Network,
+};
 
 export default function Marketplace() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,22 +124,28 @@ export default function Marketplace() {
       <div className="space-y-3">
         <Label className="text-base font-semibold">Categories</Label>
         <div className="space-y-2">
-          {categories && categories.map((category) => (
-            <div key={category.id} className="flex items-center space-x-2">
-              <Checkbox
-                id={category.id}
-                checked={selectedCategories.includes(category.name)}
-                onCheckedChange={() => toggleCategory(category.name)}
-                data-testid={`checkbox-category-${category.slug}`}
-              />
-              <label
-                htmlFor={category.id}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-              >
-                {category.name}
-              </label>
-            </div>
-          ))}
+          {categories && categories.map((category) => {
+            const CategoryIcon = categoryIcons[category.name] || Code;
+            return (
+              <div key={category.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={category.id}
+                  checked={selectedCategories.includes(category.name)}
+                  onCheckedChange={() => toggleCategory(category.name)}
+                  data-testid={`checkbox-category-${category.slug}`}
+                />
+                <label
+                  htmlFor={category.id}
+                  className="flex items-center gap-2 flex-1 cursor-pointer"
+                >
+                  <CategoryIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {category.name}
+                  </span>
+                </label>
+              </div>
+            );
+          })}
         </div>
       </div>
 
