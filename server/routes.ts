@@ -1419,7 +1419,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const builderId = req.params.id;
       
-      const builder = await storage.getBuilderById(builderId);
+      const builder = await storage.getBuilder(builderId);
       if (!builder) {
         return res.status(404).json({ error: "Builder not found" });
       }
@@ -1492,7 +1492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const builderId = req.params.id;
       
-      const builder = await storage.getBuilderById(builderId);
+      const builder = await storage.getBuilder(builderId);
       if (!builder) {
         return res.status(404).json({ error: "Builder not found" });
       }
@@ -1544,7 +1544,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const builderId = req.params.id;
       
-      const builder = await storage.getBuilderById(builderId);
+      const builder = await storage.getBuilder(builderId);
       if (!builder) {
         return res.status(404).json({ error: "Builder not found" });
       }
