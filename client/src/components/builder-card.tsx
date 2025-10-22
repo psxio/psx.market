@@ -12,35 +12,35 @@ interface BuilderCardProps {
 }
 
 const categoryVisuals = {
-  "KOLs": {
+  "KOLs & Influencers": {
     icon: Users,
     gradient: "from-purple-500/20 via-pink-500/20 to-red-500/20",
     borderColor: "border-l-purple-500",
     patternClass: "kol-pattern",
     badgeColor: "bg-purple-500/10 text-purple-500 border-purple-500/20"
   },
-  "3D Content": {
+  "3D Content Creation": {
     icon: Sparkles,
     gradient: "from-cyan-500/20 via-blue-500/20 to-indigo-500/20",
     borderColor: "border-l-cyan-500",
     patternClass: "pattern-3d",
     badgeColor: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20"
   },
-  "Marketing": {
+  "Marketing & Growth": {
     icon: TrendingUp,
     gradient: "from-green-500/20 via-emerald-500/20 to-teal-500/20",
     borderColor: "border-l-green-500",
     patternClass: "marketing-pattern",
     badgeColor: "bg-green-500/10 text-green-500 border-green-500/20"
   },
-  "Development": {
+  "Script Development": {
     icon: Code,
     gradient: "from-blue-500/20 via-indigo-500/20 to-violet-500/20",
     borderColor: "border-l-blue-500",
     patternClass: "dev-pattern",
     badgeColor: "bg-blue-500/10 text-blue-500 border-blue-500/20"
   },
-  "Volume": {
+  "Volume Services": {
     icon: BarChart3,
     gradient: "from-orange-500/20 via-amber-500/20 to-yellow-500/20",
     borderColor: "border-l-orange-500",
