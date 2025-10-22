@@ -262,7 +262,6 @@ export default function AdminServices() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No builder</SelectItem>
                         {builders?.map((builder) => (
                           <SelectItem key={builder.id} value={builder.id}>
                             {builder.name} ({builder.category})
