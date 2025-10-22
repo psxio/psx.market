@@ -310,6 +310,26 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                 </Badge>
               ))}
             </div>
+
+            {builder.tokenTickers && builder.tokenTickers.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {builder.tokenTickers.slice(0, 4).map((ticker, idx) => (
+                  <Badge 
+                    key={idx}
+                    variant="secondary" 
+                    className="bg-primary/10 text-primary border-primary/20 font-mono text-xs"
+                    data-testid={`builder-token-ticker-${idx}`}
+                  >
+                    {ticker}
+                  </Badge>
+                ))}
+                {builder.tokenTickers.length > 4 && (
+                  <Badge variant="secondary" className="text-xs font-mono">
+                    +{builder.tokenTickers.length - 4}
+                  </Badge>
+                )}
+              </div>
+            )}
           </CardContent>
 
           <CardFooter className="flex items-center justify-between gap-4 pt-0">

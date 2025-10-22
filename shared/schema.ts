@@ -20,6 +20,7 @@ export const builders = pgTable("builders", {
   twitterFollowers: integer("twitter_followers"),
   portfolioLinks: text("portfolio_links").array(),
   skills: text("skills").array(),
+  tokenTickers: text("token_tickers").array(),
   psxTier: text("psx_tier").notNull().default("bronze"),
   
   portfolioMedia: text("portfolio_media").array(),
