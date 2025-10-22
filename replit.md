@@ -60,8 +60,16 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
 - **Mobile Optimization**: Enhanced responsive design with touch-friendly spacing and mobile-specific layouts.
 - **Notification System**: Comprehensive multi-channel notification system supporting in-app, email, and push notifications with granular user preferences.
 - **File Upload & Storage System**: Complete file upload and storage infrastructure using Replit Object Storage (Google Cloud Storage backend) with granular ACL, presigned URLs, and various upload types.
-- **Advanced Search & Filtering**: Comprehensive marketplace search functionality with full-text search, category, price, rating, delivery time filters, and builder-specific filters.
+- **Advanced Search & Filtering**: Comprehensive marketplace search functionality with full-text search, category, price, rating, delivery time filters, tag-based filtering, and builder-specific filters.
 - **Profile & Service Management**: Complete management tools for builders and clients, including profile editing, service creation, editing, deletion, and archiving with ownership verification.
+- **Comprehensive Taxonomy System**: Three-tier hierarchy (Categories > Services > Tags) for organizing and discovering platform offerings:
+  - **Categories (8 main verticals)**: Creative & Design, 3D Content Creation, Marketing & Growth, KOLs & Influencers, Script Development, Audio & Production, Volume Services, Connectors & Network
+  - **Services (35+ specific offerings)**: Standalone service templates like "Graphic Design", "Smart Contract Development", "Music Production" that can be browsed in marketplace
+  - **Tags (50+ skills/tools)**: Metadata for discovery including software (Photoshop, Blender, Solidity), platforms (Twitter, Discord), and specialties (UI/UX, Viral Marketing)
+  - **Service Structure**: Services WITHOUT builders (builder_id = null) appear in marketplace as browsable offerings; services WITH builders only show on builder profiles
+  - **Marketplace Display**: Filters services to show only standalone templates, allowing users to browse by category and filter by tags
+  - **Tag Filtering**: Backend supports tag-based search allowing users to find services by specific skills, tools, or technologies
+  - Full taxonomy documented in TAXONOMY.md
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
