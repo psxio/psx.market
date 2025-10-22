@@ -185,6 +185,11 @@ export default function BuilderQuiz() {
   };
 
   const handleNext = () => {
+    const currentAnswer = answers[quizQuestions[currentQuestion].id];
+    if (!currentAnswer) {
+      return;
+    }
+    
     if (currentQuestion < quizQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {

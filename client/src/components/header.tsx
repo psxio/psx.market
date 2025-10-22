@@ -113,6 +113,7 @@ export function Header() {
                       type="search"
                       placeholder="Search services..."
                       className="pl-9"
+                      data-testid="input-search-mobile"
                     />
                   </div>
 
