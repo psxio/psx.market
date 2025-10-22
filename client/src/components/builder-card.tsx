@@ -163,7 +163,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                 <span className="font-medium">{service.deliveryTime}</span>
               </div>
               <Button variant="outline" className="w-full mt-2" size="sm">
-                Browse Builders
+                Browse Services
               </Button>
             </CardContent>
           </div>
