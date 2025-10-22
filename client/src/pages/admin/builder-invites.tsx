@@ -45,11 +45,12 @@ export default function AdminBuilderInvites() {
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return await apiRequest("POST", "/api/admin/builder-invites", {
+      const response = await apiRequest("POST", "/api/admin/builder-invites", {
         email: data.email || undefined,
         notes: data.notes || undefined,
         expiresIn: data.expiresIn ? parseInt(data.expiresIn) : undefined,
       });
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/builder-invites"] });
@@ -60,10 +61,11 @@ export default function AdminBuilderInvites() {
       setFormData({ email: "", notes: "", expiresIn: "30" });
       setDialogOpen(false);
     },
-    onError: () => {
+    onError: (error: Error) => {
+      console.error("Error creating invite:", error);
       toast({
         title: "Error",
-        description: "Failed to create invite link",
+        description: error.message || "Failed to create invite link",
         variant: "destructive",
       });
     },
