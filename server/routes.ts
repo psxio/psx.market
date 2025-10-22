@@ -11,7 +11,7 @@ import {
   insertProgressUpdateSchema,
   insertProjectDocumentSchema,
 } from "@shared/schema";
-import { requireAdminAuth, requireClientAuth } from "./middleware/auth";
+import { requireAdminAuth, requireClientAuth, generateAdminToken, revokeAdminToken, verifyAdminToken } from "./middleware/auth";
 import { WebSocketServer, WebSocket } from "ws";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
@@ -1182,12 +1182,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             return res.status(500).json({ error: "Session save failed" });
           }
 
+          // Generate auth token for iframe/cookie-blocked scenarios
+          const token = generateAdminToken(admin.id);
+
           res.json({
             id: admin.id,
             username: admin.username,
             email: admin.email,
             name: admin.name,
             role: admin.role,
+            token, // Return token for localStorage-based auth
           });
         });
       });
@@ -1197,12 +1201,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/admin/me", async (req, res) => {
-    if (!req.session.adminId) {
+    // Check for Bearer token first
+    const authHeader = req.get("Authorization");
+    let adminId = req.session.adminId;
+    
+    if (!adminId && authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      adminId = verifyAdminToken(token) || undefined;
+    }
+    
+    if (!adminId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
     try {
-      const admin = await storage.getAdminById(req.session.adminId);
+      const admin = await storage.getAdminById(adminId);
       if (!admin) {
         return res.status(404).json({ error: "Admin not found" });
       }
@@ -1220,6 +1233,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/admin/logout", (req, res) => {
+    // Revoke token if provided
+    const authHeader = req.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      revokeAdminToken(token);
+    }
+    
     req.session.destroy((err) => {
       if (err) {
         return res.status(500).json({ error: "Logout failed" });

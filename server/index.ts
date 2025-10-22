@@ -25,9 +25,9 @@ app.use(
       checkPeriod: 86400000,
     }),
     cookie: {
-      secure: false, // Allow cookies in development (Replit uses proxy)
+      secure: true, // Required for sameSite: "none"
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: "none", // Allow cross-origin cookies (Replit iframe)
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     },

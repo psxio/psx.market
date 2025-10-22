@@ -24,12 +24,25 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   });
   const [isVerifying, setIsVerifying] = useState(true);
 
+  // Helper to get auth headers
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("adminToken");
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
   // Verify session on mount
   useEffect(() => {
     const verifySession = async () => {
       try {
         const response = await fetch("/api/admin/me", {
           credentials: "include",
+          headers: getAuthHeaders(),
         });
 
         if (response.ok) {
@@ -40,11 +53,13 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
           // Backend session invalid, clear frontend state
           setAdmin(null);
           localStorage.removeItem("admin");
+          localStorage.removeItem("adminToken");
         }
       } catch (error) {
         console.error("Session verification failed:", error);
         setAdmin(null);
         localStorage.removeItem("admin");
+        localStorage.removeItem("adminToken");
       } finally {
         setIsVerifying(false);
       }
@@ -67,19 +82,33 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const adminData = await response.json();
+    
+    // Store token for iframe/cookie-blocked scenarios
+    if (adminData.token) {
+      localStorage.setItem("adminToken", adminData.token);
+    }
+    
     setAdmin(adminData);
     localStorage.setItem("admin", JSON.stringify(adminData));
   };
 
   const logout = async () => {
     try {
+      const token = localStorage.getItem("adminToken");
+      const headers: HeadersInit = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
       await fetch("/api/admin/logout", {
         method: "POST",
         credentials: "include",
+        headers,
       });
     } finally {
       setAdmin(null);
       localStorage.removeItem("admin");
+      localStorage.removeItem("adminToken");
     }
   };
 
