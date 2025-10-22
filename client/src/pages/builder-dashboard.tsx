@@ -99,6 +99,22 @@ export default function BuilderDashboard() {
     },
   });
 
+  const toggleLiveStatusMutation = useMutation({
+    mutationFn: async (isLive: boolean) => {
+      return apiRequest("PATCH", `/api/builders/${builderId}/live-status`, { isLive });
+    },
+    onSuccess: (_data, isLive) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/builders/live"] });
+      toast({
+        title: isLive ? "You're now live!" : "You're now offline",
+        description: isLive 
+          ? "Clients can see you in the 'Buy on Demand' section"
+          : "You've been removed from the live builders list",
+      });
+    },
+  });
+
   const deleteServiceMutation = useMutation({
     mutationFn: async (serviceId: string) => {
       return apiRequest("DELETE", `/api/builders/${builderId}/services/${serviceId}`);
@@ -147,6 +163,10 @@ export default function BuilderDashboard() {
     toggleAvailabilityMutation.mutate(checked);
   };
 
+  const handleLiveStatusToggle = (checked: boolean) => {
+    toggleLiveStatusMutation.mutate(checked);
+  };
+
   const handleDeleteService = (serviceId: string) => {
     deleteServiceMutation.mutate(serviceId);
   };
@@ -186,6 +206,19 @@ export default function BuilderDashboard() {
         </div>
         <div className="flex items-center gap-4">
           <NotificationCenter userId={builderId} userType="builder" />
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-chart-3/40 bg-chart-3/5">
+            <Switch
+              id="live-status"
+              checked={builder.isLive}
+              onCheckedChange={handleLiveStatusToggle}
+              disabled={toggleLiveStatusMutation.isPending}
+              data-testid="switch-live-status"
+            />
+            <Label htmlFor="live-status" className="cursor-pointer flex items-center gap-2">
+              {builder.isLive && <div className="h-2 w-2 rounded-full bg-chart-3 animate-pulse" />}
+              {builder.isLive ? "Live Now" : "Go Live"}
+            </Label>
+          </div>
           <div className="flex items-center gap-2">
             <Switch
               id="accepting-orders"

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { WelcomeModal } from "@/components/welcome-modal";
 import { BuilderCard } from "@/components/builder-card";
@@ -22,6 +23,12 @@ import {
   Shield,
   ExternalLink,
   Handshake,
+  Radio,
+  Zap,
+  Palette,
+  Music,
+  Boxes,
+  Network,
 } from "lucide-react";
 import type { Builder, Service, Category } from "@shared/schema";
 
@@ -34,9 +41,26 @@ const categoryIcons = {
   other: Sparkles,
 };
 
+const liveCategories = [
+  { name: "All Categories", slug: "", icon: Zap },
+  { name: "KOLs & Influencers", slug: "KOLs & Influencers", icon: Megaphone },
+  { name: "3D Artists", slug: "3D Content Creation", icon: Boxes },
+  { name: "Marketing", slug: "Marketing & Growth", icon: TrendingUp },
+  { name: "Developers", slug: "Script Development", icon: Code },
+  { name: "Creative & Design", slug: "Creative & Design", icon: Palette },
+  { name: "Audio & Production", slug: "Audio & Production", icon: Music },
+  { name: "Volume Services", slug: "Volume Services", icon: BarChart3 },
+];
+
 export default function Home() {
+  const [selectedCategory, setSelectedCategory] = useState("");
+
   const { data: builders, isLoading: buildersLoading, isError: buildersError } = useQuery<Builder[]>({
     queryKey: ["/api/builders/featured"],
+  });
+
+  const { data: liveBuilders, isLoading: liveLoading, isError: liveError } = useQuery<Builder[]>({
+    queryKey: ["/api/builders/live", selectedCategory],
   });
 
   const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery<
@@ -46,6 +70,7 @@ export default function Home() {
   });
 
   const agencySection = useScrollReveal();
+  const liveSection = useScrollReveal();
   const servicesSection = useScrollReveal();
   const buildersSection = useScrollReveal();
 
@@ -190,6 +215,107 @@ export default function Home() {
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section ref={liveSection.ref as any} className={`relative overflow-hidden border-b py-16 ${liveSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-chart-3/5 via-background to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-chart-2/10 via-transparent to-transparent" />
+        
+        <div className="container relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="h-2 w-2 rounded-full bg-chart-3 animate-pulse" />
+              <Badge variant="outline" className="gap-1.5 border-chart-3/40 bg-chart-3/10 text-chart-3">
+                <Radio className="h-3 w-3" />
+                Live Now
+              </Badge>
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-center mb-3">Buy on Demand</h2>
+            <p className="text-center text-muted-foreground max-w-2xl mx-auto">
+              Connect instantly with builders who are currently online and ready to start your project
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+            {liveCategories.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Button
+                  key={cat.slug}
+                  variant={selectedCategory === cat.slug ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(cat.slug)}
+                  className="gap-2 hover-elevate active-elevate-2 whitespace-nowrap"
+                  data-testid={`button-filter-${cat.slug || 'all'}`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{cat.name}</span>
+                </Button>
+              );
+            })}
+          </div>
+
+          {liveLoading ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <Skeleton className="h-[340px] w-full rounded-lg" />
+                </div>
+              ))}
+            </div>
+          ) : liveError ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
+                <Radio className="h-8 w-8 text-destructive" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold">Failed to load live builders</h3>
+              <p className="text-sm text-muted-foreground">Please try again later</p>
+            </div>
+          ) : !liveBuilders || liveBuilders.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
+                <Radio className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold">No builders live right now</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {selectedCategory ? `No ${selectedCategory} builders are currently online` : "Check back soon or browse all builders"}
+              </p>
+              <Link href="/marketplace">
+                <Button variant="outline" className="gap-2 hover-elevate">
+                  Browse All Builders
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {liveBuilders.map((builder) => (
+                  <div key={builder.id} className="relative group">
+                    <div className="absolute -top-2 -right-2 z-10">
+                      <Badge className="gap-1.5 bg-chart-3 border-0 text-white shadow-lg animate-pulse">
+                        <div className="h-2 w-2 rounded-full bg-white" />
+                        Live
+                      </Badge>
+                    </div>
+                    <BuilderCard builder={builder} />
+                  </div>
+                ))}
+              </div>
+              
+              {liveBuilders.length > 0 && (
+                <div className="mt-8 text-center">
+                  <Link href="/marketplace">
+                    <Button variant="outline" className="gap-2 hover-elevate" data-testid="button-view-marketplace">
+                      View All Builders
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
 
