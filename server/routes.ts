@@ -706,9 +706,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ error: "Invite token expired" });
         }
         
+        // Create builder with all fields from comprehensive onboarding
         const builder = await storage.createBuilder({
           walletAddress: validatedData.walletAddress,
           name: validatedData.name,
+          headline: validatedData.headline || `${validatedData.category} Expert`,
           bio: validatedData.bio,
           category: validatedData.category,
           rating: "5.0",
@@ -716,8 +718,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
           skills: validatedData.skills || [],
           verified: true,
           featured: false,
+          tokenGateWhitelisted: true,
+          responseTime: validatedData.responseTime || "24 hours",
+          
+          // Social & Portfolio
           twitterHandle: validatedData.twitterHandle,
-          portfolioItems: [],
+          portfolioLinks: validatedData.portfolioLinks || [],
+          
+          // KOL/Influencer fields
+          twitterFollowers: validatedData.twitterFollowers,
+          instagramHandle: validatedData.instagramHandle,
+          instagramFollowers: validatedData.instagramFollowers,
+          youtubeChannel: validatedData.youtubeChannel,
+          youtubeSubscribers: validatedData.youtubeSubscribers,
+          telegramHandle: validatedData.telegramHandle,
+          telegramMembers: validatedData.telegramMembers,
+          engagementRate: validatedData.engagementRate,
+          contentNiches: validatedData.contentNiches,
+          brandPartnerships: validatedData.brandPartnerships,
+          
+          // 3D Artist fields
+          software3D: validatedData.software3D,
+          renderEngines: validatedData.renderEngines,
+          styleSpecialties: validatedData.styleSpecialties,
+          animationExpertise: validatedData.animationExpertise,
+          
+          // Marketing fields
+          marketingPlatforms: validatedData.marketingPlatforms,
+          growthStrategies: validatedData.growthStrategies,
+          avgROI: validatedData.avgROI,
+          clientIndustries: validatedData.clientIndustries,
+          
+          // Developer fields
+          programmingLanguages: validatedData.programmingLanguages,
+          blockchainFrameworks: validatedData.blockchainFrameworks,
+          githubProfile: validatedData.githubProfile,
+          certifications: validatedData.certifications,
+          
+          // Volume Services fields
+          tradingExperience: validatedData.tradingExperience,
+          volumeCapabilities: validatedData.volumeCapabilities,
+          dexExpertise: validatedData.dexExpertise,
+          cexExpertise: validatedData.cexExpertise,
+          complianceKnowledge: validatedData.complianceKnowledge,
         });
         
         await storage.useBuilderInviteToken(inviteToken, builder.id, builder.name);
