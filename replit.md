@@ -25,7 +25,13 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
     - **Builder Application System**: Multi-step form wizard with category-specific questions.
     - **PSX Agency Promotion**: Dedicated homepage section for B2B services.
     - **Legal & Compliance Pages**: Comprehensive legal documentation including Terms of Service, Privacy Policy, Cookie Policy, and a searchable FAQ page.
-    - **Builder Onboarding System**: A visual checklist guiding new builders through platform setup, profile completion, service listing, portfolio showcase, payment setup, and verification.
+    - **Builder Onboarding System**: A visual checklist guiding new builders through platform setup, profile completion, service listing, portfolio showcase, payment setup, and verification. Features expandable UI with icons, progress tracking, and motivational messaging.
+    - **Onboarding & Help Resources**: 
+      - **How It Works Page**: Platform overview explaining token gating, builder discovery, and project workflow
+      - **Getting Started Guide**: Tabbed interface with client and builder-specific onboarding instructions
+      - **Welcome Modal**: First-time user greeting with localStorage persistence
+      - **Dashboard Quick Actions**: 4 shortcut buttons (Create Service, View Profile, View Orders, Earnings) for rapid navigation
+      - **Site-wide Footer**: Comprehensive navigation with Platform, Resources, Legal sections and social links
 
 ### Technical Implementations
 - **Frontend**: React and TypeScript, TanStack Query for data fetching, custom Auth Contexts.
