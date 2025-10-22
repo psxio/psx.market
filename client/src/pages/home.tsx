@@ -8,6 +8,7 @@ import { CategoryCard } from "@/components/category-card";
 import { CategoryPill } from "@/components/category-pill";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
