@@ -29,6 +29,9 @@ import {
   Music,
   Boxes,
   Network,
+  DollarSign,
+  Gift,
+  Lock,
 } from "lucide-react";
 import type { Builder, Service, Category } from "@shared/schema";
 
@@ -316,6 +319,55 @@ export default function Home() {
               )}
             </>
           )}
+        </div>
+      </section>
+
+      <section className="border-b bg-gradient-to-br from-background via-primary/5 to-chart-2/5 py-16">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <Badge variant="outline" className="mb-4 gap-1.5 border-primary/40 bg-primary/10 text-primary">
+              <DollarSign className="h-3 w-3" />
+              Flexible Payments
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+              Pay Your Way
+            </h2>
+            <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
+              USDC payments on Base blockchain with optional project allocation for aligned incentives
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="p-6 hover-elevate transition-all">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                <DollarSign className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">USDC on Base</h3>
+              <p className="text-muted-foreground text-sm">
+                Secure stablecoin payments with smart contract escrow. Fast, transparent, and cost-effective transactions on Base network.
+              </p>
+            </Card>
+
+            <Card className="p-6 hover-elevate transition-all border-chart-2/40 bg-chart-2/5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/20 mb-4">
+                <Gift className="h-6 w-6 text-chart-2" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Optional Allocation</h3>
+              <p className="text-muted-foreground text-sm">
+                Offer builders equity, tokens, or revenue share in addition to USDC. Align incentives for long-term success.
+              </p>
+            </Card>
+
+            <Card className="p-6 hover-elevate transition-all">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/10 mb-4">
+                <Lock className="h-6 w-6 text-chart-3" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Milestone Releases</h3>
+              <p className="text-muted-foreground text-sm">
+                Funds released progressively as work is completed. Protected escrow ensures security for both parties.
+              </p>
+            </Card>
+          </div>
         </div>
       </section>
 
