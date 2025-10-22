@@ -43,7 +43,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Edit } from "lucide-react";
 import type { Service, Builder } from "@shared/schema";
 
 const serviceFormSchema = z.object({
@@ -67,6 +67,7 @@ type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 
 export default function AdminServices() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
   const { toast } = useToast();
 
   const { data: services, isLoading } = useQuery<Service[]>({ 
@@ -132,6 +133,35 @@ export default function AdminServices() {
     },
   });
 
+  const updateServiceMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: ServiceFormValues }) => {
+      const response = await apiRequest("PUT", `/api/admin/services/${id}`, {
+        ...data,
+        basicPrice: data.basicPrice,
+        standardPrice: data.standardPrice || undefined,
+        premiumPrice: data.premiumPrice || undefined,
+        psxRequired: data.psxRequired,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/services"] });
+      setEditingService(null);
+      form.reset();
+      toast({
+        title: "Service Updated",
+        description: "The service has been updated successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to Update Service",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const deleteServiceMutation = useMutation({
     mutationFn: async (serviceId: string) => {
       await apiRequest("DELETE", `/api/admin/services/${serviceId}`);
@@ -153,7 +183,37 @@ export default function AdminServices() {
   });
 
   const onSubmit = (data: ServiceFormValues) => {
-    createServiceMutation.mutate(data);
+    if (editingService) {
+      updateServiceMutation.mutate({ id: editingService.id, data });
+    } else {
+      createServiceMutation.mutate(data);
+    }
+  };
+
+  const handleEditService = (service: Service) => {
+    setEditingService(service);
+    form.reset({
+      builderId: service.builderId || "",
+      title: service.title,
+      description: service.description,
+      category: service.category,
+      deliveryTime: service.deliveryTime,
+      basicPrice: service.basicPrice,
+      standardPrice: service.standardPrice || "",
+      premiumPrice: service.premiumPrice || "",
+      basicDescription: service.basicDescription,
+      standardDescription: service.standardDescription || "",
+      premiumDescription: service.premiumDescription || "",
+      psxRequired: service.psxRequired,
+      featured: service.featured,
+      active: service.active,
+    });
+  };
+
+  const handleCloseDialog = () => {
+    setIsAddDialogOpen(false);
+    setEditingService(null);
+    form.reset();
   };
 
   const categories = [
@@ -221,14 +281,24 @@ export default function AdminServices() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteServiceMutation.mutate(service.id)}
-                        data-testid={`button-delete-service-${service.id}`}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditService(service)}
+                          data-testid={`button-edit-service-${service.id}`}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => deleteServiceMutation.mutate(service.id)}
+                          data-testid={`button-delete-service-${service.id}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -238,12 +308,14 @@ export default function AdminServices() {
         </CardContent>
       </Card>
 
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+      <Dialog open={isAddDialogOpen || !!editingService} onOpenChange={handleCloseDialog}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Service</DialogTitle>
+            <DialogTitle>{editingService ? "Edit Service" : "Add New Service"}</DialogTitle>
             <DialogDescription>
-              Create a new service for a builder on the platform
+              {editingService 
+                ? "Update the service details" 
+                : "Create a new service for a builder on the platform"}
             </DialogDescription>
           </DialogHeader>
 
@@ -472,17 +544,19 @@ export default function AdminServices() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setIsAddDialogOpen(false)}
+                  onClick={handleCloseDialog}
                   data-testid="button-cancel"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={createServiceMutation.isPending}
+                  disabled={createServiceMutation.isPending || updateServiceMutation.isPending}
                   data-testid="button-submit"
                 >
-                  {createServiceMutation.isPending ? "Creating..." : "Create Service"}
+                  {editingService 
+                    ? (updateServiceMutation.isPending ? "Updating..." : "Update Service")
+                    : (createServiceMutation.isPending ? "Creating..." : "Create Service")}
                 </Button>
               </DialogFooter>
             </form>
