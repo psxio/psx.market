@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Shield } from "lucide-react";
+import { Lock, Shield, ArrowLeft } from "lucide-react";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -46,7 +46,17 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-black to-cyan-900 p-4">
-      <Card className="w-full max-w-md">
+      <div className="w-full max-w-md space-y-4">
+        <Button
+          variant="ghost"
+          className="text-white/80 hover:text-white"
+          onClick={() => setLocation("/")}
+          data-testid="button-back-home"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Marketplace
+        </Button>
+        <Card className="w-full">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <div className="h-12 w-12 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center">
@@ -102,6 +112,7 @@ export default function AdminLogin() {
           </form>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
