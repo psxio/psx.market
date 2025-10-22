@@ -83,14 +83,9 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
     const adminData = await response.json();
     
-    console.log("[AdminAuth] Login response:", { hasToken: !!adminData.token, token: adminData.token ? adminData.token.substring(0, 20) + "..." : "none" });
-    
     // Store token for iframe/cookie-blocked scenarios
     if (adminData.token) {
       localStorage.setItem("adminToken", adminData.token);
-      console.log("[AdminAuth] Token stored in localStorage");
-    } else {
-      console.error("[AdminAuth] No token in login response!");
     }
     
     setAdmin(adminData);

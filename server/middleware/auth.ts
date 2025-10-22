@@ -31,14 +31,6 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
   // Check for Bearer token first (for iframe/cookie-blocked scenarios)
   const authHeader = req.get("Authorization");
   
-  console.log("[requireAdminAuth] Headers check:", {
-    hasAuthHeader: !!authHeader,
-    authHeader: authHeader ? authHeader.substring(0, 20) + "..." : "none",
-    allHeaders: Object.keys(req.headers),
-    method: req.method,
-    path: req.path,
-  });
-  
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.substring(7);
     const adminId = verifyAdminToken(token);
@@ -46,22 +38,12 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
     if (adminId) {
       // Create a temporary session object for token-based auth
       req.session.adminId = adminId;
-      console.log("[requireAdminAuth] Token auth successful:", { adminId, method: req.method, path: req.path });
       return next();
     }
   }
 
   // Fallback to session-based auth
-  console.log("[requireAdminAuth] Session check:", {
-    hasSession: !!req.session,
-    adminId: req.session?.adminId,
-    sessionID: req.sessionID,
-    method: req.method,
-    path: req.path,
-  });
-
   if (!req.session.adminId) {
-    console.log("[requireAdminAuth] UNAUTHORIZED - No admin session found");
     return res.status(401).json({ error: "Unauthorized - Admin authentication required" });
   }
   
