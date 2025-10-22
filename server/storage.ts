@@ -63,6 +63,10 @@ import {
   type InsertPushSubscription,
   type BuilderInviteToken,
   type InsertBuilderInviteToken,
+  type Partner,
+  type InsertPartner,
+  type PartnerConnectionRequest,
+  type InsertPartnerConnectionRequest,
   builders,
   builderProjects,
   services,
@@ -103,6 +107,8 @@ import {
   notificationPreferences,
   pushSubscriptions,
   builderInviteTokens,
+  partners,
+  partnerConnectionRequests,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -370,6 +376,18 @@ export interface IStorage {
   getBuilderInviteToken(token: string): Promise<BuilderInviteToken | undefined>;
   useBuilderInviteToken(token: string, builderId: string, builderName: string): Promise<BuilderInviteToken>;
   deleteBuilderInviteToken(id: string): Promise<void>;
+
+  getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]>;
+  getPartner(id: string): Promise<Partner | undefined>;
+  createPartner(partner: InsertPartner): Promise<Partner>;
+  updatePartner(id: string, data: Partial<Partner>): Promise<Partner>;
+  deletePartner(id: string): Promise<void>;
+  
+  getPartnerConnectionRequests(options?: { partnerId?: string; userId?: string; status?: string }): Promise<PartnerConnectionRequest[]>;
+  getPartnerConnectionRequest(id: string): Promise<PartnerConnectionRequest | undefined>;
+  createPartnerConnectionRequest(request: InsertPartnerConnectionRequest): Promise<PartnerConnectionRequest>;
+  updatePartnerConnectionRequest(id: string, data: Partial<PartnerConnectionRequest>): Promise<PartnerConnectionRequest>;
+  deletePartnerConnectionRequest(id: string): Promise<void>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -1918,6 +1936,92 @@ export class PostgresStorage implements IStorage {
 
   async deleteBuilderInviteToken(id: string): Promise<void> {
     await db.delete(builderInviteTokens).where(eq(builderInviteTokens.id, id));
+  }
+
+  async getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]> {
+    let query = db.select().from(partners);
+    
+    const conditions = [];
+    if (options?.category) {
+      conditions.push(eq(partners.category, options.category));
+    }
+    if (options?.featured !== undefined) {
+      conditions.push(eq(partners.featured, options.featured));
+    }
+    if (options?.active !== undefined) {
+      conditions.push(eq(partners.active, options.active));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    return await query.orderBy(desc(partners.featured), desc(partners.successfulConnections));
+  }
+
+  async getPartner(id: string): Promise<Partner | undefined> {
+    const result = await db.select().from(partners).where(eq(partners.id, id));
+    return result[0];
+  }
+
+  async createPartner(partner: InsertPartner): Promise<Partner> {
+    const result = await db.insert(partners).values(partner).returning();
+    return result[0];
+  }
+
+  async updatePartner(id: string, data: Partial<Partner>): Promise<Partner> {
+    const result = await db.update(partners)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(partners.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deletePartner(id: string): Promise<void> {
+    await db.delete(partners).where(eq(partners.id, id));
+  }
+
+  async getPartnerConnectionRequests(options?: { partnerId?: string; userId?: string; status?: string }): Promise<PartnerConnectionRequest[]> {
+    let query = db.select().from(partnerConnectionRequests);
+    
+    const conditions = [];
+    if (options?.partnerId) {
+      conditions.push(eq(partnerConnectionRequests.partnerId, options.partnerId));
+    }
+    if (options?.userId) {
+      conditions.push(eq(partnerConnectionRequests.userId, options.userId));
+    }
+    if (options?.status) {
+      conditions.push(eq(partnerConnectionRequests.status, options.status));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    return await query.orderBy(desc(partnerConnectionRequests.createdAt));
+  }
+
+  async getPartnerConnectionRequest(id: string): Promise<PartnerConnectionRequest | undefined> {
+    const result = await db.select().from(partnerConnectionRequests).where(eq(partnerConnectionRequests.id, id));
+    return result[0];
+  }
+
+  async createPartnerConnectionRequest(request: InsertPartnerConnectionRequest): Promise<PartnerConnectionRequest> {
+    const result = await db.insert(partnerConnectionRequests).values(request).returning();
+    return result[0];
+  }
+
+  async updatePartnerConnectionRequest(id: string, data: Partial<PartnerConnectionRequest>): Promise<PartnerConnectionRequest> {
+    const result = await db.update(partnerConnectionRequests)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(partnerConnectionRequests.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deletePartnerConnectionRequest(id: string): Promise<void> {
+    await db.delete(partnerConnectionRequests).where(eq(partnerConnectionRequests.id, id));
   }
 }
 

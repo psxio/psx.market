@@ -1245,3 +1245,73 @@ export const insertBuilderInviteTokenSchema = createInsertSchema(builderInviteTo
 
 export type InsertBuilderInviteToken = z.infer<typeof insertBuilderInviteTokenSchema>;
 export type BuilderInviteToken = typeof builderInviteTokens.$inferSelect;
+
+export const partners = pgTable("partners", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  logo: text("logo"),
+  description: text("description").notNull(),
+  category: text("category").notNull(),
+  subcategory: text("subcategory"),
+  website: text("website"),
+  services: text("services").array(),
+  pricing: text("pricing"),
+  connectionFee: decimal("connection_fee", { precision: 10, scale: 2 }),
+  estimatedValue: text("estimated_value"),
+  tierLevel: text("tier_level"),
+  featured: boolean("featured").notNull().default(false),
+  active: boolean("active").notNull().default(true),
+  contactEmail: text("contact_email"),
+  contactPerson: text("contact_person"),
+  responseTime: text("response_time"),
+  successfulConnections: integer("successful_connections").notNull().default(0),
+  avgRating: decimal("avg_rating", { precision: 3, scale: 2 }).default("0"),
+  tags: text("tags").array(),
+  requirements: text("requirements").array(),
+  benefits: text("benefits").array(),
+  caseStudies: text("case_studies").array(),
+  locations: text("locations").array(),
+  languages: text("languages").array(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const partnerConnectionRequests = pgTable("partner_connection_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  partnerId: varchar("partner_id").notNull().references(() => partners.id),
+  userId: varchar("user_id").notNull(),
+  userType: text("user_type").notNull(),
+  userName: text("user_name").notNull(),
+  userEmail: text("user_email").notNull(),
+  userWallet: text("user_wallet"),
+  projectName: text("project_name"),
+  projectDescription: text("project_description").notNull(),
+  budget: text("budget"),
+  timeline: text("timeline"),
+  specificNeeds: text("specific_needs"),
+  status: text("status").notNull().default("pending"),
+  adminNotes: text("admin_notes"),
+  connectionMadeAt: text("connection_made_at"),
+  rating: integer("rating"),
+  feedback: text("feedback"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const insertPartnerSchema = createInsertSchema(partners).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPartnerConnectionRequestSchema = createInsertSchema(partnerConnectionRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertPartner = z.infer<typeof insertPartnerSchema>;
+export type Partner = typeof partners.$inferSelect;
+
+export type InsertPartnerConnectionRequest = z.infer<typeof insertPartnerConnectionRequestSchema>;
+export type PartnerConnectionRequest = typeof partnerConnectionRequests.$inferSelect;
