@@ -30,6 +30,15 @@ export function revokeAdminToken(token: string): void {
 export function requireAdminAuth(req: Request, res: Response, next: NextFunction) {
   // Check for Bearer token first (for iframe/cookie-blocked scenarios)
   const authHeader = req.get("Authorization");
+  
+  console.log("[requireAdminAuth] Headers check:", {
+    hasAuthHeader: !!authHeader,
+    authHeader: authHeader ? authHeader.substring(0, 20) + "..." : "none",
+    allHeaders: Object.keys(req.headers),
+    method: req.method,
+    path: req.path,
+  });
+  
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.substring(7);
     const adminId = verifyAdminToken(token);
