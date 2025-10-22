@@ -130,6 +130,7 @@ export const services = pgTable("services", {
   standardDeliverables: text("standard_deliverables").array(),
   premiumDeliverables: text("premium_deliverables").array(),
   tags: text("tags").array(),
+  tokenTickers: text("token_tickers").array(),
   psxRequired: decimal("psx_required", { precision: 10, scale: 2 }).notNull(),
   featured: boolean("featured").notNull().default(false),
   portfolioMedia: text("portfolio_media").array(),
