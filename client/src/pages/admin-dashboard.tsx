@@ -24,7 +24,8 @@ import {
   LayoutDashboard,
   LogOut,
   Shield,
-  Mail
+  Mail,
+  DollarSign
 } from "lucide-react";
 import AdminBuilders from "./admin/builders";
 import AdminClients from "./admin/clients";
@@ -33,6 +34,7 @@ import AdminApplications from "./admin/applications";
 import AdminReferrals from "./admin/referrals";
 import AdminBuilderInvites from "./admin/builder-invites";
 import AdminHome from "./admin/home";
+import AdminFinancial from "./admin/financial";
 
 const menuItems = [
   {
@@ -54,6 +56,11 @@ const menuItems = [
     title: "Services",
     url: "/admin/services",
     icon: Briefcase,
+  },
+  {
+    title: "Financial",
+    url: "/admin/financial",
+    icon: DollarSign,
   },
   {
     title: "Applications",
@@ -161,6 +168,7 @@ export default function AdminDashboard() {
               <Route path="/admin/builders" component={AdminBuilders} />
               <Route path="/admin/clients" component={AdminClients} />
               <Route path="/admin/services" component={AdminServices} />
+              <Route path="/admin/financial" component={AdminFinancial} />
               <Route path="/admin/applications" component={AdminApplications} />
               <Route path="/admin/builder-invites" component={AdminBuilderInvites} />
               <Route path="/admin/referrals" component={AdminReferrals} />
