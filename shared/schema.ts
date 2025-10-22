@@ -370,6 +370,11 @@ export const orders = pgTable("orders", {
   deliveryUrl: text("delivery_url"),
   deliveryNotes: text("delivery_notes"),
   
+  projectAllocationOffered: boolean("project_allocation_offered").notNull().default(false),
+  projectAllocationPercentage: decimal("project_allocation_percentage", { precision: 5, scale: 2 }),
+  projectAllocationDetails: text("project_allocation_details"),
+  projectAllocationAccepted: boolean("project_allocation_accepted").notNull().default(false),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });

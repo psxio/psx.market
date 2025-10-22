@@ -52,7 +52,7 @@ export function Header() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search services..."
+                placeholder="Search services, builders, skills..."
                 className="pl-9"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -63,6 +63,13 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse-services">
+              <Link href="/marketplace">
+                <Sparkles className="h-3.5 w-3.5" />
+                Browse Services
+              </Link>
+            </Button>
+
             <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse-builders">
               <Link href="/builders">
                 <Grid3x3 className="h-3.5 w-3.5" />
@@ -139,7 +146,7 @@ export function Header() {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       type="search"
-                      placeholder="Search services..."
+                      placeholder="Search services, builders, skills..."
                       className="pl-9"
                       value={mobileSearchQuery}
                       onChange={(e) => setMobileSearchQuery(e.target.value)}
@@ -149,6 +156,13 @@ export function Header() {
                   </div>
 
                   <nav className="flex flex-col gap-2">
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-services-mobile">
+                      <Link href="/marketplace">
+                        <Sparkles className="h-4 w-4" />
+                        Browse Services
+                      </Link>
+                    </Button>
+
                     <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-builders-mobile">
                       <Link href="/builders">
                         <Grid3x3 className="h-4 w-4" />

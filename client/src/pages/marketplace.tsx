@@ -54,6 +54,7 @@ export default function Marketplace() {
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState<string | null>(null);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   
   const headerSection = useScrollReveal();
   const servicesGrid = useScrollReveal();
@@ -267,7 +268,7 @@ export default function Marketplace() {
               />
             </div>
 
-            <Sheet>
+            <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
               <SheetTrigger asChild className="lg:hidden">
                 <Button variant="outline" size="default" className="gap-2" data-testid="button-filters">
                   <SlidersHorizontal className="h-4 w-4" />
