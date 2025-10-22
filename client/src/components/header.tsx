@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles } from "lucide-react";
+import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import {
@@ -60,6 +60,13 @@ export function Header() {
               <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-how-it-works">
                 <MessageCircle className="h-3.5 w-3.5" />
                 How It Works
+              </Button>
+            </Link>
+
+            <Link href="/getting-started" className="hidden md:block">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-getting-started">
+                <Rocket className="h-3.5 w-3.5" />
+                Getting Started
               </Button>
             </Link>
 
@@ -162,6 +169,17 @@ export function Header() {
                       >
                         <MessageCircle className="h-4 w-4" />
                         How It Works
+                      </Button>
+                    </Link>
+
+                    <Link href="/getting-started">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 hover-elevate"
+                        data-testid="link-getting-started-mobile"
+                      >
+                        <Rocket className="h-4 w-4" />
+                        Getting Started
                       </Button>
                     </Link>
 
