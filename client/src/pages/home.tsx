@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
+import { CategoryCard } from "@/components/category-card";
 import { CategoryPill } from "@/components/category-pill";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -194,65 +195,50 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={categoriesSection.ref as any} className={`border-b bg-background py-12 ${categoriesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+      <section ref={categoriesSection.ref as any} className={`border-b bg-gradient-to-b from-background to-muted/20 py-16 ${categoriesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">Browse by Category</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Find specialized Web3 builders across all categories
-              </p>
-            </div>
+          <div className="mb-12 text-center">
+            <Badge variant="outline" className="mb-4 gap-1.5 border-primary/40 bg-primary/10 text-primary">
+              <Sparkles className="h-3 w-3" />
+              Explore Categories
+            </Badge>
+            <h2 className="text-4xl font-bold tracking-tight">Browse by Category</h2>
+            <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover premium Web3 builders across all specialized verticals
+            </p>
           </div>
 
           {categoriesLoading ? (
-            <div className="flex gap-4 overflow-x-auto pb-4">
-              {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-32 w-64 flex-shrink-0 rounded-lg" />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-[280px] w-full rounded-lg" />
               ))}
             </div>
           ) : (
-            <div className="flex gap-4 overflow-x-auto pb-4">
-              {categories?.map((category) => {
-                const IconComponent = categoryIcons[category.slug as keyof typeof categoryIcons] || Sparkles;
-                return (
-                  <Link key={category.id} href={`/category/${category.slug}`}>
-                    <div className="group relative h-32 w-64 flex-shrink-0 overflow-hidden rounded-lg border bg-card p-5 transition-all hover-elevate active-elevate-2" data-testid={`category-card-${category.slug}`}>
-                      <div className="flex h-full items-start gap-4">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                          <IconComponent className="h-6 w-6 text-primary" />
-                        </div>
-                        <div className="flex flex-1 min-w-0 flex-col justify-between h-full">
-                          <div>
-                            <h3 className="mb-1 font-semibold text-base">{category.name}</h3>
-                            <p className="text-xs text-muted-foreground line-clamp-2">
-                              {category.description}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="text-xs text-muted-foreground">
-                              <span className="font-semibold text-foreground">{category.builderCount}</span> builders
-                            </div>
-                            <ArrowRight className="h-3 w-3 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {categories?.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  builderCount={category.builderCount}
+                />
+              ))}
             </div>
           )}
         </div>
       </section>
 
-      <section ref={servicesSection.ref as any} className={`py-16 ${servicesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+      <section ref={servicesSection.ref as any} className={`border-b py-16 ${servicesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight">Featured Services</h2>
+              <Badge variant="default" className="mb-3 gap-1.5">
+                <CheckCircle2 className="h-3 w-3" />
+                Ready to Book
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight">Featured Services & Offerings</h2>
               <p className="mt-2 text-muted-foreground">
-                Top-rated builders ready to bring your project to life
+                Browse specific services with pricing, portfolios, and instant booking
               </p>
             </div>
             <Link href="/marketplace">

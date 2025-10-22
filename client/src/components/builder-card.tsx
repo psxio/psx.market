@@ -188,12 +188,14 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                           onMouseEnter={(e) => {
                             e.stopPropagation();
                             setHoveredIndex(index);
-                            // Auto-play audio on hover
+                            // Auto-play audio on hover (wrapped in try-catch for browser restrictions)
                             if (isAudio) {
                               const audioEl = e.currentTarget.querySelector('audio') as HTMLAudioElement;
                               if (audioEl) {
                                 audioEl.currentTime = 0;
-                                audioEl.play();
+                                audioEl.play().catch(() => {
+                                  // Browser blocked autoplay - this is expected behavior
+                                });
                               }
                             }
                           }}
@@ -262,8 +264,8 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                 <span className="text-muted-foreground">Delivery</span>
                 <span className="font-medium">{service.deliveryTime}</span>
               </div>
-              <Button variant="outline" className="w-full mt-2" size="sm">
-                Browse Services
+              <Button variant="default" className="w-full mt-2" size="sm" data-testid="button-view-service">
+                View Service Details
               </Button>
             </CardContent>
           </div>
