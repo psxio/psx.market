@@ -14,6 +14,8 @@ if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
   throw new Error("SESSION_SECRET environment variable must be set in production");
 }
 
+app.set("trust proxy", 1); // Trust first proxy (required for Replit)
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "psx-marketplace-secret-key-dev-only",
@@ -23,11 +25,13 @@ app.use(
       checkPeriod: 86400000,
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Allow cookies in development (Replit uses proxy)
       httpOnly: true,
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
     },
+    proxy: true, // Trust proxy headers
   })
 );
 
