@@ -101,7 +101,24 @@ export default function Marketplace() {
   const { data: servicesData, isLoading, isError } = useQuery<
     Array<{ builder: Builder; service: Service }>
   >({
-    queryKey: ["/api/services" + buildQueryString()],
+    queryKey: [
+      "/api/services",
+      searchQuery,
+      selectedCategories.join(","),
+      selectedTags.join(","),
+      sortBy,
+      priceRange[0],
+      priceRange[1],
+      selectedRating,
+      selectedDeliveryTime,
+    ],
+    queryFn: async () => {
+      const queryString = buildQueryString();
+      const url = `/api/services${queryString}`;
+      const response = await fetch(url, { credentials: "include" });
+      if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+      return response.json();
+    },
   });
 
   const toggleCategory = (category: string) => {
