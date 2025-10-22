@@ -47,7 +47,7 @@ import { Plus, Trash2 } from "lucide-react";
 import type { Service, Builder } from "@shared/schema";
 
 const serviceFormSchema = z.object({
-  builderId: z.string().min(1, "Builder is required"),
+  builderId: z.string().optional(),
   title: z.string().min(5, "Title must be at least 5 characters"),
   description: z.string().min(20, "Description must be at least 20 characters"),
   category: z.string().min(1, "Category is required"),
@@ -254,14 +254,15 @@ export default function AdminServices() {
                 name="builderId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Builder *</FormLabel>
+                    <FormLabel>Builder (Optional - can be assigned later)</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger data-testid="select-builder">
-                          <SelectValue placeholder="Select a builder" />
+                          <SelectValue placeholder="No builder assigned" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        <SelectItem value="">No builder</SelectItem>
                         {builders?.map((builder) => (
                           <SelectItem key={builder.id} value={builder.id}>
                             {builder.name} ({builder.category})
@@ -269,6 +270,9 @@ export default function AdminServices() {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormDescription>
+                      Leave unassigned to create a service template, or select a builder now
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

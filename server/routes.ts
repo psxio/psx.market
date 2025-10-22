@@ -710,16 +710,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const builder = await storage.createBuilder({
           walletAddress: validatedData.walletAddress,
           name: validatedData.name,
-          headline: validatedData.headline || `${validatedData.category} Expert`,
+          headline: `${validatedData.category} Expert`,
           bio: validatedData.bio,
           category: validatedData.category,
-          rating: "5.0",
-          reviewCount: 0,
-          skills: validatedData.skills || [],
           verified: true,
-          featured: false,
           tokenGateWhitelisted: true,
-          responseTime: validatedData.responseTime || "24 hours",
           
           // Social & Portfolio
           twitterHandle: validatedData.twitterHandle,

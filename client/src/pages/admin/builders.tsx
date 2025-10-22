@@ -38,20 +38,15 @@ import type { Builder } from "@shared/schema";
 interface BuilderFormData {
   walletAddress: string;
   name: string;
+  headline: string;
   bio: string;
-  avatarUrl?: string;
+  profileImage?: string;
   category: string;
-  rating: string;
-  reviewCount: number;
   skills: string[];
   verified: boolean;
-  featured: boolean;
   twitterHandle?: string;
-  portfolioItems: Array<{
-    title: string;
-    description: string;
-    imageUrl: string;
-  }>;
+  portfolioLinks?: string[];
+  responseTime?: string;
 }
 
 export default function AdminBuilders() {
@@ -61,19 +56,18 @@ export default function AdminBuilders() {
   const [formData, setFormData] = useState<BuilderFormData>({
     walletAddress: "",
     name: "",
+    headline: "",
     bio: "",
-    avatarUrl: "",
+    profileImage: "",
     category: "kols",
-    rating: "5.0",
-    reviewCount: 0,
     skills: [],
     verified: true,
-    featured: false,
     twitterHandle: "",
-    portfolioItems: [],
+    portfolioLinks: [],
+    responseTime: "24 hours",
   });
   const [skillInput, setSkillInput] = useState("");
-  const [portfolioForm, setPortfolioForm] = useState({ title: "", description: "", imageUrl: "" });
+  const [portfolioInput, setPortfolioInput] = useState("");
 
   const { data: builders, isLoading } = useQuery<Builder[]>({ 
     queryKey: ["/api/admin/builders"] 
@@ -148,19 +142,18 @@ export default function AdminBuilders() {
     setFormData({
       walletAddress: "",
       name: "",
+      headline: "",
       bio: "",
-      avatarUrl: "",
+      profileImage: "",
       category: "kols",
-      rating: "5.0",
-      reviewCount: 0,
       skills: [],
       verified: true,
-      featured: false,
       twitterHandle: "",
-      portfolioItems: [],
+      portfolioLinks: [],
+      responseTime: "24 hours",
     });
     setSkillInput("");
-    setPortfolioForm({ title: "", description: "", imageUrl: "" });
+    setPortfolioInput("");
   };
 
   const handleOpenCreate = () => {
@@ -173,25 +166,24 @@ export default function AdminBuilders() {
     setFormData({
       walletAddress: builder.walletAddress,
       name: builder.name,
+      headline: builder.headline,
       bio: builder.bio,
-      avatarUrl: builder.avatarUrl || "",
+      profileImage: builder.profileImage || "",
       category: builder.category,
-      rating: builder.rating || "5.0",
-      reviewCount: builder.reviewCount || 0,
       skills: builder.skills || [],
       verified: builder.verified,
-      featured: builder.featured || false,
       twitterHandle: builder.twitterHandle || "",
-      portfolioItems: builder.portfolioItems || [],
+      portfolioLinks: builder.portfolioLinks || [],
+      responseTime: builder.responseTime || "24 hours",
     });
     setDialogOpen(true);
   };
 
   const handleSubmit = () => {
-    if (!formData.name || !formData.walletAddress || !formData.bio) {
+    if (!formData.name || !formData.walletAddress || !formData.bio || !formData.headline) {
       toast({
         title: "Validation error",
-        description: "Please fill in all required fields",
+        description: "Please fill in all required fields (name, wallet, headline, bio)",
         variant: "destructive",
       });
       return;
@@ -221,20 +213,20 @@ export default function AdminBuilders() {
     setFormData({ ...formData, skills: formData.skills.filter(s => s !== skill) });
   };
 
-  const addPortfolioItem = () => {
-    if (portfolioForm.title && portfolioForm.description) {
+  const addPortfolioLink = () => {
+    if (portfolioInput.trim() && !formData.portfolioLinks?.includes(portfolioInput.trim())) {
       setFormData({
         ...formData,
-        portfolioItems: [...formData.portfolioItems, portfolioForm],
+        portfolioLinks: [...(formData.portfolioLinks || []), portfolioInput.trim()],
       });
-      setPortfolioForm({ title: "", description: "", imageUrl: "" });
+      setPortfolioInput("");
     }
   };
 
-  const removePortfolioItem = (index: number) => {
+  const removePortfolioLink = (index: number) => {
     setFormData({
       ...formData,
-      portfolioItems: formData.portfolioItems.filter((_, i) => i !== index),
+      portfolioLinks: formData.portfolioLinks?.filter((_, i) => i !== index),
     });
   };
 
@@ -361,6 +353,17 @@ export default function AdminBuilders() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="headline">Headline *</Label>
+              <Input
+                id="headline"
+                value={formData.headline}
+                onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
+                placeholder="e.g., Expert KOL & Community Builder"
+                data-testid="input-headline"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="bio">Bio *</Label>
               <Textarea
                 id="bio"
@@ -374,13 +377,13 @@ export default function AdminBuilders() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="avatarUrl">Avatar URL</Label>
+                <Label htmlFor="profileImage">Profile Image URL</Label>
                 <Input
-                  id="avatarUrl"
-                  value={formData.avatarUrl}
-                  onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
+                  id="profileImage"
+                  value={formData.profileImage}
+                  onChange={(e) => setFormData({ ...formData, profileImage: e.target.value })}
                   placeholder="https://..."
-                  data-testid="input-avatar"
+                  data-testid="input-profile-image"
                 />
               </div>
               <div className="space-y-2">
@@ -395,66 +398,34 @@ export default function AdminBuilders() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                >
                   <SelectTrigger data-testid="select-category">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="kols">KOLs</SelectItem>
-                    <SelectItem value="3d-content">3D Content</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                    <SelectItem value="development">Development</SelectItem>
-                    <SelectItem value="volume">Volume</SelectItem>
+                    <SelectItem value="kols">KOLs & Influencers</SelectItem>
+                    <SelectItem value="3d">3D Content Creation</SelectItem>
+                    <SelectItem value="marketing">Marketing & Growth</SelectItem>
+                    <SelectItem value="development">Script Development</SelectItem>
+                    <SelectItem value="volume">Volume Services</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="rating">Rating</Label>
+                <Label htmlFor="responseTime">Response Time</Label>
                 <Input
-                  id="rating"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="5"
-                  value={formData.rating}
-                  onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
-                  data-testid="input-rating"
+                  id="responseTime"
+                  value={formData.responseTime}
+                  onChange={(e) => setFormData({ ...formData, responseTime: e.target.value })}
+                  placeholder="e.g., 24 hours"
+                  data-testid="input-response-time"
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="reviewCount">Review Count</Label>
-                <Input
-                  id="reviewCount"
-                  type="number"
-                  min="0"
-                  value={formData.reviewCount}
-                  onChange={(e) => setFormData({ ...formData, reviewCount: parseInt(e.target.value) || 0 })}
-                  data-testid="input-review-count"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="verified"
-                  checked={formData.verified}
-                  onCheckedChange={(checked) => setFormData({ ...formData, verified: checked })}
-                  data-testid="switch-verified"
-                />
-                <Label htmlFor="verified">Verified</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="featured"
-                  checked={formData.featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
-                  data-testid="switch-featured"
-                />
-                <Label htmlFor="featured">Featured</Label>
               </div>
             </div>
 
@@ -464,8 +435,8 @@ export default function AdminBuilders() {
                 <Input
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())}
                   placeholder="Add a skill"
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
                   data-testid="input-skill"
                 />
                 <Button type="button" onClick={addSkill} data-testid="button-add-skill">
@@ -473,75 +444,65 @@ export default function AdminBuilders() {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
-                {formData.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="gap-1">
+                {formData.skills.map((skill) => (
+                  <Badge key={skill} variant="secondary">
                     {skill}
-                    <X
-                      className="h-3 w-3 cursor-pointer"
+                    <button
                       onClick={() => removeSkill(skill)}
-                    />
+                      className="ml-2 text-xs"
+                      data-testid={`button-remove-skill-${skill}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </Badge>
                 ))}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Portfolio Items</Label>
-              <Card>
-                <CardContent className="pt-4 space-y-3">
-                  <Input
-                    value={portfolioForm.title}
-                    onChange={(e) => setPortfolioForm({ ...portfolioForm, title: e.target.value })}
-                    placeholder="Project title"
-                    data-testid="input-portfolio-title"
-                  />
-                  <Textarea
-                    value={portfolioForm.description}
-                    onChange={(e) => setPortfolioForm({ ...portfolioForm, description: e.target.value })}
-                    placeholder="Project description"
-                    rows={2}
-                    data-testid="input-portfolio-description"
-                  />
-                  <Input
-                    value={portfolioForm.imageUrl}
-                    onChange={(e) => setPortfolioForm({ ...portfolioForm, imageUrl: e.target.value })}
-                    placeholder="Image URL (optional)"
-                    data-testid="input-portfolio-image"
-                  />
-                  <Button type="button" onClick={addPortfolioItem} className="w-full" data-testid="button-add-portfolio">
-                    Add Portfolio Item
-                  </Button>
-                </CardContent>
-              </Card>
-              <div className="space-y-2 mt-2">
-                {formData.portfolioItems.map((item, index) => (
-                  <Card key={index}>
-                    <CardContent className="pt-4">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h4 className="font-semibold">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
-                          {item.imageUrl && (
-                            <p className="text-xs text-muted-foreground mt-1">Image: {item.imageUrl}</p>
-                          )}
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removePortfolioItem(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+              <Label>Portfolio Links</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={portfolioInput}
+                  onChange={(e) => setPortfolioInput(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addPortfolioLink())}
+                  placeholder="https://..."
+                  data-testid="input-portfolio-link"
+                />
+                <Button type="button" onClick={addPortfolioLink} data-testid="button-add-portfolio">
+                  Add
+                </Button>
+              </div>
+              <div className="flex flex-col gap-2 mt-2">
+                {formData.portfolioLinks?.map((link, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className="text-sm truncate flex-1">{link}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removePortfolioLink(index)}
+                      data-testid={`button-remove-portfolio-${index}`}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 ))}
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="verified"
+                checked={formData.verified}
+                onCheckedChange={(checked) => setFormData({ ...formData, verified: checked })}
+                data-testid="switch-verified"
+              />
+              <Label htmlFor="verified">Verified Builder</Label>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} data-testid="button-cancel">
               Cancel
             </Button>
             <Button 

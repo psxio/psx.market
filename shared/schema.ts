@@ -115,7 +115,7 @@ export const builderProjects = pgTable("builder_projects", {
 
 export const services = pgTable("services", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  builderId: varchar("builder_id").notNull(),
+  builderId: varchar("builder_id"),
   title: text("title").notNull(),
   description: text("description").notNull(),
   category: text("category").notNull(),
