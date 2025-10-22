@@ -73,7 +73,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
           </div>
 
           <div className="relative z-[1]">
-            <CardHeader className="space-y-0 pb-4">
+            <CardHeader className="space-y-0 pb-3">
               <div className="flex items-start justify-between gap-4 pr-10">
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-base mb-2">{service.title}</h3>
@@ -84,6 +84,34 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                 </div>
               </div>
             </CardHeader>
+
+            {service.portfolioMedia && service.portfolioMedia.length > 0 && (
+              <div className="px-6 pb-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {service.portfolioMedia.slice(0, 4).map((imageUrl, index) => (
+                    <div 
+                      key={index} 
+                      className="relative aspect-video rounded-md overflow-hidden bg-muted"
+                      data-testid={`img-preview-${index}`}
+                    >
+                      <img 
+                        src={imageUrl} 
+                        alt={`${service.title} preview ${index + 1}`}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {service.portfolioMedia.length > 4 && (
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    +{service.portfolioMedia.length - 4} more
+                  </p>
+                )}
+              </div>
+            )}
 
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between text-sm">
