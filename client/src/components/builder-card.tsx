@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, CheckCircle2, Clock, Users, Sparkles, Code, TrendingUp, BarChart3, X } from "lucide-react";
+import { Star, CheckCircle2, Clock, Users, Sparkles, Code, TrendingUp, BarChart3, X, Palette, Music, Network } from "lucide-react";
 import type { Builder, Service } from "@shared/schema";
 
 interface BuilderCardProps {
@@ -47,6 +47,27 @@ const categoryVisuals = {
     borderColor: "border-l-orange-500",
     patternClass: "volume-pattern",
     badgeColor: "bg-orange-500/10 text-orange-500 border-orange-500/20"
+  },
+  "Creative & Design": {
+    icon: Palette,
+    gradient: "from-pink-500/20 via-rose-500/20 to-red-500/20",
+    borderColor: "border-l-pink-500",
+    patternClass: "creative-pattern",
+    badgeColor: "bg-pink-500/10 text-pink-500 border-pink-500/20"
+  },
+  "Audio & Production": {
+    icon: Music,
+    gradient: "from-violet-500/20 via-purple-500/20 to-fuchsia-500/20",
+    borderColor: "border-l-violet-500",
+    patternClass: "audio-pattern",
+    badgeColor: "bg-violet-500/10 text-violet-500 border-violet-500/20"
+  },
+  "Connectors & Network": {
+    icon: Network,
+    gradient: "from-teal-500/20 via-cyan-500/20 to-blue-500/20",
+    borderColor: "border-l-teal-500",
+    patternClass: "network-pattern",
+    badgeColor: "bg-teal-500/10 text-teal-500 border-teal-500/20"
   }
 };
 
