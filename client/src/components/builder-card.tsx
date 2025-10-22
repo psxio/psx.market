@@ -108,7 +108,28 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                     {service.description}
                   </p>
-                  <Badge variant="outline" className="mb-2">{service.category}</Badge>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <Badge variant="outline">{service.category}</Badge>
+                    {service.tokenTickers && service.tokenTickers.length > 0 && (
+                      <>
+                        {service.tokenTickers.slice(0, 3).map((ticker, idx) => (
+                          <Badge 
+                            key={idx}
+                            variant="secondary" 
+                            className="bg-primary/10 text-primary border-primary/20 font-mono text-xs"
+                            data-testid={`token-ticker-${idx}`}
+                          >
+                            {ticker}
+                          </Badge>
+                        ))}
+                        {service.tokenTickers.length > 3 && (
+                          <Badge variant="secondary" className="text-xs font-mono">
+                            +{service.tokenTickers.length - 3}
+                          </Badge>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardHeader>
