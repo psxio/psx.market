@@ -58,7 +58,12 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
 - **Analytics & Insights**: Platform-wide statistics dashboard with market insights, client analytics, and builder performance metrics.
 - **Progressive Web App (PWA)**: Full PWA implementation with service worker for offline functionality and installability.
 - **Mobile Optimization**: Enhanced responsive design with touch-friendly spacing and mobile-specific layouts.
-- **Notification System**: Comprehensive multi-channel notification system supporting in-app, email, and push notifications with granular user preferences.
+- **Comprehensive Notification System**: Full-featured notification infrastructure with:
+  - **In-App Notification Center**: Bell icon with unread badge, popover panel with all/unread tabs, mark as read, delete notifications
+  - **Real-Time Toast Notifications**: Auto-shows toasts for new events, polls every 15 seconds, supports all notification types with emoji icons
+  - **Notification Settings Page**: Granular preferences for Email, Push, and In-App channels at `/settings/notifications`
+  - **Universal Support**: Works for both clients and builders with correct userType routing
+  - **Backend Integration**: Leverages existing `/api/notifications` endpoints and `server/notifications.ts` helper functions
 - **File Upload & Storage System**: Complete file upload and storage infrastructure using Replit Object Storage (Google Cloud Storage backend) with granular ACL, presigned URLs, and various upload types.
 - **Advanced Search & Filtering**: Comprehensive marketplace search functionality with full-text search, category, price, rating, delivery time filters, tag-based filtering, and builder-specific filters.
 - **Profile & Service Management**: Complete management tools for builders and clients, including profile editing, service creation, editing, deletion, and archiving with ownership verification.
