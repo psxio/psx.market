@@ -67,6 +67,10 @@ import {
   type InsertPartner,
   type PartnerConnectionRequest,
   type InsertPartnerConnectionRequest,
+  type BuilderTag,
+  type InsertBuilderTag,
+  type BuilderAdminNote,
+  type InsertBuilderAdminNote,
   builders,
   builderProjects,
   services,
@@ -91,6 +95,8 @@ import {
   platformStatistics,
   builderApplicationRevisions,
   builderOnboarding,
+  builderTags,
+  builderAdminNotes,
   admins,
   referrals,
   payments,
@@ -208,6 +214,14 @@ export interface IStorage {
   deleteBuilder(id: string): Promise<void>;
   toggleBuilderAvailability(builderId: string, accepting: boolean): Promise<Builder>;
   updateBuilderActivity(builderId: string): Promise<Builder>;
+  
+  getBuilderTags(builderId: string): Promise<BuilderTag[]>;
+  addBuilderTag(tag: InsertBuilderTag): Promise<BuilderTag>;
+  deleteBuilderTag(tagId: string): Promise<void>;
+  
+  getBuilderAdminNotes(builderId: string): Promise<BuilderAdminNote[]>;
+  addBuilderAdminNote(note: InsertBuilderAdminNote): Promise<BuilderAdminNote>;
+  deleteBuilderAdminNote(noteId: string): Promise<void>;
   getBuilderAnalytics(builderId: string): Promise<{
     totalEarnings: string;
     availableBalance: string;
@@ -1027,6 +1041,34 @@ export class PostgresStorage implements IStorage {
 
   async deleteBuilder(id: string): Promise<void> {
     await db.delete(builders).where(eq(builders.id, id));
+  }
+
+  async getBuilderTags(builderId: string): Promise<BuilderTag[]> {
+    return await db.select().from(builderTags).where(eq(builderTags.builderId, builderId));
+  }
+
+  async addBuilderTag(tag: InsertBuilderTag): Promise<BuilderTag> {
+    const result = await db.insert(builderTags).values(tag).returning();
+    return result[0];
+  }
+
+  async deleteBuilderTag(tagId: string): Promise<void> {
+    await db.delete(builderTags).where(eq(builderTags.id, tagId));
+  }
+
+  async getBuilderAdminNotes(builderId: string): Promise<BuilderAdminNote[]> {
+    return await db.select().from(builderAdminNotes)
+      .where(eq(builderAdminNotes.builderId, builderId))
+      .orderBy(desc(builderAdminNotes.createdAt));
+  }
+
+  async addBuilderAdminNote(note: InsertBuilderAdminNote): Promise<BuilderAdminNote> {
+    const result = await db.insert(builderAdminNotes).values(note).returning();
+    return result[0];
+  }
+
+  async deleteBuilderAdminNote(noteId: string): Promise<void> {
+    await db.delete(builderAdminNotes).where(eq(builderAdminNotes.id, noteId));
   }
 
   async toggleBuilderAvailability(builderId: string, accepting: boolean): Promise<Builder> {

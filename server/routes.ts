@@ -1381,6 +1381,293 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/admin/builders/bulk-action", requireAdminAuth, async (req, res) => {
+    try {
+      const { action, builderIds } = req.body;
+      
+      if (!action || !builderIds || !Array.isArray(builderIds)) {
+        return res.status(400).json({ error: "Invalid request" });
+      }
+
+      const results = [];
+      for (const id of builderIds) {
+        try {
+          if (action === "verify") {
+            await storage.updateBuilder(id, { verified: true });
+          } else if (action === "unverify") {
+            await storage.updateBuilder(id, { verified: false });
+          } else if (action === "suspend") {
+            await storage.updateBuilder(id, { isActive: false });
+          } else if (action === "activate") {
+            await storage.updateBuilder(id, { isActive: true });
+          } else if (action === "delete") {
+            await storage.deleteBuilder(id);
+          }
+          results.push({ id, success: true });
+        } catch (error) {
+          results.push({ id, success: false, error: error instanceof Error ? error.message : 'Unknown error' });
+        }
+      }
+      
+      res.json({ results });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to perform bulk action" });
+    }
+  });
+
+  app.get("/api/admin/builders/:id/analytics", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      
+      const builder = await storage.getBuilderById(builderId);
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+
+      const orders = await storage.getOrders();
+      const builderOrders = orders.filter(o => o.builderId === builderId);
+      
+      const totalRevenue = builderOrders
+        .filter(o => o.status === "completed")
+        .reduce((sum, o) => sum + (parseFloat(o.totalAmount) || 0), 0);
+      
+      const completedOrders = builderOrders.filter(o => o.status === "completed").length;
+      const activeOrders = builderOrders.filter(o => 
+        o.status === "pending" || o.status === "in_progress"
+      ).length;
+      
+      const avgOrderValue = completedOrders > 0 ? totalRevenue / completedOrders : 0;
+      
+      const reviews = await storage.getReviews();
+      const builderReviews = reviews.filter(r => r.builderId === builderId);
+      
+      const avgRating = builderReviews.length > 0
+        ? builderReviews.reduce((sum, r) => sum + parseFloat(r.rating), 0) / builderReviews.length
+        : 0;
+      
+      const monthlyRevenue = [];
+      const last6Months = [];
+      const now = new Date();
+      
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthKey = d.toISOString().slice(0, 7);
+        last6Months.push(monthKey);
+        
+        const monthOrders = builderOrders.filter(o => {
+          if (!o.completedAt) return false;
+          return o.completedAt.startsWith(monthKey);
+        });
+        
+        const revenue = monthOrders.reduce((sum, o) => 
+          sum + (parseFloat(o.totalAmount) || 0), 0
+        );
+        
+        monthlyRevenue.push({
+          month: monthKey,
+          revenue: revenue,
+          orders: monthOrders.length,
+        });
+      }
+      
+      res.json({
+        totalRevenue,
+        totalOrders: builderOrders.length,
+        completedOrders,
+        activeOrders,
+        avgOrderValue,
+        avgRating,
+        totalReviews: builderReviews.length,
+        monthlyRevenue,
+        successRate: builder.successRate || "100",
+        onTimeDeliveryRate: builder.onTimeDeliveryRate || "100",
+        avgResponseTimeHours: builder.avgResponseTimeHours || 24,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch builder analytics" });
+    }
+  });
+
+  app.get("/api/admin/builders/:id/performance-score", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      
+      const builder = await storage.getBuilderById(builderId);
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+
+      const avgRating = parseFloat(builder.rating || "0");
+      const ratingScore = (avgRating / 5) * 30;
+      
+      const successRate = parseFloat(builder.successRate || "100");
+      const successScore = (successRate / 100) * 25;
+      
+      const onTimeRate = parseFloat(builder.onTimeDeliveryRate || "100");
+      const deliveryScore = (onTimeRate / 100) * 20;
+      
+      const responseTimeHours = builder.avgResponseTimeHours || 24;
+      const responseScore = Math.max(0, 15 - (responseTimeHours / 24) * 15);
+      
+      const completionScore = Math.min(10, (builder.completedProjects || 0) / 10 * 10);
+      
+      const totalScore = Math.round(
+        ratingScore + successScore + deliveryScore + responseScore + completionScore
+      );
+      
+      let grade = "F";
+      if (totalScore >= 90) grade = "A+";
+      else if (totalScore >= 85) grade = "A";
+      else if (totalScore >= 80) grade = "B+";
+      else if (totalScore >= 75) grade = "B";
+      else if (totalScore >= 70) grade = "C+";
+      else if (totalScore >= 65) grade = "C";
+      else if (totalScore >= 60) grade = "D";
+      
+      res.json({
+        totalScore,
+        grade,
+        breakdown: {
+          rating: { score: Math.round(ratingScore), max: 30, value: avgRating },
+          successRate: { score: Math.round(successScore), max: 25, value: successRate },
+          onTimeDelivery: { score: Math.round(deliveryScore), max: 20, value: onTimeRate },
+          responseTime: { score: Math.round(responseScore), max: 15, value: responseTimeHours },
+          completion: { score: Math.round(completionScore), max: 10, value: builder.completedProjects || 0 },
+        },
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to calculate performance score" });
+    }
+  });
+
+  app.get("/api/admin/builders/:id/compliance", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      
+      const builder = await storage.getBuilderById(builderId);
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+
+      const issues = [];
+      
+      if (!builder.profileImage) {
+        issues.push({ field: "profileImage", message: "Missing profile image", severity: "medium" });
+      }
+      
+      if (!builder.bio || builder.bio.length < 50) {
+        issues.push({ field: "bio", message: "Bio too short (minimum 50 characters)", severity: "high" });
+      }
+      
+      if (!builder.portfolioLinks || builder.portfolioLinks.length === 0) {
+        issues.push({ field: "portfolioLinks", message: "No portfolio links added", severity: "high" });
+      }
+      
+      if (!builder.skills || builder.skills.length === 0) {
+        issues.push({ field: "skills", message: "No skills listed", severity: "medium" });
+      }
+      
+      const services = await storage.getServices();
+      const builderServices = services.filter(s => s.builderId === builderId);
+      
+      if (builderServices.length === 0) {
+        issues.push({ field: "services", message: "No services created", severity: "critical" });
+      }
+      
+      if (!builder.twitterHandle && !builder.instagramHandle && !builder.telegramHandle) {
+        issues.push({ field: "socialMedia", message: "No social media profiles added", severity: "low" });
+      }
+      
+      const isCompliant = issues.filter(i => i.severity === "critical").length === 0;
+      
+      res.json({
+        isCompliant,
+        totalIssues: issues.length,
+        issues,
+        lastChecked: new Date().toISOString(),
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to check compliance" });
+    }
+  });
+
+  app.get("/api/admin/builders/:id/tags", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      const tags = await storage.getBuilderTags(builderId);
+      res.json(tags);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch builder tags" });
+    }
+  });
+
+  app.post("/api/admin/builders/:id/tags", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      const { tagLabel, tagColor, tagType } = req.body;
+      
+      const tag = await storage.addBuilderTag({
+        builderId,
+        tagLabel,
+        tagColor: tagColor || "gray",
+        tagType: tagType || "custom",
+        addedBy: req.user!.id,
+      });
+      
+      res.json(tag);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add tag" });
+    }
+  });
+
+  app.delete("/api/admin/builders/:builderId/tags/:tagId", requireAdminAuth, async (req, res) => {
+    try {
+      await storage.deleteBuilderTag(req.params.tagId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete tag" });
+    }
+  });
+
+  app.get("/api/admin/builders/:id/notes", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      const notes = await storage.getBuilderAdminNotes(builderId);
+      res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch builder notes" });
+    }
+  });
+
+  app.post("/api/admin/builders/:id/notes", requireAdminAuth, async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      const { note, noteType, priority } = req.body;
+      
+      const newNote = await storage.addBuilderAdminNote({
+        builderId,
+        note,
+        noteType: noteType || "general",
+        priority: priority || "normal",
+        createdBy: req.user!.id,
+        createdByName: req.user!.username,
+      });
+      
+      res.json(newNote);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add note" });
+    }
+  });
+
+  app.delete("/api/admin/builders/:builderId/notes/:noteId", requireAdminAuth, async (req, res) => {
+    try {
+      await storage.deleteBuilderAdminNote(req.params.noteId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete note" });
+    }
+  });
+
   app.get("/api/admin/clients", requireAdminAuth, async (_req, res) => {
     try {
       const clients = await storage.getClients();
