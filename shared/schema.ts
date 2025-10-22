@@ -599,6 +599,28 @@ export const builderOnboarding = pgTable("builder_onboarding", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const builderTags = pgTable("builder_tags", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  tagLabel: text("tag_label").notNull(),
+  tagColor: text("tag_color").notNull().default("gray"),
+  tagType: text("tag_type").notNull().default("custom"),
+  addedBy: varchar("added_by").notNull(),
+  addedAt: text("added_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderAdminNotes = pgTable("builder_admin_notes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  note: text("note").notNull(),
+  noteType: text("note_type").notNull().default("general"),
+  priority: text("priority").notNull().default("normal"),
+  createdBy: varchar("created_by").notNull(),
+  createdByName: text("created_by_name").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const insertBuilderApplicationSchema = createInsertSchema(builderApplications).omit({
   id: true,
   status: true,
@@ -1138,6 +1160,17 @@ export const insertBuilderOnboardingSchema = createInsertSchema(builderOnboardin
   updatedAt: true,
 });
 
+export const insertBuilderTagSchema = createInsertSchema(builderTags).omit({
+  id: true,
+  addedAt: true,
+});
+
+export const insertBuilderAdminNoteSchema = createInsertSchema(builderAdminNotes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertBuilderFollow = z.infer<typeof insertBuilderFollowSchema>;
 export type BuilderFollow = typeof builderFollows.$inferSelect;
 
@@ -1161,6 +1194,12 @@ export type BuilderApplicationRevision = typeof builderApplicationRevisions.$inf
 
 export type InsertBuilderOnboarding = z.infer<typeof insertBuilderOnboardingSchema>;
 export type BuilderOnboarding = typeof builderOnboarding.$inferSelect;
+
+export type InsertBuilderTag = z.infer<typeof insertBuilderTagSchema>;
+export type BuilderTag = typeof builderTags.$inferSelect;
+
+export type InsertBuilderAdminNote = z.infer<typeof insertBuilderAdminNoteSchema>;
+export type BuilderAdminNote = typeof builderAdminNotes.$inferSelect;
 
 export const notifications = pgTable("notifications", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
