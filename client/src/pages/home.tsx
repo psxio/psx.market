@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Header } from "@/components/header";
+import { WelcomeModal } from "@/components/welcome-modal";
 import { BuilderCard } from "@/components/builder-card";
 import { CategoryCard } from "@/components/category-card";
 import { CategoryPill } from "@/components/category-pill";
@@ -51,6 +52,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <WelcomeModal />
 
       <section className="relative overflow-hidden border-b bg-gradient-to-br from-background via-background to-primary/5">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />

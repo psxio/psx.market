@@ -55,6 +55,20 @@ export function Header() {
                 For Builders
               </Button>
             </Link>
+
+            <Link href="/how-it-works" className="hidden md:block">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-how-it-works">
+                <MessageCircle className="h-3.5 w-3.5" />
+                How It Works
+              </Button>
+            </Link>
+
+            <Link href="/faq" className="hidden md:block">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-faq">
+                <Shield className="h-3.5 w-3.5" />
+                Help
+              </Button>
+            </Link>
             
             {(isClient || isBuilder) && (
               <>
@@ -137,6 +151,28 @@ export function Header() {
                       >
                         <Sparkles className="h-4 w-4" />
                         For Builders
+                      </Button>
+                    </Link>
+
+                    <Link href="/how-it-works">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 hover-elevate"
+                        data-testid="link-how-it-works-mobile"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        How It Works
+                      </Button>
+                    </Link>
+
+                    <Link href="/faq">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 hover-elevate"
+                        data-testid="link-faq-mobile"
+                      >
+                        <Shield className="h-4 w-4" />
+                        Help
                       </Button>
                     </Link>
                     
