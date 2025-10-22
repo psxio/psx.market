@@ -3807,5 +3807,497 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FINANCIAL MANAGEMENT ENDPOINTS
+
+  // Payment Dashboard - All transactions with filters
+  app.get("/api/admin/financial/payments", requireAdminAuth, async (req, res) => {
+    try {
+      const { status, dateFrom, dateTo, builderId, clientId } = req.query;
+      
+      let payments = await storage.getPayments();
+      
+      if (status && status !== 'all') {
+        payments = payments.filter(p => p.status === status);
+      }
+      
+      if (dateFrom) {
+        payments = payments.filter(p => p.createdAt >= dateFrom);
+      }
+      
+      if (dateTo) {
+        payments = payments.filter(p => p.createdAt <= dateTo);
+      }
+      
+      if (builderId) {
+        payments = payments.filter(p => p.builderId === builderId);
+      }
+      
+      if (clientId) {
+        payments = payments.filter(p => p.clientId === clientId);
+      }
+      
+      const [builders, clients, orders] = await Promise.all([
+        storage.getBuilders(),
+        storage.getClients(),
+        storage.getOrders(),
+      ]);
+      
+      const enrichedPayments = payments.map(payment => {
+        const builder = builders.find(b => b.id === payment.builderId);
+        const client = clients.find(c => c.id === payment.clientId);
+        const order = orders.find(o => o.id === payment.orderId);
+        
+        return {
+          ...payment,
+          builderName: builder?.name,
+          clientName: client?.name,
+          orderTitle: order?.title,
+        };
+      });
+      
+      res.json(enrichedPayments);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+      res.status(500).json({ error: "Failed to fetch payments" });
+    }
+  });
+
+  // Revenue Analytics - Daily/weekly/monthly revenue charts
+  app.get("/api/admin/financial/revenue-analytics", requireAdminAuth, async (req, res) => {
+    try {
+      const { period = '30' } = req.query;
+      const days = parseInt(period as string);
+      
+      const payments = await storage.getPayments();
+      const completedPayments = payments.filter(p => p.status === 'completed' && p.paidAt);
+      
+      const now = new Date();
+      const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+      
+      const recentPayments = completedPayments.filter(p => {
+        const paidDate = new Date(p.paidAt!);
+        return paidDate >= startDate;
+      });
+      
+      const dailyRevenue: Record<string, { date: string; revenue: number; platformFees: number; builderPayouts: number; transactions: number }> = {};
+      
+      for (let i = 0; i < days; i++) {
+        const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+        const dateKey = date.toISOString().split('T')[0];
+        dailyRevenue[dateKey] = {
+          date: dateKey,
+          revenue: 0,
+          platformFees: 0,
+          builderPayouts: 0,
+          transactions: 0,
+        };
+      }
+      
+      recentPayments.forEach(payment => {
+        const dateKey = payment.paidAt!.split('T')[0];
+        if (dailyRevenue[dateKey]) {
+          dailyRevenue[dateKey].revenue += parseFloat(payment.amount);
+          dailyRevenue[dateKey].platformFees += parseFloat(payment.platformFee);
+          dailyRevenue[dateKey].builderPayouts += parseFloat(payment.builderAmount);
+          dailyRevenue[dateKey].transactions += 1;
+        }
+      });
+      
+      const totalRevenue = recentPayments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      const totalPlatformFees = recentPayments.reduce((sum, p) => sum + parseFloat(p.platformFee), 0);
+      const totalBuilderPayouts = recentPayments.reduce((sum, p) => sum + parseFloat(p.builderAmount), 0);
+      
+      const avgTransactionValue = recentPayments.length > 0 
+        ? totalRevenue / recentPayments.length 
+        : 0;
+      
+      res.json({
+        period: days,
+        totalRevenue,
+        totalPlatformFees,
+        totalBuilderPayouts,
+        totalTransactions: recentPayments.length,
+        avgTransactionValue,
+        dailyData: Object.values(dailyRevenue).sort((a, b) => a.date.localeCompare(b.date)),
+      });
+    } catch (error) {
+      console.error("Error calculating revenue analytics:", error);
+      res.status(500).json({ error: "Failed to calculate revenue analytics" });
+    }
+  });
+
+  // Payout Queue - Pending builder payouts
+  app.get("/api/admin/financial/payout-queue", requireAdminAuth, async (req, res) => {
+    try {
+      const payouts = await storage.getPayouts();
+      const pendingPayouts = payouts.filter(p => p.status === 'pending');
+      
+      const builders = await storage.getBuilders();
+      
+      const enrichedPayouts = pendingPayouts.map(payout => {
+        const builder = builders.find(b => b.id === payout.builderId);
+        return {
+          ...payout,
+          builderName: builder?.name,
+          builderEmail: builder?.twitterHandle,
+        };
+      });
+      
+      const totalPending = pendingPayouts.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      
+      res.json({
+        payouts: enrichedPayouts,
+        totalPending,
+        count: pendingPayouts.length,
+      });
+    } catch (error) {
+      console.error("Error fetching payout queue:", error);
+      res.status(500).json({ error: "Failed to fetch payout queue" });
+    }
+  });
+
+  // Process payout (batch or single)
+  app.post("/api/admin/financial/process-payouts", requireAdminAuth, async (req, res) => {
+    try {
+      const { payoutIds } = req.body;
+      
+      if (!payoutIds || !Array.isArray(payoutIds)) {
+        return res.status(400).json({ error: "Invalid request" });
+      }
+      
+      const results = [];
+      
+      for (const payoutId of payoutIds) {
+        try {
+          const payout = await storage.updatePayout(payoutId, {
+            status: 'processing',
+            processedAt: new Date().toISOString(),
+          });
+          results.push({ id: payoutId, success: true });
+        } catch (error) {
+          results.push({ id: payoutId, success: false, error: error instanceof Error ? error.message : 'Unknown error' });
+        }
+      }
+      
+      res.json({ results });
+    } catch (error) {
+      console.error("Error processing payouts:", error);
+      res.status(500).json({ error: "Failed to process payouts" });
+    }
+  });
+
+  // Transaction History - Full transaction logs with filters
+  app.get("/api/admin/financial/transactions", requireAdminAuth, async (req, res) => {
+    try {
+      const { type, status, search } = req.query;
+      
+      const [payments, payouts, refunds] = await Promise.all([
+        storage.getPayments(),
+        storage.getPayouts(),
+        storage.getRefunds(),
+      ]);
+      
+      const [builders, clients] = await Promise.all([
+        storage.getBuilders(),
+        storage.getClients(),
+      ]);
+      
+      let transactions: any[] = [];
+      
+      if (!type || type === 'all' || type === 'payment') {
+        transactions = transactions.concat(payments.map(p => ({
+          id: p.id,
+          type: 'payment',
+          amount: p.amount,
+          currency: p.currency,
+          status: p.status,
+          transactionHash: p.transactionHash,
+          blockNumber: p.blockNumber,
+          createdAt: p.createdAt,
+          processedAt: p.paidAt,
+          fromName: clients.find(c => c.id === p.clientId)?.name,
+          toName: builders.find(b => b.id === p.builderId)?.name,
+          platformFee: p.platformFee,
+        })));
+      }
+      
+      if (!type || type === 'all' || type === 'payout') {
+        transactions = transactions.concat(payouts.map(p => ({
+          id: p.id,
+          type: 'payout',
+          amount: p.amount,
+          currency: p.currency,
+          status: p.status,
+          transactionHash: p.transactionHash,
+          createdAt: p.createdAt,
+          processedAt: p.processedAt,
+          toName: builders.find(b => b.id === p.builderId)?.name,
+          failureReason: p.failureReason,
+        })));
+      }
+      
+      if (!type || type === 'all' || type === 'refund') {
+        transactions = transactions.concat(refunds.map(r => ({
+          id: r.id,
+          type: 'refund',
+          amount: r.amount,
+          currency: 'USDC',
+          status: r.status,
+          transactionHash: r.transactionHash,
+          createdAt: r.createdAt,
+          processedAt: r.processedAt,
+          reason: r.reason,
+          failureReason: r.failureReason,
+        })));
+      }
+      
+      if (status && status !== 'all') {
+        transactions = transactions.filter(t => t.status === status);
+      }
+      
+      if (search) {
+        const searchLower = (search as string).toLowerCase();
+        transactions = transactions.filter(t => 
+          t.transactionHash?.toLowerCase().includes(searchLower) ||
+          t.fromName?.toLowerCase().includes(searchLower) ||
+          t.toName?.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      res.json(transactions);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      res.status(500).json({ error: "Failed to fetch transactions" });
+    }
+  });
+
+  // Failed Payment Recovery - Retry failed payments
+  app.get("/api/admin/financial/failed-payments", requireAdminAuth, async (req, res) => {
+    try {
+      const payments = await storage.getPayments();
+      const failedPayments = payments.filter(p => p.status === 'failed');
+      
+      const [builders, clients, orders] = await Promise.all([
+        storage.getBuilders(),
+        storage.getClients(),
+        storage.getOrders(),
+      ]);
+      
+      const enrichedFailedPayments = failedPayments.map(payment => {
+        const builder = builders.find(b => b.id === payment.builderId);
+        const client = clients.find(c => c.id === payment.clientId);
+        const order = orders.find(o => o.id === payment.orderId);
+        
+        return {
+          ...payment,
+          builderName: builder?.name,
+          clientName: client?.name,
+          orderTitle: order?.title,
+        };
+      });
+      
+      res.json(enrichedFailedPayments);
+    } catch (error) {
+      console.error("Error fetching failed payments:", error);
+      res.status(500).json({ error: "Failed to fetch failed payments" });
+    }
+  });
+
+  // Retry failed payment
+  app.post("/api/admin/financial/retry-payment/:id", requireAdminAuth, async (req, res) => {
+    try {
+      const payment = await storage.getPayment(req.params.id);
+      
+      if (!payment) {
+        return res.status(404).json({ error: "Payment not found" });
+      }
+      
+      if (payment.status !== 'failed') {
+        return res.status(400).json({ error: "Payment is not in failed status" });
+      }
+      
+      const updatedPayment = await storage.updatePayment(req.params.id, {
+        status: 'pending',
+      });
+      
+      res.json(updatedPayment);
+    } catch (error) {
+      console.error("Error retrying payment:", error);
+      res.status(500).json({ error: "Failed to retry payment" });
+    }
+  });
+
+  // Escrow Monitoring - View funds in escrow
+  app.get("/api/admin/financial/escrow", requireAdminAuth, async (req, res) => {
+    try {
+      const payments = await storage.getPayments();
+      const inEscrow = payments.filter(p => p.status === 'escrowed' || p.status === 'completed');
+      
+      const [builders, clients, orders] = await Promise.all([
+        storage.getBuilders(),
+        storage.getClients(),
+        storage.getOrders(),
+      ]);
+      
+      const enrichedEscrow = inEscrow.map(payment => {
+        const builder = builders.find(b => b.id === payment.builderId);
+        const client = clients.find(c => c.id === payment.clientId);
+        const order = orders.find(o => o.id === payment.orderId);
+        
+        return {
+          ...payment,
+          builderName: builder?.name,
+          clientName: client?.name,
+          orderTitle: order?.title,
+          orderStatus: order?.status,
+        };
+      });
+      
+      const totalInEscrow = inEscrow.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      const totalBuilderAmount = inEscrow.reduce((sum, p) => sum + parseFloat(p.builderAmount), 0);
+      
+      res.json({
+        payments: enrichedEscrow,
+        totalInEscrow,
+        totalBuilderAmount,
+        count: inEscrow.length,
+      });
+    } catch (error) {
+      console.error("Error fetching escrow data:", error);
+      res.status(500).json({ error: "Failed to fetch escrow data" });
+    }
+  });
+
+  // Platform Fee Manager - View/adjust fees
+  app.get("/api/admin/financial/platform-fees", requireAdminAuth, async (req, res) => {
+    try {
+      const payments = await storage.getPayments();
+      
+      const fees = payments.map(p => ({
+        paymentId: p.id,
+        orderId: p.orderId,
+        amount: p.amount,
+        platformFee: p.platformFee,
+        platformFeePercentage: p.platformFeePercentage,
+        paidAt: p.paidAt,
+      }));
+      
+      const totalFees = payments.reduce((sum, p) => sum + parseFloat(p.platformFee), 0);
+      const avgFeePercentage = payments.length > 0
+        ? payments.reduce((sum, p) => sum + parseFloat(p.platformFeePercentage), 0) / payments.length
+        : 2.5;
+      
+      res.json({
+        fees,
+        totalFees,
+        avgFeePercentage,
+        totalPayments: payments.length,
+      });
+    } catch (error) {
+      console.error("Error fetching platform fees:", error);
+      res.status(500).json({ error: "Failed to fetch platform fees" });
+    }
+  });
+
+  // Adjust payment fee
+  app.put("/api/admin/financial/adjust-fee/:id", requireAdminAuth, async (req, res) => {
+    try {
+      const { platformFeePercentage } = req.body;
+      
+      if (!platformFeePercentage || platformFeePercentage < 0 || platformFeePercentage > 100) {
+        return res.status(400).json({ error: "Invalid fee percentage" });
+      }
+      
+      const payment = await storage.getPayment(req.params.id);
+      
+      if (!payment) {
+        return res.status(404).json({ error: "Payment not found" });
+      }
+      
+      const amount = parseFloat(payment.amount);
+      const newPlatformFee = (amount * platformFeePercentage) / 100;
+      const newBuilderAmount = amount - newPlatformFee;
+      
+      const updatedPayment = await storage.updatePayment(req.params.id, {
+        platformFeePercentage: platformFeePercentage.toString(),
+        platformFee: newPlatformFee.toString(),
+        builderAmount: newBuilderAmount.toString(),
+      });
+      
+      res.json(updatedPayment);
+    } catch (error) {
+      console.error("Error adjusting fee:", error);
+      res.status(500).json({ error: "Failed to adjust fee" });
+    }
+  });
+
+  // Financial Reports - Exportable data
+  app.get("/api/admin/financial/reports", requireAdminAuth, async (req, res) => {
+    try {
+      const { dateFrom, dateTo, format = 'json' } = req.query;
+      
+      const [payments, payouts, orders] = await Promise.all([
+        storage.getPayments(),
+        storage.getPayouts(),
+        storage.getOrders(),
+      ]);
+      
+      let filteredPayments = payments;
+      
+      if (dateFrom) {
+        filteredPayments = filteredPayments.filter(p => p.createdAt >= dateFrom);
+      }
+      
+      if (dateTo) {
+        filteredPayments = filteredPayments.filter(p => p.createdAt <= dateTo);
+      }
+      
+      const totalRevenue = filteredPayments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      const totalPlatformFees = filteredPayments.reduce((sum, p) => sum + parseFloat(p.platformFee), 0);
+      const totalBuilderPayouts = filteredPayments.reduce((sum, p) => sum + parseFloat(p.builderAmount), 0);
+      
+      const completedPayments = filteredPayments.filter(p => p.status === 'completed');
+      const pendingPayments = filteredPayments.filter(p => p.status === 'pending');
+      const failedPayments = filteredPayments.filter(p => p.status === 'failed');
+      
+      const report = {
+        period: {
+          from: dateFrom || 'all time',
+          to: dateTo || 'now',
+        },
+        summary: {
+          totalRevenue,
+          totalPlatformFees,
+          totalBuilderPayouts,
+          totalPayments: filteredPayments.length,
+          completedPayments: completedPayments.length,
+          pendingPayments: pendingPayments.length,
+          failedPayments: failedPayments.length,
+        },
+        payments: filteredPayments,
+      };
+      
+      if (format === 'csv') {
+        const csvLines = [
+          'ID,Order ID,Amount,Currency,Platform Fee,Builder Amount,Status,Paid At,Created At',
+          ...filteredPayments.map(p => 
+            `${p.id},${p.orderId},${p.amount},${p.currency},${p.platformFee},${p.builderAmount},${p.status},${p.paidAt || ''},${p.createdAt}`
+          ),
+        ];
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename=financial-report-${Date.now()}.csv`);
+        return res.send(csvLines.join('\n'));
+      }
+      
+      res.json(report);
+    } catch (error) {
+      console.error("Error generating financial report:", error);
+      res.status(500).json({ error: "Failed to generate financial report" });
+    }
+  });
+
   return httpServer;
 }
