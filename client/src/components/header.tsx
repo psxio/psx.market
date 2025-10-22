@@ -1,10 +1,11 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
 import { Button } from "@/components/ui/button";
 import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -15,6 +16,23 @@ import {
 
 export function Header() {
   const { isClient, isBuilder, client, builder } = useWalletAuth();
+  const [, setLocation] = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      setLocation(`/marketplace?search=${encodeURIComponent(query.trim())}`);
+      setSearchQuery("");
+      setMobileSearchQuery("");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, query: string) => {
+    if (e.key === "Enter") {
+      handleSearch(query);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -36,6 +54,9 @@ export function Header() {
                 type="search"
                 placeholder="Search services..."
                 className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, searchQuery)}
                 data-testid="input-search"
               />
             </div>
@@ -120,6 +141,9 @@ export function Header() {
                       type="search"
                       placeholder="Search services..."
                       className="pl-9"
+                      value={mobileSearchQuery}
+                      onChange={(e) => setMobileSearchQuery(e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(e, mobileSearchQuery)}
                       data-testid="input-search-mobile"
                     />
                   </div>

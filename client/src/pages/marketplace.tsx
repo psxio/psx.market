@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
@@ -46,6 +46,14 @@ export default function Marketplace() {
   
   const headerSection = useScrollReveal();
   const servicesGrid = useScrollReveal();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const searchParam = params.get("search");
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, []);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
