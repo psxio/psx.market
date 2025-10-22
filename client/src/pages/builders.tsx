@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowRight,
+  ArrowLeft,
   CheckCircle,
   DollarSign,
   TrendingUp,
@@ -142,6 +143,18 @@ export default function BuildersLanding() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 py-3 max-w-7xl">
+          <Link href="/marketplace">
+            <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back-to-marketplace">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Marketplace
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-purple-500/10 via-background to-background">
         <div className="absolute inset-0 bg-grid-white/5 bg-[size:20px_20px]" />
