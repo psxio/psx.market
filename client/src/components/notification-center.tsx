@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Bell, Check, Trash2, X } from "lucide-react";
+import { Bell, Check, Trash2, X, Package, MessageCircle, DollarSign, Star, Target, AlertTriangle } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -77,19 +77,19 @@ export function NotificationCenter({ userId, userType }: NotificationCenterProps
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "order_update":
-        return "📦";
+        return <Package className="h-5 w-5" />;
       case "message":
-        return "💬";
+        return <MessageCircle className="h-5 w-5" />;
       case "payment":
-        return "💰";
+        return <DollarSign className="h-5 w-5" />;
       case "review":
-        return "⭐";
+        return <Star className="h-5 w-5" />;
       case "milestone":
-        return "🎯";
+        return <Target className="h-5 w-5" />;
       case "dispute":
-        return "⚠️";
+        return <AlertTriangle className="h-5 w-5" />;
       default:
-        return "🔔";
+        return <Bell className="h-5 w-5" />;
     }
   };
 
@@ -175,7 +175,7 @@ export function NotificationCenter({ userId, userType }: NotificationCenterProps
                       data-testid={`notification-${notification.id}`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="text-2xl flex-shrink-0">
+                        <div className="flex-shrink-0 text-muted-foreground">
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -237,7 +237,7 @@ export function NotificationCenter({ userId, userType }: NotificationCenterProps
                       data-testid={`notification-${notification.id}`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="text-2xl flex-shrink-0">
+                        <div className="flex-shrink-0 text-muted-foreground">
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
