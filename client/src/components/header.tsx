@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sheet";
 
 export function Header() {
-  const { isClient, isBuilder, client } = useWalletAuth();
+  const { isClient, isBuilder, client, builder } = useWalletAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -57,10 +57,13 @@ export function Header() {
                     Dashboard
                   </Button>
                 </Link>
-                {client && (
+                {(client || builder) && (
                   <>
                     <div className="hidden md:block">
-                      <NotificationCenter userId={client.id} userType="client" />
+                      <NotificationCenter 
+                        userId={client?.id || builder?.id || ""} 
+                        userType={isClient ? "client" : "builder"} 
+                      />
                     </div>
                     <Link href="/messages" className="hidden md:block">
                       <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">

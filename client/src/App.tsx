@@ -12,6 +12,7 @@ import { AdminAuthProvider } from "@/hooks/use-admin-auth";
 import { ClientAuthProvider } from "@/hooks/use-client-auth";
 import { BuilderAuthProvider } from "@/hooks/use-builder-auth";
 import { InstallPWAPrompt } from "@/components/install-pwa-prompt";
+import { NotificationToastListener } from "@/components/notification-toast-listener";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
 import ServiceDetail from "@/pages/service-detail";
@@ -79,6 +80,7 @@ function App() {
                   <TooltipProvider>
                     <Toaster />
                     <InstallPWAPrompt />
+                    <NotificationToastListener />
                     <Router />
                   </TooltipProvider>
                 </BuilderAuthProvider>
