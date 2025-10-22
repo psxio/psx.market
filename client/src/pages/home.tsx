@@ -82,8 +82,9 @@ export default function Home() {
                   and crypto projects. Quality assured through $CREATE and $PSX holdings.
                 </p>
                 <div className="rounded-lg border border-chart-3/30 bg-chart-3/5 p-4">
-                  <p className="text-sm font-medium text-chart-3">
-                    🎉 Launch Special: The first 50 approved builders and first 2 clients get FREE whitelisted access — no tokens required!
+                  <p className="text-sm font-medium text-chart-3 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Launch Special: The first 50 approved builders and first 2 clients get FREE whitelisted access — no tokens required!
                   </p>
                 </div>
               </div>

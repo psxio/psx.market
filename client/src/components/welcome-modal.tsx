@@ -30,17 +30,19 @@ export function WelcomeModal({ open: controlledOpen, onOpenChange }: WelcomeModa
     }
   }, [controlledOpen]);
 
-  const handleClose = () => {
-    localStorage.setItem("hasSeenWelcome", "true");
-    setIsOpen(false);
-    setStep(0);
+  const handleClose = (open: boolean) => {
+    if (!open) {
+      localStorage.setItem("hasSeenWelcome", "true");
+      setStep(0);
+    }
+    setIsOpen(open);
   };
 
   const handleNext = () => {
     if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
-      handleClose();
+      handleClose(false);
     }
   };
 
@@ -222,13 +224,13 @@ export function WelcomeModal({ open: controlledOpen, onOpenChange }: WelcomeModa
   const currentStep = steps[step];
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl" data-testid="dialog-welcome-modal">
         <Button
           variant="ghost"
           size="icon"
           className="absolute right-4 top-4"
-          onClick={handleClose}
+          onClick={() => handleClose(false)}
           data-testid="button-close-modal"
         >
           <X className="h-4 w-4" />
