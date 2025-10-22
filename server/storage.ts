@@ -122,6 +122,9 @@ export interface IStorage {
   getFeaturedBuilders(): Promise<Builder[]>;
   getLiveBuilders(category?: string): Promise<Builder[]>;
   updateBuilderLiveStatus(builderId: string, isLive: boolean): Promise<Builder>;
+  incrementBuilderViews(builderId: string): Promise<void>;
+  updateBuilderResponseRate(builderId: string, wasResponded: boolean): Promise<void>;
+  calculateAndUpdateTrending(): Promise<void>;
   createBuilder(builder: InsertBuilder): Promise<Builder>;
   
   getBuilderProjects(builderId: string): Promise<BuilderProject[]>;
@@ -539,6 +542,60 @@ export class PostgresStorage implements IStorage {
       .where(eq(builders.id, builderId))
       .returning();
     return result[0];
+  }
+
+  async incrementBuilderViews(builderId: string): Promise<void> {
+    await db.update(builders)
+      .set({ 
+        profileViews: sqlFunc`${builders.profileViews} + 1`,
+        recentViews: sqlFunc`${builders.recentViews} + 1`
+      })
+      .where(eq(builders.id, builderId));
+  }
+
+  async updateBuilderResponseRate(builderId: string, wasResponded: boolean): Promise<void> {
+    const builder = await this.getBuilder(builderId);
+    if (!builder) return;
+
+    const newMessagesReceived = (builder.totalMessagesReceived || 0) + 1;
+    const newMessagesResponded = (builder.totalMessagesResponded || 0) + (wasResponded ? 1 : 0);
+    const newResponseRate = (newMessagesResponded / newMessagesReceived) * 100;
+
+    await db.update(builders)
+      .set({
+        totalMessagesReceived: newMessagesReceived,
+        totalMessagesResponded: newMessagesResponded,
+        responseRate: newResponseRate.toFixed(2)
+      })
+      .where(eq(builders.id, builderId));
+  }
+
+  async calculateAndUpdateTrending(): Promise<void> {
+    const allBuilders = await this.getBuilders();
+    const now = Date.now();
+    const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+
+    for (const builder of allBuilders) {
+      const recentOrders = await db.select()
+        .from(orders)
+        .where(
+          and(
+            eq(orders.builderId, builder.id),
+            sqlFunc`${orders.createdAt} > ${new Date(oneWeekAgo).toISOString()}`
+          )
+        );
+
+      const recentViews = builder.recentViews || 0;
+      const trendingScore = (recentOrders.length * 10) + recentViews;
+      const isTrending = trendingScore > 50;
+
+      await db.update(builders)
+        .set({ isTrending })
+        .where(eq(builders.id, builder.id));
+    }
+
+    await db.update(builders)
+      .set({ recentViews: 0 });
   }
 
   async createBuilder(builder: InsertBuilder): Promise<Builder> {

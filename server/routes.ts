@@ -187,6 +187,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/builders/:id/track-view", async (req, res) => {
+    try {
+      await storage.incrementBuilderViews(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to track view" });
+    }
+  });
+
   app.get("/api/builders/:id/services", async (req, res) => {
     try {
       const services = await storage.getServicesByBuilder(req.params.id);
