@@ -8,6 +8,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import { UIEnhancementsProvider } from "@/components/ui-enhancements";
 import { AdminAuthProvider } from "@/hooks/use-admin-auth";
 import { ClientAuthProvider } from "@/hooks/use-client-auth";
 import { BuilderAuthProvider } from "@/hooks/use-builder-auth";
@@ -85,23 +86,25 @@ function App() {
           borderRadius: 'medium',
         })}>
           <ThemeProvider defaultTheme="dark">
-            <AdminAuthProvider>
-              <ClientAuthProvider>
-                <BuilderAuthProvider>
-                  <TooltipProvider>
-                    <Toaster />
-                    <InstallPWAPrompt />
-                    <NotificationToastListener />
-                    <div className="flex flex-col min-h-screen">
-                      <main className="flex-1">
-                        <Router />
-                      </main>
-                      <Footer />
-                    </div>
-                  </TooltipProvider>
-                </BuilderAuthProvider>
-              </ClientAuthProvider>
-            </AdminAuthProvider>
+            <UIEnhancementsProvider>
+              <AdminAuthProvider>
+                <ClientAuthProvider>
+                  <BuilderAuthProvider>
+                    <TooltipProvider>
+                      <Toaster />
+                      <InstallPWAPrompt />
+                      <NotificationToastListener />
+                      <div className="flex flex-col min-h-screen">
+                        <main className="flex-1">
+                          <Router />
+                        </main>
+                        <Footer />
+                      </div>
+                    </TooltipProvider>
+                  </BuilderAuthProvider>
+                </ClientAuthProvider>
+              </AdminAuthProvider>
+            </UIEnhancementsProvider>
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
