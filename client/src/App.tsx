@@ -23,6 +23,7 @@ import BuildersLanding from "@/pages/builders";
 import BuilderQuiz from "@/pages/builder-quiz";
 import Apply from "@/pages/apply";
 import HowItWorks from "@/pages/how-it-works";
+import GettingStarted from "@/pages/getting-started";
 import BuilderInvite from "@/pages/builder-invite";
 import BuilderOnboarding from "@/pages/builder-onboarding";
 import BecomeClient from "@/pages/become-client";
@@ -52,6 +53,7 @@ function Router() {
       <Route path="/builder-quiz" component={BuilderQuiz} />
       <Route path="/apply" component={Apply} />
       <Route path="/how-it-works" component={HowItWorks} />
+      <Route path="/getting-started" component={GettingStarted} />
       <Route path="/builder-invite/:token" component={BuilderInvite} />
       <Route path="/builder-onboarding/:token?" component={BuilderOnboarding} />
       <Route path="/become-client" component={BecomeClient} />
