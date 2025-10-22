@@ -141,6 +141,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/builders/live", async (req, res) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const builders = await storage.getLiveBuilders(category);
+      res.json(builders);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch live builders" });
+    }
+  });
+
+  app.patch("/api/builders/:id/live-status", async (req, res) => {
+    if (!req.session.userId || req.session.userType !== "builder") {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const builderId = req.params.id;
+    if (req.session.userId !== builderId) {
+      return res.status(403).json({ error: "You can only update your own live status" });
+    }
+
+    try {
+      const { isLive } = req.body;
+      if (typeof isLive !== "boolean") {
+        return res.status(400).json({ error: "isLive must be a boolean" });
+      }
+
+      const builder = await storage.updateBuilderLiveStatus(builderId, isLive);
+      res.json(builder);
+    } catch (error) {
+      console.error("Error updating live status:", error);
+      res.status(500).json({ error: "Failed to update live status" });
+    }
+  });
+
   app.get("/api/builders/:id", async (req, res) => {
     try {
       const builder = await storage.getBuilder(req.params.id);

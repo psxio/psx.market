@@ -64,6 +64,7 @@ export const builders = pgTable("builders", {
   
   acceptingOrders: boolean("accepting_orders").notNull().default(true),
   isActive: boolean("is_active").notNull().default(true),
+  isLive: boolean("is_live").notNull().default(false),
   avgResponseTimeHours: integer("avg_response_time_hours").default(24),
   totalEarnings: decimal("total_earnings", { precision: 10, scale: 2 }).default("0"),
   availableBalance: decimal("available_balance", { precision: 10, scale: 2 }).default("0"),

@@ -7,6 +7,8 @@ declare module "express-session" {
     clientId: string;
     clientAddress: string;
     builderId: string;
+    userId: string;
+    userType: "admin" | "client" | "builder";
   }
 }
 

@@ -120,6 +120,8 @@ export interface IStorage {
   getBuilderByWallet(walletAddress: string): Promise<Builder | undefined>;
   getBuilders(): Promise<Builder[]>;
   getFeaturedBuilders(): Promise<Builder[]>;
+  getLiveBuilders(category?: string): Promise<Builder[]>;
+  updateBuilderLiveStatus(builderId: string, isLive: boolean): Promise<Builder>;
   createBuilder(builder: InsertBuilder): Promise<Builder>;
   
   getBuilderProjects(builderId: string): Promise<BuilderProject[]>;
@@ -518,6 +520,25 @@ export class PostgresStorage implements IStorage {
 
   async getFeaturedBuilders(): Promise<Builder[]> {
     return await db.select().from(builders).where(eq(builders.verified, true)).limit(6);
+  }
+
+  async getLiveBuilders(category?: string): Promise<Builder[]> {
+    const conditions = [eq(builders.isLive, true), eq(builders.isActive, true)];
+    if (category) {
+      conditions.push(eq(builders.category, category));
+    }
+    return await db.select().from(builders).where(and(...conditions)).orderBy(desc(builders.rating)).limit(20);
+  }
+
+  async updateBuilderLiveStatus(builderId: string, isLive: boolean): Promise<Builder> {
+    const result = await db.update(builders)
+      .set({ 
+        isLive,
+        lastActiveAt: new Date().toISOString()
+      })
+      .where(eq(builders.id, builderId))
+      .returning();
+    return result[0];
   }
 
   async createBuilder(builder: InsertBuilder): Promise<Builder> {
