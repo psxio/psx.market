@@ -55,7 +55,7 @@ const isVideoUrl = (url: string): boolean => {
 };
 
 export function BuilderCard({ builder, service }: BuilderCardProps) {
-  const [hoveredMedia, setHoveredMedia] = useState<string | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Handle services without assigned builder - show as generic service card
   if (!builder && service) {
@@ -64,102 +64,68 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
     const CategoryIcon = visual.icon;
 
     return (
-      <>
-        {/* Media Preview Modal */}
-        {hoveredMedia && (
-          <div 
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
-            onMouseLeave={() => setHoveredMedia(null)}
-            onClick={() => setHoveredMedia(null)}
-            data-testid="media-preview-modal"
-          >
-            <div className="relative max-w-5xl max-h-[90vh] w-full mx-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute -top-12 right-0 text-white hover:bg-white/20"
-                onClick={() => setHoveredMedia(null)}
-                data-testid="button-close-preview"
-              >
-                <X className="h-6 w-6" />
-              </Button>
-              <div className="relative rounded-lg overflow-hidden bg-black">
-                {isVideoUrl(hoveredMedia) ? (
-                  <video
-                    src={hoveredMedia}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full max-h-[80vh] object-contain"
-                    data-testid="video-preview"
-                  />
-                ) : (
-                  <img
-                    src={hoveredMedia}
-                    alt="Preview"
-                    className="w-full h-full max-h-[80vh] object-contain"
-                    data-testid="img-preview-large"
-                  />
-                )}
-              </div>
+      <Link href={`/marketplace?categories=${encodeURIComponent(service.category)}`}>
+        <Card 
+          className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-visible transition-all border-l-4 ${visual.borderColor}`}
+          data-testid={`card-service-${service.id}`}
+        >
+          <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${visual.patternClass}`}>
+            <div className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} animate-gradient`} />
+          </div>
+
+          <div className="absolute top-3 right-3 z-10">
+            <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
+              <CategoryIcon className="h-4 w-4" />
             </div>
           </div>
-        )}
 
-        <Link href={`/marketplace?categories=${encodeURIComponent(service.category)}`}>
-          <Card 
-            className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-hidden transition-all border-l-4 ${visual.borderColor}`}
-            data-testid={`card-service-${service.id}`}
-          >
-            <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${visual.patternClass}`}>
-              <div className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} animate-gradient`} />
-            </div>
-
-            <div className="absolute top-3 right-3 z-10">
-              <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
-                <CategoryIcon className="h-4 w-4" />
-              </div>
-            </div>
-
-            <div className="relative z-[1]">
-              <CardHeader className="space-y-0 pb-3">
-                <div className="flex items-start justify-between gap-4 pr-10">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-base mb-2">{service.title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                      {service.description}
-                    </p>
-                    <Badge variant="outline" className="mb-2">{service.category}</Badge>
-                  </div>
+          <div className="relative z-[1]">
+            <CardHeader className="space-y-0 pb-3">
+              <div className="flex items-start justify-between gap-4 pr-10">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-base mb-2">{service.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {service.description}
+                  </p>
+                  <Badge variant="outline" className="mb-2">{service.category}</Badge>
                 </div>
-              </CardHeader>
+              </div>
+            </CardHeader>
 
-              {service.portfolioMedia && service.portfolioMedia.length > 0 && (
-                <div className="px-6 pb-3">
-                  <div className="grid grid-cols-2 gap-2">
-                    {service.portfolioMedia.slice(0, 4).map((mediaUrl, index) => {
-                      const isVideo = isVideoUrl(mediaUrl);
-                      return (
-                        <div 
-                          key={index} 
-                          className="relative aspect-video rounded-md overflow-hidden bg-muted cursor-zoom-in hover:ring-2 hover:ring-primary/50 transition-all"
-                          data-testid={`preview-${index}`}
-                          onMouseEnter={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            setHoveredMedia(mediaUrl);
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            setHoveredMedia(mediaUrl);
-                          }}
-                        >
+            {service.portfolioMedia && service.portfolioMedia.length > 0 && (
+              <div className="px-6 pb-3 relative">
+                <div className="grid grid-cols-2 gap-2">
+                  {service.portfolioMedia.slice(0, 4).map((mediaUrl, index) => {
+                    const isVideo = isVideoUrl(mediaUrl);
+                    const isHovered = hoveredIndex === index;
+                    return (
+                      <div 
+                        key={index} 
+                        className={`relative aspect-video rounded-md bg-muted transition-all duration-300 ${
+                          isHovered 
+                            ? 'scale-150 z-50 shadow-2xl ring-2 ring-primary' 
+                            : 'scale-100 z-10'
+                        }`}
+                        style={{
+                          transformOrigin: index === 0 ? 'top left' : index === 1 ? 'top right' : index === 2 ? 'bottom left' : 'bottom right'
+                        }}
+                        data-testid={`preview-${index}`}
+                        onMouseEnter={(e) => {
+                          e.stopPropagation();
+                          setHoveredIndex(index);
+                        }}
+                        onMouseLeave={(e) => {
+                          e.stopPropagation();
+                          setHoveredIndex(null);
+                        }}
+                      >
+                        <div className="w-full h-full rounded-md overflow-hidden">
                           {isVideo ? (
                             <video
                               src={mediaUrl}
                               className="w-full h-full object-cover"
+                              autoPlay={isHovered}
+                              loop
                               muted
                               playsInline
                               data-testid={`video-thumbnail-${index}`}
@@ -175,34 +141,34 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                             />
                           )}
                         </div>
-                      );
-                    })}
-                  </div>
-                  {service.portfolioMedia.length > 4 && (
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      +{service.portfolioMedia.length - 4} more
-                    </p>
-                  )}
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+                {service.portfolioMedia.length > 4 && (
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    +{service.portfolioMedia.length - 4} more
+                  </p>
+                )}
+              </div>
+            )}
 
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Starting at</span>
-                  <span className="font-semibold text-lg">${service.basicPrice}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Delivery</span>
-                  <span className="font-medium">{service.deliveryTime}</span>
-                </div>
-                <Button variant="outline" className="w-full mt-2" size="sm">
-                  Browse Builders
-                </Button>
-              </CardContent>
-            </div>
-          </Card>
-        </Link>
-      </>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Starting at</span>
+                <span className="font-semibold text-lg">${service.basicPrice}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Delivery</span>
+                <span className="font-medium">{service.deliveryTime}</span>
+              </div>
+              <Button variant="outline" className="w-full mt-2" size="sm">
+                Browse Builders
+              </Button>
+            </CardContent>
+          </div>
+        </Card>
+      </Link>
     );
   }
 
