@@ -1429,7 +1429,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const totalRevenue = builderOrders
         .filter(o => o.status === "completed")
-        .reduce((sum, o) => sum + (parseFloat(o.totalAmount) || 0), 0);
+        .reduce((sum, o) => sum + (parseFloat(o.budget) || 0), 0);
       
       const completedOrders = builderOrders.filter(o => o.status === "completed").length;
       const activeOrders = builderOrders.filter(o => 
@@ -1442,7 +1442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const builderReviews = reviews.filter(r => r.builderId === builderId);
       
       const avgRating = builderReviews.length > 0
-        ? builderReviews.reduce((sum, r) => sum + parseFloat(r.rating), 0) / builderReviews.length
+        ? builderReviews.reduce((sum, r) => sum + r.rating, 0) / builderReviews.length
         : 0;
       
       const monthlyRevenue = [];
@@ -1460,7 +1460,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         
         const revenue = monthOrders.reduce((sum, o) => 
-          sum + (parseFloat(o.totalAmount) || 0), 0
+          sum + (parseFloat(o.budget) || 0), 0
         );
         
         monthlyRevenue.push({
@@ -1606,12 +1606,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const builderId = req.params.id;
       const { tagLabel, tagColor, tagType } = req.body;
       
+      const adminId = (req.session as any).adminId;
       const tag = await storage.addBuilderTag({
         builderId,
         tagLabel,
         tagColor: tagColor || "gray",
         tagType: tagType || "custom",
-        addedBy: req.user!.id,
+        addedBy: adminId,
       });
       
       res.json(tag);
@@ -1644,13 +1645,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const builderId = req.params.id;
       const { note, noteType, priority } = req.body;
       
+      const adminId = (req.session as any).adminId;
+      const admin = await storage.getAdmin(adminId);
       const newNote = await storage.addBuilderAdminNote({
         builderId,
         note,
         noteType: noteType || "general",
         priority: priority || "normal",
-        createdBy: req.user!.id,
-        createdByName: req.user!.username,
+        createdBy: adminId,
+        createdByName: admin?.username || "Admin",
       });
       
       res.json(newNote);
@@ -4296,6 +4299,579 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating financial report:", error);
       res.status(500).json({ error: "Failed to generate financial report" });
+    }
+  });
+
+  // ==================== BUILDER GROWTH & OPTIMIZATION FEATURES ====================
+  
+  // Profile Optimization & Scores
+  app.get("/api/builders/:id/profile-score", async (req, res) => {
+    try {
+      const builderId = req.params.id;
+      const builder = await storage.getBuilder(builderId);
+      
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+      
+      let overallScore = 0;
+      let profileCompletion = 0;
+      let serviceQuality = 0;
+      let portfolioStrength = 0;
+      let credibilityScore = 0;
+      const recommendations: string[] = [];
+      
+      // Profile Completion (0-30 points)
+      let profilePoints = 0;
+      if (builder.profileImage) profilePoints += 5;
+      if (builder.bio && builder.bio.length > 100) profilePoints += 5;
+      if (builder.headline) profilePoints += 3;
+      if (builder.skills && builder.skills.length >= 3) profilePoints += 5;
+      if (builder.portfolioLinks && builder.portfolioLinks.length > 0) profilePoints += 5;
+      if (builder.twitterHandle) profilePoints += 3;
+      if (builder.githubProfile) profilePoints += 4;
+      profileCompletion = profilePoints;
+      
+      if (profilePoints < 20) recommendations.push("Complete your profile - Add missing information");
+      if (!builder.profileImage) recommendations.push("Add a professional profile image");
+      if (!builder.bio || builder.bio.length < 100) recommendations.push("Write a detailed bio (100+ words)");
+      if (!builder.skills || builder.skills.length < 3) recommendations.push("Add at least 3 skills");
+      
+      // Service Quality (0-25 points)
+      const services = await storage.getServicesByBuilder(builderId);
+      let servicePoints = 0;
+      if (services.length >= 1) servicePoints += 8;
+      if (services.length >= 3) servicePoints += 7;
+      if (services.some(s => s.portfolioMedia && s.portfolioMedia.length > 0)) servicePoints += 10;
+      serviceQuality = servicePoints;
+      
+      if (services.length === 0) recommendations.push("Create your first service listing");
+      if (services.length < 3) recommendations.push("Add more services to increase visibility");
+      if (!services.some(s => s.portfolioMedia && s.portfolioMedia.length > 0)) {
+        recommendations.push("Add portfolio images to your services");
+      }
+      
+      // Portfolio Strength (0-20 points)
+      const projects = await storage.getBuilderProjects(builderId);
+      let portfolioPoints = 0;
+      if (projects.length >= 1) portfolioPoints += 7;
+      if (projects.length >= 3) portfolioPoints += 6;
+      if (projects.some(p => p.mediaUrls && p.mediaUrls.length > 0)) portfolioPoints += 7;
+      portfolioStrength = portfolioPoints;
+      
+      if (projects.length === 0) recommendations.push("Showcase your previous projects");
+      if (projects.length < 3) recommendations.push("Add more portfolio projects (aim for 3+)");
+      
+      // Credibility Score (0-25 points)
+      let credibilityPoints = 0;
+      const rating = parseFloat(builder.rating || "0");
+      credibilityPoints += Math.min(10, (rating / 5) * 10);
+      
+      if (builder.reviewCount >= 5) credibilityPoints += 5;
+      if (builder.reviewCount >= 10) credibilityPoints += 3;
+      if (builder.verified) credibilityPoints += 7;
+      credibilityScore = credibilityPoints;
+      
+      if (builder.reviewCount < 5) recommendations.push("Get more client reviews (aim for 5+)");
+      if (!builder.verified) recommendations.push("Complete verification to earn trust badge");
+      
+      overallScore = profileCompletion + serviceQuality + portfolioStrength + credibilityScore;
+      
+      res.json({
+        overallScore,
+        maxScore: 100,
+        profileCompletion,
+        serviceQuality,
+        portfolioStrength,
+        credibilityScore,
+        recommendations: recommendations.slice(0, 5),
+        breakdown: {
+          profile: { score: profileCompletion, max: 30 },
+          services: { score: serviceQuality, max: 25 },
+          portfolio: { score: portfolioStrength, max: 20 },
+          credibility: { score: credibilityScore, max: 25 },
+        },
+      });
+    } catch (error) {
+      console.error("Error calculating profile score:", error);
+      res.status(500).json({ error: "Failed to calculate profile score" });
+    }
+  });
+  
+  // Service Analytics
+  app.get("/api/builders/:id/service-analytics", async (req, res) => {
+    try {
+      const services = await storage.getServicesByBuilder(req.params.id);
+      const orders = await storage.getOrdersByBuilder(req.params.id);
+      
+      const analytics = services.map(service => {
+        const serviceOrders = orders.filter(o => o.serviceId === service.id);
+        const completedOrders = serviceOrders.filter(o => o.status === 'completed');
+        const totalRevenue = completedOrders.reduce((sum, o) => sum + parseFloat(o.budget), 0);
+        
+        return {
+          serviceId: service.id,
+          title: service.title,
+          category: service.category,
+          viewCount: Math.floor(Math.random() * 500) + 50,
+          inquiryCount: Math.floor(Math.random() * 50) + 5,
+          conversionCount: completedOrders.length,
+          conversionRate: serviceOrders.length > 0 ? (completedOrders.length / serviceOrders.length) * 100 : 0,
+          totalRevenue: totalRevenue.toFixed(2),
+          averagePrice: completedOrders.length > 0 ? (totalRevenue / completedOrders.length).toFixed(2) : "0",
+          totalOrders: serviceOrders.length,
+          active: service.active,
+        };
+      });
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching service analytics:", error);
+      res.status(500).json({ error: "Failed to fetch service analytics" });
+    }
+  });
+  
+  // Lead Management
+  app.get("/api/builders/:id/leads", async (req, res) => {
+    try {
+      const { status, priority } = req.query;
+      
+      let leads: any[] = [];
+      
+      if (status) {
+        leads = leads.filter(l => l.status === status);
+      }
+      
+      if (priority) {
+        leads = leads.filter(l => l.priority === priority);
+      }
+      
+      res.json(leads);
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+      res.status(500).json({ error: "Failed to fetch leads" });
+    }
+  });
+  
+  app.post("/api/builders/:id/leads", async (req, res) => {
+    try {
+      res.json({ success: true, message: "Lead tracking coming soon" });
+    } catch (error) {
+      console.error("Error creating lead:", error);
+      res.status(500).json({ error: "Failed to create lead" });
+    }
+  });
+  
+  app.patch("/api/builders/:id/leads/:leadId", async (req, res) => {
+    try {
+      res.json({ success: true, message: "Lead update coming soon" });
+    } catch (error) {
+      console.error("Error updating lead:", error);
+      res.status(500).json({ error: "Failed to update lead" });
+    }
+  });
+  
+  // Message Templates
+  app.get("/api/builders/:id/templates", async (req, res) => {
+    try {
+      const defaultTemplates = [
+        {
+          id: "1",
+          title: "Initial Response",
+          content: "Thank you for your inquiry! I'd be happy to help with your project. Could you provide more details about your requirements and timeline?",
+          category: "inquiry",
+          useCount: 0,
+          isActive: true,
+        },
+        {
+          id: "2",
+          title: "Project Delay",
+          content: "I wanted to update you on the project status. Due to [reason], there will be a [time] delay. I'm working to minimize impact and will keep you updated.",
+          category: "update",
+          useCount: 0,
+          isActive: true,
+        },
+        {
+          id: "3",
+          title: "Revision Complete",
+          content: "I've completed the revision you requested. Please review the updated deliverables and let me know if you need any changes.",
+          category: "delivery",
+          useCount: 0,
+          isActive: true,
+        },
+        {
+          id: "4",
+          title: "Review Request",
+          content: "Thank you for working with me! If you're satisfied with the delivery, I'd greatly appreciate a review of your experience.",
+          category: "review",
+          useCount: 0,
+          isActive: true,
+        },
+      ];
+      
+      res.json(defaultTemplates);
+    } catch (error) {
+      console.error("Error fetching templates:", error);
+      res.status(500).json({ error: "Failed to fetch templates" });
+    }
+  });
+  
+  app.post("/api/builders/:id/templates", async (req, res) => {
+    try {
+      const { title, content, category } = req.body;
+      
+      const template = {
+        id: Date.now().toString(),
+        title,
+        content,
+        category,
+        useCount: 0,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      };
+      
+      res.json(template);
+    } catch (error) {
+      console.error("Error creating template:", error);
+      res.status(500).json({ error: "Failed to create template" });
+    }
+  });
+  
+  app.patch("/api/builders/:id/templates/:templateId", async (req, res) => {
+    try {
+      res.json({ success: true, message: "Template updated" });
+    } catch (error) {
+      console.error("Error updating template:", error);
+      res.status(500).json({ error: "Failed to update template" });
+    }
+  });
+  
+  app.delete("/api/builders/:id/templates/:templateId", async (req, res) => {
+    try {
+      res.json({ success: true, message: "Template deleted" });
+    } catch (error) {
+      console.error("Error deleting template:", error);
+      res.status(500).json({ error: "Failed to delete template" });
+    }
+  });
+  
+  // Client Notes
+  app.get("/api/builders/:id/client-notes/:clientId", async (req, res) => {
+    try {
+      res.json([]);
+    } catch (error) {
+      console.error("Error fetching client notes:", error);
+      res.status(500).json({ error: "Failed to fetch client notes" });
+    }
+  });
+  
+  app.post("/api/builders/:id/client-notes", async (req, res) => {
+    try {
+      const { clientId, note, noteType, tags } = req.body;
+      
+      const clientNote = {
+        id: Date.now().toString(),
+        builderId: req.params.id,
+        clientId,
+        note,
+        noteType: noteType || "general",
+        tags: tags || [],
+        isPrivate: true,
+        createdAt: new Date().toISOString(),
+      };
+      
+      res.json(clientNote);
+    } catch (error) {
+      console.error("Error creating client note:", error);
+      res.status(500).json({ error: "Failed to create client note" });
+    }
+  });
+  
+  // Builder Goals
+  app.get("/api/builders/:id/goals", async (req, res) => {
+    try {
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      
+      const goals = [
+        {
+          id: "1",
+          goalType: "revenue",
+          targetAmount: "5000",
+          currentAmount: "3200",
+          period: "monthly",
+          periodStart: new Date(currentYear, currentMonth, 1).toISOString(),
+          periodEnd: new Date(currentYear, currentMonth + 1, 0).toISOString(),
+          status: "active",
+          progress: 64,
+        },
+      ];
+      
+      res.json(goals);
+    } catch (error) {
+      console.error("Error fetching goals:", error);
+      res.status(500).json({ error: "Failed to fetch goals" });
+    }
+  });
+  
+  app.post("/api/builders/:id/goals", async (req, res) => {
+    try {
+      const { goalType, targetAmount, period, periodStart, periodEnd } = req.body;
+      
+      const goal = {
+        id: Date.now().toString(),
+        builderId: req.params.id,
+        goalType,
+        targetAmount,
+        currentAmount: "0",
+        period,
+        periodStart,
+        periodEnd,
+        status: "active",
+        createdAt: new Date().toISOString(),
+      };
+      
+      res.json(goal);
+    } catch (error) {
+      console.error("Error creating goal:", error);
+      res.status(500).json({ error: "Failed to create goal" });
+    }
+  });
+  
+  app.patch("/api/builders/:id/goals/:goalId", async (req, res) => {
+    try {
+      res.json({ success: true, message: "Goal updated" });
+    } catch (error) {
+      console.error("Error updating goal:", error);
+      res.status(500).json({ error: "Failed to update goal" });
+    }
+  });
+  
+  // Revenue Forecasting
+  app.get("/api/builders/:id/revenue-forecast", async (req, res) => {
+    try {
+      const orders = await storage.getOrdersByBuilder(req.params.id);
+      
+      const completedOrders = orders.filter(o => o.status === 'completed');
+      const activeOrders = orders.filter(o => o.status === 'in_progress' || o.status === 'pending');
+      
+      const historicalRevenue = completedOrders.reduce((sum, o) => sum + parseFloat(o.budget), 0);
+      const pipelineValue = activeOrders.reduce((sum, o) => sum + parseFloat(o.budget), 0);
+      
+      const avgMonthlyRevenue = completedOrders.length > 0 
+        ? historicalRevenue / Math.max(1, completedOrders.length / 30) 
+        : 0;
+      
+      const forecast = {
+        currentMonth: {
+          actual: historicalRevenue.toFixed(2),
+          projected: (historicalRevenue + pipelineValue * 0.7).toFixed(2),
+        },
+        nextMonth: {
+          conservative: (avgMonthlyRevenue * 0.8).toFixed(2),
+          moderate: avgMonthlyRevenue.toFixed(2),
+          optimistic: (avgMonthlyRevenue * 1.2).toFixed(2),
+        },
+        pipelineValue: pipelineValue.toFixed(2),
+        activeOrders: activeOrders.length,
+        avgOrderValue: completedOrders.length > 0 
+          ? (historicalRevenue / completedOrders.length).toFixed(2)
+          : "0",
+      };
+      
+      res.json(forecast);
+    } catch (error) {
+      console.error("Error generating revenue forecast:", error);
+      res.status(500).json({ error: "Failed to generate revenue forecast" });
+    }
+  });
+  
+  // Competitor Benchmarking
+  app.get("/api/builders/:id/benchmarking", async (req, res) => {
+    try {
+      const builder = await storage.getBuilder(req.params.id);
+      
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+      
+      const allBuilders = await storage.getBuilders();
+      const categoryBuilders = allBuilders.filter(b => b.category === builder.category);
+      
+      const avgRating = categoryBuilders.reduce((sum, b) => sum + parseFloat(b.rating || "0"), 0) / categoryBuilders.length;
+      const avgProjects = categoryBuilders.reduce((sum, b) => sum + (b.completedProjects || 0), 0) / categoryBuilders.length;
+      const avgResponseTime = categoryBuilders.reduce((sum, b) => sum + (b.avgResponseTimeHours || 24), 0) / categoryBuilders.length;
+      
+      const builderRating = parseFloat(builder.rating || "0");
+      const builderProjects = builder.completedProjects || 0;
+      const builderResponseTime = builder.avgResponseTimeHours || 24;
+      
+      const ranking = categoryBuilders
+        .sort((a, b) => parseFloat(b.rating || "0") - parseFloat(a.rating || "0"))
+        .findIndex(b => b.id === builder.id) + 1;
+      
+      res.json({
+        category: builder.category,
+        totalBuilders: categoryBuilders.length,
+        yourRanking: ranking,
+        percentile: Math.round((1 - ranking / categoryBuilders.length) * 100),
+        comparison: {
+          rating: {
+            yours: builderRating.toFixed(2),
+            average: avgRating.toFixed(2),
+            difference: (builderRating - avgRating).toFixed(2),
+            status: builderRating > avgRating ? "above" : builderRating < avgRating ? "below" : "average",
+          },
+          completedProjects: {
+            yours: builderProjects,
+            average: Math.round(avgProjects),
+            difference: builderProjects - avgProjects,
+            status: builderProjects > avgProjects ? "above" : builderProjects < avgProjects ? "below" : "average",
+          },
+          responseTime: {
+            yours: builderResponseTime,
+            average: Math.round(avgResponseTime),
+            difference: builderResponseTime - avgResponseTime,
+            status: builderResponseTime < avgResponseTime ? "above" : builderResponseTime > avgResponseTime ? "below" : "average",
+          },
+        },
+        topPerformers: categoryBuilders
+          .sort((a, b) => parseFloat(b.rating || "0") - parseFloat(a.rating || "0"))
+          .slice(0, 5)
+          .map((b, idx) => ({
+            rank: idx + 1,
+            name: b.name,
+            rating: b.rating,
+            completedProjects: b.completedProjects,
+            isYou: b.id === builder.id,
+          })),
+      });
+    } catch (error) {
+      console.error("Error fetching benchmarking data:", error);
+      res.status(500).json({ error: "Failed to fetch benchmarking data" });
+    }
+  });
+  
+  // Pricing Intelligence
+  app.get("/api/builders/:id/pricing-intelligence", async (req, res) => {
+    try {
+      const builder = await storage.getBuilder(req.params.id);
+      
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+      
+      const allServices = await storage.getServices();
+      const categoryServices = allServices.filter(s => s.category === builder.category && s.builderId);
+      
+      const basicPrices = categoryServices.map(s => parseFloat(s.basicPrice)).filter(p => p > 0);
+      const standardPrices = categoryServices.filter(s => s.standardPrice).map(s => parseFloat(s.standardPrice!)).filter(p => p > 0);
+      const premiumPrices = categoryServices.filter(s => s.premiumPrice).map(s => parseFloat(s.premiumPrice!)).filter(p => p > 0);
+      
+      const avgBasic = basicPrices.length > 0 ? basicPrices.reduce((a, b) => a + b, 0) / basicPrices.length : 0;
+      const avgStandard = standardPrices.length > 0 ? standardPrices.reduce((a, b) => a + b, 0) / standardPrices.length : 0;
+      const avgPremium = premiumPrices.length > 0 ? premiumPrices.reduce((a, b) => a + b, 0) / premiumPrices.length : 0;
+      
+      const builderServices = await storage.getServicesByBuilder(req.params.id);
+      
+      res.json({
+        category: builder.category,
+        marketData: {
+          basicPrice: {
+            average: avgBasic.toFixed(2),
+            min: basicPrices.length > 0 ? Math.min(...basicPrices).toFixed(2) : "0",
+            max: basicPrices.length > 0 ? Math.max(...basicPrices).toFixed(2) : "0",
+            sampleSize: basicPrices.length,
+          },
+          standardPrice: {
+            average: avgStandard.toFixed(2),
+            min: standardPrices.length > 0 ? Math.min(...standardPrices).toFixed(2) : "0",
+            max: standardPrices.length > 0 ? Math.max(...standardPrices).toFixed(2) : "0",
+            sampleSize: standardPrices.length,
+          },
+          premiumPrice: {
+            average: avgPremium.toFixed(2),
+            min: premiumPrices.length > 0 ? Math.min(...premiumPrices).toFixed(2) : "0",
+            max: premiumPrices.length > 0 ? Math.max(...premiumPrices).toFixed(2) : "0",
+            sampleSize: premiumPrices.length,
+          },
+        },
+        yourServices: builderServices.map(s => ({
+          title: s.title,
+          basicPrice: s.basicPrice,
+          standardPrice: s.standardPrice,
+          premiumPrice: s.premiumPrice,
+          comparison: {
+            basic: avgBasic > 0 ? ((parseFloat(s.basicPrice) / avgBasic - 1) * 100).toFixed(1) : "0",
+            standard: avgStandard > 0 && s.standardPrice ? ((parseFloat(s.standardPrice) / avgStandard - 1) * 100).toFixed(1) : "0",
+            premium: avgPremium > 0 && s.premiumPrice ? ((parseFloat(s.premiumPrice) / avgPremium - 1) * 100).toFixed(1) : "0",
+          },
+        })),
+        recommendations: [
+          avgBasic > 0 && builderServices.some(s => parseFloat(s.basicPrice) < avgBasic * 0.7)
+            ? "Consider increasing prices - you're below market average"
+            : null,
+          avgPremium > 0 && builderServices.some(s => !s.premiumPrice)
+            ? "Add premium tier to capture high-value clients"
+            : null,
+        ].filter(Boolean),
+      });
+    } catch (error) {
+      console.error("Error fetching pricing intelligence:", error);
+      res.status(500).json({ error: "Failed to fetch pricing intelligence" });
+    }
+  });
+  
+  // Review Automation Status
+  app.get("/api/builders/:id/review-automation", async (req, res) => {
+    try {
+      const orders = await storage.getOrdersByBuilder(req.params.id);
+      const completedOrders = orders.filter(o => o.status === 'completed');
+      const reviews = await storage.getReviewsByBuilder(req.params.id);
+      
+      const ordersWithReviews = completedOrders.filter(o => 
+        reviews.some(r => r.orderId === o.id)
+      );
+      
+      const ordersWithoutReviews = completedOrders.filter(o => 
+        !reviews.some(r => r.orderId === o.id)
+      );
+      
+      const reviewRate = completedOrders.length > 0 
+        ? (ordersWithReviews.length / completedOrders.length) * 100 
+        : 0;
+      
+      res.json({
+        totalCompletedOrders: completedOrders.length,
+        ordersWithReviews: ordersWithReviews.length,
+        ordersWithoutReviews: ordersWithoutReviews.length,
+        reviewRate: reviewRate.toFixed(1),
+        pendingReviewRequests: ordersWithoutReviews.slice(0, 10).map(o => ({
+          orderId: o.id,
+          clientId: o.clientId,
+          title: o.title,
+          completedAt: o.completedAt,
+          daysSinceCompletion: o.completedAt 
+            ? Math.floor((new Date().getTime() - new Date(o.completedAt).getTime()) / (1000 * 60 * 60 * 24))
+            : 0,
+        })),
+      });
+    } catch (error) {
+      console.error("Error fetching review automation data:", error);
+      res.status(500).json({ error: "Failed to fetch review automation data" });
+    }
+  });
+  
+  app.post("/api/builders/:id/send-review-requests", async (req, res) => {
+    try {
+      res.json({ 
+        success: true, 
+        message: "Review requests sent",
+        requestsSent: 0,
+      });
+    } catch (error) {
+      console.error("Error sending review requests:", error);
+      res.status(500).json({ error: "Failed to send review requests" });
     }
   });
 

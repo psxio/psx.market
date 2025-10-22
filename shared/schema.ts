@@ -1368,3 +1368,223 @@ export type Partner = typeof partners.$inferSelect;
 
 export type InsertPartnerConnectionRequest = z.infer<typeof insertPartnerConnectionRequestSchema>;
 export type PartnerConnectionRequest = typeof partnerConnectionRequests.$inferSelect;
+
+export const serviceAnalytics = pgTable("service_analytics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serviceId: varchar("service_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  
+  viewCount: integer("view_count").notNull().default(0),
+  inquiryCount: integer("inquiry_count").notNull().default(0),
+  conversionCount: integer("conversion_count").notNull().default(0),
+  
+  averagePrice: decimal("average_price", { precision: 10, scale: 2 }),
+  totalRevenue: decimal("total_revenue", { precision: 10, scale: 2 }).default("0"),
+  
+  date: text("date").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderLeads = pgTable("builder_leads", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  clientId: varchar("client_id"),
+  
+  clientName: text("client_name").notNull(),
+  clientEmail: text("client_email"),
+  clientWallet: text("client_wallet"),
+  
+  serviceId: varchar("service_id"),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  budget: text("budget"),
+  
+  status: text("status").notNull().default("new"),
+  priority: text("priority").notNull().default("normal"),
+  
+  leadSource: text("lead_source"),
+  
+  firstResponseAt: text("first_response_at"),
+  convertedAt: text("converted_at"),
+  convertedToOrderId: varchar("converted_to_order_id"),
+  
+  lostReason: text("lost_reason"),
+  lostNotes: text("lost_notes"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const messageTemplates = pgTable("message_templates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull(),
+  
+  useCount: integer("use_count").notNull().default(0),
+  
+  isActive: boolean("is_active").notNull().default(true),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const clientNotes = pgTable("client_notes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  
+  note: text("note").notNull(),
+  noteType: text("note_type").notNull().default("general"),
+  
+  tags: text("tags").array(),
+  
+  isPrivate: boolean("is_private").notNull().default(true),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderGoals = pgTable("builder_goals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  
+  goalType: text("goal_type").notNull(),
+  targetAmount: decimal("target_amount", { precision: 10, scale: 2 }).notNull(),
+  currentAmount: decimal("current_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+  
+  period: text("period").notNull(),
+  periodStart: text("period_start").notNull(),
+  periodEnd: text("period_end").notNull(),
+  
+  status: text("status").notNull().default("active"),
+  
+  achievedAt: text("achieved_at"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const reviewAutomation = pgTable("review_automation", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  
+  requestSentAt: text("request_sent_at"),
+  reminderSentAt: text("reminder_sent_at"),
+  
+  reviewSubmittedAt: text("review_submitted_at"),
+  reviewId: varchar("review_id"),
+  
+  status: text("status").notNull().default("pending"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const pricingIntelligence = pgTable("pricing_intelligence", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  category: text("category").notNull(),
+  serviceType: text("service_type").notNull(),
+  
+  averageBasicPrice: decimal("average_basic_price", { precision: 10, scale: 2 }),
+  averageStandardPrice: decimal("average_standard_price", { precision: 10, scale: 2 }),
+  averagePremiumPrice: decimal("average_premium_price", { precision: 10, scale: 2 }),
+  
+  minPrice: decimal("min_price", { precision: 10, scale: 2 }),
+  maxPrice: decimal("max_price", { precision: 10, scale: 2 }),
+  
+  sampleSize: integer("sample_size").notNull(),
+  
+  date: text("date").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderProfileScores = pgTable("builder_profile_scores", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull().unique(),
+  
+  overallScore: integer("overall_score").notNull().default(0),
+  
+  profileCompletion: integer("profile_completion").notNull().default(0),
+  serviceQuality: integer("service_quality").notNull().default(0),
+  portfolioStrength: integer("portfolio_strength").notNull().default(0),
+  credibilityScore: integer("credibility_score").notNull().default(0),
+  
+  recommendations: text("recommendations").array(),
+  
+  lastCalculatedAt: text("last_calculated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const insertServiceAnalyticsSchema = createInsertSchema(serviceAnalytics).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBuilderLeadSchema = createInsertSchema(builderLeads).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMessageTemplateSchema = createInsertSchema(messageTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertClientNoteSchema = createInsertSchema(clientNotes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertBuilderGoalSchema = createInsertSchema(builderGoals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertReviewAutomationSchema = createInsertSchema(reviewAutomation).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertPricingIntelligenceSchema = createInsertSchema(pricingIntelligence).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBuilderProfileScoreSchema = createInsertSchema(builderProfileScores).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertServiceAnalytics = z.infer<typeof insertServiceAnalyticsSchema>;
+export type ServiceAnalytics = typeof serviceAnalytics.$inferSelect;
+
+export type InsertBuilderLead = z.infer<typeof insertBuilderLeadSchema>;
+export type BuilderLead = typeof builderLeads.$inferSelect;
+
+export type InsertMessageTemplate = z.infer<typeof insertMessageTemplateSchema>;
+export type MessageTemplate = typeof messageTemplates.$inferSelect;
+
+export type InsertClientNote = z.infer<typeof insertClientNoteSchema>;
+export type ClientNote = typeof clientNotes.$inferSelect;
+
+export type InsertBuilderGoal = z.infer<typeof insertBuilderGoalSchema>;
+export type BuilderGoal = typeof builderGoals.$inferSelect;
+
+export type InsertReviewAutomation = z.infer<typeof insertReviewAutomationSchema>;
+export type ReviewAutomation = typeof reviewAutomation.$inferSelect;
+
+export type InsertPricingIntelligence = z.infer<typeof insertPricingIntelligenceSchema>;
+export type PricingIntelligence = typeof pricingIntelligence.$inferSelect;
+
+export type InsertBuilderProfileScore = z.infer<typeof insertBuilderProfileScoreSchema>;
+export type BuilderProfileScore = typeof builderProfileScores.$inferSelect;
