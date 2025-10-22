@@ -44,12 +44,7 @@ export default function Home() {
     queryKey: ["/api/services/featured"],
   });
 
-  const { data: categories, isLoading: categoriesLoading, isError: categoriesError } = useQuery<Category[]>({
-    queryKey: ["/api/categories"],
-  });
-
   const agencySection = useScrollReveal();
-  const categoriesSection = useScrollReveal();
   const servicesSection = useScrollReveal();
   const buildersSection = useScrollReveal();
 
@@ -195,39 +190,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={categoriesSection.ref as any} className={`border-b bg-gradient-to-b from-background to-muted/20 py-16 ${categoriesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <Badge variant="outline" className="mb-4 gap-1.5 border-primary/40 bg-primary/10 text-primary">
-              <Sparkles className="h-3 w-3" />
-              Explore Categories
-            </Badge>
-            <h2 className="text-4xl font-bold tracking-tight">Browse by Category</h2>
-            <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover premium Web3 builders across all specialized verticals
-            </p>
-          </div>
-
-          {categoriesLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[...Array(8)].map((_, i) => (
-                <Skeleton key={i} className="h-[280px] w-full rounded-lg" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {categories?.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  builderCount={category.builderCount}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       <section ref={servicesSection.ref as any} className={`border-b py-16 ${servicesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
@@ -276,42 +238,116 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={buildersSection.ref as any} className={`border-t bg-muted/30 py-16 ${buildersSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight">Top Builders</h2>
-              <p className="mt-2 text-muted-foreground">
-                Verified experts with proven track records
-              </p>
+      <section ref={buildersSection.ref as any} className={`relative overflow-hidden border-t py-24 ${buildersSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-chart-2/5 to-chart-3/5" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-chart-3/10 to-transparent" />
+        
+        <div className="container relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <div className="mb-6 inline-flex items-center gap-3">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary" />
+              <Badge variant="default" className="gap-1.5 bg-gradient-to-r from-primary via-chart-2 to-chart-3 border-0 text-base px-4 py-1.5">
+                <Sparkles className="h-4 w-4 animate-pulse" />
+                Elite Talent Showcase
+              </Badge>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-primary" />
             </div>
-            <Link href="/marketplace">
-              <Button variant="ghost" className="gap-2 hover-elevate" data-testid="button-view-all-builders">
-                View All
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <h2 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              <span className="bg-gradient-to-r from-foreground via-primary to-chart-2 bg-clip-text text-transparent">
+                Top Builders
+              </span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto md:text-xl">
+              Verified experts with proven track records, exceptional ratings, and thousands of successful deliveries
+            </p>
+            
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-foreground">100% Verified</div>
+                  <div className="text-muted-foreground text-xs">Background checked</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-chart-3/10 border border-chart-3/20">
+                  <Users className="h-5 w-5 text-chart-3" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-foreground">4.9+ Rating</div>
+                  <div className="text-muted-foreground text-xs">Average score</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-chart-2/10 border border-chart-2/20">
+                  <Shield className="h-5 w-5 text-chart-2" />
+                </div>
+                <div className="text-left">
+                  <div className="font-bold text-foreground">Token Gated</div>
+                  <div className="text-muted-foreground text-xs">Quality assured</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {buildersLoading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="space-y-4">
-                  <Skeleton className="h-[260px] w-full rounded-lg" />
+                  <Skeleton className="h-[360px] w-full rounded-lg" />
                 </div>
               ))}
             </div>
           ) : buildersError ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
+                <Shield className="h-8 w-8 text-destructive" />
+              </div>
               <h3 className="mb-2 text-lg font-semibold">Failed to load builders</h3>
               <p className="text-sm text-muted-foreground">Please try again later</p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {builders?.map((builder) => (
-                <BuilderCard key={builder.id} builder={builder} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {builders?.map((builder, index) => (
+                  <div
+                    key={builder.id}
+                    className="relative group"
+                    style={{
+                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
+                    }}
+                  >
+                    {index === 0 && (
+                      <div className="absolute -top-4 -right-4 z-10">
+                        <Badge className="bg-gradient-to-r from-chart-4 via-chart-3 to-primary border-0 text-white px-3 py-1 shadow-lg animate-pulse">
+                          #1 Top Rated
+                        </Badge>
+                      </div>
+                    )}
+                    {index === 1 && (
+                      <div className="absolute -top-4 -right-4 z-10">
+                        <Badge className="bg-gradient-to-r from-chart-3 to-chart-2 border-0 text-white px-3 py-1 shadow-lg">
+                          Featured
+                        </Badge>
+                      </div>
+                    )}
+                    <BuilderCard builder={builder} />
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-12 text-center">
+                <Link href="/marketplace">
+                  <Button size="lg" variant="outline" className="gap-2 hover-elevate group border-2" data-testid="button-view-all-builders">
+                    <span>Explore All Builders</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              </div>
+            </>
           )}
         </div>
       </section>
@@ -387,6 +423,17 @@ export default function Home() {
           }
           50% {
             transform: translateY(-20px);
+          }
+        }
+        
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
       `}</style>
