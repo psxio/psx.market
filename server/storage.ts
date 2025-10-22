@@ -142,6 +142,7 @@ export interface IStorage {
   getCategories(): Promise<Category[]>;
   createCategory(category: InsertCategory): Promise<Category>;
 
+  getReviews(): Promise<Review[]>;
   getReviewsByBuilder(builderId: string): Promise<Review[]>;
   getReview(id: string): Promise<Review | undefined>;
   createReview(review: InsertReview): Promise<Review>;
@@ -655,6 +656,10 @@ export class PostgresStorage implements IStorage {
   async createCategory(category: InsertCategory): Promise<Category> {
     const result = await db.insert(categories).values(category).returning();
     return result[0];
+  }
+
+  async getReviews(): Promise<Review[]> {
+    return await db.select().from(reviews).orderBy(desc(reviews.createdAt));
   }
 
   async getReviewsByBuilder(builderId: string): Promise<Review[]> {
