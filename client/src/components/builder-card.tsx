@@ -50,6 +50,11 @@ const categoryVisuals = {
 };
 
 export function BuilderCard({ builder, service }: BuilderCardProps) {
+  // Handle null builder (services without assigned builder)
+  if (!builder) {
+    return null;
+  }
+
   const initials = builder.name
     .split(" ")
     .map((n) => n[0])
