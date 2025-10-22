@@ -61,6 +61,7 @@ const serviceFormSchema = z.object({
   psxRequired: z.string().min(1, "PSX requirement is required"),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),
+  portfolioMediaUrls: z.string().optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -95,11 +96,16 @@ export default function AdminServices() {
       psxRequired: "1000",
       featured: false,
       active: true,
+      portfolioMediaUrls: "",
     },
   });
 
   const createServiceMutation = useMutation({
     mutationFn: async (data: ServiceFormValues) => {
+      const portfolioMedia = data.portfolioMediaUrls
+        ? data.portfolioMediaUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0)
+        : [];
+      
       const response = await apiRequest("POST", "/api/admin/services", {
         ...data,
         basicPrice: data.basicPrice,
@@ -110,7 +116,7 @@ export default function AdminServices() {
         standardDeliverables: [],
         premiumDeliverables: [],
         tags: [],
-        portfolioMedia: [],
+        portfolioMedia,
         videoUrls: [],
       });
       return response.json();
@@ -135,12 +141,17 @@ export default function AdminServices() {
 
   const updateServiceMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ServiceFormValues }) => {
+      const portfolioMedia = data.portfolioMediaUrls
+        ? data.portfolioMediaUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0)
+        : [];
+      
       const response = await apiRequest("PUT", `/api/admin/services/${id}`, {
         ...data,
         basicPrice: data.basicPrice,
         standardPrice: data.standardPrice || undefined,
         premiumPrice: data.premiumPrice || undefined,
         psxRequired: data.psxRequired,
+        portfolioMedia,
       });
       return response.json();
     },
@@ -207,6 +218,7 @@ export default function AdminServices() {
       psxRequired: service.psxRequired,
       featured: service.featured,
       active: service.active,
+      portfolioMediaUrls: service.portfolioMedia?.join('\n') || "",
     });
   };
 
@@ -482,6 +494,28 @@ export default function AdminServices() {
                         data-testid="textarea-basic-description"
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="portfolioMediaUrls"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preview Images (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter image URLs (one per line)&#10;https://example.com/image1.jpg&#10;https://example.com/image2.png"
+                        {...field}
+                        data-testid="textarea-portfolio-media"
+                        className="font-mono text-sm"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Add preview images to showcase the service features (one URL per line)
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
