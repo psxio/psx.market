@@ -326,7 +326,7 @@ export default function GettingStarted() {
             <div className="mt-12 pt-8 border-t">
               <h3 className="text-2xl font-bold mb-6">Helpful Resources</h3>
               <div className="grid md:grid-cols-3 gap-4">
-                <Link href="/how-it-works">
+                <Link href="/how-it-works" data-testid="link-resource-how-it-works">
                   <Card className="hover-elevate cursor-pointer h-full">
                     <CardContent className="p-6 text-center space-y-3">
                       <Book className="h-8 w-8 text-primary mx-auto" />
@@ -335,7 +335,7 @@ export default function GettingStarted() {
                     </CardContent>
                   </Card>
                 </Link>
-                <Link href="/faq">
+                <Link href="/faq" data-testid="link-resource-faq">
                   <Card className="hover-elevate cursor-pointer h-full">
                     <CardContent className="p-6 text-center space-y-3">
                       <HelpCircle className="h-8 w-8 text-primary mx-auto" />
@@ -344,7 +344,7 @@ export default function GettingStarted() {
                     </CardContent>
                   </Card>
                 </Link>
-                <Link href="/marketplace">
+                <Link href="/marketplace" data-testid="link-resource-marketplace">
                   <Card className="hover-elevate cursor-pointer h-full">
                     <CardContent className="p-6 text-center space-y-3">
                       <Search className="h-8 w-8 text-primary mx-auto" />
@@ -728,7 +728,7 @@ export default function GettingStarted() {
             <div className="mt-12 pt-8 border-t">
               <h3 className="text-2xl font-bold mb-6">Helpful Resources</h3>
               <div className="grid md:grid-cols-3 gap-4">
-                <Link href="/builder-quiz">
+                <Link href="/builder-quiz" data-testid="link-resource-quiz">
                   <Card className="hover-elevate cursor-pointer h-full">
                     <CardContent className="p-6 text-center space-y-3">
                       <Target className="h-8 w-8 text-primary mx-auto" />
@@ -737,7 +737,7 @@ export default function GettingStarted() {
                     </CardContent>
                   </Card>
                 </Link>
-                <Link href="/builders">
+                <Link href="/builders" data-testid="link-resource-builders">
                   <Card className="hover-elevate cursor-pointer h-full">
                     <CardContent className="p-6 text-center space-y-3">
                       <Users className="h-8 w-8 text-primary mx-auto" />
@@ -746,7 +746,7 @@ export default function GettingStarted() {
                     </CardContent>
                   </Card>
                 </Link>
-                <Link href="/faq">
+                <Link href="/faq" data-testid="link-resource-faq-builder">
                   <Card className="hover-elevate cursor-pointer h-full">
                     <CardContent className="p-6 text-center space-y-3">
                       <HelpCircle className="h-8 w-8 text-primary mx-auto" />
