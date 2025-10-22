@@ -44,17 +44,16 @@ import {
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
-import type { Builder, Order, Service } from "@shared/schema";
+import { useBuilderAuth } from "@/hooks/use-builder-auth";
+import type { Order, Service } from "@shared/schema";
 
 export default function BuilderDashboard() {
-  const [builderId] = useState("1");
+  const { builder, isLoading: builderLoading } = useBuilderAuth();
   const { toast } = useToast();
   const [deleteServiceId, setDeleteServiceId] = useState<string | null>(null);
   const [archiveServiceId, setArchiveServiceId] = useState<string | null>(null);
 
-  const { data: builder, isLoading: builderLoading } = useQuery<Builder>({
-    queryKey: ["/api/builders", builderId],
-  });
+  const builderId = builder?.id;
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery<{
     totalEarnings: string;
@@ -67,14 +66,17 @@ export default function BuilderDashboard() {
     onTimeDeliveryRate: string;
   }>({
     queryKey: ["/api/builders", builderId, "analytics"],
+    enabled: !!builderId,
   });
 
   const { data: orders = [], isLoading: ordersLoading } = useQuery<Order[]>({
     queryKey: ["/api/builders", builderId, "orders"],
+    enabled: !!builderId,
   });
 
   const { data: services = [], isLoading: servicesLoading } = useQuery<Service[]>({
     queryKey: ["/api/builders", builderId, "services"],
+    enabled: !!builderId,
   });
 
   const { data: onboardingData } = useQuery<{
@@ -87,24 +89,27 @@ export default function BuilderDashboard() {
     isComplete: boolean;
   }>({
     queryKey: ["/api/builders", builderId, "onboarding"],
+    enabled: !!builderId,
     retry: false,
   });
 
   const toggleAvailabilityMutation = useMutation({
     mutationFn: async (accepting: boolean) => {
+      if (!builderId) throw new Error("Builder ID not found");
       return apiRequest("PATCH", `/api/builders/${builderId}/availability`, { accepting });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/builders/me"] });
     },
   });
 
   const toggleLiveStatusMutation = useMutation({
     mutationFn: async (isLive: boolean) => {
+      if (!builderId) throw new Error("Builder ID not found");
       return apiRequest("PATCH", `/api/builders/${builderId}/live-status`, { isLive });
     },
     onSuccess: (_data, isLive) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/builders/me"] });
       queryClient.invalidateQueries({ queryKey: ["/api/builders/live"] });
       toast({
         title: isLive ? "You're now live!" : "You're now offline",
@@ -117,6 +122,7 @@ export default function BuilderDashboard() {
 
   const deleteServiceMutation = useMutation({
     mutationFn: async (serviceId: string) => {
+      if (!builderId) throw new Error("Builder ID not found");
       return apiRequest("DELETE", `/api/builders/${builderId}/services/${serviceId}`);
     },
     onSuccess: () => {
@@ -138,6 +144,7 @@ export default function BuilderDashboard() {
 
   const archiveServiceMutation = useMutation({
     mutationFn: async ({ serviceId, active }: { serviceId: string; active: boolean }) => {
+      if (!builderId) throw new Error("Builder ID not found");
       return apiRequest("PATCH", `/api/builders/${builderId}/services/${serviceId}/archive`, { active });
     },
     onSuccess: (_data, variables) => {

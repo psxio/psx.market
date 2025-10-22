@@ -989,6 +989,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         req.session.builderId = builder.id;
+        req.session.userId = builder.id;
+        req.session.userType = "builder";
 
         req.session.save((err) => {
           if (err) {
