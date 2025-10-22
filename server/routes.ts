@@ -575,7 +575,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/services/featured", async (_req, res) => {
     try {
-      const services = await storage.getFeaturedServices();
+      let services = await storage.getFeaturedServices();
+      
+      // Filter to only show standalone services (no builder assigned) - same as marketplace
+      services = services.filter(service => !service.builderId || service.builderId === '');
+      
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
           const builder = service.builderId ? await storage.getBuilder(service.builderId) : null;
