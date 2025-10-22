@@ -1465,6 +1465,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch invite tokens" });
     }
   });
+
+  app.delete("/api/admin/builder-invites/:id", requireAdminAuth, async (req, res) => {
+    try {
+      await storage.deleteBuilderInviteToken(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting invite token:", error);
+      res.status(500).json({ error: "Failed to delete invite token" });
+    }
+  });
   
   app.get("/api/builder-invites/verify/:token", async (req, res) => {
     try {

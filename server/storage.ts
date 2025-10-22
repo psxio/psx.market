@@ -369,6 +369,7 @@ export interface IStorage {
   getBuilderInviteTokens(): Promise<BuilderInviteToken[]>;
   getBuilderInviteToken(token: string): Promise<BuilderInviteToken | undefined>;
   useBuilderInviteToken(token: string, builderId: string, builderName: string): Promise<BuilderInviteToken>;
+  deleteBuilderInviteToken(id: string): Promise<void>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -1913,6 +1914,10 @@ export class PostgresStorage implements IStorage {
       .returning();
     
     return result[0];
+  }
+
+  async deleteBuilderInviteToken(id: string): Promise<void> {
+    await db.delete(builderInviteTokens).where(eq(builderInviteTokens.id, id));
   }
 }
 

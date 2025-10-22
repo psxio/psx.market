@@ -27,7 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Link2, Copy, Check, Mail, UserPlus, Sparkles } from "lucide-react";
+import { Plus, Link2, Copy, Check, Mail, UserPlus, Sparkles, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { BuilderInviteToken } from "@shared/schema";
 
@@ -84,6 +84,36 @@ export default function AdminBuilderInvites() {
       });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/admin/builder-invites/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/builder-invites"] });
+      toast({
+        title: "Invite revoked",
+        description: "The invite link has been permanently deleted",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to revoke invite link",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = (id: string, email?: string) => {
+    const confirmMsg = email 
+      ? `Revoke invite for ${email}? This cannot be undone.`
+      : "Revoke this invite link? This cannot be undone.";
+    
+    if (confirm(confirmMsg)) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   const handleCreate = () => {
     createMutation.mutate(formData);
@@ -250,7 +280,7 @@ export default function AdminBuilderInvites() {
                 <TableHead>Created At</TableHead>
                 <TableHead>Expires</TableHead>
                 <TableHead>Used By</TableHead>
-                <TableHead className="text-right">Link</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -295,26 +325,38 @@ export default function AdminBuilderInvites() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {isActive && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(invite.token)}
-                            data-testid={`button-copy-${invite.id}`}
-                          >
-                            {copiedToken === invite.token ? (
-                              <>
-                                <Check className="mr-1 h-3 w-3" />
-                                Copied
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="mr-1 h-3 w-3" />
-                                Copy Link
-                              </>
-                            )}
-                          </Button>
-                        )}
+                        <div className="flex items-center justify-end gap-2">
+                          {isActive && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyToClipboard(invite.token)}
+                              data-testid={`button-copy-${invite.id}`}
+                            >
+                              {copiedToken === invite.token ? (
+                                <>
+                                  <Check className="mr-1 h-3 w-3" />
+                                  Copied
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="mr-1 h-3 w-3" />
+                                  Copy Link
+                                </>
+                              )}
+                            </Button>
+                          )}
+                          {!invite.used && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(invite.id, invite.email || undefined)}
+                              data-testid={`button-revoke-${invite.id}`}
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
