@@ -319,7 +319,10 @@ export default function BuilderDashboard() {
             <Button
               variant="outline"
               className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
-              onClick={() => window.location.href = `/builder/${builderId}/create-service`}
+              onClick={() => {
+                const servicesTab = document.querySelector('[data-testid="tab-services"]') as HTMLElement;
+                servicesTab?.click();
+              }}
               data-testid="button-quick-create-service"
             >
               <div className="flex items-center gap-2 w-full">
@@ -327,22 +330,22 @@ export default function BuilderDashboard() {
                 <span className="font-semibold">Create Service</span>
               </div>
               <p className="text-xs text-muted-foreground text-left">
-                Add a new service listing to attract more clients
+                View your services and manage listings
               </p>
             </Button>
 
             <Button
               variant="outline"
               className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
-              onClick={() => window.location.href = `/builder/${builderId}/edit-profile`}
+              onClick={() => window.location.href = `/builder/${builderId}`}
               data-testid="button-quick-edit-profile"
             >
               <div className="flex items-center gap-2 w-full">
                 <User className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Edit Profile</span>
+                <span className="font-semibold">View Profile</span>
               </div>
               <p className="text-xs text-muted-foreground text-left">
-                Update your bio, skills, and portfolio showcase
+                See your public builder profile page
               </p>
             </Button>
 
@@ -367,15 +370,18 @@ export default function BuilderDashboard() {
             <Button
               variant="outline"
               className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
-              onClick={() => window.location.href = `/builder/${builderId}/edit-profile`}
-              data-testid="button-quick-upload-portfolio"
+              onClick={() => {
+                const earningsTab = document.querySelector('[data-testid="tab-earnings"]') as HTMLElement;
+                earningsTab?.click();
+              }}
+              data-testid="button-quick-view-earnings"
             >
               <div className="flex items-center gap-2 w-full">
-                <Image className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Portfolio</span>
+                <DollarSign className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Earnings</span>
               </div>
               <p className="text-xs text-muted-foreground text-left">
-                Showcase your best work and past projects
+                Track your revenue and payment history
               </p>
             </Button>
           </div>
