@@ -720,7 +720,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           portfolioItems: [],
         });
         
-        await storage.markInviteTokenAsUsed(inviteToken, builder.id, builder.name);
+        await storage.useBuilderInviteToken(inviteToken, builder.id, builder.name);
         
         return res.status(201).json({
           id: builder.id,
