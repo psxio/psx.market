@@ -726,35 +726,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           instagramFollowers: validatedData.instagramFollowers,
           youtubeChannel: validatedData.youtubeChannel,
           youtubeSubscribers: validatedData.youtubeSubscribers,
-          telegramHandle: validatedData.telegramHandle,
-          telegramMembers: validatedData.telegramMembers,
           engagementRate: validatedData.engagementRate,
           contentNiches: validatedData.contentNiches,
-          brandPartnerships: validatedData.brandPartnerships,
           
           // 3D Artist fields
           software3D: validatedData.software3D,
           renderEngines: validatedData.renderEngines,
           styleSpecialties: validatedData.styleSpecialties,
-          animationExpertise: validatedData.animationExpertise,
           
           // Marketing fields
           marketingPlatforms: validatedData.marketingPlatforms,
           growthStrategies: validatedData.growthStrategies,
-          avgROI: validatedData.avgROI,
-          clientIndustries: validatedData.clientIndustries,
           
           // Developer fields
           programmingLanguages: validatedData.programmingLanguages,
           blockchainFrameworks: validatedData.blockchainFrameworks,
           githubProfile: validatedData.githubProfile,
-          certifications: validatedData.certifications,
           
           // Volume Services fields
           tradingExperience: validatedData.tradingExperience,
           volumeCapabilities: validatedData.volumeCapabilities,
-          dexExpertise: validatedData.dexExpertise,
-          cexExpertise: validatedData.cexExpertise,
           complianceKnowledge: validatedData.complianceKnowledge,
         });
         
