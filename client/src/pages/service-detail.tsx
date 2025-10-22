@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   ArrowLeft,
   Clock,
@@ -27,6 +40,10 @@ import type { Service, Builder } from "@shared/schema";
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  const [customRequirements, setCustomRequirements] = useState("");
 
   const { data: serviceData, isLoading, isError } = useQuery<{
     service: Service;
@@ -37,6 +54,127 @@ export default function ServiceDetail() {
 
   const service = serviceData?.service;
   const builder = serviceData?.builder;
+
+  // Update document head for SEO
+  useEffect(() => {
+    if (service && builder) {
+      // Set page title
+      document.title = `${service.title} by ${builder.name} - Create.psx Marketplace`;
+
+      // Create unique meta tags that we can clean up later
+      const metaDescription = document.createElement("meta");
+      metaDescription.setAttribute("name", "description");
+      metaDescription.setAttribute("content", service.description);
+      metaDescription.setAttribute("data-service-detail", "true");
+      document.head.appendChild(metaDescription);
+
+      // Create Open Graph tags
+      const ogTags = [
+        { property: "og:title", content: `${service.title} by ${builder.name}` },
+        { property: "og:description", content: service.description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: window.location.href },
+      ];
+
+      ogTags.forEach(({ property, content }) => {
+        const tag = document.createElement("meta");
+        tag.setAttribute("property", property);
+        tag.setAttribute("content", content);
+        tag.setAttribute("data-service-detail", "true");
+        document.head.appendChild(tag);
+      });
+
+      // Add structured data for rich snippets
+      const structuredData = document.createElement("script");
+      structuredData.setAttribute("type", "application/ld+json");
+      structuredData.setAttribute("data-service-detail", "true");
+      structuredData.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: service.title,
+        description: service.description,
+        provider: {
+          "@type": "Person",
+          name: builder.name,
+        },
+        offers: {
+          "@type": "Offer",
+          price: service.basicPrice,
+          priceCurrency: "USD",
+        },
+      });
+      document.head.appendChild(structuredData);
+
+      // Cleanup function to remove all service detail tags
+      return () => {
+        document.title = "Create.psx - Web3 Talent Marketplace";
+        document.querySelectorAll('[data-service-detail="true"]').forEach((el) => el.remove());
+      };
+    }
+  }, [service, builder]);
+
+  const createOrderMutation = useMutation({
+    mutationFn: async (orderData: {
+      builderId: string;
+      serviceId: string;
+      packageType: string;
+      title: string;
+      requirements: string;
+      budget: string;
+      deliveryDays: number;
+    }) => {
+      const response = await apiRequest("POST", "/api/orders", orderData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/clients/me/orders"] });
+      toast({
+        title: "Order Created Successfully",
+        description: `Your ${selectedPackage} package order has been created. ${builder?.name} will be notified!`,
+      });
+      setBookingDialogOpen(false);
+      setCustomRequirements("");
+      setSelectedPackage(null);
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Booking Failed",
+        description: error.message || "Failed to create order. Please try again or log in as a client.",
+      });
+    },
+  });
+
+  const handleBooking = (packageName: string) => {
+    setSelectedPackage(packageName);
+    setBookingDialogOpen(true);
+  };
+
+  const handleConfirmBooking = () => {
+    if (!service || !builder || !selectedPackage) return;
+
+    // Get package details
+    const packagePrice =
+      selectedPackage === "Basic"
+        ? service.basicPrice
+        : selectedPackage === "Standard"
+        ? service.standardPrice
+        : service.premiumPrice;
+
+    // Parse delivery days from deliveryTime string
+    const deliveryDays = parseInt(service.deliveryTime.match(/\d+/)?.[0] || "7");
+
+    createOrderMutation.mutate({
+      builderId: builder.id,
+      serviceId: service.id,
+      packageType: selectedPackage,
+      title: service.title,
+      requirements: customRequirements || "No specific requirements",
+      budget: packagePrice?.toString() || "0",
+      deliveryDays,
+    });
+  };
 
   if (isLoading) {
     return (
@@ -111,13 +249,6 @@ export default function ServiceDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
-      {/* SEO Meta Tags */}
-      <title>{service.title} - Create.psx Marketplace</title>
-      <meta name="description" content={service.description} />
-      <meta property="og:title" content={`${service.title} by ${builder.name}`} />
-      <meta property="og:description" content={service.description} />
-      <meta property="og:type" content="product" />
 
       <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
         {/* Breadcrumb */}
@@ -257,10 +388,7 @@ export default function ServiceDetail() {
                           className="w-full"
                           variant={pkg.popular ? "default" : "outline"}
                           data-testid={`button-select-${pkg.name.toLowerCase()}`}
-                          onClick={() => {
-                            // TODO: Implement booking flow
-                            alert(`Booking ${pkg.name} package - Coming soon!`);
-                          }}
+                          onClick={() => handleBooking(pkg.name)}
                         >
                           Select {pkg.name}
                         </Button>
@@ -459,6 +587,74 @@ export default function ServiceDetail() {
             </Card>
           </div>
         </div>
+
+        {/* Booking Dialog */}
+        <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]" data-testid="dialog-booking">
+            <DialogHeader>
+              <DialogTitle>Book {selectedPackage} Package</DialogTitle>
+              <DialogDescription>
+                Send a booking request to {builder?.name} for the {selectedPackage} package
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <h4 className="font-semibold">Service</h4>
+                <p className="text-sm text-muted-foreground">{service?.title}</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold">Package</h4>
+                <p className="text-sm text-muted-foreground">
+                  {selectedPackage} - $
+                  {selectedPackage === "Basic"
+                    ? service?.basicPrice
+                    : selectedPackage === "Standard"
+                    ? service?.standardPrice
+                    : service?.premiumPrice}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="requirements">Custom Requirements (Optional)</Label>
+                <Textarea
+                  id="requirements"
+                  placeholder="Describe any specific requirements or details for your project..."
+                  value={customRequirements}
+                  onChange={(e) => setCustomRequirements(e.target.value)}
+                  rows={4}
+                  data-testid="textarea-requirements"
+                />
+              </div>
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <div className="flex items-start gap-2 text-sm">
+                  <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Secure Payment</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Payment will be held in escrow until delivery is complete
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setBookingDialogOpen(false)}
+                data-testid="button-cancel-booking"
+                disabled={createOrderMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmBooking}
+                data-testid="button-confirm-booking"
+                disabled={createOrderMutation.isPending}
+              >
+                {createOrderMutation.isPending ? "Creating Order..." : "Confirm Booking"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
