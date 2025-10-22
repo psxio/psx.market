@@ -181,7 +181,7 @@ export function newOrderEmail(data: OrderNotificationData & { recipientType: 'cl
       : `You have a new order from ${data.clientName || 'a client'}`,
     content: isClient ? `
       <p>Hi ${data.recipientName},</p>
-      <p>Your order has been placed successfully! 🎉</p>
+      <p>Your order has been placed successfully!</p>
       <p><strong>Order Details:</strong></p>
       <p><strong>Service:</strong> ${data.orderTitle}</p>
       <p><strong>Order ID:</strong> ${data.orderId}</p>
@@ -190,7 +190,7 @@ export function newOrderEmail(data: OrderNotificationData & { recipientType: 'cl
       <p>You can track your order status and communicate with the builder through your dashboard.</p>
     ` : `
       <p>Hi ${data.recipientName},</p>
-      <p>Great news! You have a new order. 💼</p>
+      <p>Great news! You have a new order.</p>
       <p><strong>Order Details:</strong></p>
       <p><strong>Service:</strong> ${data.orderTitle}</p>
       <p><strong>Order ID:</strong> ${data.orderId}</p>
@@ -209,8 +209,8 @@ export function newOrderEmail(data: OrderNotificationData & { recipientType: 'cl
     text: plainTextTemplate({
       ...templateData,
       content: isClient
-        ? `Hi ${data.recipientName},\n\nYour order has been placed successfully!\n\nOrder Details:\nService: ${data.orderTitle}\nOrder ID: ${data.orderId}\nBuilder: ${data.builderName || 'TBD'}\n\nThe builder will review your requirements and confirm the order. You'll receive a notification once they respond.`
-        : `Hi ${data.recipientName},\n\nGreat news! You have a new order.\n\nOrder Details:\nService: ${data.orderTitle}\nOrder ID: ${data.orderId}\nClient: ${data.clientName || 'Client'}\n\nPlease review the order requirements and confirm or discuss with the client as soon as possible.`
+        ? `Hi ${data.recipientName},\n\nYour order has been placed successfully.\n\nOrder Details:\nService: ${data.orderTitle}\nOrder ID: ${data.orderId}\nBuilder: ${data.builderName || 'TBD'}\n\nThe builder will review your requirements and confirm the order. You'll receive a notification once they respond.`
+        : `Hi ${data.recipientName},\n\nGreat news - You have a new order.\n\nOrder Details:\nService: ${data.orderTitle}\nOrder ID: ${data.orderId}\nClient: ${data.clientName || 'Client'}\n\nPlease review the order requirements and confirm or discuss with the client as soon as possible.`
     }),
   };
 }

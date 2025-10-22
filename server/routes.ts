@@ -598,7 +598,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!service) {
         return res.status(404).json({ error: "Service not found" });
       }
-      res.json(service);
+      
+      // Get builder information if service has a builderId
+      const builder = service.builderId ? await storage.getBuilder(service.builderId) : null;
+      
+      res.json({ service, builder });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch service" });
     }
