@@ -14,6 +14,7 @@ import { BuilderAuthProvider } from "@/hooks/use-builder-auth";
 import { InstallPWAPrompt } from "@/components/install-pwa-prompt";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
+import ServiceDetail from "@/pages/service-detail";
 import Marketplace from "@/pages/marketplace";
 import CategoryPage from "@/pages/category";
 import Apply from "@/pages/apply";
@@ -38,6 +39,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/marketplace" component={Marketplace} />
+      <Route path="/service/:id" component={ServiceDetail} />
       <Route path="/builder/:id" component={BuilderProfile} />
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/apply" component={Apply} />

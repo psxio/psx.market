@@ -97,7 +97,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
     const CategoryIcon = visual.icon;
 
     return (
-      <Link href={`/marketplace?categories=${encodeURIComponent(service.category)}`}>
+      <Link href={`/service/${service.id}`}>
         <Card 
           className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-visible transition-all border-l-4 ${visual.borderColor}`}
           data-testid={`card-service-${service.id}`}
