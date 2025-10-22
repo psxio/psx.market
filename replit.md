@@ -24,6 +24,11 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
     - **Admin & Client Dashboards**: Dedicated interfaces for administration and project management with secure authentication.
     - **Builder Application System**: Multi-step form wizard with category-specific questions. Features quiz-to-onboarding integration that pre-fills profile data based on quiz results.
     - **Builder Invite System**: Admin-managed private invite links that route through the "For Builders" landing page before onboarding. Invite links use format `/builders?invite={token}` to showcase platform benefits before application. Legacy `/builder-invite/{token}` links redirect to new flow for backward compatibility.
+    - **Navigation Strategy**: 
+      - **Navbar Links**: Browse Builders, Getting Started, Help (FAQ), Dashboard (when authenticated), Messages (when authenticated), Admin
+      - **For Builders Landing**: Only accessible via builder onboarding flow (Become a Builder CTA, invite links) - NOT in navbar to reduce clutter
+      - **How It Works**: Moved to footer Resources section for better UX - comprehensive help accessible but not cluttering main nav
+      - **Footer Organization**: Platform (Browse Services, Find Builders, Become a Builder, Hire Builders), Resources (How It Works, Getting Started, FAQ, Builder Quiz), Legal (Terms, Privacy, Cookies)
     - **Buy on Demand Section**: Homepage section displaying builders who are currently live and available for instant booking. Features real-time status indicators, category filtering, and prominent "Live" badges with pulse animations. Builders control their live status via dashboard toggle.
     - **PSX Agency Promotion**: Dedicated homepage section for B2B services.
     - **Legal & Compliance Pages**: Comprehensive legal documentation including Terms of Service, Privacy Policy, Cookie Policy, and a searchable FAQ page.

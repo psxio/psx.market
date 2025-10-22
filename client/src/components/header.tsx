@@ -42,24 +42,10 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse">
-              <Link href="/marketplace">
-                <Grid3x3 className="h-3.5 w-3.5" />
-                Browse Services
-              </Link>
-            </Button>
-
-            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-for-builders">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse-builders">
               <Link href="/builders">
-                <Sparkles className="h-3.5 w-3.5" />
-                For Builders
-              </Link>
-            </Button>
-
-            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-how-it-works">
-              <Link href="/how-it-works">
-                <MessageCircle className="h-3.5 w-3.5" />
-                How It Works
+                <Grid3x3 className="h-3.5 w-3.5" />
+                Browse Builders
               </Link>
             </Button>
 
@@ -139,24 +125,10 @@ export function Header() {
                   </div>
 
                   <nav className="flex flex-col gap-2">
-                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-mobile">
-                      <Link href="/marketplace">
-                        <Grid3x3 className="h-4 w-4" />
-                        Browse Services
-                      </Link>
-                    </Button>
-
-                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-for-builders-mobile">
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-builders-mobile">
                       <Link href="/builders">
-                        <Sparkles className="h-4 w-4" />
-                        For Builders
-                      </Link>
-                    </Button>
-
-                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-how-it-works-mobile">
-                      <Link href="/how-it-works">
-                        <MessageCircle className="h-4 w-4" />
-                        How It Works
+                        <Grid3x3 className="h-4 w-4" />
+                        Browse Builders
                       </Link>
                     </Button>
 
