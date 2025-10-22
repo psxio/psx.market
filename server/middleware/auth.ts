@@ -19,11 +19,31 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
   const host = req.get("host");
   
   if (req.method !== "GET" && req.method !== "HEAD") {
-    const isValidOrigin = origin && new URL(origin).host === host;
-    const isValidReferer = referer && new URL(referer).host === host;
-    
-    if (!isValidOrigin && !isValidReferer) {
-      return res.status(403).json({ error: "CSRF validation failed" });
+    try {
+      const isValidOrigin = origin && new URL(origin).host === host;
+      const isValidReferer = referer && new URL(referer).host === host;
+      
+      if (!isValidOrigin && !isValidReferer) {
+        console.error("CSRF validation failed:", {
+          origin,
+          referer,
+          host,
+          isValidOrigin,
+          isValidReferer,
+          method: req.method,
+          path: req.path
+        });
+        return res.status(403).json({ error: "CSRF validation failed" });
+      }
+    } catch (error) {
+      console.error("Error in CSRF validation:", error, {
+        origin,
+        referer,
+        host,
+        method: req.method,
+        path: req.path
+      });
+      return res.status(403).json({ error: "CSRF validation error" });
     }
   }
   
