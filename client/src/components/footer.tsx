@@ -55,31 +55,39 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Platform</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/marketplace">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-marketplace">
-                    Browse Services
-                  </a>
+                <Link 
+                  href="/marketplace"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-marketplace"
+                >
+                  Browse Services
                 </Link>
               </li>
               <li>
-                <Link href="/builders">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-builders">
-                    Find Builders
-                  </a>
+                <Link 
+                  href="/builders"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-builders"
+                >
+                  Find Builders
                 </Link>
               </li>
               <li>
-                <Link href="/apply">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-apply">
-                    Become a Builder
-                  </a>
+                <Link 
+                  href="/apply"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-apply"
+                >
+                  Become a Builder
                 </Link>
               </li>
               <li>
-                <Link href="/become-client">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-become-client">
-                    Hire Builders
-                  </a>
+                <Link 
+                  href="/become-client"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-become-client"
+                >
+                  Hire Builders
                 </Link>
               </li>
             </ul>
@@ -89,31 +97,39 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Resources</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/how-it-works">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-how-it-works">
-                    How It Works
-                  </a>
+                <Link 
+                  href="/how-it-works"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-how-it-works"
+                >
+                  How It Works
                 </Link>
               </li>
               <li>
-                <Link href="/getting-started">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-getting-started">
-                    Getting Started
-                  </a>
+                <Link 
+                  href="/getting-started"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-getting-started"
+                >
+                  Getting Started
                 </Link>
               </li>
               <li>
-                <Link href="/faq">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-faq">
-                    FAQ
-                  </a>
+                <Link 
+                  href="/faq"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-faq"
+                >
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/builder-quiz">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-builder-quiz">
-                    Builder Quiz
-                  </a>
+                <Link 
+                  href="/builder-quiz"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-builder-quiz"
+                >
+                  Builder Quiz
                 </Link>
               </li>
             </ul>
@@ -123,24 +139,30 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/terms-of-service">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-terms">
-                    Terms of Service
-                  </a>
+                <Link 
+                  href="/terms-of-service"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-terms"
+                >
+                  Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-privacy">
-                    Privacy Policy
-                  </a>
+                <Link 
+                  href="/privacy-policy"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-privacy"
+                >
+                  Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/cookie-policy">
-                  <a className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-footer-cookies">
-                    Cookie Policy
-                  </a>
+                <Link 
+                  href="/cookie-policy"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-cookies"
+                >
+                  Cookie Policy
                 </Link>
               </li>
             </ul>
