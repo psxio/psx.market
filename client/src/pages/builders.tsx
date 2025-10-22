@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useSearch } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,10 +28,13 @@ import {
   Heart,
   MessageCircle,
   ChevronRight,
+  UserPlus,
 } from "lucide-react";
 import type { Builder } from "@shared/schema";
 
 export default function BuildersLanding() {
+  const searchParams = useSearch();
+  const inviteToken = new URLSearchParams(searchParams).get('invite');
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [earningsCategory, setEarningsCategory] = useState<string>("development");
   const [hoursPerWeek, setHoursPerWeek] = useState<number>(20);
@@ -161,35 +164,80 @@ export default function BuildersLanding() {
         <div className="container relative mx-auto px-4 py-16 md:py-24 max-w-7xl">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-6">
-              <Badge className="w-fit" variant="outline" data-testid="badge-now-hiring">
-                <Sparkles className="mr-1 h-3 w-3" />
-                Now Hiring Top Talent
-              </Badge>
+              {inviteToken ? (
+                <Badge className="w-fit bg-gradient-to-r from-purple-500 to-cyan-500 border-0 text-white" data-testid="badge-invited">
+                  <Award className="mr-1 h-3 w-3" />
+                  You've Been Invited
+                </Badge>
+              ) : (
+                <Badge className="w-fit" variant="outline" data-testid="badge-now-hiring">
+                  <Sparkles className="mr-1 h-3 w-3" />
+                  Now Hiring Top Talent
+                </Badge>
+              )}
               
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                Build Your Web3 Career on{" "}
-                <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">
-                  Create.psx
-                </span>
+                {inviteToken ? (
+                  <>
+                    Welcome to{" "}
+                    <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">
+                      Create.psx
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    Build Your Web3 Career on{" "}
+                    <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">
+                      Create.psx
+                    </span>
+                  </>
+                )}
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-xl">
-                Join the premier marketplace for Web3 builders. Work with top memecoin projects, set your own rates, and get paid in USDC with full escrow protection.
+                {inviteToken ? (
+                  <>You've been personally invited to join the premier Web3 marketplace. Skip the wait list and start building your career with top memecoin projects today.</>
+                ) : (
+                  <>Join the premier marketplace for Web3 builders. Work with top memecoin projects, set your own rates, and get paid in USDC with full escrow protection.</>
+                )}
               </p>
 
               <div className="flex flex-wrap gap-3">
-                <Link href="/builder-quiz">
-                  <Button size="lg" className="gap-2" data-testid="button-take-quiz">
-                    <Target className="h-4 w-4" />
-                    Take Readiness Quiz
-                  </Button>
-                </Link>
-                <Link href="/builder-onboarding">
-                  <Button size="lg" variant="outline" className="gap-2" data-testid="button-start-earning">
-                    Start Application
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
+                {inviteToken ? (
+                  <>
+                    <Link href={`/builder-onboarding/${inviteToken}`}>
+                      <Button size="lg" className="gap-2" data-testid="button-complete-application">
+                        <UserPlus className="h-4 w-4" />
+                        Complete Your Application
+                      </Button>
+                    </Link>
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="gap-2" 
+                      onClick={() => window.scrollTo({ top: document.body.scrollHeight / 3, behavior: 'smooth' })}
+                      data-testid="button-learn-more"
+                    >
+                      Learn More First
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/builder-quiz">
+                      <Button size="lg" className="gap-2" data-testid="button-take-quiz">
+                        <Target className="h-4 w-4" />
+                        Take Readiness Quiz
+                      </Button>
+                    </Link>
+                    <Link href="/builder-onboarding">
+                      <Button size="lg" variant="outline" className="gap-2" data-testid="button-start-earning">
+                        Start Application
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-6 pt-4">
