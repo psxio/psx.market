@@ -35,9 +35,35 @@ export default function AdminApplications() {
     },
   });
 
+  const rejectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/admin/applications/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/applications"] });
+      toast({
+        title: "Application denied",
+        description: "The application has been removed",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to deny application",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleApprove = (id: string) => {
     if (confirm("Approve this builder application?")) {
       approveMutation.mutate(id);
+    }
+  };
+
+  const handleReject = (id: string) => {
+    if (confirm("Deny this builder application? This will permanently delete it.")) {
+      rejectMutation.mutate(id);
     }
   };
 
@@ -107,6 +133,7 @@ export default function AdminApplications() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            onClick={() => handleReject(app.id)}
                             data-testid={`button-reject-${app.id}`}
                           >
                             <XCircle className="h-4 w-4 text-red-500" />
