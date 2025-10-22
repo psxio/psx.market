@@ -1939,8 +1939,6 @@ export class PostgresStorage implements IStorage {
   }
 
   async getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]> {
-    let query = db.select().from(partners);
-    
     const conditions = [];
     if (options?.category) {
       conditions.push(eq(partners.category, options.category));
@@ -1953,10 +1951,13 @@ export class PostgresStorage implements IStorage {
     }
     
     if (conditions.length > 0) {
-      query = query.where(and(...conditions));
+      return await db.select().from(partners)
+        .where(and(...conditions))
+        .orderBy(desc(partners.featured), desc(partners.successfulConnections));
     }
     
-    return await query.orderBy(desc(partners.featured), desc(partners.successfulConnections));
+    return await db.select().from(partners)
+      .orderBy(desc(partners.featured), desc(partners.successfulConnections));
   }
 
   async getPartner(id: string): Promise<Partner | undefined> {
@@ -1982,8 +1983,6 @@ export class PostgresStorage implements IStorage {
   }
 
   async getPartnerConnectionRequests(options?: { partnerId?: string; userId?: string; status?: string }): Promise<PartnerConnectionRequest[]> {
-    let query = db.select().from(partnerConnectionRequests);
-    
     const conditions = [];
     if (options?.partnerId) {
       conditions.push(eq(partnerConnectionRequests.partnerId, options.partnerId));
@@ -1996,10 +1995,13 @@ export class PostgresStorage implements IStorage {
     }
     
     if (conditions.length > 0) {
-      query = query.where(and(...conditions));
+      return await db.select().from(partnerConnectionRequests)
+        .where(and(...conditions))
+        .orderBy(desc(partnerConnectionRequests.createdAt));
     }
     
-    return await query.orderBy(desc(partnerConnectionRequests.createdAt));
+    return await db.select().from(partnerConnectionRequests)
+      .orderBy(desc(partnerConnectionRequests.createdAt));
   }
 
   async getPartnerConnectionRequest(id: string): Promise<PartnerConnectionRequest | undefined> {

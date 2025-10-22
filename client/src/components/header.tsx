@@ -59,12 +59,10 @@ export function Header() {
                 </Link>
                 {(client || builder) && (
                   <>
-                    <div className="hidden md:block">
-                      <NotificationCenter 
-                        userId={client?.id || builder?.id || ""} 
-                        userType={client ? "client" : "builder"} 
-                      />
-                    </div>
+                    <NotificationCenter 
+                      userId={client?.id || builder?.id || ""} 
+                      userType={client ? "client" : "builder"} 
+                    />
                     <Link href="/messages" className="hidden md:block">
                       <Button variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate" data-testid="link-messages">
                         <MessageCircle className="h-3.5 w-3.5" />
