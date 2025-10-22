@@ -63,7 +63,7 @@ Create.psx employs a decoupled frontend and backend architecture for enhanced sc
 - **Data Storage**: PostgreSQL database with Drizzle ORM.
 - **Data Models**: Comprehensive schemas for Builders, Clients, Services, Orders, Payments, Reviews, Applications, and various other platform entities.
 - **Order Management System**: Full order booking and management with status workflows, revision tracking, and activity logging.
-- **Payment Integration**: Comprehensive USDC payment system on Base blockchain using Base Pay SDK, featuring smart contract-based escrow, milestone releases, platform fees, automated payouts, and dispute resolution.
+- **Payment Integration**: Comprehensive USDC payment system on Base blockchain using Base Pay SDK, featuring smart contract-based escrow, milestone releases, platform fees, automated payouts, and dispute resolution. Supports optional project allocation offers (equity/tokens/revenue share) in addition to USDC payments for flexible builder compensation.
 - **Real-Time Messaging System**: WebSocket-based chat for client-builder communication with project/order-based threads, multiple message types, read receipts, and file attachments.
 - **Enhanced Review System**: Comprehensive review platform with builder responses, admin moderation, community voting, and dispute system.
 - **Project Management System**: Includes milestone and deliverable tracking, builder submission workflow, client review, and a centralized document repository.

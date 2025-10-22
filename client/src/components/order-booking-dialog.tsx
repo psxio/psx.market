@@ -16,9 +16,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2, CheckCircle2, Clock, RefreshCcw } from "lucide-react";
+import { Loader2, CheckCircle2, Clock, RefreshCcw, Gift } from "lucide-react";
 import type { Service, Builder } from "@shared/schema";
 
 interface OrderBookingDialogProps {
@@ -39,6 +41,9 @@ export function OrderBookingDialog({
   const [, navigate] = useLocation();
   const [selectedPackage, setSelectedPackage] = useState<"basic" | "standard" | "premium">("basic");
   const [requirements, setRequirements] = useState("");
+  const [offerAllocation, setOfferAllocation] = useState(false);
+  const [allocationPercentage, setAllocationPercentage] = useState("");
+  const [allocationDetails, setAllocationDetails] = useState("");
 
   const packages = [
     {
@@ -89,6 +94,9 @@ export function OrderBookingDialog({
       onOpenChange(false);
       setRequirements("");
       setSelectedPackage("basic");
+      setOfferAllocation(false);
+      setAllocationPercentage("");
+      setAllocationDetails("");
       // Navigate to order confirmation page
       navigate(`/order-confirmation/${order.id}`);
     },
@@ -129,6 +137,9 @@ export function OrderBookingDialog({
       budget: String(selectedPkg?.price || 0),
       deliveryDays: parseInt(selectedPkg?.deliveryTime?.match(/\d+/)?.[0] || "7"),
       revisionsIncluded: selectedPkg?.revisions || 0,
+      projectAllocationOffered: offerAllocation,
+      projectAllocationPercentage: offerAllocation && allocationPercentage ? allocationPercentage : null,
+      projectAllocationDetails: offerAllocation && allocationDetails ? allocationDetails.trim() : null,
     });
   };
 
@@ -225,6 +236,73 @@ export function OrderBookingDialog({
               Be as specific as possible to help the builder deliver exactly what you need.
             </p>
           </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="offer-allocation"
+                checked={offerAllocation}
+                onCheckedChange={(checked) => setOfferAllocation(checked as boolean)}
+                data-testid="checkbox-offer-allocation"
+              />
+              <div className="flex-1 space-y-1">
+                <Label htmlFor="offer-allocation" className="text-base font-semibold cursor-pointer flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-primary" />
+                  Offer Project Allocation (Optional)
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  In addition to USDC payment, offer the builder equity, tokens, or revenue share in your project
+                </p>
+              </div>
+            </div>
+
+            {offerAllocation && (
+              <div className="ml-7 space-y-4 p-4 bg-muted/30 rounded-md border">
+                <div className="space-y-2">
+                  <Label htmlFor="allocation-percentage" className="text-sm font-medium">
+                    Allocation Percentage
+                  </Label>
+                  <Input
+                    id="allocation-percentage"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    placeholder="e.g., 5"
+                    value={allocationPercentage}
+                    onChange={(e) => setAllocationPercentage(e.target.value)}
+                    className="w-32"
+                    data-testid="input-allocation-percentage"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Percentage of equity, tokens, or revenue
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="allocation-details" className="text-sm font-medium">
+                    Allocation Details
+                  </Label>
+                  <Textarea
+                    id="allocation-details"
+                    placeholder="Describe the allocation offer. E.g., '5% token allocation with 6-month vesting' or '10% revenue share for first year'"
+                    value={allocationDetails}
+                    onChange={(e) => setAllocationDetails(e.target.value)}
+                    rows={3}
+                    className="resize-none"
+                    data-testid="textarea-allocation-details"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Specify terms, vesting schedule, or other relevant details
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <Separator />
 
           <Card className="bg-muted/50">
             <CardContent className="p-4 space-y-2">
