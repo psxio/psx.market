@@ -17,8 +17,11 @@ export async function apiRequest(
   
   if (url.includes("/admin/")) {
     const token = localStorage.getItem("adminToken");
+    console.log("[apiRequest] Admin API request:", { url, hasToken: !!token, token: token ? token.substring(0, 20) + "..." : "none" });
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      console.warn("[apiRequest] No admin token found in localStorage!");
     }
   }
 
