@@ -211,7 +211,7 @@ export const builderApplications = pgTable("builder_applications", {
   bio: text("bio").notNull(),
   category: text("category").notNull(),
   portfolioLinks: text("portfolio_links").array(),
-  yearsExperience: integer("years_experience").notNull(),
+  yearsExperience: integer("years_experience"),
   status: text("status").notNull().default("pending"),
   submittedAt: text("submitted_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   reviewerNotes: text("reviewer_notes"),
