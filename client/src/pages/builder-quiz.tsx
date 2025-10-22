@@ -263,6 +263,55 @@ export default function BuilderQuiz() {
     };
   };
 
+  const saveQuizDataAndNavigate = () => {
+    const result = getRecommendation();
+    
+    // Map quiz category to onboarding category value
+    const categoryMapping = {
+      "kols": "kols",
+      "3d-content": "3d-artists",
+      "marketing": "marketers",
+      "development": "developers",
+      "volume": "volume",
+    };
+
+    // Map experience to headline
+    const experienceHeadlines = {
+      "none": "Aspiring Web3 Builder",
+      "beginner": "Web3 Builder with 6+ months experience",
+      "intermediate": "Experienced Web3 Professional (1-3 years)",
+      "expert": "Senior Web3 Expert (3+ years)",
+    };
+
+    // Map availability to response time
+    const availabilityMapping = {
+      "part-time": "48 hours",
+      "regular": "24 hours",
+      "full-time": "12 hours",
+      "unlimited": "6 hours",
+    };
+
+    const quizData = {
+      category: categoryMapping[result.category as keyof typeof categoryMapping],
+      categoryName: result.categoryName,
+      headline: experienceHeadlines[answers.experience as keyof typeof experienceHeadlines] || "",
+      bio: result.description,
+      responseTime: availabilityMapping[answers.availability as keyof typeof availabilityMapping] || "24 hours",
+      experienceLevel: answers.experience,
+      skillsAnswer: answers.skills,
+      audienceLevel: answers.audience,
+      portfolioLevel: answers.portfolio,
+      scores: result.scores,
+      completedAt: new Date().toISOString(),
+    };
+
+    // Save to localStorage
+    localStorage.setItem("builderQuizResults", JSON.stringify(quizData));
+    
+    // Navigate to onboarding
+    setLocation("/builder-onboarding");
+  };
+
   if (showResults) {
     const result = getRecommendation();
 
@@ -342,12 +391,15 @@ export default function BuilderQuiz() {
                   <p className="text-sm text-muted-foreground">
                     Based on your answers, you have the experience and skills to succeed on Create.psx. Apply now to start earning!
                   </p>
-                  <Link href="/builder-onboarding">
-                    <Button className="w-full gap-2" size="lg" data-testid="button-apply-now">
-                      <Award className="h-5 w-5" />
-                      Start Application
-                    </Button>
-                  </Link>
+                  <Button 
+                    className="w-full gap-2" 
+                    size="lg" 
+                    onClick={saveQuizDataAndNavigate}
+                    data-testid="button-apply-now"
+                  >
+                    <Award className="h-5 w-5" />
+                    Start Application
+                  </Button>
                 </div>
               )}
 
@@ -366,11 +418,13 @@ export default function BuilderQuiz() {
                         Learn More
                       </Button>
                     </Link>
-                    <Link href="/builder-onboarding">
-                      <Button className="w-full" data-testid="button-apply-anyway">
-                        Apply Anyway
-                      </Button>
-                    </Link>
+                    <Button 
+                      className="w-full" 
+                      onClick={saveQuizDataAndNavigate}
+                      data-testid="button-apply-anyway"
+                    >
+                      Apply Anyway
+                    </Button>
                   </div>
                 </div>
               )}

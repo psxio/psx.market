@@ -121,6 +121,36 @@ export default function BuilderOnboarding() {
     }
   }, [isConnected, address]);
 
+  // Load quiz results if available
+  useEffect(() => {
+    const quizDataStr = localStorage.getItem("builderQuizResults");
+    if (quizDataStr) {
+      try {
+        const quizData = JSON.parse(quizDataStr);
+        
+        // Pre-fill form with quiz data
+        setFormData(prev => ({
+          ...prev,
+          category: quizData.category || prev.category,
+          headline: quizData.headline || prev.headline,
+          bio: quizData.bio || prev.bio,
+          responseTime: quizData.responseTime || prev.responseTime,
+        }));
+
+        // Show a toast to inform user
+        toast({
+          title: "Quiz Results Loaded!",
+          description: "We've pre-filled your profile with information from the quiz. Feel free to customize it.",
+        });
+
+        // Clear quiz data after loading (optional - user can only use it once)
+        // localStorage.removeItem("builderQuizResults");
+      } catch (error) {
+        console.error("Error loading quiz data:", error);
+      }
+    }
+  }, [toast]);
+
   const totalSteps = 4;
   const progress = (currentStep / totalSteps) * 100;
 
@@ -198,6 +228,9 @@ export default function BuilderOnboarding() {
           inviteToken,
         });
         
+        // Clear quiz data after successful submission
+        localStorage.removeItem("builderQuizResults");
+        
         toast({
           title: "Welcome to Create.psx! 🎉",
           description: "Your builder profile has been created successfully.",
@@ -208,6 +241,9 @@ export default function BuilderOnboarding() {
         }, 1500);
       } else {
         await apiRequest("POST", "/api/builder-applications", builderData);
+        
+        // Clear quiz data after successful submission
+        localStorage.removeItem("builderQuizResults");
         
         toast({
           title: "Application Submitted!",
