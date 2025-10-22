@@ -62,7 +62,7 @@ export function Header() {
                     <div className="hidden md:block">
                       <NotificationCenter 
                         userId={client?.id || builder?.id || ""} 
-                        userType={isClient ? "client" : "builder"} 
+                        userType={client ? "client" : "builder"} 
                       />
                     </div>
                     <Link href="/messages" className="hidden md:block">
