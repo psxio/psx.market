@@ -290,6 +290,18 @@ export default function BuilderOnboarding() {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="container max-w-3xl mx-auto px-4">
+        {/* Back Button */}
+        <div className="mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => setLocation("/marketplace")}
+            data-testid="button-back-marketplace"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Marketplace
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           {inviteToken && (
