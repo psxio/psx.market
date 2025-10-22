@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -30,7 +32,19 @@ import { useToast } from "@/hooks/use-toast";
 import type { BuilderInviteToken } from "@shared/schema";
 
 export default function AdminBuilderInvites() {
+  const { isAuthenticated } = useAdminAuth();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLocation("/admin/login");
+    }
+  }, [isAuthenticated, setLocation]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
   const [dialogOpen, setDialogOpen] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [formData, setFormData] = useState({

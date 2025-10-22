@@ -24,7 +24,7 @@ import ClientDashboard from "@/pages/client-dashboard";
 import BuilderDashboard from "@/pages/builder-dashboard";
 import MessagesPage from "@/pages/messages";
 import NotificationSettings from "@/pages/notification-settings";
-import FileUploadDemo from "@/pages/FileUploadDemo";
+import FileUploadDemo from "@/pages/file-upload-demo";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import TermsOfService from "@/pages/terms-of-service";
