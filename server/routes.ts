@@ -51,7 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const services = await storage.getServicesByCategory(req.params.slug);
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
-          const builder = await storage.getBuilder(service.builderId);
+          const builder = service.builderId ? await storage.getBuilder(service.builderId) : null;
           return { service, builder };
         })
       );
@@ -451,7 +451,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
-          const builder = await storage.getBuilder(service.builderId);
+          const builder = service.builderId ? await storage.getBuilder(service.builderId) : null;
           return { service, builder };
         })
       );
@@ -566,7 +566,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const services = await storage.getFeaturedServices();
       const servicesWithBuilders = await Promise.all(
         services.map(async (service) => {
-          const builder = await storage.getBuilder(service.builderId);
+          const builder = service.builderId ? await storage.getBuilder(service.builderId) : null;
           return { service, builder };
         })
       );
