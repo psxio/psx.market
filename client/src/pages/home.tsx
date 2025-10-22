@@ -213,7 +213,7 @@ export default function Home() {
 
           {servicesLoading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[...Array(8)].map((_, i) => (
+              {[...Array(4)].map((_, i) => (
                 <div key={i} className="space-y-4">
                   <Skeleton className="h-[280px] w-full rounded-lg" />
                 </div>
@@ -226,7 +226,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {servicesData?.map(({ builder, service }) => (
+              {servicesData?.slice(0, 4).map(({ builder, service }) => (
                 <BuilderCard
                   key={service.id}
                   builder={builder}
