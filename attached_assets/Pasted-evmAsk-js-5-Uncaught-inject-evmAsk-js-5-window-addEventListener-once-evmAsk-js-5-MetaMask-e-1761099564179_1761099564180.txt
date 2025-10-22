@@ -1,0 +1,1453 @@
+evmAsk.js:5 Uncaught 
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+ MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: 
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+Manifest fetch from <URL> failed, code 403
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+Web3Marketplace:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+Web3Marketplace:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+Web3Marketplace:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+o1151714.ingest.sentry.io/api/6318792/envelope/?sentry_key=8aa91189a4274b5a8c9b7b01d46ea360&sentry_version=7&sentry_client=sentry.javascript.browser%2F7.112.0:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1761099207454&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1761099207454&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4181&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099207539&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099208007&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4181&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099208069&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099208882&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [LaunchDarkly] LaunchDarkly client initialized
+cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Failed to create PluginFactory Object
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+u @ sdk.min.js:1
+ Failed to load Remote Plugin 
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+u @ sdk.min.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099210012&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4181&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099210083&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+evmAsk.js:5 Uncaught 
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'battery'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'layout-animations'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'navigation-override'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'oversized-images'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'publickey-credentials'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'speaker-selection'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'unoptimized-images'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'unsized-media'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Unrecognized feature: 'pointer-lock'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-e82cdf92ab03cbc5.js:1
+(anonymous) @ framework-e82cdf92ab03cbc5.js:1
+uD @ framework-e82cdf92ab03cbc5.js:1
+uI @ framework-e82cdf92ab03cbc5.js:1
+uM @ framework-e82cdf92ab03cbc5.js:1
+uS @ framework-e82cdf92ab03cbc5.js:1
+C @ framework-e82cdf92ab03cbc5.js:1
+z @ framework-e82cdf92ab03cbc5.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099210994&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: 
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+shared-286c96909274d…94aedeca40d96d.js:1 Uncaught (in promise) 
+(anonymous) @ shared-286c96909274d…94aedeca40d96d.js:1
+shared-286c96909274d…94aedeca40d96d.js:1 Uncaught (in promise) 
+(anonymous) @ shared-286c96909274d…94aedeca40d96d.js:1
+evmAsk.js:5 Uncaught 
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+ MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: 
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+shared-286c96909274d…94aedeca40d96d.js:1 Uncaught (in promise) 
+(anonymous) @ shared-286c96909274d…94aedeca40d96d.js:1
+shared-286c96909274d…94aedeca40d96d.js:1 Uncaught (in promise) 
+(anonymous) @ shared-286c96909274d…94aedeca40d96d.js:1
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+evmAsk.js:5 Uncaught 
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+ MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: 
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+shared-286c96909274d…94aedeca40d96d.js:1 Uncaught (in promise) 
+(anonymous) @ shared-286c96909274d…94aedeca40d96d.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099214515&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4181&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099214515&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4181&gz=1. TypeError: Failed to fetch 
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099214589&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099214589&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099215522&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099215522&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+evmAsk.js:5 Uncaught TypeError: Cannot redefine property: ethereum
+    at Object.defineProperty (<anonymous>)
+    at r.inject (evmAsk.js:5:5093)
+    at window.addEventListener.once (evmAsk.js:5:9013)
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+inpage.js:1 MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: TypeError: Cannot set property ethereum of #<Window> which has only a getter
+    at a (inpage.js:1:51283)
+    at r.initializeProvider (inpage.js:1:51054)
+    at Object.<anonymous> (inpage.js:1:2308)
+    at Object.<anonymous> (inpage.js:1:6316)
+    at 2.../../shared/modules/provider-injection (inpage.js:1:6329)
+    at i (inpage.js:1:254)
+    at e (inpage.js:1:412)
+    at inpage.js:1:429
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099217380&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099217884&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+r.stripe.com/b:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+shared-286c96909274dd06ec94aedeca40d96d.js:1 Uncaught (in promise) FetchError: Error fetching https://r.stripe.com/b: Failed to fetch
+    at shared-286c96909274dd06ec94aedeca40d96d.js:1:226825
+(anonymous) @ shared-286c96909274dd06ec94aedeca40d96d.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099219897&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099224403&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099224403&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=4&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099277383&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099277889&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099279892&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099284398&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099284398&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://62f7572b-c937-4d54-b238-6ff4555db997-00-2sso1misgxwdd.riker.replit.dev/&size=32:1  Failed to load resource: the server responded with a status of 404 ()
+t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://62f7572b-c937-4d54-b238-6ff4555db997-00-2sso1misgxwdd.riker.replit.dev&size=32:1  Failed to load resource: the server responded with a status of 404 ()
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099307379&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099307882&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099309887&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099314394&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099314394&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099317381&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099317888&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099319892&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099324398&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099324398&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099337380&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099337886&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099339891&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099344395&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099344395&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099347384&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099347887&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099349891&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099354395&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099354395&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099377382&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099377888&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099379895&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099384417&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099384417&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099387382&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099387884&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099389891&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099394395&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099394395&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099397383&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099397890&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099399896&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099404401&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099404401&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+evmAsk.js:5 Uncaught TypeError: Cannot redefine property: ethereum
+    at Object.defineProperty (<anonymous>)
+    at r.inject (evmAsk.js:5:5093)
+    at window.addEventListener.once (evmAsk.js:5:9013)
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+inpage.js:1 MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: TypeError: Cannot set property ethereum of #<Window> which has only a getter
+    at a (inpage.js:1:51283)
+    at r.initializeProvider (inpage.js:1:51054)
+    at Object.<anonymous> (inpage.js:1:2308)
+    at Object.<anonymous> (inpage.js:1:6316)
+    at 2.../../shared/modules/provider-injection (inpage.js:1:6329)
+    at i (inpage.js:1:254)
+    at e (inpage.js:1:412)
+    at inpage.js:1:429
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:24 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Arbd%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+evmAsk.js:5 Uncaught TypeError: Cannot redefine property: ethereum
+    at Object.defineProperty (<anonymous>)
+    at r.inject (evmAsk.js:5:5093)
+    at window.addEventListener.once (evmAsk.js:5:9013)
+inject @ evmAsk.js:5
+window.addEventListener.once @ evmAsk.js:5
+inpage.js:1 MetaMask encountered an error setting the global Ethereum provider - this is likely due to another Ethereum wallet extension also setting the global Ethereum provider: TypeError: Cannot set property ethereum of #<Window> which has only a getter
+    at a (inpage.js:1:51283)
+    at r.initializeProvider (inpage.js:1:51054)
+    at Object.<anonymous> (inpage.js:1:2308)
+    at Object.<anonymous> (inpage.js:1:6316)
+    at 2.../../shared/modules/provider-injection (inpage.js:1:6329)
+    at i (inpage.js:1:254)
+    at e (inpage.js:1:412)
+    at inpage.js:1:429
+a @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+2.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+registerSW.ts:7 SW registered: ServiceWorkerRegistration
+beacon.js:1 Uncaught SyntaxError: Unexpected token '<'
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+0948d63a-5bb3-406d-b835-3ff62389637b-00-3neymvurrlzrb.picard.replit.dev/api/clients/me:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+client:536 WebSocket connection to 'wss://0948d63a-5bb3-406d-b835-3ff62389637b-00-3neymvurrlzrb.picard.replit.dev/?token=xrGeZCLoK4lK' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=xrGeZCLoK4lK' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099537383&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099537890&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+manifest.json:1  Failed to load resource: the server responded with a status of 403 ()
+manifest.json:1  GET https://replit.com/public/manifest.json 403 (Forbidden)
+_app-5bf3df336f4d71ab.js:28  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099539896&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099544404&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099544404&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+_app-5bf3df336f4d71ab.js:28  POST https://events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+promise @ _app-5bf3df336f4d71ab.js:30
+(anonymous) @ _app-5bf3df336f4d71ab.js:30
+r.httpRequest @ _app-5bf3df336f4d71ab.js:30
+t @ _app-5bf3df336f4d71ab.js:30
+a.sendChunk @ _app-5bf3df336f4d71ab.js:30
+a.sendEvents @ _app-5bf3df336f4d71ab.js:30
+a.flush @ _app-5bf3df336f4d71ab.js:30
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+_app-5bf3df336f4d71ab.js:28  POST https://events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+promise @ _app-5bf3df336f4d71ab.js:30
+(anonymous) @ _app-5bf3df336f4d71ab.js:30
+r.httpRequest @ _app-5bf3df336f4d71ab.js:30
+t @ _app-5bf3df336f4d71ab.js:30
+(anonymous) @ _app-5bf3df336f4d71ab.js:30
+Promise.catch
+t @ _app-5bf3df336f4d71ab.js:30
+a.sendChunk @ _app-5bf3df336f4d71ab.js:30
+a.sendEvents @ _app-5bf3df336f4d71ab.js:30
+a.flush @ _app-5bf3df336f4d71ab.js:30
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+setTimeout
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+e @ _app-5bf3df336f4d71ab.js:30
+n @ _app-5bf3df336f4d71ab.js:28
+_app-5bf3df336f4d71ab.js:28  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099555184&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=518&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+post @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEventsViaPost @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEvents @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_retryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+_safeRetryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t._notifyVisibilityChanged @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t.HTMLElement.focus @ _app-5bf3df336f4d71ab.js:16
+x @ 275e5802-d68f911f1bb8f2ea.js:1
+(anonymous) @ 275e5802-d68f911f1bb8f2ea.js:1
+ignore @ 275e5802-d68f911f1bb8f2ea.js:1
+eM.mousedown @ 275e5802-d68f911f1bb8f2ea.js:1
+runHandlers @ 275e5802-d68f911f1bb8f2ea.js:1
+handleEvent @ 275e5802-d68f911f1bb8f2ea.js:1
+n @ _app-5bf3df336f4d71ab.js:28
+_app-5bf3df336f4d71ab.js:28  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099555696&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=518&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+post @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEventsViaPost @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEvents @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_retryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+_safeRetryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t._notifyVisibilityChanged @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t.HTMLElement.focus @ _app-5bf3df336f4d71ab.js:16
+x @ 275e5802-d68f911f1bb8f2ea.js:1
+(anonymous) @ 275e5802-d68f911f1bb8f2ea.js:1
+ignore @ 275e5802-d68f911f1bb8f2ea.js:1
+eM.mousedown @ 275e5802-d68f911f1bb8f2ea.js:1
+runHandlers @ 275e5802-d68f911f1bb8f2ea.js:1
+handleEvent @ 275e5802-d68f911f1bb8f2ea.js:1
+n @ _app-5bf3df336f4d71ab.js:28
+manifest.json:1  GET https://replit.com/public/manifest.json 403 (Forbidden)
+cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10  POST https://ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/ net::ERR_BLOCKED_BY_CLIENT
+U @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+N @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+(anonymous) @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+_app-5bf3df336f4d71ab.js:28  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099557701&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=518&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+post @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEventsViaPost @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEvents @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_retryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+_safeRetryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t._notifyVisibilityChanged @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t.HTMLElement.focus @ _app-5bf3df336f4d71ab.js:16
+x @ 275e5802-d68f911f1bb8f2ea.js:1
+(anonymous) @ 275e5802-d68f911f1bb8f2ea.js:1
+ignore @ 275e5802-d68f911f1bb8f2ea.js:1
+eM.mousedown @ 275e5802-d68f911f1bb8f2ea.js:1
+runHandlers @ 275e5802-d68f911f1bb8f2ea.js:1
+handleEvent @ 275e5802-d68f911f1bb8f2ea.js:1
+n @ _app-5bf3df336f4d71ab.js:28
+cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10  POST https://ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/ net::ERR_BLOCKED_BY_CLIENT
+U @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+N @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+(anonymous) @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1761099204903%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252Ft%252Fthecreators%252Frepls%252FWeb3Marketplace%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+pageProvider.js:2 Uncaught (in promise) {message: 'User rejected the request.', stack: 'Error: User rejected the request.\n    at a (chrome…gmoleebolmdjonilkdbch/content-script.js:2:168341)', code: 4001}
+onResponse @ pageProvider.js:2
+(anonymous) @ pageProvider.js:2
+o.emit @ pageProvider.js:2
+S @ pageProvider.js:2
+N @ pageProvider.js:2
+C.push @ pageProvider.js:2
+_onData @ pageProvider.js:2
+_onMessage @ pageProvider.js:2
+postMessage
+_postMessage @ content-script.js:2
+_write @ content-script.js:2
+I @ content-script.js:2
+(anonymous) @ content-script.js:2
+O.write @ content-script.js:2
+BroadcastChannelMessage.send @ content-script.js:2
+G.onRequest @ content-script.js:2
+(index):1 Uncaught (in promise) {code: 4001, message: 'User rejected the request.'}
+(index):1 Uncaught (in promise) {code: 4001, message: 'User rejected the request.'}
+postMessage
+_postMessage @ content-script.js:2
+_write @ content-script.js:2
+I @ content-script.js:2
+(anonymous) @ content-script.js:2
+O.write @ content-script.js:2
+BroadcastChannelMessage.send @ content-script.js:2
+G.onRequest @ content-script.js:2
+pageProvider.js:2 Uncaught (in promise) {message: 'User rejected the request.', stack: 'Error: User rejected the request.\n    at a (chrome…gmoleebolmdjonilkdbch/content-script.js:2:168341)', code: 4001}
+onResponse @ pageProvider.js:2
+(anonymous) @ pageProvider.js:2
+o.emit @ pageProvider.js:2
+S @ pageProvider.js:2
+N @ pageProvider.js:2
+C.push @ pageProvider.js:2
+_onData @ pageProvider.js:2
+_onMessage @ pageProvider.js:2
+postMessage
+_postMessage @ content-script.js:2
+_write @ content-script.js:2
+I @ content-script.js:2
+(anonymous) @ content-script.js:2
+O.write @ content-script.js:2
+BroadcastChannelMessage.send @ content-script.js:2
+G.onRequest @ content-script.js:2
+manifest.json:1  GET https://replit.com/public/manifest.json 403 (Forbidden)
+_app-5bf3df336f4d71ab.js:28  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099562205&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=518&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+post @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEventsViaPost @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEvents @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_retryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+_safeRetryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t._notifyVisibilityChanged @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t.HTMLElement.focus @ _app-5bf3df336f4d71ab.js:16
+x @ 275e5802-d68f911f1bb8f2ea.js:1
+(anonymous) @ 275e5802-d68f911f1bb8f2ea.js:1
+ignore @ 275e5802-d68f911f1bb8f2ea.js:1
+eM.mousedown @ 275e5802-d68f911f1bb8f2ea.js:1
+runHandlers @ 275e5802-d68f911f1bb8f2ea.js:1
+handleEvent @ 275e5802-d68f911f1bb8f2ea.js:1
+n @ _app-5bf3df336f4d71ab.js:28
+_app-5bf3df336f4d71ab.js:28  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client-react&sv=3.26.0&t=1761099562205&sid=fcd54cce-2cd3-4050-9d11-1615fd32066c&ec=518&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at _app-5bf3df336f4d71ab.js:28:9046
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:90452)
+    at Generator.next (<anonymous>)
+    at 6609-5b2a4c0b75da2e46.js:1:88045
+    at new Promise (<anonymous>)
+    at i (6609-5b2a4c0b75da2e46.js:1:87794)
+    at a._sendRequest (6609-5b2a4c0b75da2e46.js:1:89675)
+    at 6609-5b2a4c0b75da2e46.js:1:57974
+    at l._capture (6609-5b2a4c0b75da2e46.js:1:58272)
+    at e.<computed> [as _sendRequest] (6609-5b2a4c0b75da2e46.js:1:57943)
+    at a.<anonymous> (6609-5b2a4c0b75da2e46.js:1:91623)
+    at Generator.next (<anonymous>)
+    at a (6609-5b2a4c0b75da2e46.js:1:87850)
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+error @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+o @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendRequest @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+post @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEventsViaPost @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEvents @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_retryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+_safeRetryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t._notifyVisibilityChanged @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t.HTMLElement.focus @ _app-5bf3df336f4d71ab.js:16
+x @ 275e5802-d68f911f1bb8f2ea.js:1
+(anonymous) @ 275e5802-d68f911f1bb8f2ea.js:1
+ignore @ 275e5802-d68f911f1bb8f2ea.js:1
+eM.mousedown @ 275e5802-d68f911f1bb8f2ea.js:1
+runHandlers @ 275e5802-d68f911f1bb8f2ea.js:1
+handleEvent @ 275e5802-d68f911f1bb8f2ea.js:1
+n @ _app-5bf3df336f4d71ab.js:28
+_app-5bf3df336f4d71ab.js:28   WARN  [Statsig] Failed to flush events.
+(anonymous) @ _app-5bf3df336f4d71ab.js:28
+warn @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+a @ 6609-5b2a4c0b75da2e46.js:1
+Promise.then
+l @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_sendEvents @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+i @ 6609-5b2a4c0b75da2e46.js:1
+_retryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+_capture @ 6609-5b2a4c0b75da2e46.js:1
+e.<computed> @ 6609-5b2a4c0b75da2e46.js:1
+_safeRetryFailedLogs @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t._notifyVisibilityChanged @ 6609-5b2a4c0b75da2e46.js:1
+(anonymous) @ 6609-5b2a4c0b75da2e46.js:1
+t.HTMLElement.focus @ _app-5bf3df336f4d71ab.js:16
+x @ 275e5802-d68f911f1bb8f2ea.js:1
+(anonymous) @ 275e5802-d68f911f1bb8f2ea.js:1
+ignore @ 275e5802-d68f911f1bb8f2ea.js:1
+eM.mousedown @ 275e5802-d68f911f1bb8f2ea.js:1
+runHandlers @ 275e5802-d68f911f1bb8f2ea.js:1
+handleEvent @ 275e5802-d68f911f1bb8f2ea.js:1
+n @ _app-5bf3df336f4d71ab.js:28
