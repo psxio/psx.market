@@ -1596,6 +1596,318 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin Analytics Endpoints
+  app.get("/api/admin/analytics/activity-feed", requireAdminAuth, async (req, res) => {
+    try {
+      const limit = Number(req.query.limit) || 20;
+      
+      const [orders, applications, payments, reviews] = await Promise.all([
+        storage.getOrders(),
+        storage.getBuilderApplications(),
+        storage.getPayments(),
+        storage.getReviews(),
+      ]);
+      
+      const activities: any[] = [];
+      
+      orders.slice(0, limit / 4).forEach(order => {
+        activities.push({
+          id: order.id,
+          type: 'order',
+          action: order.status === 'pending' ? 'created' : order.status,
+          timestamp: order.createdAt,
+          data: {
+            orderId: order.id,
+            title: order.title,
+            amount: order.budget,
+            status: order.status,
+          }
+        });
+      });
+      
+      applications.slice(0, limit / 4).forEach(app => {
+        activities.push({
+          id: app.id,
+          type: 'application',
+          action: app.status === 'pending' ? 'submitted' : app.status,
+          timestamp: app.submittedAt,
+          data: {
+            applicationId: app.id,
+            name: app.name,
+            category: app.category,
+            status: app.status,
+          }
+        });
+      });
+      
+      payments.slice(0, limit / 4).forEach(payment => {
+        activities.push({
+          id: payment.id,
+          type: 'payment',
+          action: payment.status,
+          timestamp: payment.createdAt,
+          data: {
+            paymentId: payment.id,
+            amount: payment.amount,
+            status: payment.status,
+            method: payment.paymentMethod,
+          }
+        });
+      });
+      
+      reviews.slice(0, limit / 4).forEach(review => {
+        activities.push({
+          id: review.id,
+          type: 'review',
+          action: 'posted',
+          timestamp: review.createdAt,
+          data: {
+            reviewId: review.id,
+            rating: review.rating,
+            clientName: review.clientName,
+          }
+        });
+      });
+      
+      activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      
+      res.json(activities.slice(0, limit));
+    } catch (error) {
+      console.error("Error fetching activity feed:", error);
+      res.status(500).json({ error: "Failed to fetch activity feed" });
+    }
+  });
+
+  app.get("/api/admin/analytics/dashboard", requireAdminAuth, async (req, res) => {
+    try {
+      const period = (req.query.period as string) || '7';
+      const daysAgo = Number(period);
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - daysAgo);
+      
+      const [builders, clients, services, orders, applications, payments, reviews] = await Promise.all([
+        storage.getBuilders(),
+        storage.getClients(),
+        storage.getServices(),
+        storage.getOrders(),
+        storage.getBuilderApplications(),
+        storage.getPayments(),
+        storage.getReviews(),
+      ]);
+      
+      const prevStartDate = new Date(startDate);
+      prevStartDate.setDate(prevStartDate.getDate() - daysAgo);
+      
+      const currentPeriodOrders = orders.filter(o => new Date(o.createdAt) >= startDate);
+      const prevPeriodOrders = orders.filter(o => 
+        new Date(o.createdAt) >= prevStartDate && new Date(o.createdAt) < startDate
+      );
+      
+      const currentPeriodRevenue = payments
+        .filter(p => new Date(p.createdAt) >= startDate && p.status === 'completed')
+        .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+      
+      const prevPeriodRevenue = payments
+        .filter(p => new Date(p.createdAt) >= prevStartDate && new Date(p.createdAt) < startDate && p.status === 'completed')
+        .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+      
+      const totalRevenue = payments
+        .filter(p => p.status === 'completed')
+        .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+      
+      const platformFees = payments
+        .filter(p => p.status === 'completed')
+        .reduce((sum, p) => sum + Number(p.platformFee || 0), 0);
+      
+      const calculateGrowth = (current: number, previous: number) => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return ((current - previous) / previous) * 100;
+      };
+      
+      const stats = {
+        totalBuilders: builders.length,
+        totalClients: clients.length,
+        activeServices: services.filter(s => s.active).length,
+        totalOrders: orders.length,
+        pendingApplications: applications.filter(a => a.status === 'pending').length,
+        totalRevenue: totalRevenue.toFixed(2),
+        platformFees: platformFees.toFixed(2),
+        averageOrderValue: orders.length > 0 ? (totalRevenue / orders.length).toFixed(2) : '0',
+        completedOrders: orders.filter(o => o.status === 'completed').length,
+        activeOrders: orders.filter(o => ['pending', 'in_progress', 'delivered'].includes(o.status || '')).length,
+        averageRating: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(2) : '0',
+      };
+      
+      const growth = {
+        orders: calculateGrowth(currentPeriodOrders.length, prevPeriodOrders.length),
+        revenue: calculateGrowth(currentPeriodRevenue, prevPeriodRevenue),
+      };
+      
+      const chartData = [];
+      for (let i = daysAgo - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dayOrders = orders.filter(o => o.createdAt.startsWith(dateStr));
+        const dayRevenue = payments
+          .filter(p => p.createdAt.startsWith(dateStr) && p.status === 'completed')
+          .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+        const dayBuilders = builders.filter(b => b.createdAt.startsWith(dateStr));
+        const dayClients = clients.filter(c => c.createdAt.startsWith(dateStr));
+        
+        chartData.push({
+          date: dateStr,
+          orders: dayOrders.length,
+          revenue: Number(dayRevenue.toFixed(2)),
+          newBuilders: dayBuilders.length,
+          newClients: dayClients.length,
+        });
+      }
+      
+      res.json({ stats, growth, chartData });
+    } catch (error) {
+      console.error("Error fetching dashboard analytics:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard analytics" });
+    }
+  });
+
+  app.get("/api/admin/analytics/top-performers", requireAdminAuth, async (_req, res) => {
+    try {
+      const [builders, orders, payments, reviews] = await Promise.all([
+        storage.getBuilders(),
+        storage.getOrders(),
+        storage.getPayments(),
+        storage.getReviews(),
+      ]);
+      
+      const builderStats = builders.map(builder => {
+        const builderOrders = orders.filter(o => o.builderId === builder.id);
+        const builderPayments = payments.filter(p => p.builderId === builder.id && p.status === 'completed');
+        const revenue = builderPayments.reduce((sum, p) => sum + Number(p.builderAmount || 0), 0);
+        const builderReviews = reviews.filter(r => r.builderId === builder.id);
+        const avgRating = builderReviews.length > 0 
+          ? builderReviews.reduce((sum, r) => sum + r.rating, 0) / builderReviews.length 
+          : 0;
+        
+        return {
+          id: builder.id,
+          name: builder.name,
+          profileImage: builder.profileImage,
+          category: builder.category,
+          revenue: Number(revenue.toFixed(2)),
+          ordersCount: builderOrders.length,
+          completedOrders: builderOrders.filter(o => o.status === 'completed').length,
+          rating: Number(avgRating.toFixed(2)),
+          reviewCount: builderReviews.length,
+        };
+      });
+      
+      const topByRevenue = [...builderStats].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+      const topByRating = [...builderStats].filter(b => b.reviewCount >= 3).sort((a, b) => b.rating - a.rating).slice(0, 5);
+      const topByOrders = [...builderStats].sort((a, b) => b.completedOrders - a.completedOrders).slice(0, 5);
+      
+      res.json({
+        topByRevenue,
+        topByRating,
+        topByOrders,
+      });
+    } catch (error) {
+      console.error("Error fetching top performers:", error);
+      res.status(500).json({ error: "Failed to fetch top performers" });
+    }
+  });
+
+  app.get("/api/admin/analytics/conversion-funnel", requireAdminAuth, async (_req, res) => {
+    try {
+      const [applications, builders, orders] = await Promise.all([
+        storage.getBuilderApplications(),
+        storage.getBuilders(),
+        storage.getOrders(),
+      ]);
+      
+      const totalApplications = applications.length;
+      const approvedApplications = applications.filter(a => a.status === 'approved').length;
+      const buildersWithOrders = new Set(orders.map(o => o.builderId)).size;
+      
+      const funnel = [
+        {
+          stage: 'Applications Submitted',
+          count: totalApplications,
+          percentage: 100,
+        },
+        {
+          stage: 'Applications Approved',
+          count: approvedApplications,
+          percentage: totalApplications > 0 ? (approvedApplications / totalApplications) * 100 : 0,
+        },
+        {
+          stage: 'Builders Created',
+          count: builders.length,
+          percentage: totalApplications > 0 ? (builders.length / totalApplications) * 100 : 0,
+        },
+        {
+          stage: 'First Order Received',
+          count: buildersWithOrders,
+          percentage: builders.length > 0 ? (buildersWithOrders / builders.length) * 100 : 0,
+        },
+      ];
+      
+      res.json(funnel);
+    } catch (error) {
+      console.error("Error fetching conversion funnel:", error);
+      res.status(500).json({ error: "Failed to fetch conversion funnel" });
+    }
+  });
+
+  app.get("/api/admin/analytics/platform-health", requireAdminAuth, async (_req, res) => {
+    try {
+      const [orders, payments, builders, applications] = await Promise.all([
+        storage.getOrders(),
+        storage.getPayments(),
+        storage.getBuilders(),
+        storage.getBuilderApplications(),
+      ]);
+      
+      const last24Hours = new Date();
+      last24Hours.setHours(last24Hours.getHours() - 24);
+      
+      const activeOrders = orders.filter(o => ['pending', 'in_progress', 'delivered'].includes(o.status || ''));
+      const recentOrders = orders.filter(o => new Date(o.createdAt) >= last24Hours);
+      const failedPayments = payments.filter(p => p.status === 'failed');
+      const pendingApplications = applications.filter(a => a.status === 'pending');
+      const verifiedBuilders = builders.filter(b => b.verified);
+      
+      const healthScore = Math.min(100, Math.max(0, 
+        (verifiedBuilders.length / Math.max(builders.length, 1)) * 30 +
+        (1 - (failedPayments.length / Math.max(payments.length, 1))) * 30 +
+        (activeOrders.length / Math.max(orders.length, 1)) * 20 +
+        (recentOrders.length > 0 ? 20 : 0)
+      ));
+      
+      let healthStatus = 'critical';
+      if (healthScore >= 80) healthStatus = 'excellent';
+      else if (healthScore >= 60) healthStatus = 'good';
+      else if (healthScore >= 40) healthStatus = 'fair';
+      
+      res.json({
+        score: Math.round(healthScore),
+        status: healthStatus,
+        metrics: {
+          activeOrders: activeOrders.length,
+          recentActivity: recentOrders.length,
+          failedPayments: failedPayments.length,
+          pendingApplications: pendingApplications.length,
+          verifiedBuilders: verifiedBuilders.length,
+          totalBuilders: builders.length,
+        },
+      });
+    } catch (error) {
+      console.error("Error calculating platform health:", error);
+      res.status(500).json({ error: "Failed to calculate platform health" });
+    }
+  });
+
   app.post("/api/payments", async (req, res) => {
     try {
       const platformFeePercentage = Number(req.body.platformFeePercentage) || 2.5;
