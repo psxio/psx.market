@@ -37,7 +37,10 @@ import {
   Plus,
   Trash2,
   Archive,
-  ArchiveRestore
+  ArchiveRestore,
+  User,
+  FileText,
+  Image
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
@@ -305,6 +308,79 @@ export default function BuilderDashboard() {
       {onboardingData && !onboardingData.isComplete && (
         <OnboardingChecklist builderId={builderId} onboardingData={onboardingData} />
       )}
+
+      <Card data-testid="card-quick-actions">
+        <CardHeader>
+          <CardTitle className="text-lg">Quick Actions</CardTitle>
+          <CardDescription>Common tasks to help you manage your business</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            <Button
+              variant="outline"
+              className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
+              onClick={() => window.location.href = `/builder/${builderId}/create-service`}
+              data-testid="button-quick-create-service"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <Plus className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Create Service</span>
+              </div>
+              <p className="text-xs text-muted-foreground text-left">
+                Add a new service listing to attract more clients
+              </p>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
+              onClick={() => window.location.href = `/builder/${builderId}/edit-profile`}
+              data-testid="button-quick-edit-profile"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <User className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Edit Profile</span>
+              </div>
+              <p className="text-xs text-muted-foreground text-left">
+                Update your bio, skills, and portfolio showcase
+              </p>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
+              onClick={() => {
+                const ordersTab = document.querySelector('[data-testid="tab-orders"]') as HTMLElement;
+                ordersTab?.click();
+              }}
+              data-testid="button-quick-view-orders"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <FileText className="h-5 w-5 text-primary" />
+                <span className="font-semibold">View Orders</span>
+              </div>
+              <p className="text-xs text-muted-foreground text-left">
+                Check active orders and client requests
+              </p>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-auto flex-col items-start gap-2 p-4 hover-elevate"
+              onClick={() => window.location.href = `/builder/${builderId}/edit-profile`}
+              data-testid="button-quick-upload-portfolio"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <Image className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Portfolio</span>
+              </div>
+              <p className="text-xs text-muted-foreground text-left">
+                Showcase your best work and past projects
+              </p>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="orders" className="space-y-4">
         <TabsList data-testid="tabs-builder-dashboard">
