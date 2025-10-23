@@ -806,14 +806,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/services/featured", async (_req, res) => {
     try {
-      let services = await storage.getFeaturedServices();
-      
-      const servicesWithBuilders = await Promise.all(
-        services.map(async (service) => {
-          const builder = service.builderId ? await storage.getBuilder(service.builderId) : null;
-          return { service, builder };
-        })
-      );
+      const servicesWithBuilders = await storage.getFeaturedServicesWithBuilders();
       res.json(servicesWithBuilders);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch featured services" });

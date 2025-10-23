@@ -162,6 +162,7 @@ export interface IStorage {
   getServices(): Promise<Service[]>;
   getServicesByBuilder(builderId: string): Promise<Service[]>;
   getFeaturedServices(): Promise<Service[]>;
+  getFeaturedServicesWithBuilders(): Promise<Array<{ service: Service; builder: Builder | null }>>;
   getServicesByCategory(categorySlug: string): Promise<Service[]>;
   createService(service: InsertService): Promise<Service>;
 
@@ -1112,6 +1113,20 @@ export class PostgresStorage implements IStorage {
 
   async getFeaturedServices(): Promise<Service[]> {
     return await db.select().from(services).where(eq(services.featured, true)).limit(6);
+  }
+
+  async getFeaturedServicesWithBuilders(): Promise<Array<{ service: Service; builder: Builder | null }>> {
+    const result = await db
+      .select()
+      .from(services)
+      .leftJoin(builders, eq(services.builderId, builders.id))
+      .where(eq(services.featured, true))
+      .limit(6);
+    
+    return result.map(row => ({
+      service: row.services,
+      builder: row.builders
+    }));
   }
 
   async getServicesByCategory(categorySlug: string): Promise<Service[]> {
