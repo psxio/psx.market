@@ -145,22 +145,24 @@ export default function Marketplace() {
           {categories && categories.map((category) => {
             const CategoryIcon = categoryIcons[category.name] || Code;
             return (
-              <div key={category.id} className="flex items-center space-x-2">
+              <div 
+                key={category.id} 
+                className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+                onClick={() => toggleCategory(category.name)}
+                data-testid={`filter-category-${category.slug}`}
+              >
                 <Checkbox
-                  id={category.id}
                   checked={selectedCategories.includes(category.name)}
-                  onCheckedChange={() => toggleCategory(category.name)}
+                  onCheckedChange={() => {}}
+                  className="pointer-events-none"
                   data-testid={`checkbox-category-${category.slug}`}
                 />
-                <label
-                  htmlFor={category.id}
-                  className="flex items-center gap-2 flex-1 cursor-pointer"
-                >
+                <div className="flex items-center gap-2 flex-1">
                   <CategoryIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <span className="text-sm font-medium">
                     {category.name}
                   </span>
-                </label>
+                </div>
               </div>
             );
           })}
@@ -202,19 +204,21 @@ export default function Marketplace() {
         <Label className="text-base font-semibold">Rating</Label>
         <div className="space-y-2">
           {ratings.map((rating) => (
-            <div key={rating} className="flex items-center space-x-2">
+            <div 
+              key={rating} 
+              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+              onClick={() => setSelectedRating(selectedRating === rating ? null : rating)}
+              data-testid={`filter-rating-${rating.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus')}`}
+            >
               <Checkbox 
-                id={rating}
                 checked={selectedRating === rating}
-                onCheckedChange={(checked) => setSelectedRating(checked ? rating : null)}
+                onCheckedChange={() => {}}
+                className="pointer-events-none"
                 data-testid={`checkbox-rating-${rating.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus')}`}
               />
-              <label
-                htmlFor={rating}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-              >
+              <span className="text-sm font-medium">
                 {rating}
-              </label>
+              </span>
             </div>
           ))}
         </div>
@@ -224,19 +228,21 @@ export default function Marketplace() {
         <Label className="text-base font-semibold">Delivery Time</Label>
         <div className="space-y-2">
           {deliveryTimes.map((time) => (
-            <div key={time} className="flex items-center space-x-2">
+            <div 
+              key={time} 
+              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+              onClick={() => setSelectedDeliveryTime(selectedDeliveryTime === time ? null : time)}
+              data-testid={`filter-delivery-${time.toLowerCase().replace(/\s+/g, '-')}`}
+            >
               <Checkbox 
-                id={time}
                 checked={selectedDeliveryTime === time}
-                onCheckedChange={(checked) => setSelectedDeliveryTime(checked ? time : null)}
+                onCheckedChange={() => {}}
+                className="pointer-events-none"
                 data-testid={`checkbox-delivery-${time.toLowerCase().replace(/\s+/g, '-')}`}
               />
-              <label
-                htmlFor={time}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-              >
+              <span className="text-sm font-medium">
                 {time}
-              </label>
+              </span>
             </div>
           ))}
         </div>
