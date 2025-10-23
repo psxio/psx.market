@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { 
@@ -20,10 +21,25 @@ import {
   User, 
   Briefcase, 
   Award,
-  Wallet
+  Wallet,
+  Clock,
+  AlertCircle,
+  TrendingUp
 } from "lucide-react";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { StepIndicator } from "@/components/onboarding/StepIndicator";
+import { ImageUploader } from "@/components/ImageUploader";
+import { useAutoSave, loadSavedData, clearSavedData } from "@/hooks/useAutoSave";
+import { 
+  validateStep1, 
+  validateStep2, 
+  validateStep3,
+  getTotalTimeRemaining,
+  calculateProfileStrength,
+  getProfileStrengthSuggestions,
+  type OnboardingFormData
+} from "@/lib/onboardingValidation";
 
 interface InviteVerification {
   valid: boolean;
@@ -48,60 +64,91 @@ export default function BuilderOnboarding() {
   const inviteToken = params?.token;
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [profilePhoto, setProfilePhoto] = useState<string>("");
+  const [coverImage, setCoverImage] = useState<string>("");
 
-  const [formData, setFormData] = useState({
-    // Basic Info (Step 1)
-    name: "",
-    email: "",
-    walletAddress: "",
-    headline: "",
-    bio: "",
-    category: "",
+  const [formData, setFormData] = useState(() => {
+    // Try to load saved data first
+    const saved = loadSavedData<any>("builder-onboarding-draft", {
+      // Basic Info (Step 1)
+      name: "",
+      email: "",
+      walletAddress: "",
+      headline: "",
+      bio: "",
+      category: "",
+      
+      // Professional Details (Step 2)
+      skills: [] as string[],
+      portfolioLinks: [] as string[],
+      twitterHandle: "",
+      responseTime: "24 hours",
+      
+      // Category-Specific (Step 3)
+      // KOL fields
+      twitterFollowers: "",
+      instagramHandle: "",
+      instagramFollowers: "",
+      youtubeChannel: "",
+      youtubeSubscribers: "",
+      telegramHandle: "",
+      telegramMembers: "",
+      engagementRate: "",
+      contentNiches: [] as string[],
+      brandPartnerships: [] as string[],
+      
+      // 3D Artist fields
+      software3D: [] as string[],
+      renderEngines: [] as string[],
+      styleSpecialties: [] as string[],
+      animationExpertise: false,
+      
+      // Marketing fields
+      marketingPlatforms: [] as string[],
+      growthStrategies: [] as string[],
+      avgROI: "",
+      clientIndustries: [] as string[],
+      
+      // Developer fields
+      programmingLanguages: [] as string[],
+      blockchainFrameworks: [] as string[],
+      githubProfile: "",
+      certifications: [] as string[],
+      
+      // Volume fields
+      tradingExperience: "",
+      volumeCapabilities: "",
+      dexExpertise: [] as string[],
+      cexExpertise: [] as string[],
+      complianceKnowledge: false,
+    });
     
-    // Professional Details (Step 2)
-    skills: [] as string[],
-    portfolioLinks: [] as string[],
-    twitterHandle: "",
-    responseTime: "24 hours",
-    
-    // Category-Specific (Step 3)
-    // KOL fields
-    twitterFollowers: "",
-    instagramHandle: "",
-    instagramFollowers: "",
-    youtubeChannel: "",
-    youtubeSubscribers: "",
-    telegramHandle: "",
-    telegramMembers: "",
-    engagementRate: "",
-    contentNiches: [] as string[],
-    brandPartnerships: [] as string[],
-    
-    // 3D Artist fields
-    software3D: [] as string[],
-    renderEngines: [] as string[],
-    styleSpecialties: [] as string[],
-    animationExpertise: false,
-    
-    // Marketing fields
-    marketingPlatforms: [] as string[],
-    growthStrategies: [] as string[],
-    avgROI: "",
-    clientIndustries: [] as string[],
-    
-    // Developer fields
-    programmingLanguages: [] as string[],
-    blockchainFrameworks: [] as string[],
-    githubProfile: "",
-    certifications: [] as string[],
-    
-    // Volume fields
-    tradingExperience: "",
-    volumeCapabilities: "",
-    dexExpertise: [] as string[],
-    cexExpertise: [] as string[],
-    complianceKnowledge: false,
+    return saved;
   });
+
+  // Auto-save form data
+  useAutoSave({
+    data: formData,
+    key: "builder-onboarding-draft",
+    delay: 2000,
+    enabled: !isSubmitting,
+  });
+
+  // Calculate profile strength
+  const profileStrength = calculateProfileStrength({ ...formData, profileImage: profilePhoto } as OnboardingFormData);
+  const profileSuggestions = getProfileStrengthSuggestions({ ...formData, profileImage: profilePhoto } as OnboardingFormData);
+  
+  // Time estimation
+  const timeRemaining = getTotalTimeRemaining(currentStep);
+  
+  // Step indicator data
+  const steps = [
+    { number: 1, title: "Basic Info", completed: currentStep > 1, current: currentStep === 1 },
+    { number: 2, title: "Professional", completed: currentStep > 2, current: currentStep === 2 },
+    { number: 3, title: "Expertise", completed: currentStep > 3, current: currentStep === 3 },
+    { number: 4, title: "Review", completed: false, current: currentStep === 4 },
+  ];
 
   // Verify invite token if provided
   const { data: verification, isLoading: verifyingToken } = useQuery<InviteVerification>({
@@ -155,14 +202,38 @@ export default function BuilderOnboarding() {
   const progress = (currentStep / totalSteps) * 100;
 
   const handleNext = () => {
+    // Validate current step before advancing
+    let validation;
+    if (currentStep === 1) {
+      validation = validateStep1(formData as OnboardingFormData);
+    } else if (currentStep === 2) {
+      validation = validateStep2(formData as OnboardingFormData);
+    } else if (currentStep === 3) {
+      validation = validateStep3(formData as OnboardingFormData);
+    }
+
+    if (validation && !validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast({
+        title: "Please complete required fields",
+        description: validation.errors[0],
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setValidationErrors([]);
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleBack = () => {
+    setValidationErrors([]);
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -184,6 +255,9 @@ export default function BuilderOnboarding() {
         verified: !!inviteToken, // Auto-verify invited builders
         featured: false,
         tokenGateWhitelisted: true,
+        profileImage: profilePhoto || undefined,
+        coverImage: coverImage || undefined,
+        profileStrength: profileStrength,
       };
 
       // Add category-specific fields
@@ -228,7 +302,8 @@ export default function BuilderOnboarding() {
           inviteToken,
         });
         
-        // Clear quiz data after successful submission
+        // Clear saved data after successful submission
+        clearSavedData("builder-onboarding-draft");
         localStorage.removeItem("builderQuizResults");
         
         toast({
@@ -242,7 +317,8 @@ export default function BuilderOnboarding() {
       } else {
         await apiRequest("POST", "/api/builder-applications", builderData);
         
-        // Clear quiz data after successful submission
+        // Clear saved data after successful submission
+        clearSavedData("builder-onboarding-draft");
         localStorage.removeItem("builderQuizResults");
         
         toast({
@@ -366,14 +442,63 @@ export default function BuilderOnboarding() {
           </div>
         </div>
 
-        {/* Progress */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Step {currentStep} of {totalSteps}</span>
-            <span className="text-sm text-muted-foreground">{Math.round(progress)}% complete</span>
-          </div>
-          <Progress value={progress} className="h-2" />
+        {/* Step Indicator */}
+        <div className="mb-12 pt-4">
+          <StepIndicator steps={steps} />
         </div>
+
+        {/* Profile Strength & Time Estimation */}
+        <div className="mb-6 grid gap-4 sm:grid-cols-2">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-chart-3" />
+                  Profile Strength
+                </span>
+                <span className="text-sm font-semibold">{profileStrength}%</span>
+              </div>
+              <Progress value={profileStrength} className="h-2 mb-2" />
+              {profileSuggestions.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  {profileSuggestions[0]}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-primary" />
+                  Time Remaining
+                </span>
+                <span className="text-sm font-semibold">~{timeRemaining} min</span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-2">
+                {currentStep === 1 && "Let's get the basics set up"}
+                {currentStep === 2 && "Share your professional background"}
+                {currentStep === 3 && "Show us your expertise"}
+                {currentStep === 4 && "Almost there! Review and submit"}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Validation Errors */}
+        {validationErrors.length > 0 && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <ul className="list-disc list-inside space-y-1">
+                {validationErrors.map((error, i) => (
+                  <li key={i}>{error}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Steps */}
         <Card>
@@ -450,6 +575,32 @@ export default function BuilderOnboarding() {
                   <p className="text-xs text-muted-foreground mt-1">
                     Your Base wallet address for receiving payments
                   </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Profile Photo</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Upload a professional photo to build trust with clients (+10% profile strength)
+                  </p>
+                  <ImageUploader
+                    currentImage={profilePhoto}
+                    onUploadComplete={(url) => setProfilePhoto(url)}
+                    label="Upload Profile Photo"
+                    maxSizeMB={5}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Cover Banner (Optional)</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Add a cover image to make your profile stand out
+                  </p>
+                  <ImageUploader
+                    currentImage={coverImage}
+                    onUploadComplete={(url) => setCoverImage(url)}
+                    label="Upload Cover Banner"
+                    maxSizeMB={10}
+                  />
                 </div>
 
                 <div>
