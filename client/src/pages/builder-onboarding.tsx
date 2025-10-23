@@ -751,69 +751,173 @@ export default function BuilderOnboarding() {
             {/* Step 3: Category-Specific Fields */}
             {currentStep === 3 && formData.category === "kols" && (
               <>
-                <h3 className="text-lg font-semibold">Social Media Metrics</h3>
+                <h3 className="text-lg font-semibold">Connect Your Social Media</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Connect your accounts to automatically verify your follower counts. No manual entry needed!
+                </p>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Twitter Followers</Label>
-                    <Input
-                      type="number"
-                      value={formData.twitterFollowers}
-                      onChange={(e) => setFormData({ ...formData, twitterFollowers: e.target.value })}
-                      placeholder="10000"
-                      data-testid="input-twitter-followers"
-                    />
-                  </div>
-                  <div>
-                    <Label>Instagram Handle</Label>
-                    <Input
-                      value={formData.instagramHandle}
-                      onChange={(e) => setFormData({ ...formData, instagramHandle: e.target.value })}
-                      placeholder="@username"
-                      data-testid="input-instagram"
-                    />
-                  </div>
-                  <div>
-                    <Label>Instagram Followers</Label>
-                    <Input
-                      type="number"
-                      value={formData.instagramFollowers}
-                      onChange={(e) => setFormData({ ...formData, instagramFollowers: e.target.value })}
-                      placeholder="5000"
-                      data-testid="input-instagram-followers"
-                    />
-                  </div>
-                  <div>
-                    <Label>YouTube Channel</Label>
-                    <Input
-                      value={formData.youtubeChannel}
-                      onChange={(e) => setFormData({ ...formData, youtubeChannel: e.target.value })}
-                      placeholder="@channel"
-                      data-testid="input-youtube"
-                    />
-                  </div>
-                  <div>
-                    <Label>YouTube Subscribers</Label>
-                    <Input
-                      type="number"
-                      value={formData.youtubeSubscribers}
-                      onChange={(e) => setFormData({ ...formData, youtubeSubscribers: e.target.value })}
-                      placeholder="1000"
-                      data-testid="input-youtube-subs"
-                    />
-                  </div>
-                  <div>
-                    <Label>Telegram Handle</Label>
-                    <Input
-                      value={formData.telegramHandle}
-                      onChange={(e) => setFormData({ ...formData, telegramHandle: e.target.value })}
-                      placeholder="@telegram"
-                      data-testid="input-telegram"
-                    />
-                  </div>
+                <Alert className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    We automatically fetch your real follower counts when you connect each platform. This prevents fake stats and builds trust with clients.
+                  </AlertDescription>
+                </Alert>
+
+                <div className="space-y-4">
+                  {/* Twitter / X Connection */}
+                  <Card className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                          <span className="text-white dark:text-black font-bold">𝕏</span>
+                        </div>
+                        <div>
+                          <Label className="text-base font-semibold">Twitter / X</Label>
+                          <p className="text-sm text-muted-foreground">
+                            {formData.twitterFollowers ? 
+                              `✅ Connected - ${parseInt(formData.twitterFollowers).toLocaleString()} followers` : 
+                              "Connect to verify your follower count"
+                            }
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant={formData.twitterFollowers ? "outline" : "default"}
+                        onClick={() => {
+                          // TODO: Implement Twitter OAuth
+                          toast({
+                            title: "Coming Soon",
+                            description: "Twitter/X OAuth integration is in progress. For now, please provide your handle.",
+                          });
+                        }}
+                        data-testid="button-connect-twitter"
+                      >
+                        {formData.twitterFollowers ? "Reconnect" : "Connect"}
+                      </Button>
+                    </div>
+                    {!formData.twitterFollowers && (
+                      <div className="mt-3">
+                        <Label className="text-sm">Twitter Handle (temporary)</Label>
+                        <Input
+                          value={formData.twitterHandle}
+                          onChange={(e) => setFormData({ ...formData, twitterHandle: e.target.value })}
+                          placeholder="@yourhandle"
+                          className="mt-1"
+                          data-testid="input-twitter-handle"
+                        />
+                      </div>
+                    )}
+                  </Card>
+
+                  {/* Instagram Connection */}
+                  <Card className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">IG</span>
+                        </div>
+                        <div>
+                          <Label className="text-base font-semibold">Instagram</Label>
+                          <p className="text-sm text-muted-foreground">
+                            {formData.instagramFollowers ? 
+                              `✅ ${parseInt(formData.instagramFollowers).toLocaleString()} followers` : 
+                              "Requires Business account for verification"
+                            }
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled
+                        data-testid="button-connect-instagram"
+                      >
+                        Business Only
+                      </Button>
+                    </div>
+                    <div className="mt-3">
+                      <Label className="text-sm">Instagram Handle</Label>
+                      <Input
+                        value={formData.instagramHandle}
+                        onChange={(e) => setFormData({ ...formData, instagramHandle: e.target.value })}
+                        placeholder="@username"
+                        className="mt-1"
+                        data-testid="input-instagram-handle"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Note: Auto-verification only works with Instagram Business accounts. We're working on alternative verification methods.
+                      </p>
+                    </div>
+                  </Card>
+
+                  {/* YouTube Connection */}
+                  <Card className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">YT</span>
+                        </div>
+                        <div>
+                          <Label className="text-base font-semibold">YouTube</Label>
+                          <p className="text-sm text-muted-foreground">
+                            {formData.youtubeSubscribers ? 
+                              `✅ Connected - ${parseInt(formData.youtubeSubscribers).toLocaleString()} subscribers` : 
+                              "Connect to verify your subscriber count"
+                            }
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant={formData.youtubeSubscribers ? "outline" : "default"}
+                        onClick={() => {
+                          // TODO: Implement YouTube OAuth
+                          toast({
+                            title: "Coming Soon",
+                            description: "YouTube OAuth integration is in progress. For now, please provide your channel.",
+                          });
+                        }}
+                        data-testid="button-connect-youtube"
+                      >
+                        {formData.youtubeSubscribers ? "Reconnect" : "Connect"}
+                      </Button>
+                    </div>
+                    {!formData.youtubeSubscribers && (
+                      <div className="mt-3">
+                        <Label className="text-sm">YouTube Channel (temporary)</Label>
+                        <Input
+                          value={formData.youtubeChannel}
+                          onChange={(e) => setFormData({ ...formData, youtubeChannel: e.target.value })}
+                          placeholder="@channel or channel URL"
+                          className="mt-1"
+                          data-testid="input-youtube-channel"
+                        />
+                      </div>
+                    )}
+                  </Card>
+
+                  {/* Telegram (Optional) */}
+                  <Card className="p-4 bg-muted/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold">TG</span>
+                      </div>
+                      <div className="flex-1">
+                        <Label className="text-base font-semibold">Telegram (Optional)</Label>
+                        <Input
+                          value={formData.telegramHandle}
+                          onChange={(e) => setFormData({ ...formData, telegramHandle: e.target.value })}
+                          placeholder="@telegram"
+                          className="mt-2"
+                          data-testid="input-telegram-handle"
+                        />
+                      </div>
+                    </div>
+                  </Card>
                 </div>
 
-                <div>
+                <div className="mt-6">
                   <Label>Content Niches (Press Enter to add)</Label>
                   <Input
                     placeholder="e.g., DeFi, NFTs, GameFi"

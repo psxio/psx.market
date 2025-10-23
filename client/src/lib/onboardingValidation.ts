@@ -92,14 +92,17 @@ export function validateStep3(data: OnboardingFormData): ValidationResult {
 
   // Category-specific validation
   if (data.category === "kols") {
-    if (!data.twitterFollowers || parseInt(data.twitterFollowers) < 1000) {
-      errors.push("KOLs should have at least 1,000 Twitter followers");
-      missingFields.push("twitterFollowers");
+    // Require at least one social media platform to be connected
+    const hasTwitter = data.twitterHandle && data.twitterHandle.trim().length > 0;
+    const hasInstagram = data.instagramHandle && data.instagramHandle.trim().length > 0;
+    const hasYoutube = data.youtubeChannel && data.youtubeChannel.trim().length > 0;
+    
+    if (!hasTwitter && !hasInstagram && !hasYoutube) {
+      errors.push("Please connect at least one social media platform (Twitter, Instagram, or YouTube)");
+      missingFields.push("socialMedia");
     }
-    if (!data.engagementRate) {
-      errors.push("Please provide your engagement rate");
-      missingFields.push("engagementRate");
-    }
+    
+    // No engagement rate requirement - will be calculated from API data
   } else if (data.category === "3d-artists") {
     if (!data.software3D || data.software3D.length < 1) {
       errors.push("Please list at least one 3D software you use");
