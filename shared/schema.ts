@@ -375,6 +375,16 @@ export const orders = pgTable("orders", {
   projectAllocationDetails: text("project_allocation_details"),
   projectAllocationAccepted: boolean("project_allocation_accepted").notNull().default(false),
   
+  escrowContractAddress: text("escrow_contract_address"),
+  escrowCreatedTxHash: text("escrow_created_tx_hash"),
+  escrowStatus: text("escrow_status").notNull().default("none"),
+  escrowPlatformFee: decimal("escrow_platform_fee", { precision: 10, scale: 2 }),
+  escrowReleasedAmount: decimal("escrow_released_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+  inDispute: boolean("in_dispute").notNull().default(false),
+  disputeRaisedAt: text("dispute_raised_at"),
+  disputeResolvedAt: text("dispute_resolved_at"),
+  disputeOutcome: text("dispute_outcome"),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -418,6 +428,17 @@ export const milestones = pgTable("milestones", {
   status: text("status").notNull().default("pending"),
   completedAt: text("completed_at"),
   transactionHash: text("transaction_hash"),
+  
+  milestoneIndex: integer("milestone_index").notNull(),
+  approvalDeadline: integer("approval_deadline").notNull(),
+  submittedAt: text("submitted_at"),
+  approvedAt: text("approved_at"),
+  paidAt: text("paid_at"),
+  autoApproved: boolean("auto_approved").notNull().default(false),
+  
+  escrowStatus: text("escrow_status").notNull().default("pending"),
+  escrowTxHash: text("escrow_tx_hash"),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
@@ -1588,3 +1609,76 @@ export type PricingIntelligence = typeof pricingIntelligence.$inferSelect;
 
 export type InsertBuilderProfileScore = z.infer<typeof insertBuilderProfileScoreSchema>;
 export type BuilderProfileScore = typeof builderProfileScores.$inferSelect;
+
+export const escrowDisputes = pgTable("escrow_disputes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  
+  initiatedBy: varchar("initiated_by").notNull(),
+  initiatorType: text("initiator_type").notNull(),
+  
+  reason: text("reason").notNull(),
+  description: text("description").notNull(),
+  evidence: text("evidence").array(),
+  evidenceUrls: text("evidence_urls").array(),
+  
+  status: text("status").notNull().default("open"),
+  outcome: text("outcome"),
+  
+  clientPercentage: integer("client_percentage"),
+  builderPercentage: integer("builder_percentage"),
+  
+  resolvedBy: varchar("resolved_by"),
+  resolvedAt: text("resolved_at"),
+  resolutionNotes: text("resolution_notes"),
+  
+  escrowTxHash: text("escrow_tx_hash"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const escrowTransactions = pgTable("escrow_transactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  
+  transactionType: text("transaction_type").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  
+  fromAddress: text("from_address"),
+  toAddress: text("to_address"),
+  
+  txHash: text("tx_hash").notNull(),
+  blockNumber: integer("block_number"),
+  gasUsed: text("gas_used"),
+  
+  status: text("status").notNull().default("pending"),
+  errorMessage: text("error_message"),
+  
+  metadata: text("metadata"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  confirmedAt: text("confirmed_at"),
+});
+
+export const insertEscrowDisputeSchema = createInsertSchema(escrowDisputes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  status: true,
+  resolvedBy: true,
+  resolvedAt: true,
+});
+
+export const insertEscrowTransactionSchema = createInsertSchema(escrowTransactions).omit({
+  id: true,
+  createdAt: true,
+  confirmedAt: true,
+  status: true,
+});
+
+export type InsertEscrowDispute = z.infer<typeof insertEscrowDisputeSchema>;
+export type EscrowDispute = typeof escrowDisputes.$inferSelect;
+
+export type InsertEscrowTransaction = z.infer<typeof insertEscrowTransactionSchema>;
+export type EscrowTransaction = typeof escrowTransactions.$inferSelect;
