@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { RecommendedServices } from "@/components/ai/RecommendedServices";
+import { PricingComparisonTable } from "@/components/PricingComparisonTable";
 import {
   ArrowLeft,
   Clock,
@@ -346,59 +347,10 @@ export default function ServiceDetail() {
             )}
 
             {/* Package Comparison */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">Compare Packages</CardTitle>
-                <CardDescription>
-                  Choose the package that best fits your project needs
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {packages.map((pkg) => (
-                    <Card
-                      key={pkg.name}
-                      className={`relative overflow-hidden ${
-                        pkg.popular ? "border-2 border-primary" : ""
-                      }`}
-                    >
-                      {pkg.popular && (
-                        <div className="absolute top-0 right-0">
-                          <Badge className="rounded-bl-lg rounded-tr-none bg-primary">
-                            Most Popular
-                          </Badge>
-                        </div>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="text-xl">{pkg.name}</CardTitle>
-                        <div className="mt-2">
-                          <span className="text-3xl font-bold">${pkg.price}</span>
-                        </div>
-                        <CardDescription className="mt-2">{pkg.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                          {pkg.deliverables.map((item, i) => (
-                            <div key={i} className="flex items-start gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                              <span className="text-sm">{item}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <Button
-                          className="w-full"
-                          variant={pkg.popular ? "default" : "outline"}
-                          data-testid={`button-select-${pkg.name.toLowerCase()}`}
-                          onClick={() => handleBooking(pkg.name)}
-                        >
-                          Select {pkg.name}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <PricingComparisonTable
+              service={service}
+              onSelectTier={(tier) => handleBooking(tier.charAt(0).toUpperCase() + tier.slice(1))}
+            />
 
             {/* Additional Details Tabs */}
             <Tabs defaultValue="details" className="w-full">
