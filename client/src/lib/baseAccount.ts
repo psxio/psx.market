@@ -8,6 +8,7 @@ const BASE_SEPOLIA_HEX = '0x14a34';
 // Token contract addresses on Base
 const PSX_TOKEN_ADDRESS = import.meta.env.VITE_PSX_TOKEN_ADDRESS || '0x0000000000000000000000000000000000000000';
 const CREATE_TOKEN_ADDRESS = '0x3849cC93e7B71b37885237cd91a215974135cD8D';
+const USDC_TOKEN_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'; // Base mainnet
 
 interface BaseAccountManager {
   sdk: any;
@@ -413,6 +414,67 @@ export async function getRawCREATEBalance(address: string): Promise<{ value: big
   } catch (error) {
     console.error('Error fetching raw CREATE balance:', error);
     return null;
+  }
+}
+
+// USDC Token balance functions
+export async function getUSDCBalance(address: string): Promise<string> {
+  const manager = initializeBaseAccount();
+  
+  try {
+    // Ensure we're on Base network before fetching balance
+    await ensureBaseNetwork(manager.provider);
+
+    // Get token decimals (USDC typically has 6 decimals)
+    const decimals = await getTokenDecimals(manager.provider, USDC_TOKEN_ADDRESS);
+    
+    // ERC-20 balanceOf function signature: 0x70a08231
+    const addressWithoutPrefix = address.slice(2);
+    const balanceOfCalldata = '0x70a08231' + addressWithoutPrefix.toLowerCase().padStart(64, '0');
+    
+    const result = await manager.provider.request({
+      method: 'eth_call',
+      params: [
+        {
+          to: USDC_TOKEN_ADDRESS,
+          data: balanceOfCalldata
+        },
+        'latest'
+      ]
+    });
+
+    // Parse the result using BigInt to avoid precision loss
+    const balanceWei = BigInt(result);
+    
+    // Handle edge case: decimals === 0 (no fractional part)
+    if (decimals === 0) {
+      return balanceWei.toLocaleString('en-US');
+    }
+    
+    // Convert using BigInt division to maintain precision
+    let divisor = BigInt(1);
+    for (let i = 0; i < decimals; i++) {
+      divisor = divisor * BigInt(10);
+    }
+    
+    const balanceWhole = balanceWei / divisor;
+    const balanceRemainder = balanceWei % divisor;
+    
+    // Format with decimals (show up to 2 decimal places)
+    const remainderStr = balanceRemainder.toString().padStart(decimals, '0');
+    const decimalPart = remainderStr.slice(0, Math.min(2, decimals));
+    
+    const wholeFormatted = balanceWhole.toLocaleString('en-US');
+    
+    // Only show decimal part if it's non-zero
+    if (decimalPart && BigInt(decimalPart) > BigInt(0)) {
+      return wholeFormatted + '.' + decimalPart;
+    }
+    
+    return wholeFormatted;
+  } catch (error) {
+    console.error('Error fetching USDC balance:', error);
+    return '0';
   }
 }
 

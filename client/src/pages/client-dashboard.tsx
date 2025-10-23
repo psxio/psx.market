@@ -15,6 +15,7 @@ import { Header } from "@/components/header";
 import { User, LogOut, Shield, Wallet, Mail, Building2, Clock, Package, Calendar, ArrowRight, CreditCard } from "lucide-react";
 import type { Order } from "@shared/schema";
 import { PaymentHistory } from "@/components/payment-history";
+import { WalletBalanceDisplay } from "@/components/wallet-balance-display";
 
 export default function ClientDashboard() {
   const { client, isAuthenticated, logout, updateProfile } = useClientAuth();
@@ -178,6 +179,8 @@ export default function ClientDashboard() {
                 </div>
               </CardContent>
             </Card>
+            
+            <WalletBalanceDisplay address={client.walletAddress} variant="card" />
           </div>
 
           <div className="lg:col-span-2">
