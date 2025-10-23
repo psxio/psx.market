@@ -71,6 +71,20 @@ import {
   type InsertBuilderTag,
   type BuilderAdminNote,
   type InsertBuilderAdminNote,
+  type UserOnlineStatus,
+  type InsertUserOnlineStatus,
+  type TypingIndicator,
+  type InsertTypingIndicator,
+  type SavedSearch,
+  type InsertSavedSearch,
+  type BuilderFavorite,
+  type InsertBuilderFavorite,
+  type SearchHistory,
+  type InsertSearchHistory,
+  type UserPreferences,
+  type InsertUserPreferences,
+  type FilterPreset,
+  type InsertFilterPreset,
   builders,
   builderProjects,
   services,
@@ -115,6 +129,13 @@ import {
   builderInviteTokens,
   partners,
   partnerConnectionRequests,
+  userOnlineStatus,
+  typingIndicators,
+  savedSearches,
+  builderFavorites,
+  searchHistory,
+  userPreferences,
+  filterPresets,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -408,6 +429,47 @@ export interface IStorage {
   createPartnerConnectionRequest(request: InsertPartnerConnectionRequest): Promise<PartnerConnectionRequest>;
   updatePartnerConnectionRequest(id: string, data: Partial<PartnerConnectionRequest>): Promise<PartnerConnectionRequest>;
   deletePartnerConnectionRequest(id: string): Promise<void>;
+  
+  // Real-Time Features
+  getUserOnlineStatus(userId: string): Promise<UserOnlineStatus | undefined>;
+  updateUserOnlineStatus(userId: string, userType: string, status: string, currentActivity?: string): Promise<UserOnlineStatus>;
+  getOnlineUsers(userType?: string): Promise<UserOnlineStatus[]>;
+  cleanupStaleOnlineStatuses(inactiveMinutes?: number): Promise<void>;
+  
+  getTypingIndicator(threadId: string, userId: string): Promise<TypingIndicator | undefined>;
+  setTypingIndicator(threadId: string, userId: string, userType: string, isTyping: boolean): Promise<TypingIndicator>;
+  getThreadTypingIndicators(threadId: string): Promise<TypingIndicator[]>;
+  cleanupStaleTypingIndicators(inactiveSeconds?: number): Promise<void>;
+  
+  // Advanced Search & Filtering
+  getSavedSearches(userId: string, userType: string): Promise<SavedSearch[]>;
+  getSavedSearch(id: string): Promise<SavedSearch | undefined>;
+  createSavedSearch(search: InsertSavedSearch): Promise<SavedSearch>;
+  updateSavedSearch(id: string, data: Partial<SavedSearch>): Promise<SavedSearch>;
+  deleteSavedSearch(id: string): Promise<void>;
+  incrementSearchUsage(id: string): Promise<SavedSearch>;
+  
+  getBuilderFavorites(userId: string, collectionName?: string): Promise<BuilderFavorite[]>;
+  addBuilderFavorite(favorite: InsertBuilderFavorite): Promise<BuilderFavorite>;
+  removeBuilderFavorite(userId: string, builderId: string): Promise<void>;
+  isBuilderFavorited(userId: string, builderId: string): Promise<boolean>;
+  getFavoriteCollections(userId: string): Promise<string[]>;
+  
+  getSearchHistory(userId: string, userType: string, limit?: number): Promise<SearchHistory[]>;
+  addSearchHistory(history: InsertSearchHistory): Promise<SearchHistory>;
+  clearSearchHistory(userId: string): Promise<void>;
+  deleteSearchHistoryItem(id: string): Promise<void>;
+  getPopularSearches(userType: string, limit?: number): Promise<{ query: string; count: number }[]>;
+  
+  getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
+  createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
+  updateUserPreferences(userId: string, data: Partial<UserPreferences>): Promise<UserPreferences>;
+  
+  getFilterPresets(userId?: string, includeGlobal?: boolean): Promise<FilterPreset[]>;
+  getFilterPreset(id: string): Promise<FilterPreset | undefined>;
+  createFilterPreset(preset: InsertFilterPreset): Promise<FilterPreset>;
+  updateFilterPreset(id: string, data: Partial<FilterPreset>): Promise<FilterPreset>;
+  deleteFilterPreset(id: string): Promise<void>;
 }
 
 export class PostgresStorage implements IStorage {

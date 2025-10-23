@@ -1682,3 +1682,165 @@ export type EscrowDispute = typeof escrowDisputes.$inferSelect;
 
 export type InsertEscrowTransaction = z.infer<typeof insertEscrowTransactionSchema>;
 export type EscrowTransaction = typeof escrowTransactions.$inferSelect;
+
+// Real-Time Features
+
+export const userOnlineStatus = pgTable("user_online_status", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique(),
+  userType: text("user_type").notNull(), // 'builder' | 'client' | 'admin'
+  status: text("status").notNull().default("offline"), // 'online' | 'offline' | 'away' | 'busy'
+  lastSeen: text("last_seen").notNull().default(sql`CURRENT_TIMESTAMP`),
+  currentActivity: text("current_activity"), // 'browsing' | 'messaging' | 'idle'
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const typingIndicators = pgTable("typing_indicators", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  threadId: varchar("thread_id").notNull(),
+  userId: varchar("user_id").notNull(),
+  userType: text("user_type").notNull(), // 'builder' | 'client'
+  isTyping: boolean("is_typing").notNull().default(false),
+  startedAt: text("started_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Advanced Search & Filtering Features
+
+export const savedSearches = pgTable("saved_searches", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  userType: text("user_type").notNull(),
+  name: text("name").notNull(),
+  searchType: text("search_type").notNull(), // 'builder' | 'service'
+  filters: text("filters").notNull(), // JSON string of filter parameters
+  sortBy: text("sort_by"),
+  isDefault: boolean("is_default").notNull().default(false),
+  usageCount: integer("usage_count").notNull().default(0),
+  lastUsedAt: text("last_used_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const builderFavorites = pgTable("builder_favorites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  collectionName: text("collection_name"), // Optional custom collection
+  notes: text("notes"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const searchHistory = pgTable("search_history", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  userType: text("user_type").notNull(),
+  searchQuery: text("search_query").notNull(),
+  searchType: text("search_type").notNull(), // 'builder' | 'service'
+  filters: text("filters"), // JSON string of applied filters
+  resultsCount: integer("results_count"),
+  clickedResultId: varchar("clicked_result_id"),
+  searchedAt: text("searched_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const userPreferences = pgTable("user_preferences", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique(),
+  userType: text("user_type").notNull(),
+  
+  // Locale & Timezone
+  timezone: text("timezone").default("UTC"),
+  language: text("language").default("en"),
+  dateFormat: text("date_format").default("MM/DD/YYYY"),
+  timeFormat: text("time_format").default("12h"), // '12h' | '24h'
+  
+  // Communication Preferences
+  preferredLanguages: text("preferred_languages").array(),
+  availableForCalls: boolean("available_for_calls").notNull().default(true),
+  
+  // Notification Settings (browser notifications)
+  browserNotificationsEnabled: boolean("browser_notifications_enabled").notNull().default(false),
+  soundEnabled: boolean("sound_enabled").notNull().default(true),
+  desktopNotifications: boolean("desktop_notifications").notNull().default(false),
+  
+  // Search Preferences
+  defaultSearchSort: text("default_search_sort").default("relevance"),
+  showAvailableOnly: boolean("show_available_only").notNull().default(false),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const filterPresets = pgTable("filter_presets", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id"),
+  name: text("name").notNull(),
+  description: text("description"),
+  filters: text("filters").notNull(), // JSON string
+  isGlobal: boolean("is_global").notNull().default(false), // System presets
+  icon: text("icon"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Insert Schemas
+
+export const insertUserOnlineStatusSchema = createInsertSchema(userOnlineStatus).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertTypingIndicatorSchema = createInsertSchema(typingIndicators).omit({
+  id: true,
+  startedAt: true,
+  updatedAt: true,
+});
+
+export const insertSavedSearchSchema = createInsertSchema(savedSearches).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertBuilderFavoriteSchema = createInsertSchema(builderFavorites).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSearchHistorySchema = createInsertSchema(searchHistory).omit({
+  id: true,
+  searchedAt: true,
+});
+
+export const insertUserPreferencesSchema = createInsertSchema(userPreferences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertFilterPresetSchema = createInsertSchema(filterPresets).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Types
+
+export type InsertUserOnlineStatus = z.infer<typeof insertUserOnlineStatusSchema>;
+export type UserOnlineStatus = typeof userOnlineStatus.$inferSelect;
+
+export type InsertTypingIndicator = z.infer<typeof insertTypingIndicatorSchema>;
+export type TypingIndicator = typeof typingIndicators.$inferSelect;
+
+export type InsertSavedSearch = z.infer<typeof insertSavedSearchSchema>;
+export type SavedSearch = typeof savedSearches.$inferSelect;
+
+export type InsertBuilderFavorite = z.infer<typeof insertBuilderFavoriteSchema>;
+export type BuilderFavorite = typeof builderFavorites.$inferSelect;
+
+export type InsertSearchHistory = z.infer<typeof insertSearchHistorySchema>;
+export type SearchHistory = typeof searchHistory.$inferSelect;
+
+export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
+export type UserPreferences = typeof userPreferences.$inferSelect;
+
+export type InsertFilterPreset = z.infer<typeof insertFilterPresetSchema>;
+export type FilterPreset = typeof filterPresets.$inferSelect;
