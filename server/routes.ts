@@ -942,7 +942,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const builder = await storage.getBuilderByWallet(req.params.address);
       const client = await storage.getClientByWallet(req.params.address);
-      const isWhitelisted = builder?.tokenGateWhitelisted || client?.whitelisted || false;
+      const isWhitelisted = builder?.tokenGateWhitelisted || false;
       
       res.json({
         walletAddress: req.params.address,
