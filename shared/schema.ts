@@ -100,6 +100,15 @@ export const builders = pgTable("builders", {
   badges: text("badges").array(),
   memberSince: text("member_since").default(sql`CURRENT_TIMESTAMP`),
   
+  // Profile Enhancement Fields
+  coverImage: text("cover_image"),
+  profileStrength: integer("profile_strength").default(0),
+  repeatClientsCount: integer("repeat_clients_count").notNull().default(0),
+  videoIntroUrl: text("video_intro_url"),
+  rateCard: text("rate_card"),
+  pricingExpectations: text("pricing_expectations"),
+  verificationBadges: text("verification_badges").array(),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
