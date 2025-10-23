@@ -657,10 +657,10 @@ export default function ServiceDetail() {
               </Button>
               <Button
                 onClick={handleConfirmBooking}
-                data-testid="button-confirm-booking"
+                data-testid="button-confirm-order"
                 disabled={createOrderMutation.isPending}
               >
-                {createOrderMutation.isPending ? "Creating Order..." : "Confirm Booking"}
+                {createOrderMutation.isPending ? "Creating Order..." : `Place Order - $${calculateTotalPrice().toLocaleString()}`}
               </Button>
             </DialogFooter>
           </DialogContent>
