@@ -15,6 +15,8 @@ import { BuilderAuthProvider } from "@/hooks/use-builder-auth";
 import { InstallPWAPrompt } from "@/components/install-pwa-prompt";
 import { NotificationToastListener } from "@/components/notification-toast-listener";
 import { Footer } from "@/components/footer";
+import { FAQChatbot } from "@/components/faq-chatbot";
+import { KeyboardShortcutsHelp, useKeyboardShortcuts } from "@/components/keyboard-shortcuts-help";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile";
 import ServiceDetail from "@/pages/service-detail";
@@ -76,6 +78,26 @@ function Router() {
   );
 }
 
+function AppContent() {
+  useKeyboardShortcuts();
+  
+  return (
+    <>
+      <Toaster />
+      <InstallPWAPrompt />
+      <NotificationToastListener />
+      <KeyboardShortcutsHelp />
+      <FAQChatbot />
+      <div className="flex flex-col min-h-screen">
+        <main className="flex-1">
+          <Router />
+        </main>
+        <Footer />
+      </div>
+    </>
+  );
+}
+
 function App() {
   return (
     <WagmiProvider config={config}>
@@ -91,15 +113,7 @@ function App() {
                 <ClientAuthProvider>
                   <BuilderAuthProvider>
                     <TooltipProvider>
-                      <Toaster />
-                      <InstallPWAPrompt />
-                      <NotificationToastListener />
-                      <div className="flex flex-col min-h-screen">
-                        <main className="flex-1">
-                          <Router />
-                        </main>
-                        <Footer />
-                      </div>
+                      <AppContent />
                     </TooltipProvider>
                   </BuilderAuthProvider>
                 </ClientAuthProvider>

@@ -6,6 +6,7 @@ import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles
 import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import { useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 import {
   Sheet,
   SheetContent,
@@ -122,6 +123,8 @@ export function Header() {
                 Admin
               </Link>
             </Button>
+            
+            <ThemeToggle />
             
             <div className="hidden md:flex">
               <WalletConnectButton />
