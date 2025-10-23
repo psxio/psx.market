@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { RecommendedServices } from "@/components/ai/RecommendedServices";
 import {
   ArrowLeft,
   Clock,
@@ -587,6 +588,13 @@ export default function ServiceDetail() {
             </Card>
           </div>
         </div>
+
+        {/* AI Recommended Services */}
+        {id && (
+          <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+            <RecommendedServices serviceId={id} />
+          </div>
+        )}
 
         {/* Booking Dialog */}
         <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>

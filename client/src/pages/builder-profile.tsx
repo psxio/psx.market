@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrderBookingDialog } from "@/components/order-booking-dialog";
+import { SimilarBuilders } from "@/components/ai/SimilarBuilders";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   Star,
@@ -1057,6 +1058,10 @@ export default function BuilderProfile() {
             )}
           </TabsContent>
         </Tabs>
+      </div>
+
+      <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+        <SimilarBuilders builderId={builderId!} />
       </div>
 
       {selectedService && builder && (

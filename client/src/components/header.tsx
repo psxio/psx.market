@@ -78,6 +78,13 @@ export function Header() {
               </Link>
             </Button>
 
+            <Button asChild variant="default" size="sm" className="gap-1.5 text-xs hover-elevate hidden lg:flex bg-gradient-to-r from-purple-500 to-cyan-500" data-testid="link-find-builder">
+              <Link href="/find-builder">
+                <Sparkles className="h-3.5 w-3.5" />
+                Find Your Builder
+              </Link>
+            </Button>
+
             <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-getting-started">
               <Link href="/getting-started">
                 <Rocket className="h-3.5 w-3.5" />

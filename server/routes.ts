@@ -4870,6 +4870,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Matching Routes
+  app.post("/api/ai/match-builders", async (req, res) => {
+    try {
+      const { aiMatchingService } = await import("./aiMatchingService");
+      
+      const criteria = req.body;
+      const builders = await storage.getBuilders();
+      
+      const builderServices = new Map<string, any[]>();
+      for (const builder of builders) {
+        const services = await storage.getServicesByBuilder(builder.id);
+        builderServices.set(builder.id, services);
+      }
+      
+      const results = await aiMatchingService.matchBuildersToProject(
+        criteria,
+        builders,
+        builderServices
+      );
+      
+      res.json(results);
+    } catch (error) {
+      console.error("Error in AI matching:", error);
+      res.status(500).json({ error: "Failed to match builders" });
+    }
+  });
+
+  app.get("/api/ai/similar-builders/:builderId", async (req, res) => {
+    try {
+      const { aiMatchingService } = await import("./aiMatchingService");
+      
+      const builder = await storage.getBuilder(req.params.builderId);
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+      
+      const allBuilders = await storage.getBuilders();
+      const similarBuilders = await aiMatchingService.findSimilarBuilders(
+        builder,
+        allBuilders,
+        4
+      );
+      
+      res.json(similarBuilders);
+    } catch (error) {
+      console.error("Error finding similar builders:", error);
+      res.status(500).json({ error: "Failed to find similar builders" });
+    }
+  });
+
+  app.get("/api/ai/recommended-services/:serviceId", async (req, res) => {
+    try {
+      const { aiMatchingService } = await import("./aiMatchingService");
+      
+      const service = await storage.getService(req.params.serviceId);
+      if (!service) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      const allServices = await storage.getServices();
+      const servicesWithBuilders = await Promise.all(
+        allServices.map(async (s) => ({
+          service: s,
+          builder: s.builderId ? await storage.getBuilder(s.builderId) : null,
+        }))
+      );
+      
+      const recommendations = await aiMatchingService.generateServiceRecommendations(
+        service,
+        servicesWithBuilders
+      );
+      
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Error generating recommendations:", error);
+      res.status(500).json({ error: "Failed to generate recommendations" });
+    }
+  });
+
+  app.get("/api/ai/quiz-questions", async (req, res) => {
+    try {
+      const { aiMatchingService } = await import("./aiMatchingService");
+      const category = req.query.category as string | undefined;
+      
+      const questions = await aiMatchingService.generateQuizQuestions(category);
+      res.json(questions);
+    } catch (error) {
+      console.error("Error generating quiz questions:", error);
+      res.status(500).json({ error: "Failed to generate quiz questions" });
+    }
+  });
+
   // Register escrow routes
   app.use(escrowRouter);
 
