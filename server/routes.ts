@@ -782,11 +782,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const builder = await storage.createBuilder({
           walletAddress: validatedData.walletAddress,
           name: validatedData.name,
-          headline: `${validatedData.category} Expert`,
+          headline: validatedData.headline || `${validatedData.category} Expert`,
           bio: validatedData.bio,
           category: validatedData.category,
           verified: true,
           tokenGateWhitelisted: true,
+          
+          // Profile Images
+          profileImage: validatedData.profileImage,
+          coverImage: validatedData.coverImage,
+          profileStrength: validatedData.profileStrength,
           
           // Social & Portfolio
           twitterHandle: validatedData.twitterHandle,
