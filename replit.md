@@ -42,7 +42,20 @@ Create.psx employs a decoupled frontend and backend architecture.
 - **Data Storage**: PostgreSQL database with Drizzle ORM.
 - **Data Models**: Comprehensive schemas for Builders, Clients, Services, Orders, Payments, Reviews, Applications, and other entities.
 - **Order Management System**: Full order booking, management, status workflows, revision tracking, and activity logging.
-- **Payment Integration**: Comprehensive USDC payment system on Base blockchain using Base Pay SDK, featuring smart contract-based escrow, milestone releases, platform fees, automated payouts, and dispute resolution. Supports optional project allocation offers.
+- **Smart Contract Escrow System**: Fully implemented on-chain USDC payment system on Base blockchain with:
+  - **USDCEscrow.sol**: Auditable Solidity smart contract using OpenZeppelin standards (ReentrancyGuard, SafeERC20, Ownable)
+  - **Milestone-Based Releases**: Break projects into trackable milestones with individual payment amounts
+  - **Automated Approval**: Time-locked auto-release after approval deadline passes
+  - **Dispute Resolution**: Freezable payments with admin arbitration (CLIENT_WINS, BUILDER_WINS, PARTIAL split)
+  - **Platform Fees**: Configurable fee system (default 2.5%, managed by admin)
+  - **Automated Refunds**: Full refund capability before any payments released
+  - **Multi-Network Support**: Deployed on Base mainnet (production) and Sepolia testnet (development)
+  - **Comprehensive Tracking**: On-chain event monitoring, transaction history, and status syncing
+  - **Frontend Components**: EscrowManager, MilestoneTimeline, DisputeInterface, TransactionHistory
+  - **Backend Integration**: escrowService for contract interaction, API routes for state management
+  - **Database Schema**: escrowTransactions and escrowDisputes tables for complete audit trail
+  - **Deployment Ready**: Hardhat configuration, deployment scripts, BaseScan verification support
+  - **USDC Integration**: Base mainnet (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913), Sepolia (0x036CbD53842c5426634e7929541eC2318f3dCF7e)
 - **Real-Time Messaging System**: WebSocket-based chat for client-builder communication with project/order-based threads, read receipts, and file attachments.
 - **Enhanced Review System**: Comprehensive review platform with builder responses, admin moderation, community voting, and dispute system.
 - **Project Management System**: Milestone and deliverable tracking, builder submission workflow, client review, and centralized document repository.
