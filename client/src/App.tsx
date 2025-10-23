@@ -44,6 +44,7 @@ import PrivacyPolicy from "@/pages/privacy-policy";
 import CookiePolicy from "@/pages/cookie-policy";
 import FAQ from "@/pages/faq";
 import FindBuilder from "@/pages/find-builder";
+import BuyerRequests from "@/pages/buyer-requests";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -77,6 +78,7 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/cookie-policy" component={CookiePolicy} />
       <Route path="/faq" component={FAQ} />
+      <Route path="/buyer-requests" component={BuyerRequests} />
       <Route component={NotFound} />
     </Switch>
   );
