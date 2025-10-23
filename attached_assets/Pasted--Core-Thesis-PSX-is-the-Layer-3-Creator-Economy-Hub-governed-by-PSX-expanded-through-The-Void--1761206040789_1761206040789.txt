@@ -1,0 +1,52 @@
+■■ Core Thesis
+PSX is the Layer-3 Creator Economy Hub — governed by $PSX, expanded through The Void, and
+powered by PSX.Agency. We’re building infrastructure for the next wave of creator-owned economies,blending Gaming, Tokenized IP, B2B launch infrastructure, and Perpetual creator marketplaces.
+
+■ The Void (Product Layer)
+A 2D → 3D Game Engine / Metaverse / Creator Launchpad where users & projects can create, build, play, trade, socialize, and cross IP directly in-world. The ecosystem integrates a Perp DEX, Creator Marketplace, and IP bridge allowing external projects to enter The Void. 
+
++ Current 2D platformer live on psxonbase.com
+
+■ PSX.Agency (Revenue Layer 1)
+A B2B Coin-to-Coin Agency offering brand development, marketing activations, token infrastructure, 3D content, merchandise creation, and token-gated creator marketplaces. Revenue model: retainers +token allocations + marketplace commissions. First partnership: $TFUND (BNB Chain).
+
+■ PSX X Create Marketplace  (Revenue Layer 2)
+
+
+■ $PSX Token (Governance & Value Layer)
+Utility token for governance, staking, creator revenue share, and gas. Long-term goal: make $PSX the index of the creator economy — giving holders exposure to gaming, IP, and agency revenue.
+
+■ Traction & Ecosystem
+• Playable 2D platformer live on Base 
+• $PSX x $ZORA live 
+• Partnerships: $TENGE +$TFUND | Create on Base | 
+• 20+ active creators & developers 
+• 1M+ organic reach via Base ecosystem 
+• B2B / Coin-to-coin Agency is almost finalized and liv with a joint merger / partnership with Create        On Base which provides tools & services
+• Grant fundraising round live with join applications to base batches grant program with Create on base and multiple other grants.
+• In works to 
+•
+•
+•
+•
+
+■ Expansion Vision
+The Void (L3 Game Layer): Steam + Uniswap + Discord of Web3 PSX.Agency (Infra Layer): The
+creative factory powering creator economies $PSX (Governance Layer): The economy tying all
+components together
+
+■ Grant / Accelerator Fit
+We align with grants funding creator economy infra, gaming ecosystems, and decentralized
+marketplaces. Ideal fits: Base Ecosystem Fund, Arbitrum Foundation, Immutable X, Binance Labs,
+Animoca Brands, Outlier Ventures, Avalanche Multiverse, Solana Foundation.
+
+■ Funding / Ask
+Raise: $100K–$500K Use of Funds: 40% Game/3D Dev, 25% Infra, 20% Creator Tooling, 15%
+Marketing Runway: 12 months to 3D alpha launch.
+
+
+
+■■ Elevator Pitch
+“PSX is a Layer-3 creator economy hub — building infrastructure for creators and projects to launch, trade, and grow inside a game-based world called The Void. Think of it as the intersection of a 3D
+metaverse, a DEX, and a creative agency — with real clients, a playable demo, and a live token.”
+
