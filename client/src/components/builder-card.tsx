@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "wouter";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -215,9 +215,18 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                           <div className="w-full h-full rounded-md overflow-hidden">
                             {isVideo ? (
                               <video
+                                ref={(el) => {
+                                  if (el) {
+                                    if (isHovered) {
+                                      el.play().catch(() => {});
+                                    } else {
+                                      el.pause();
+                                      el.currentTime = 0;
+                                    }
+                                  }
+                                }}
                                 src={mediaUrl}
                                 className="w-full h-full object-cover"
-                                autoPlay={isHovered}
                                 loop
                                 muted
                                 playsInline
@@ -395,45 +404,81 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                           return (
                             <div 
                               key={index} 
-                              className={`relative aspect-video rounded-md bg-muted overflow-hidden transition-all duration-300 ${
+                              className={`relative aspect-video rounded-md bg-muted transition-all duration-300 ${
                                 isHovered 
-                                  ? 'scale-105 z-20 shadow-xl ring-2 ring-primary' 
+                                  ? 'scale-150 z-50 shadow-2xl ring-2 ring-primary' 
                                   : 'scale-100 z-10'
                               }`}
-                              onMouseEnter={() => setHoveredIndex(index)}
-                              onMouseLeave={() => setHoveredIndex(null)}
+                              style={{
+                                transformOrigin: index === 0 ? 'top left' : index === 1 ? 'top right' : index === 2 ? 'bottom left' : 'bottom right'
+                              }}
                               data-testid={`media-${index}`}
+                              onMouseEnter={(e) => {
+                                e.stopPropagation();
+                                setHoveredIndex(index);
+                                // Auto-play audio on hover
+                                if (isAudio) {
+                                  const audioEl = e.currentTarget.querySelector('audio') as HTMLAudioElement;
+                                  if (audioEl) {
+                                    audioEl.currentTime = 0;
+                                    audioEl.play().catch(() => {
+                                      // Browser blocked autoplay
+                                    });
+                                  }
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                e.stopPropagation();
+                                setHoveredIndex(null);
+                                // Pause audio on hover out
+                                if (isAudio) {
+                                  const audioEl = e.currentTarget.querySelector('audio') as HTMLAudioElement;
+                                  if (audioEl) {
+                                    audioEl.pause();
+                                    audioEl.currentTime = 0;
+                                  }
+                                }
+                              }}
                             >
-                              {isVideo ? (
-                                <video
-                                  src={mediaUrl}
-                                  loop
-                                  muted
-                                  playsInline
-                                  autoPlay={isHovered}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                  }}
-                                />
-                              ) : isAudio ? (
-                                <div className="flex flex-col items-center justify-center h-full">
-                                  <Music className={`h-8 w-8 mb-2 transition-all ${isHovered ? 'text-primary scale-125' : 'text-muted-foreground'}`} />
-                                  <span className="text-xs text-center font-medium">
-                                    {isHovered ? 'Playing...' : 'Hover to Play'}
-                                  </span>
-                                  <audio src={mediaUrl} preload="auto" />
-                                </div>
-                              ) : (
-                                <img 
-                                  src={mediaUrl} 
-                                  alt={`${service.title} preview ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                  }}
-                                />
-                              )}
+                              <div className="w-full h-full rounded-md overflow-hidden">
+                                {isVideo ? (
+                                  <video
+                                    ref={(el) => {
+                                      if (el) {
+                                        if (isHovered) {
+                                          el.play().catch(() => {});
+                                        } else {
+                                          el.pause();
+                                          el.currentTime = 0;
+                                        }
+                                      }
+                                    }}
+                                    src={mediaUrl}
+                                    className="w-full h-full object-cover"
+                                    loop
+                                    muted
+                                    playsInline
+                                    data-testid={`video-thumbnail-${index}`}
+                                  />
+                                ) : isAudio ? (
+                                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-violet-500/10 via-purple-500/10 to-fuchsia-500/10 p-4">
+                                    <Music className={`h-8 w-8 mb-2 transition-all duration-300 ${isHovered ? 'text-primary animate-pulse' : 'text-muted-foreground'}`} />
+                                    <span className="text-xs text-center font-medium">
+                                      {isHovered ? 'Playing...' : 'Hover to Play'}
+                                    </span>
+                                    <audio src={mediaUrl} preload="auto" />
+                                  </div>
+                                ) : (
+                                  <img 
+                                    src={mediaUrl} 
+                                    alt={`${service.title} preview ${index + 1}`}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                )}
+                              </div>
                             </div>
                           );
                         })}
