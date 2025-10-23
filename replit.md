@@ -8,6 +8,7 @@ Create.psx is a dual token-gated Web3 marketplace connecting premium builders wi
 - Professional Web3 aesthetic
 - **Typography**: Space Grotesk font (matching time.fun) loaded from Google Fonts, applied site-wide via CSS variable --font-sans
 - **Animations**: Scroll-triggered reveal animations throughout (fadeInUp, fadeInLeft, fadeInRight, fadeInScale, slideInUp, zoomIn, bounceIn)
+- **Navigation**: Help and Admin links moved to footer (not in navbar)
 
 ## System Architecture
 Create.psx employs a decoupled frontend and backend architecture.
@@ -15,7 +16,11 @@ Create.psx employs a decoupled frontend and backend architecture.
 ### UI/UX Decisions
 - **Branding**: Consistent purple/cyan gradient with equal prominence for Create and PSX brands.
 - **Design System**: Tailwind CSS and Shadcn UI for a modern, responsive, mobile-first design.
+- **Navigation Structure**: 
+  - Header: Browse Services, Browse Builders, Find Your Builder, Getting Started, Dashboard, Messages
+  - Footer: Platform links, Resources (including Help & FAQ and Admin Portal), Legal links
 - **Key Features**: Dual token-gated access, comprehensive builder profiles with portfolios and services, advanced search and filtering, dedicated admin and client dashboards, a multi-step builder application system, and a visual builder onboarding checklist. The platform also includes a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance pages.
+- **Browse Pages**: Both Browse Services and Browse Builders use consistent filtering layouts with sidebar filters (categories, languages, rating, availability), search functionality, and grid-based card displays.
 
 ### Technical Implementations
 - **Frontend**: React and TypeScript, TanStack Query for data fetching.

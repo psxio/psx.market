@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let builders = await storage.getBuilders();
       
-      const { search, categories, sortBy, minRating, psxTier, verified } = req.query;
+      const { search, categories, sortBy, minRating, psxTier, verified, languages, availability } = req.query;
 
       let filteredResults = builders;
 
@@ -77,7 +77,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           builder.category.toLowerCase().includes(searchLower) ||
           builder.skills?.some((skill) => skill.toLowerCase().includes(searchLower)) ||
           builder.bio?.toLowerCase().includes(searchLower) ||
-          builder.headline?.toLowerCase().includes(searchLower)
+          builder.headline?.toLowerCase().includes(searchLower) ||
+          builder.specializations?.some((spec) => spec.toLowerCase().includes(searchLower))
         );
       }
 
@@ -85,6 +86,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const categoryList = categories.split(",");
         filteredResults = filteredResults.filter((builder) => 
           categoryList.includes(builder.category)
+        );
+      }
+
+      if (languages && typeof languages === "string") {
+        const languageList = languages.split(",");
+        filteredResults = filteredResults.filter((builder) => 
+          builder.languages && builder.languages.some((lang) => languageList.includes(lang))
+        );
+      }
+
+      if (availability && typeof availability === "string") {
+        filteredResults = filteredResults.filter((builder) => 
+          builder.availability === availability
         );
       }
 

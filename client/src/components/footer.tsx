@@ -120,7 +120,7 @@ export function Footer() {
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
                   data-testid="link-footer-faq"
                 >
-                  FAQ
+                  Help & FAQ
                 </Link>
               </li>
               <li>
@@ -130,6 +130,15 @@ export function Footer() {
                   data-testid="link-footer-builder-quiz"
                 >
                   Builder Quiz
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/admin/login"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-admin"
+                >
+                  Admin Portal
                 </Link>
               </li>
             </ul>

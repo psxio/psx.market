@@ -91,13 +91,6 @@ export function Header() {
                 Getting Started
               </Link>
             </Button>
-
-            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-faq">
-              <Link href="/faq">
-                <Shield className="h-3.5 w-3.5" />
-                Help
-              </Link>
-            </Button>
             
             {(isClient || isBuilder) && (
               <>
@@ -123,13 +116,6 @@ export function Header() {
                 )}
               </>
             )}
-            
-            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-admin">
-              <Link href="/admin/login">
-                <Shield className="h-3.5 w-3.5" />
-                Admin
-              </Link>
-            </Button>
             
             <ThemeToggle />
             
@@ -186,13 +172,6 @@ export function Header() {
                         Getting Started
                       </Link>
                     </Button>
-
-                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-faq-mobile">
-                      <Link href="/faq">
-                        <Shield className="h-4 w-4" />
-                        Help
-                      </Link>
-                    </Button>
                     
                     {(isClient || isBuilder) && (
                       <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-dashboard-mobile">
@@ -211,13 +190,6 @@ export function Header() {
                         </Link>
                       </Button>
                     )}
-                    
-                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-admin-mobile">
-                      <Link href="/admin/login">
-                        <Shield className="h-4 w-4" />
-                        Admin
-                      </Link>
-                    </Button>
                   </nav>
                 </div>
               </SheetContent>
