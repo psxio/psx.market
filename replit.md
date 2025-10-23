@@ -67,6 +67,17 @@ Create.psx employs a decoupled frontend and backend architecture.
   - **Revenue Forecasting**: Pipeline value tracking, earnings projections with trend analysis, goal setting and progress monitoring, and financial planning tools.
   - **Message Templates Library**: Quick reply templates, FAQ auto-responses, customizable communication templates, and usage tracking.
   - **Client Relationship Manager**: Client notes and history tracking, project timeline visualization, retention analytics, and upsell opportunity identification.
+- **Quick Win UX Enhancements**: 10 immediate user experience improvements:
+  - **USDC Balance Display**: Real-time USDC balance alongside PSX/CREATE tokens in wallet displays and dashboards. Supports Base mainnet (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) and Sepolia (0x036CbD53842c5426634e7929541eC2318f3dCF7e).
+  - **Empty State Illustrations**: Professional empty state component with customizable icons, titles, descriptions, and action buttons for better UX.
+  - **Breadcrumb Navigation**: Hierarchical navigation breadcrumbs for improved page tracking and orientation.
+  - **Price Calculator Widget**: Interactive cost estimator with package selection, quantity slider, platform fee calculation, and delivery time display.
+  - **Recently Viewed Tracker**: localStorage-based tracking system for builders and services with max 5 recent items, showing avatars, ratings, and prices.
+  - **Theme Toggle**: Light/dark mode switcher in header with localStorage persistence, instant theme application.
+  - **Enhanced Keyboard Shortcuts**: Global keyboard navigation (g+h/m/d/s for pages, "/" for search, "?" for help modal) with comprehensive help dialog.
+  - **Enhanced Toast Notifications**: Action-enabled toasts with undo functionality, success toasts with custom actions.
+  - **FAQ Chatbot**: Floating support chatbot with 8 FAQ categories, quick question badges, keyword matching, and automated responses.
+  - **Enhanced Loading Skeletons**: 7 specialized skeleton components (BuilderCard, ServiceCard, DashboardStat, OrderCard, Profile, TableRow, ChatMessage) for smooth loading states.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
