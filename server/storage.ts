@@ -491,9 +491,9 @@ export class PostgresStorage implements IStorage {
         icon: "megaphone",
       },
       {
-        name: "3D Content Creators",
+        name: "3D & 2D Content Creation",
         slug: "3d-content",
-        description: "Professional 3D artists creating stunning visuals for your project",
+        description: "Professional 3D & 2D artists creating stunning visuals, animations, and videos",
         icon: "box",
       },
       {
@@ -505,14 +505,26 @@ export class PostgresStorage implements IStorage {
       {
         name: "Script Development",
         slug: "development",
-        description: "Smart contract and token development experts",
+        description: "Smart contract, website, bot development, and technical solutions",
         icon: "code",
       },
       {
         name: "Volume Services",
         slug: "volume",
-        description: "Liquidity and volume generation for your token",
+        description: "Liquidity, volume generation, and trading services for any chain",
         icon: "bar-chart-3",
+      },
+      {
+        name: "Graphic Design",
+        slug: "graphic-design",
+        description: "Creative graphic design for branding, marketing, and visual identity",
+        icon: "palette",
+      },
+      {
+        name: "Social Media Management",
+        slug: "social-media",
+        description: "Professional social media management, content creation, and community engagement",
+        icon: "network",
       },
     ];
 
@@ -572,6 +584,314 @@ export class PostgresStorage implements IStorage {
 
     for (const builder of buildersData) {
       await db.insert(builders).values(builder as any);
+    }
+
+    // Get the created builder IDs to assign to services
+    const createdBuilders = await db.select().from(builders);
+    const builder1 = createdBuilders[0];
+    const builder2 = createdBuilders[1];
+
+    // Comprehensive Service Seed Data - All Categories
+    const servicesData: Array<Partial<Service>> = [
+      // VOLUME SERVICES - Any Chain
+      {
+        builderId: builder1?.id,
+        title: "Custom Volume Generation (Any Chain)",
+        description: "Professional volume generation service supporting any blockchain network. Create natural trading patterns, maintain healthy price action, and build liquidity for your token launch or ongoing project.",
+        category: "volume",
+        deliveryTime: "3-7 days",
+        basicPrice: "2500.00",
+        standardPrice: "5000.00",
+        premiumPrice: "10000.00",
+        basicDescription: "Basic volume package - $50K daily volume for 7 days",
+        standardDescription: "Standard volume package - $150K daily volume for 14 days with custom patterns",
+        premiumDescription: "Premium volume package - $300K+ daily volume for 30 days with advanced market making",
+        basicDeliverables: ["$50K daily volume", "7 days duration", "Basic trading patterns", "Daily reports"],
+        standardDeliverables: ["$150K daily volume", "14 days duration", "Custom trading patterns", "Real-time dashboard", "Liquidity management"],
+        premiumDeliverables: ["$300K+ daily volume", "30 days duration", "Advanced market making", "24/7 monitoring", "Multi-DEX support", "Custom strategies"],
+        tags: ["volume", "liquidity", "trading", "market-making", "multi-chain"],
+        tokenTickers: [],
+        psxRequired: "100.00",
+        featured: true,
+        active: true,
+      },
+      {
+        builderId: builder1?.id,
+        title: "Custom Makers & Transactions - Trend Bot (Any Chain)",
+        description: "Advanced trend bot service creating organic wallet activity and transaction patterns. Perfect for building credibility, creating FOMO, and attracting organic traders across any blockchain.",
+        category: "volume",
+        deliveryTime: "2-5 days",
+        basicPrice: "1500.00",
+        standardPrice: "3500.00",
+        premiumPrice: "7500.00",
+        basicDescription: "Basic trend bot - 100 unique wallets, 500 transactions",
+        standardDescription: "Standard trend bot - 300 unique wallets, 2000 transactions, custom patterns",
+        premiumDescription: "Premium trend bot - 1000+ unique wallets, 10K+ transactions, AI-driven patterns",
+        basicDeliverables: ["100 unique wallets", "500 organic transactions", "5 days activity", "Basic patterns"],
+        standardDeliverables: ["300 unique wallets", "2000 transactions", "10 days activity", "Custom patterns", "Geographic distribution"],
+        premiumDeliverables: ["1000+ unique wallets", "10K+ transactions", "30 days activity", "AI-driven patterns", "Multi-chain support", "Viral mechanics"],
+        tags: ["trend-bot", "makers", "transactions", "wallet-activity", "multi-chain"],
+        psxRequired: "75.00",
+        featured: true,
+        active: true,
+      },
+      
+      // 3D & 2D CONTENT CREATION
+      {
+        builderId: builder2?.id,
+        title: "3D & 2D Character Design",
+        description: "Custom character design for your Web3 project, NFT collection, or memecoin mascot. Professional 3D modeling and 2D illustration with multiple revisions and full commercial rights.",
+        category: "3d-content",
+        deliveryTime: "5-10 days",
+        basicPrice: "800.00",
+        standardPrice: "1500.00",
+        premiumPrice: "3000.00",
+        basicDescription: "Basic character - 2D concept art, single pose, 2 revisions",
+        standardDescription: "Standard character - 2D + 3D low-poly model, 3 poses, turnaround, 4 revisions",
+        premiumDescription: "Premium character - Fully rigged 3D model, multiple poses, PBR textures, unlimited revisions",
+        basicDeliverables: ["2D concept art", "Single pose", "2 revisions", "PNG/JPG delivery", "Commercial rights"],
+        standardDeliverables: ["2D + 3D model", "3 poses", "360° turnaround", "4 revisions", "Source files", "Commercial rights"],
+        premiumDeliverables: ["Rigged 3D model", "Multiple poses", "PBR textures", "Unlimited revisions", "Blender/Maya files", "Full IP rights"],
+        tags: ["3d", "2d", "character-design", "nft", "mascot", "modeling"],
+        psxRequired: "50.00",
+        featured: true,
+        active: true,
+      },
+      {
+        builderId: builder2?.id,
+        title: "3D & 2D Animations",
+        description: "Professional animation services for token launches, explainer videos, NFT reveals, and social media content. Fluid motion, stunning visuals, and eye-catching effects.",
+        category: "3d-content",
+        deliveryTime: "7-14 days",
+        basicPrice: "1200.00",
+        standardPrice: "2500.00",
+        premiumPrice: "5000.00",
+        basicDescription: "Basic animation - 10 second 2D/3D loop, simple motion",
+        standardDescription: "Standard animation - 30 second animated sequence, advanced effects, sound design",
+        premiumDescription: "Premium animation - 60+ second cinematic animation, particle effects, full production",
+        basicDeliverables: ["10 second animation", "Simple motion", "1080p export", "2 revisions", "MP4 delivery"],
+        standardDeliverables: ["30 second animation", "Advanced effects", "4K export", "4 revisions", "Sound design", "Source files"],
+        premiumDeliverables: ["60+ second animation", "Cinematic quality", "Particle effects", "Unlimited revisions", "Multi-format export", "Full production"],
+        tags: ["animation", "3d", "2d", "motion-graphics", "video", "effects"],
+        psxRequired: "60.00",
+        featured: true,
+        active: true,
+      },
+      {
+        builderId: builder2?.id,
+        title: "Token Launch Video (3D & 2D)",
+        description: "High-impact launch video for your token or NFT collection. Professional cinematics, particle effects, logo reveals, and social-ready formats to maximize launch hype.",
+        category: "3d-content",
+        deliveryTime: "7-12 days",
+        basicPrice: "1500.00",
+        standardPrice: "3000.00",
+        premiumPrice: "6000.00",
+        basicDescription: "Basic launch video - 15 second teaser with logo reveal",
+        standardDescription: "Standard launch video - 30 second full trailer with 3D elements and music",
+        premiumDescription: "Premium launch video - 60 second cinematic trailer, full production, multiple cuts",
+        basicDeliverables: ["15 second video", "Logo reveal", "2D/3D mix", "1080p export", "2 revisions"],
+        standardDeliverables: ["30 second video", "Full 3D cinematics", "Particle effects", "Licensed music", "4K export", "4 revisions"],
+        premiumDeliverables: ["60 second video", "Cinematic production", "Advanced VFX", "Custom soundtrack", "Multiple cuts", "Unlimited revisions", "Social media formats"],
+        tags: ["launch-video", "3d", "token", "trailer", "cinematics", "marketing"],
+        psxRequired: "75.00",
+        featured: true,
+        active: true,
+      },
+      
+      // SOCIAL MEDIA MANAGEMENT
+      {
+        builderId: builder2?.id,
+        title: "Twitter & Social Media Management",
+        description: "Complete social media management for Web3 projects. Content creation, community engagement, growth strategies, and 24/7 monitoring across Twitter, Discord, Telegram, and more.",
+        category: "social-media",
+        deliveryTime: "Ongoing",
+        basicPrice: "800.00",
+        standardPrice: "1500.00",
+        premiumPrice: "3000.00",
+        basicDescription: "Basic package - Twitter only, 3 posts/day, basic engagement (per month)",
+        standardDescription: "Standard package - Twitter + 1 platform, 5 posts/day, community management (per month)",
+        premiumDescription: "Premium package - All platforms, 10+ posts/day, full growth strategy, 24/7 (per month)",
+        basicDeliverables: ["Twitter management", "3 posts/day", "Basic engagement", "Weekly reports", "30 days"],
+        standardDeliverables: ["Twitter + Discord/TG", "5 posts/day", "Community management", "Growth tactics", "Daily reports", "30 days"],
+        premiumDeliverables: ["All platforms", "10+ posts/day", "24/7 monitoring", "Full growth strategy", "Influencer outreach", "Real-time analytics", "30 days"],
+        tags: ["social-media", "twitter", "discord", "telegram", "community", "content"],
+        psxRequired: "40.00",
+        featured: false,
+        active: true,
+      },
+      
+      // KOL SERVICES
+      {
+        builderId: builder2?.id,
+        title: "KOL Management (Any Chain)",
+        description: "End-to-end KOL campaign management for your token launch or project. We source, negotiate, coordinate, and track influencer partnerships across all major chains and platforms.",
+        category: "kols",
+        deliveryTime: "5-10 days",
+        basicPrice: "2000.00",
+        standardPrice: "4000.00",
+        premiumPrice: "8000.00",
+        basicDescription: "Basic KOL package - 5 micro-influencers, basic coordination",
+        standardDescription: "Standard KOL package - 10 mid-tier KOLs, full coordination, tracking",
+        premiumDescription: "Premium KOL package - 20+ top-tier KOLs, campaign management, ROI tracking",
+        basicDeliverables: ["5 micro-influencers", "100K+ total reach", "Basic coordination", "Campaign report"],
+        standardDeliverables: ["10 mid-tier KOLs", "500K+ total reach", "Full coordination", "Performance tracking", "Negotiation included"],
+        premiumDeliverables: ["20+ top-tier KOLs", "2M+ total reach", "Campaign management", "ROI tracking", "Ongoing optimization", "Multi-platform"],
+        tags: ["kol", "influencer", "marketing", "campaign", "multi-chain"],
+        psxRequired: "100.00",
+        featured: true,
+        active: true,
+      },
+      {
+        builderId: builder2?.id,
+        title: "KOL Sourcing & Connecting (Any Chain)",
+        description: "Connect with the right influencers for your project. We provide verified KOL contacts, negotiate rates, and facilitate introductions across all blockchain networks.",
+        category: "kols",
+        deliveryTime: "3-7 days",
+        basicPrice: "500.00",
+        standardPrice: "1200.00",
+        premiumPrice: "2500.00",
+        basicDescription: "Basic sourcing - 10 verified KOL contacts with reach data",
+        standardDescription: "Standard sourcing - 25 KOL contacts, warm introductions, rate negotiation",
+        premiumDescription: "Premium sourcing - 50+ KOL contacts, direct introductions, partnership facilitation",
+        basicDeliverables: ["10 verified KOLs", "Contact details", "Reach metrics", "Niche matching"],
+        standardDeliverables: ["25 verified KOLs", "Warm introductions", "Rate negotiation", "Multi-platform coverage"],
+        premiumDeliverables: ["50+ verified KOLs", "Direct introductions", "Partnership facilitation", "Ongoing support", "Multi-chain network"],
+        tags: ["kol-sourcing", "influencer-network", "connections", "partnerships", "multi-chain"],
+        psxRequired: "30.00",
+        featured: false,
+        active: true,
+      },
+      
+      // WEBSITE DEVELOPMENT
+      {
+        builderId: builder1?.id,
+        title: "Website Landing Page",
+        description: "Professional landing page for your token, NFT project, or Web3 platform. Modern design, mobile-responsive, wallet connection, and optimized for conversions.",
+        category: "development",
+        deliveryTime: "3-7 days",
+        basicPrice: "800.00",
+        standardPrice: "1500.00",
+        premiumPrice: "3000.00",
+        basicDescription: "Basic landing page - Single page, responsive design, 3 sections",
+        standardDescription: "Standard landing page - Multi-section, wallet connect, animations, SEO",
+        premiumDescription: "Premium landing page - Custom design, advanced features, Web3 integration, CMS",
+        basicDeliverables: ["Single page", "Responsive design", "3 sections", "Contact form", "2 revisions"],
+        standardDeliverables: ["Multi-section page", "Wallet connection", "Smooth animations", "SEO optimized", "4 revisions", "Basic analytics"],
+        premiumDeliverables: ["Custom design", "Full Web3 integration", "CMS backend", "Advanced animations", "Analytics dashboard", "Unlimited revisions"],
+        tags: ["landing-page", "website", "web3", "responsive", "design"],
+        psxRequired: "40.00",
+        featured: false,
+        active: true,
+      },
+      {
+        builderId: builder1?.id,
+        title: "Full-Blown Website",
+        description: "Complete website development for Web3 projects. Multi-page architecture, blockchain integration, admin dashboard, database, and scalable infrastructure.",
+        category: "development",
+        deliveryTime: "14-30 days",
+        basicPrice: "3000.00",
+        standardPrice: "6000.00",
+        premiumPrice: "12000.00",
+        basicDescription: "Basic website - 5 pages, responsive, basic features",
+        standardDescription: "Standard website - 10+ pages, Web3 integration, database, admin panel",
+        premiumDescription: "Premium website - Custom platform, full Web3 stack, advanced features, scalability",
+        basicDeliverables: ["5 pages", "Responsive design", "Contact forms", "Basic SEO", "1 month support"],
+        standardDeliverables: ["10+ pages", "Web3 wallet integration", "Database setup", "Admin dashboard", "SEO optimization", "3 months support"],
+        premiumDeliverables: ["Custom full-stack platform", "Smart contract integration", "Advanced database", "User authentication", "Real-time features", "6 months support", "Scalable infrastructure"],
+        tags: ["full-website", "web3", "full-stack", "dapp", "platform"],
+        psxRequired: "150.00",
+        featured: true,
+        active: true,
+      },
+      
+      // BOT DEVELOPMENT
+      {
+        builderId: builder1?.id,
+        title: "Farcaster Apps & Telegram Bots",
+        description: "Custom Farcaster frames, Telegram bots, and social platform integrations for your Web3 project. Automate community management, create interactive experiences, and boost engagement.",
+        category: "development",
+        deliveryTime: "7-14 days",
+        basicPrice: "1200.00",
+        standardPrice: "2500.00",
+        premiumPrice: "5000.00",
+        basicDescription: "Basic bot - Simple Telegram bot or Farcaster frame with core features",
+        standardDescription: "Standard bot - Advanced bot with custom commands, database, analytics",
+        premiumDescription: "Premium bot - Full-featured platform with AI, Web3 integration, multi-platform",
+        basicDeliverables: ["Simple bot/frame", "5 core features", "Basic commands", "Documentation", "1 month support"],
+        standardDeliverables: ["Advanced bot", "15+ features", "Database integration", "Analytics dashboard", "Custom commands", "3 months support"],
+        premiumDeliverables: ["Full platform", "Unlimited features", "AI integration", "Web3 capabilities", "Multi-platform", "Real-time sync", "6 months support"],
+        tags: ["telegram-bot", "farcaster", "bot-development", "automation", "web3"],
+        psxRequired: "60.00",
+        featured: false,
+        active: true,
+      },
+      
+      // GRAPHIC DESIGN
+      {
+        builderId: builder2?.id,
+        title: "Graphic Design - Branding & Marketing",
+        description: "Professional graphic design services for Web3 projects. Logos, banners, social media graphics, NFT art, and complete brand identity packages.",
+        category: "graphic-design",
+        deliveryTime: "3-7 days",
+        basicPrice: "400.00",
+        standardPrice: "800.00",
+        premiumPrice: "1500.00",
+        basicDescription: "Basic package - 5 graphics (social media posts, banners)",
+        standardDescription: "Standard package - 15 graphics + logo design, brand guidelines",
+        premiumDescription: "Premium package - Complete brand identity, 30+ graphics, unlimited revisions",
+        basicDeliverables: ["5 custom graphics", "Social media ready", "Source files", "2 revisions"],
+        standardDeliverables: ["15 custom graphics", "Logo design", "Brand guidelines", "Social media templates", "4 revisions"],
+        premiumDeliverables: ["Complete brand identity", "30+ graphics", "Logo variations", "Style guide", "Marketing materials", "Unlimited revisions"],
+        tags: ["graphic-design", "branding", "logo", "social-graphics", "nft-art"],
+        psxRequired: "25.00",
+        featured: false,
+        active: true,
+      },
+    ];
+
+    for (const service of servicesData) {
+      await db.insert(services).values(service as any);
+    }
+
+    // Create global filter presets
+    const filterPresetsData: Array<Partial<FilterPreset>> = [
+      {
+        name: "Urgent - Available Now",
+        description: "Builders accepting orders with fast delivery (< 5 days)",
+        filters: JSON.stringify({
+          acceptingOrders: true,
+          deliveryTime: ["1-3 days", "3-7 days"],
+          sortBy: "responseTime"
+        }),
+        isGlobal: true,
+        icon: "zap",
+      },
+      {
+        name: "Premium - Top Rated",
+        description: "Verified builders with 4.5+ rating and 50+ completed projects",
+        filters: JSON.stringify({
+          verified: true,
+          minRating: 4.5,
+          minCompletedProjects: 50,
+          sortBy: "rating"
+        }),
+        isGlobal: true,
+        icon: "star",
+      },
+      {
+        name: "Budget-Friendly",
+        description: "Quality services under $1000",
+        filters: JSON.stringify({
+          maxPrice: 1000,
+          sortBy: "price"
+        }),
+        isGlobal: true,
+        icon: "dollar-sign",
+      },
+    ];
+
+    for (const preset of filterPresetsData) {
+      await db.insert(filterPresets).values(preset as any);
     }
 
     const adminPassword = await bcrypt.hash("admin123", 10);
