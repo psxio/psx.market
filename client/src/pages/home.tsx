@@ -323,55 +323,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b bg-gradient-to-br from-background via-primary/5 to-chart-2/5 py-8">
-        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="mb-6 text-center">
-            <Badge variant="outline" className="mb-2 gap-1 border-primary/40 bg-primary/10 text-primary text-xs">
-              <DollarSign className="h-3 w-3" />
-              Flexible Payments
-            </Badge>
-            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-              Pay Your Way
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground max-w-2xl mx-auto">
-              USDC payments on Base blockchain with optional project allocation
-            </p>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="p-4 hover-elevate transition-all">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 mb-3">
-                <DollarSign className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="text-base font-semibold mb-1.5">USDC on Base</h3>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Secure stablecoin payments with smart contract escrow on Base network.
-              </p>
-            </Card>
-
-            <Card className="p-4 hover-elevate transition-all border-chart-2/40 bg-chart-2/5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chart-2/20 mb-3">
-                <Gift className="h-4 w-4 text-chart-2" />
-              </div>
-              <h3 className="text-base font-semibold mb-1.5">Optional Allocation</h3>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Offer builders equity, tokens, or revenue share in addition to USDC.
-              </p>
-            </Card>
-
-            <Card className="p-4 hover-elevate transition-all">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chart-3/10 mb-3">
-                <Lock className="h-4 w-4 text-chart-3" />
-              </div>
-              <h3 className="text-base font-semibold mb-1.5">Milestone Releases</h3>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Funds released progressively as work is completed with protected escrow.
-              </p>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       <section ref={servicesSection.ref as any} className={`border-b py-16 ${servicesSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
