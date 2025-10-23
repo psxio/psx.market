@@ -340,12 +340,108 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
 
           <CardContent className="pb-4 space-y-3">
             {service && (
-              <div className="rounded-md bg-muted/50 p-3 border">
-                <h4 className="font-medium text-sm mb-1 line-clamp-2">{service.title}</h4>
-                <p className="text-xs text-muted-foreground line-clamp-2">
-                  {service.description}
-                </p>
-              </div>
+              <>
+                <div className="rounded-md bg-muted/50 p-3 border">
+                  <h4 className="font-medium text-sm mb-1 line-clamp-2">{service.title}</h4>
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    {service.description}
+                  </p>
+                  {service.tokenTickers && service.tokenTickers.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {service.tokenTickers.slice(0, 3).map((ticker, idx) => (
+                        <Badge 
+                          key={idx}
+                          variant="secondary" 
+                          className="bg-primary/10 text-primary border-primary/20 font-mono text-xs"
+                          data-testid={`token-ticker-${idx}`}
+                        >
+                          {ticker}
+                        </Badge>
+                      ))}
+                      {service.tokenTickers.length > 3 && (
+                        <Badge variant="secondary" className="text-xs font-mono">
+                          +{service.tokenTickers.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                {service.portfolioMedia && service.portfolioMedia.length > 0 && (
+                  <div className="mt-3">
+                    {isPartnerData(service.portfolioMedia[0]) ? (
+                      <div className="grid grid-cols-4 gap-2">
+                        {service.portfolioMedia.slice(0, 8).map((mediaUrl, index) => {
+                          const partnerName = getPartnerName(mediaUrl);
+                          return (
+                            <div 
+                              key={index}
+                              className="flex items-center justify-center p-2 rounded-md bg-muted/50 border border-border hover-elevate active-elevate-2 transition-all"
+                              data-testid={`partner-${index}`}
+                            >
+                              <span className="text-[10px] font-medium text-center line-clamp-2">
+                                {partnerName}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-2">
+                        {service.portfolioMedia.slice(0, 4).map((mediaUrl, index) => {
+                          const isVideo = isVideoUrl(mediaUrl);
+                          const isAudio = isAudioUrl(mediaUrl);
+                          const isHovered = hoveredIndex === index;
+                          return (
+                            <div 
+                              key={index} 
+                              className={`relative aspect-video rounded-md bg-muted overflow-hidden transition-all duration-300 ${
+                                isHovered 
+                                  ? 'scale-105 z-20 shadow-xl ring-2 ring-primary' 
+                                  : 'scale-100 z-10'
+                              }`}
+                              onMouseEnter={() => setHoveredIndex(index)}
+                              onMouseLeave={() => setHoveredIndex(null)}
+                              data-testid={`media-${index}`}
+                            >
+                              {isVideo ? (
+                                <video
+                                  src={mediaUrl}
+                                  loop
+                                  muted
+                                  playsInline
+                                  autoPlay={isHovered}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                  }}
+                                />
+                              ) : isAudio ? (
+                                <div className="flex flex-col items-center justify-center h-full">
+                                  <Music className={`h-8 w-8 mb-2 transition-all ${isHovered ? 'text-primary scale-125' : 'text-muted-foreground'}`} />
+                                  <span className="text-xs text-center font-medium">
+                                    {isHovered ? 'Playing...' : 'Hover to Play'}
+                                  </span>
+                                  <audio src={mediaUrl} preload="auto" />
+                                </div>
+                              ) : (
+                                <img 
+                                  src={mediaUrl} 
+                                  alt={`${service.title} preview ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                  }}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             <div className="flex items-center gap-3 text-sm flex-wrap">

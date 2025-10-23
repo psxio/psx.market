@@ -660,6 +660,12 @@ export class PostgresStorage implements IStorage {
         premiumDeliverables: ["$300K+ daily volume", "30 days duration", "Advanced market making", "24/7 monitoring", "Multi-DEX support", "Custom strategies"],
         tags: ["volume", "liquidity", "trading", "market-making", "multi-chain"],
         tokenTickers: [],
+        portfolioMedia: [
+          "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800",
+          "https://images.unsplash.com/photo-1642790551116-18e150f248e3?w=800",
+          "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800",
+          "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=800"
+        ],
         psxRequired: "100.00",
         featured: true,
         active: true,
@@ -702,6 +708,12 @@ export class PostgresStorage implements IStorage {
         standardDeliverables: ["2D + 3D model", "3 poses", "360° turnaround", "4 revisions", "Source files", "Commercial rights"],
         premiumDeliverables: ["Rigged 3D model", "Multiple poses", "PBR textures", "Unlimited revisions", "Blender/Maya files", "Full IP rights"],
         tags: ["3d", "2d", "character-design", "nft", "mascot", "modeling"],
+        portfolioMedia: [
+          "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800",
+          "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800",
+          "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=800",
+          "https://images.unsplash.com/photo-1551447438-45c3a0af2050?w=800"
+        ],
         psxRequired: "50.00",
         featured: true,
         active: true,
@@ -715,6 +727,12 @@ export class PostgresStorage implements IStorage {
         basicPrice: "1200.00",
         standardPrice: "2500.00",
         premiumPrice: "5000.00",
+        portfolioMedia: [
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "https://images.unsplash.com/photo-1551847812-d8a7e1f5f95e?w=800",
+          "https://images.unsplash.com/photo-1618192772237-dd5f33ba54ff?w=800",
+          "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800"
+        ],
         basicDescription: "Basic animation - 10 second 2D/3D loop, simple motion",
         standardDescription: "Standard animation - 30 second animated sequence, advanced effects, sound design",
         premiumDescription: "Premium animation - 60+ second cinematic animation, particle effects, full production",
@@ -735,6 +753,12 @@ export class PostgresStorage implements IStorage {
         basicPrice: "1500.00",
         standardPrice: "3000.00",
         premiumPrice: "6000.00",
+        portfolioMedia: [
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+          "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800",
+          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800"
+        ],
         basicDescription: "Basic launch video - 15 second teaser with logo reveal",
         standardDescription: "Standard launch video - 30 second full trailer with 3D elements and music",
         premiumDescription: "Premium launch video - 60 second cinematic trailer, full production, multiple cuts",
@@ -779,6 +803,16 @@ export class PostgresStorage implements IStorage {
         basicPrice: "2000.00",
         standardPrice: "4000.00",
         premiumPrice: "8000.00",
+        portfolioMedia: [
+          "partner:Binance",
+          "partner:Coinbase",
+          "partner:OKX",
+          "partner:Bybit",
+          "partner:KuCoin",
+          "partner:Crypto.com",
+          "partner:Bitget",
+          "partner:Gate.io"
+        ],
         basicDescription: "Basic KOL package - 5 micro-influencers, basic coordination",
         standardDescription: "Standard KOL package - 10 mid-tier KOLs, full coordination, tracking",
         premiumDescription: "Premium KOL package - 20+ top-tier KOLs, campaign management, ROI tracking",
