@@ -15,6 +15,7 @@ import { requireAdminAuth, requireClientAuth, generateAdminToken, revokeAdminTok
 import { WebSocketServer, WebSocket } from "ws";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
+import escrowRouter from "./routes/escrow";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -4874,6 +4875,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to send review requests" });
     }
   });
+
+  // Register escrow routes
+  app.use(escrowRouter);
 
   return httpServer;
 }
