@@ -2212,6 +2212,302 @@ export class PostgresStorage implements IStorage {
   async deletePartnerConnectionRequest(id: string): Promise<void> {
     await db.delete(partnerConnectionRequests).where(eq(partnerConnectionRequests.id, id));
   }
+
+  // Real-Time Features Implementation
+
+  async getUserOnlineStatus(userId: string): Promise<UserOnlineStatus | undefined> {
+    const result = await db.select().from(userOnlineStatus).where(eq(userOnlineStatus.userId, userId));
+    return result[0];
+  }
+
+  async updateUserOnlineStatus(userId: string, userType: string, status: string, currentActivity?: string): Promise<UserOnlineStatus> {
+    const existing = await this.getUserOnlineStatus(userId);
+    const now = new Date().toISOString();
+    
+    if (existing) {
+      const result = await db.update(userOnlineStatus)
+        .set({
+          status,
+          currentActivity,
+          lastSeen: now,
+          updatedAt: now,
+        })
+        .where(eq(userOnlineStatus.userId, userId))
+        .returning();
+      return result[0];
+    } else {
+      const result = await db.insert(userOnlineStatus).values({
+        userId,
+        userType,
+        status,
+        currentActivity,
+        lastSeen: now,
+      }).returning();
+      return result[0];
+    }
+  }
+
+  async getOnlineUsers(userType?: string): Promise<UserOnlineStatus[]> {
+    if (userType) {
+      return await db.select().from(userOnlineStatus)
+        .where(and(
+          eq(userOnlineStatus.userType, userType),
+          or(
+            eq(userOnlineStatus.status, 'online'),
+            eq(userOnlineStatus.status, 'away'),
+            eq(userOnlineStatus.status, 'busy')
+          )
+        ));
+    }
+    return await db.select().from(userOnlineStatus)
+      .where(or(
+        eq(userOnlineStatus.status, 'online'),
+        eq(userOnlineStatus.status, 'away'),
+        eq(userOnlineStatus.status, 'busy')
+      ));
+  }
+
+  async cleanupStaleOnlineStatuses(inactiveMinutes: number = 15): Promise<void> {
+    const cutoffTime = new Date(Date.now() - inactiveMinutes * 60 * 1000).toISOString();
+    await db.update(userOnlineStatus)
+      .set({ status: 'offline' })
+      .where(sqlFunc`${userOnlineStatus.lastSeen} < ${cutoffTime}`);
+  }
+
+  async getTypingIndicator(threadId: string, userId: string): Promise<TypingIndicator | undefined> {
+    const result = await db.select().from(typingIndicators)
+      .where(and(
+        eq(typingIndicators.threadId, threadId),
+        eq(typingIndicators.userId, userId)
+      ));
+    return result[0];
+  }
+
+  async setTypingIndicator(threadId: string, userId: string, userType: string, isTyping: boolean): Promise<TypingIndicator> {
+    const existing = await this.getTypingIndicator(threadId, userId);
+    const now = new Date().toISOString();
+    
+    if (existing) {
+      const result = await db.update(typingIndicators)
+        .set({
+          isTyping,
+          updatedAt: now,
+        })
+        .where(and(
+          eq(typingIndicators.threadId, threadId),
+          eq(typingIndicators.userId, userId)
+        ))
+        .returning();
+      return result[0];
+    } else {
+      const result = await db.insert(typingIndicators).values({
+        threadId,
+        userId,
+        userType,
+        isTyping,
+      }).returning();
+      return result[0];
+    }
+  }
+
+  async getThreadTypingIndicators(threadId: string): Promise<TypingIndicator[]> {
+    return await db.select().from(typingIndicators)
+      .where(and(
+        eq(typingIndicators.threadId, threadId),
+        eq(typingIndicators.isTyping, true)
+      ));
+  }
+
+  async cleanupStaleTypingIndicators(inactiveSeconds: number = 10): Promise<void> {
+    const cutoffTime = new Date(Date.now() - inactiveSeconds * 1000).toISOString();
+    await db.delete(typingIndicators)
+      .where(sqlFunc`${typingIndicators.updatedAt} < ${cutoffTime}`);
+  }
+
+  // Advanced Search & Filtering Implementation
+
+  async getSavedSearches(userId: string, userType: string): Promise<SavedSearch[]> {
+    return await db.select().from(savedSearches)
+      .where(and(
+        eq(savedSearches.userId, userId),
+        eq(savedSearches.userType, userType)
+      ))
+      .orderBy(desc(savedSearches.lastUsedAt), desc(savedSearches.usageCount));
+  }
+
+  async getSavedSearch(id: string): Promise<SavedSearch | undefined> {
+    const result = await db.select().from(savedSearches).where(eq(savedSearches.id, id));
+    return result[0];
+  }
+
+  async createSavedSearch(search: InsertSavedSearch): Promise<SavedSearch> {
+    const result = await db.insert(savedSearches).values(search).returning();
+    return result[0];
+  }
+
+  async updateSavedSearch(id: string, data: Partial<SavedSearch>): Promise<SavedSearch> {
+    const result = await db.update(savedSearches)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(savedSearches.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteSavedSearch(id: string): Promise<void> {
+    await db.delete(savedSearches).where(eq(savedSearches.id, id));
+  }
+
+  async incrementSearchUsage(id: string): Promise<SavedSearch> {
+    const result = await db.update(savedSearches)
+      .set({
+        usageCount: sqlFunc`${savedSearches.usageCount} + 1`,
+        lastUsedAt: new Date().toISOString(),
+      })
+      .where(eq(savedSearches.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async getBuilderFavorites(userId: string, collectionName?: string): Promise<BuilderFavorite[]> {
+    if (collectionName) {
+      return await db.select().from(builderFavorites)
+        .where(and(
+          eq(builderFavorites.userId, userId),
+          eq(builderFavorites.collectionName, collectionName)
+        ))
+        .orderBy(desc(builderFavorites.createdAt));
+    }
+    return await db.select().from(builderFavorites)
+      .where(eq(builderFavorites.userId, userId))
+      .orderBy(desc(builderFavorites.createdAt));
+  }
+
+  async addBuilderFavorite(favorite: InsertBuilderFavorite): Promise<BuilderFavorite> {
+    const result = await db.insert(builderFavorites).values(favorite).returning();
+    return result[0];
+  }
+
+  async removeBuilderFavorite(userId: string, builderId: string): Promise<void> {
+    await db.delete(builderFavorites)
+      .where(and(
+        eq(builderFavorites.userId, userId),
+        eq(builderFavorites.builderId, builderId)
+      ));
+  }
+
+  async isBuilderFavorited(userId: string, builderId: string): Promise<boolean> {
+    const result = await db.select().from(builderFavorites)
+      .where(and(
+        eq(builderFavorites.userId, userId),
+        eq(builderFavorites.builderId, builderId)
+      ));
+    return result.length > 0;
+  }
+
+  async getFavoriteCollections(userId: string): Promise<string[]> {
+    const result = await db.selectDistinct({ collectionName: builderFavorites.collectionName })
+      .from(builderFavorites)
+      .where(and(
+        eq(builderFavorites.userId, userId),
+        sqlFunc`${builderFavorites.collectionName} IS NOT NULL`
+      ));
+    return result.map(r => r.collectionName!).filter(Boolean);
+  }
+
+  async getSearchHistory(userId: string, userType: string, limit: number = 50): Promise<SearchHistory[]> {
+    return await db.select().from(searchHistory)
+      .where(and(
+        eq(searchHistory.userId, userId),
+        eq(searchHistory.userType, userType)
+      ))
+      .orderBy(desc(searchHistory.searchedAt))
+      .limit(limit);
+  }
+
+  async addSearchHistory(history: InsertSearchHistory): Promise<SearchHistory> {
+    const result = await db.insert(searchHistory).values(history).returning();
+    return result[0];
+  }
+
+  async clearSearchHistory(userId: string): Promise<void> {
+    await db.delete(searchHistory).where(eq(searchHistory.userId, userId));
+  }
+
+  async deleteSearchHistoryItem(id: string): Promise<void> {
+    await db.delete(searchHistory).where(eq(searchHistory.id, id));
+  }
+
+  async getPopularSearches(userType: string, limit: number = 10): Promise<{ query: string; count: number }[]> {
+    const result = await db.select({
+      query: searchHistory.searchQuery,
+      count: sqlFunc<number>`COUNT(*)::int`,
+    })
+      .from(searchHistory)
+      .where(eq(searchHistory.userType, userType))
+      .groupBy(searchHistory.searchQuery)
+      .orderBy(desc(sqlFunc`COUNT(*)`))
+      .limit(limit);
+    return result;
+  }
+
+  async getUserPreferences(userId: string): Promise<UserPreferences | undefined> {
+    const result = await db.select().from(userPreferences).where(eq(userPreferences.userId, userId));
+    return result[0];
+  }
+
+  async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
+    const result = await db.insert(userPreferences).values(preferences).returning();
+    return result[0];
+  }
+
+  async updateUserPreferences(userId: string, data: Partial<UserPreferences>): Promise<UserPreferences> {
+    const result = await db.update(userPreferences)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(userPreferences.userId, userId))
+      .returning();
+    return result[0];
+  }
+
+  async getFilterPresets(userId?: string, includeGlobal: boolean = true): Promise<FilterPreset[]> {
+    if (userId) {
+      if (includeGlobal) {
+        return await db.select().from(filterPresets)
+          .where(or(
+            eq(filterPresets.userId, userId),
+            eq(filterPresets.isGlobal, true)
+          ))
+          .orderBy(desc(filterPresets.isGlobal), desc(filterPresets.createdAt));
+      }
+      return await db.select().from(filterPresets)
+        .where(eq(filterPresets.userId, userId))
+        .orderBy(desc(filterPresets.createdAt));
+    }
+    return await db.select().from(filterPresets)
+      .where(eq(filterPresets.isGlobal, true))
+      .orderBy(desc(filterPresets.createdAt));
+  }
+
+  async getFilterPreset(id: string): Promise<FilterPreset | undefined> {
+    const result = await db.select().from(filterPresets).where(eq(filterPresets.id, id));
+    return result[0];
+  }
+
+  async createFilterPreset(preset: InsertFilterPreset): Promise<FilterPreset> {
+    const result = await db.insert(filterPresets).values(preset).returning();
+    return result[0];
+  }
+
+  async updateFilterPreset(id: string, data: Partial<FilterPreset>): Promise<FilterPreset> {
+    const result = await db.update(filterPresets)
+      .set(data)
+      .where(eq(filterPresets.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteFilterPreset(id: string): Promise<void> {
+    await db.delete(filterPresets).where(eq(filterPresets.id, id));
+  }
 }
 
 export const storage = new PostgresStorage();

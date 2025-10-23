@@ -1,5 +1,5 @@
 ## Overview
-Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the memecoin and crypto space. Its core purpose is to ensure quality by requiring $CREATE or $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, legal compliance, robust builder onboarding, and **AI-powered builder discovery and matching**. The long-term vision is to become the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management.
+Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the memecoin and crypto space. Its primary purpose is to ensure quality by requiring $CREATE or $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -15,95 +15,33 @@ Create.psx employs a decoupled frontend and backend architecture.
 ### UI/UX Decisions
 - **Branding**: Consistent purple/cyan gradient with equal prominence for Create and PSX brands.
 - **Design System**: Tailwind CSS and Shadcn UI for a modern, responsive, mobile-first design.
-- **Key Features**:
-    - **Dual Token-Gated Access**: $CREATE or $PSX token required for marketplace access and client tier assignment.
-    - **Builder Profiles**: Comprehensive profiles with portfolios, services, reviews, dynamic skill arrays, and category-specific showcases.
-    - **Previous Projects Showcase**: Detailed case studies with results, metrics, media, and testimonials.
-    - **Service Listings**: Detailed service offerings with tiered pricing.
-    - **Marketplace Browsing**: Comprehensive search and filtering system.
-    - **Admin & Client Dashboards**: Dedicated interfaces for administration and project management with secure authentication.
-    - **Advanced Admin Analytics Dashboard**: Comprehensive analytics including platform health score, interactive charts (Recharts), real-time activity feed, growth metrics, top performers widget, conversion funnel visualization, quick actions panel, and comprehensive stats.
-    - **Builder Application System**: Multi-step form wizard with category-specific questions and quiz-to-onboarding integration.
-    - **Builder Invite System**: Admin-managed private invite links for onboarding.
-    - **Navigation Strategy**: Clear separation of public, authenticated, and builder-specific content, with a well-organized footer.
-    - **Buy on Demand Section**: Homepage section displaying live, available builders with real-time status and category filtering.
-    - **PSX Agency Promotion**: Dedicated homepage section for B2B services.
-    - **Legal & Compliance Pages**: Comprehensive legal documentation and searchable FAQ.
-    - **Builder Onboarding System**: Visual checklist for new builders including profile setup, service listing, payment setup, and verification.
-    - **Onboarding & Help Resources**: How It Works page, Getting Started Guide, Welcome Modal, Builder Quiz integration, and Dashboard Quick Actions.
+- **Key Features**: Dual token-gated access, comprehensive builder profiles with portfolios and services, advanced search and filtering, dedicated admin and client dashboards, a multi-step builder application system, and a visual builder onboarding checklist. The platform also includes a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance pages.
 
 ### Technical Implementations
-- **Frontend**: React and TypeScript, TanStack Query for data fetching, custom Auth Contexts.
+- **Frontend**: React and TypeScript, TanStack Query for data fetching.
 - **Backend**: Express and TypeScript, RESTful API.
-- **Authentication**:
-  - **Admin**: Session-based using `express-session` and `bcrypt`.
-  - **Unified Wallet System**: RainbowKit integration with wagmi for all wallet connections, automatic user detection, and auto-login for registered users. Supports multiple wallets.
-- **Wallet Integration**: RainbowKit + wagmi for wallet connection, network verification (Base mainnet/Sepolia), and ERC-20 token balance checking for $CREATE and $PSX tokens. Token-gating requires holding either token, not both. `useWalletAuth` hook for wallet status.
-- **Data Storage**: PostgreSQL database with Drizzle ORM.
-- **Data Models**: Comprehensive schemas for Builders, Clients, Services, Orders, Payments, Reviews, Applications, and other entities.
-- **Order Management System**: Full order booking, management, status workflows, revision tracking, and activity logging.
-- **Smart Contract Escrow System**: Fully implemented on-chain USDC payment system on Base blockchain with:
-  - **USDCEscrow.sol**: Auditable Solidity smart contract using OpenZeppelin standards (ReentrancyGuard, SafeERC20, Ownable)
-  - **Milestone-Based Releases**: Break projects into trackable milestones with individual payment amounts
-  - **Automated Approval**: Time-locked auto-release after approval deadline passes
-  - **Dispute Resolution**: Freezable payments with admin arbitration (CLIENT_WINS, BUILDER_WINS, PARTIAL split)
-  - **Platform Fees**: Configurable fee system (default 2.5%, managed by admin)
-  - **Automated Refunds**: Full refund capability before any payments released
-  - **Multi-Network Support**: Deployed on Base mainnet (production) and Sepolia testnet (development)
-  - **Comprehensive Tracking**: On-chain event monitoring, transaction history, and status syncing
-  - **Frontend Components**: EscrowManager, MilestoneTimeline, DisputeInterface, TransactionHistory
-  - **Backend Integration**: escrowService for contract interaction, API routes for state management
-  - **Database Schema**: escrowTransactions and escrowDisputes tables for complete audit trail
-  - **Deployment Ready**: Hardhat configuration, deployment scripts, BaseScan verification support
-  - **USDC Integration**: Base mainnet (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913), Sepolia (0x036CbD53842c5426634e7929541eC2318f3dCF7e)
-- **Real-Time Messaging System**: WebSocket-based chat for client-builder communication with project/order-based threads, read receipts, and file attachments.
-- **Enhanced Review System**: Comprehensive review platform with builder responses, admin moderation, community voting, and dispute system.
-- **Project Management System**: Milestone and deliverable tracking, builder submission workflow, client review, and centralized document repository.
-- **Builder Dashboard & Tools**: Interface for builders including earnings, order management, service listings, performance analytics, and availability.
-- **Social & Community Features**: Builder follow system, activity feed, community badges, and testimonials.
-- **Analytics & Insights**: Platform-wide statistics dashboard with market insights, client analytics, and builder performance metrics.
-- **Progressive Web App (PWA)**: Full PWA implementation for offline functionality and installability.
-- **Mobile Optimization**: Enhanced responsive design with touch-friendly spacing and mobile-specific layouts.
-- **Comprehensive Notification System**: In-app notification center, real-time toast notifications, and granular notification settings.
-- **File Upload & Storage System**: Replit Object Storage (Google Cloud Storage backend) with ACL, presigned URLs, and various upload types.
-- **Advanced Search & Filtering**: Comprehensive marketplace search functionality with full-text search, category, price, rating, delivery time, and tag-based filtering.
-- **Profile & Service Management**: Complete management tools for builders and clients, including profile editing, service creation, editing, deletion, and archiving with ownership verification.
-- **Comprehensive Taxonomy System**: Three-tier hierarchy (Categories > Services > Tags) for organizing offerings. Categories are main verticals, services are specific offerings, and tags are skills/tools. Services without builders are browsable; with builders, they appear on profiles.
-- **Financial Management System**: Comprehensive admin financial dashboard with payment dashboard, revenue analytics (Recharts), payout queue, transaction history, failed payment recovery, escrow monitoring, platform fee manager, and exportable financial reports.
-- **UI/UX Enhancement System**: Centralized system for improved user experience including: Toast Notification Center, Keyboard Shortcuts, Confirmation Modals, Undo/Redo System, Data Density Options, Loading Skeletons, and Empty States, managed by a `UIEnhancementsProvider`.
-- **Builder Analytics & Growth Tools**: Comprehensive analytics dashboard with 8 specialized modules for builder success:
-  - **Profile Optimization**: Profile strength scoring (0-100%), completion checklist, SEO suggestions, profile view analytics, and conversion tracking.
-  - **Service Performance Analytics**: View counts, inquiry rates, conversion metrics by service, performance trends, and optimization recommendations.
-  - **Lead Management Inbox**: Inquiry tracking with status workflow (new/contacted/converted/lost), response templates, conversion tracking, and lead source analytics.
-  - **Review Automation System**: Automated review request scheduling post-delivery, customizable templates, tracking dashboard, and response automation.
-  - **Pricing Intelligence**: Competitive price comparison, dynamic pricing suggestions, revenue optimization analysis, and category-based benchmarking.
-  - **Revenue Forecasting**: Pipeline value tracking, earnings projections with trend analysis, goal setting and progress monitoring, and financial planning tools.
-  - **Message Templates Library**: Quick reply templates, FAQ auto-responses, customizable communication templates, and usage tracking.
-  - **Client Relationship Manager**: Client notes and history tracking, project timeline visualization, retention analytics, and upsell opportunity identification.
-- **Quick Win UX Enhancements**: 10 immediate user experience improvements:
-  - **USDC Balance Display**: Real-time USDC balance alongside PSX/CREATE tokens in wallet displays and dashboards. Supports Base mainnet (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) and Sepolia (0x036CbD53842c5426634e7929541eC2318f3dCF7e).
-  - **Empty State Illustrations**: Professional empty state component with customizable icons, titles, descriptions, and action buttons for better UX.
-  - **Breadcrumb Navigation**: Hierarchical navigation breadcrumbs for improved page tracking and orientation.
-  - **Price Calculator Widget**: Interactive cost estimator with package selection, quantity slider, platform fee calculation, and delivery time display.
-  - **Recently Viewed Tracker**: localStorage-based tracking system for builders and services with max 5 recent items, showing avatars, ratings, and prices.
-  - **Theme Toggle**: Light/dark mode switcher in header with localStorage persistence, instant theme application.
-  - **Enhanced Keyboard Shortcuts**: Global keyboard navigation (g+h/m/d/s for pages, "/" for search, "?" for help modal) with comprehensive help dialog.
-  - **Enhanced Toast Notifications**: Action-enabled toasts with undo functionality, success toasts with custom actions.
-  - **FAQ Chatbot**: Floating support chatbot with 8 FAQ categories, quick question badges, keyword matching, and automated responses.
-  - **Enhanced Loading Skeletons**: 7 specialized skeleton components (BuilderCard, ServiceCard, DashboardStat, OrderCard, Profile, TableRow, ChatMessage) for smooth loading states.
-- **AI-Powered Builder Discovery & Matching System**: Comprehensive AI-driven matching platform powered by OpenAI GPT-4o-mini:
-  - **Find Your Builder Wizard**: Multi-step quiz with dynamic AI-generated questions tailored to project needs, category-specific questionnaires, and intelligent builder matching (70%+ score for top matches, 50%+ for alternatives).
-  - **Similar Builders Engine**: AI-powered builder recommendations based on skills, category, and expertise with reasoning and matched skills display.
-  - **Smart Service Recommendations**: Complementary service suggestions on service detail pages using AI analysis to find related offerings.
-  - **AI Matching API**: Backend service (`aiMatchingService`) with 4 endpoints for builder matching, similar builders, service recommendations, and quiz generation.
-  - **Integration**: Find Your Builder page (/find-builder) with prominent header button, Similar Builders widget on builder profiles, Recommended Services on service detail pages.
+- **Authentication**: Session-based for admin, RainbowKit + wagmi for unified wallet authentication, supporting $CREATE or $PSX token gating.
+- **Data Storage**: PostgreSQL database with Drizzle ORM, managing schemas for Builders, Clients, Services, Orders, Payments, and more.
+- **Order Management System**: Full lifecycle management including booking, status workflows, and revision tracking.
+- **Smart Contract Escrow System**: On-chain USDC payment system on Base blockchain using `USDCEscrow.sol` for milestone-based releases, dispute resolution, platform fees, and automated refunds.
+- **Real-Time Messaging System**: WebSocket-based chat with read receipts and file attachments.
+- **Enhanced Review System**: Comprehensive platform for builder reviews, moderation, and dispute resolution.
+- **Project Management System**: Tracking milestones, deliverables, and document repositories.
+- **Builder Dashboard & Tools**: Interface for managing earnings, orders, services, and availability.
+- **File Upload & Storage**: Replit Object Storage (Google Cloud Storage backend) with ACL and presigned URLs.
+- **Financial Management System**: Admin dashboard with revenue analytics, payout queue, and escrow monitoring.
+- **UI/UX Enhancement System**: Centralized system providing toast notifications, keyboard shortcuts, confirmation modals, loading skeletons, and empty states.
+- **Builder Analytics & Growth Tools**: 8 specialized modules for builders covering profile optimization, service performance, lead management, review automation, pricing intelligence, revenue forecasting, message templates, and client relationship management.
+- **Quick Win UX Enhancements**: Includes USDC balance display, empty state illustrations, breadcrumb navigation, price calculator widget, recently viewed tracker, theme toggle, enhanced keyboard shortcuts, action-enabled toast notifications, an FAQ chatbot, and specialized loading skeletons.
+- **Real-Time Features**: Online/offline status tracking, live builder availability, typing indicators in chat, browser notifications, and unread message counters.
+- **Advanced Search & Filtering System**: Features saved search preferences, builder favorites/collections, search history, filter presets, location/timezone filters, and language/communication preferences.
+- **AI-Powered Builder Discovery & Matching System**: Utilizes OpenAI GPT-4o-mini for a "Find Your Builder Wizard" (quiz-based matching), "Similar Builders Engine" for recommendations, and "Smart Service Recommendations".
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
-- **Wallet SDK**: Base Account SDK (`@base-org/account`)
+- **Wallet SDK**: Base Account SDK
 - **Payment Token**: USDC (ERC-20)
-- **Access Tokens**: $CREATE (0x3849cC93e7B71b37885237cd91a215974135cD8D) and $PSX (ERC-20 tokens on Base)
-- **Token Standard**: ERC-20 (for $CREATE, $PSX, and USDC)
-- **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations (no personal API key required)
+- **Access Tokens**: $CREATE (ERC-20 on Base) and $PSX (ERC-20 on Base)
+- **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
