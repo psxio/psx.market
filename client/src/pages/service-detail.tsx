@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { RecommendedServices } from "@/components/ai/RecommendedServices";
 import { PricingComparisonTable } from "@/components/PricingComparisonTable";
+import { ServiceAddons, ServiceAddon, defaultAddons } from "@/components/ServiceAddons";
 import {
   ArrowLeft,
   Clock,
@@ -46,6 +47,7 @@ export default function ServiceDetail() {
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [customRequirements, setCustomRequirements] = useState("");
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
   const { data: serviceData, isLoading, isError } = useQuery<{
     service: Service;
@@ -56,6 +58,33 @@ export default function ServiceDetail() {
 
   const service = serviceData?.service;
   const builder = serviceData?.builder;
+
+  // Create sample addons with IDs
+  const serviceAddons: ServiceAddon[] = defaultAddons.map((addon, index) => ({
+    ...addon,
+    id: `addon-${index}`,
+  }));
+
+  const toggleAddon = (addonId: string) => {
+    setSelectedAddons((prev) =>
+      prev.includes(addonId)
+        ? prev.filter((id) => id !== addonId)
+        : [...prev, addonId]
+    );
+  };
+
+  const calculateTotalPrice = () => {
+    let basePrice = 0;
+    if (selectedPackage === "Basic") basePrice = service?.basicPrice || 0;
+    else if (selectedPackage === "Standard") basePrice = service?.standardPrice || 0;
+    else if (selectedPackage === "Premium") basePrice = service?.premiumPrice || 0;
+
+    const addonsPrice = serviceAddons
+      .filter((addon) => selectedAddons.includes(addon.id))
+      .reduce((sum, addon) => sum + addon.price, 0);
+
+    return basePrice + addonsPrice;
+  };
 
   // Update document head for SEO
   useEffect(() => {
@@ -557,7 +586,7 @@ export default function ServiceDetail() {
                 Send a booking request to {builder?.name} for the {selectedPackage} package
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
               <div className="space-y-2">
                 <h4 className="font-semibold">Service</h4>
                 <p className="text-sm text-muted-foreground">{service?.title}</p>
@@ -573,6 +602,17 @@ export default function ServiceDetail() {
                     : service?.premiumPrice}
                 </p>
               </div>
+              
+              <Separator />
+              
+              <ServiceAddons
+                addons={serviceAddons}
+                selectedAddons={selectedAddons}
+                onToggleAddon={toggleAddon}
+              />
+              
+              <Separator />
+              
               <div className="space-y-2">
                 <Label htmlFor="requirements">Custom Requirements (Optional)</Label>
                 <Textarea
@@ -584,15 +624,25 @@ export default function ServiceDetail() {
                   data-testid="textarea-requirements"
                 />
               </div>
+              
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-start gap-2 text-sm">
                   <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="flex-1">
                     <p className="font-medium">Secure Payment</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Payment will be held in escrow until delivery is complete
                     </p>
                   </div>
+                </div>
+              </div>
+              
+              <div className="rounded-lg border-2 border-primary bg-primary/5 p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-semibold">Total Price:</span>
+                  <span className="text-2xl font-bold text-primary" data-testid="text-total-price">
+                    ${calculateTotalPrice().toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
