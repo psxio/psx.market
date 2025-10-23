@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
+import { AutocompleteSearch } from "./AutocompleteSearch";
 import { Button } from "@/components/ui/button";
 import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -18,20 +19,18 @@ import {
 export function Header() {
   const { isClient, isBuilder, client, builder } = useWalletAuth();
   const [, setLocation] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
 
-  const handleSearch = (query: string) => {
+  const handleMobileSearch = (query: string) => {
     if (query.trim()) {
-      setLocation(`/marketplace?search=${encodeURIComponent(query.trim())}`);
-      setSearchQuery("");
+      setLocation(`/browse-services?search=${encodeURIComponent(query.trim())}`);
       setMobileSearchQuery("");
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, query: string) => {
+  const handleMobileKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleSearch(query);
+      handleMobileSearch(mobileSearchQuery);
     }
   };
 
@@ -49,18 +48,10 @@ export function Header() {
           </Link>
 
           <div className="hidden flex-1 max-w-md md:flex">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search services, builders, skills..."
-                className="pl-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => handleKeyDown(e, searchQuery)}
-                data-testid="input-search"
-              />
-            </div>
+            <AutocompleteSearch
+              placeholder="Search services, builders, or categories..."
+              className="w-full"
+            />
           </div>
 
           <div className="flex items-center gap-2">
@@ -146,7 +137,7 @@ export function Header() {
                       className="pl-9"
                       value={mobileSearchQuery}
                       onChange={(e) => setMobileSearchQuery(e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(e, mobileSearchQuery)}
+                      onKeyDown={handleMobileKeyDown}
                       data-testid="input-search-mobile"
                     />
                   </div>
