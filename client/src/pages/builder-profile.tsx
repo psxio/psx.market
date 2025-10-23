@@ -12,6 +12,9 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrderBookingDialog } from "@/components/order-booking-dialog";
 import { SimilarBuilders } from "@/components/ai/SimilarBuilders";
+import { VideoIntroduction } from "@/components/VideoIntroduction";
+import { PortfolioLightbox } from "@/components/PortfolioLightbox";
+import { ReviewList } from "@/components/ReviewWithResponse";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   Star,
@@ -45,6 +48,8 @@ export default function BuilderProfile() {
   const builderId = params?.id;
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   
   const servicesSection = useScrollReveal();
   const reviewsSection = useScrollReveal();
@@ -213,6 +218,13 @@ export default function BuilderProfile() {
           </TabsList>
 
           <TabsContent value="about" className="space-y-6">
+            {builder.videoIntroUrl && (
+              <VideoIntroduction
+                videoUrl={builder.videoIntroUrl}
+                builderName={builder.name}
+              />
+            )}
+
             <Card>
               <CardHeader>
                 <CardTitle>About</CardTitle>
@@ -471,22 +483,31 @@ export default function BuilderProfile() {
                             </p>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                               {builder.portfolioMedia.map((media, i) => (
-                                <a
+                                <button
                                   key={i}
-                                  href={media}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="aspect-video rounded-md border hover-elevate overflow-hidden"
+                                  onClick={() => {
+                                    setLightboxIndex(i);
+                                    setLightboxOpen(true);
+                                  }}
+                                  className="aspect-video rounded-md border hover-elevate overflow-hidden cursor-pointer"
+                                  data-testid={`button-portfolio-${i}`}
+                                  aria-label={`View portfolio image ${i + 1}`}
                                 >
                                   <img
                                     src={media}
                                     alt={`Portfolio ${i + 1}`}
                                     className="w-full h-full object-cover"
                                   />
-                                </a>
+                                </button>
                               ))}
                             </div>
                           </div>
+                          <PortfolioLightbox
+                            items={builder.portfolioMedia.map((url) => ({ url, type: "image" }))}
+                            initialIndex={lightboxIndex}
+                            isOpen={lightboxOpen}
+                            onClose={() => setLightboxOpen(false)}
+                          />
                         </>
                       )}
                     </CardContent>
@@ -1017,44 +1038,13 @@ export default function BuilderProfile() {
                   <Skeleton key={i} className="h-32 w-full" />
                 ))}
               </div>
-            ) : reviews && reviews.length > 0 ? (
-              <div ref={reviewsSection.ref as any} className={`space-y-4 ${reviewsSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-                {reviews.map((review) => (
-                  <Card key={review.id} data-testid={`card-review-${review.id}`}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                          <CardTitle className="text-base">{review.clientName}</CardTitle>
-                          {review.projectTitle && (
-                            <CardDescription>{review.projectTitle}</CardDescription>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-4 w-4 ${
-                                i < review.rating
-                                  ? "fill-chart-4 text-chart-4"
-                                  : "text-muted-foreground"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{review.comment}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
             ) : (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <p className="text-muted-foreground">No reviews yet</p>
-                </CardContent>
-              </Card>
+              <div ref={reviewsSection.ref as any} className={`${reviewsSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+                <ReviewList
+                  reviews={reviews || []}
+                  builderId={builderId}
+                />
+              </div>
             )}
           </TabsContent>
         </Tabs>
