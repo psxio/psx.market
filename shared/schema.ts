@@ -82,6 +82,24 @@ export const builders = pgTable("builders", {
   recentViews: integer("recent_views").notNull().default(0),
   isTrending: boolean("is_trending").notNull().default(false),
   
+  // Fiverr-like Enhanced Profile Fields
+  languages: text("languages").array(),
+  timezone: text("timezone"),
+  country: text("country"),
+  city: text("city"),
+  education: text("education").array(),
+  workExperience: text("work_experience"),
+  yearsOfExperience: integer("years_of_experience"),
+  availability: text("availability").default("available"),
+  hoursPerWeek: integer("hours_per_week"),
+  description: text("description"),
+  faqs: text("faqs").array(),
+  linkedinProfile: text("linkedin_profile"),
+  websiteUrl: text("website_url"),
+  specializations: text("specializations").array(),
+  badges: text("badges").array(),
+  memberSince: text("member_since").default(sql`CURRENT_TIMESTAMP`),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
