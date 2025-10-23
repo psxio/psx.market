@@ -4954,7 +4954,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { aiMatchingService } = await import("./aiMatchingService");
       const category = req.query.category as string | undefined;
       
-      const questions = await aiMatchingService.generateQuizQuestions(category);
+      const result = await aiMatchingService.generateQuizQuestions(category);
+      // OpenAI returns the questions wrapped in an object, extract the array
+      let questions;
+      if (Array.isArray(result)) {
+        questions = result;
+      } else if (typeof result === 'object' && result !== null) {
+        // Try to find the array in the response object
+        questions = result.quizQuestions || result.questions || Object.values(result)[0];
+      } else {
+        questions = result;
+      }
+      
+      // Ensure we have an array
+      if (!Array.isArray(questions)) {
+        throw new Error("Invalid quiz questions format from AI");
+      }
+      
       res.json(questions);
     } catch (error) {
       console.error("Error generating quiz questions:", error);

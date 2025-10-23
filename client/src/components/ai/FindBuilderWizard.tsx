@@ -196,6 +196,18 @@ export function FindBuilderWizard() {
   }
 
   const currentQuestion = questions[step];
+  
+  // Extra safety check - if currentQuestion is somehow undefined, show error
+  if (!currentQuestion) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center">
+          <p className="text-muted-foreground">Error loading question. Please refresh the page.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   const currentAnswer = answers[currentQuestion.id];
   const isLastQuestion = step === questions.length - 1;
 

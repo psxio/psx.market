@@ -1,5 +1,5 @@
 ## Overview
-Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the memecoin and crypto space. Its core purpose is to ensure quality by requiring $CREATE or $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, legal compliance, and a robust builder onboarding system. The long-term vision is to become the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management.
+Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the memecoin and crypto space. Its core purpose is to ensure quality by requiring $CREATE or $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, legal compliance, robust builder onboarding, and **AI-powered builder discovery and matching**. The long-term vision is to become the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -91,6 +91,12 @@ Create.psx employs a decoupled frontend and backend architecture.
   - **Enhanced Toast Notifications**: Action-enabled toasts with undo functionality, success toasts with custom actions.
   - **FAQ Chatbot**: Floating support chatbot with 8 FAQ categories, quick question badges, keyword matching, and automated responses.
   - **Enhanced Loading Skeletons**: 7 specialized skeleton components (BuilderCard, ServiceCard, DashboardStat, OrderCard, Profile, TableRow, ChatMessage) for smooth loading states.
+- **AI-Powered Builder Discovery & Matching System**: Comprehensive AI-driven matching platform powered by OpenAI GPT-4o-mini:
+  - **Find Your Builder Wizard**: Multi-step quiz with dynamic AI-generated questions tailored to project needs, category-specific questionnaires, and intelligent builder matching (70%+ score for top matches, 50%+ for alternatives).
+  - **Similar Builders Engine**: AI-powered builder recommendations based on skills, category, and expertise with reasoning and matched skills display.
+  - **Smart Service Recommendations**: Complementary service suggestions on service detail pages using AI analysis to find related offerings.
+  - **AI Matching API**: Backend service (`aiMatchingService`) with 4 endpoints for builder matching, similar builders, service recommendations, and quiz generation.
+  - **Integration**: Find Your Builder page (/find-builder) with prominent header button, Similar Builders widget on builder profiles, Recommended Services on service detail pages.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
@@ -98,5 +104,6 @@ Create.psx employs a decoupled frontend and backend architecture.
 - **Payment Token**: USDC (ERC-20)
 - **Access Tokens**: $CREATE (0x3849cC93e7B71b37885237cd91a215974135cD8D) and $PSX (ERC-20 tokens on Base)
 - **Token Standard**: ERC-20 (for $CREATE, $PSX, and USDC)
+- **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations (no personal API key required)
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
