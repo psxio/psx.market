@@ -5144,7 +5144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const servicesWithBuilders = await Promise.all(
         allServices.map(async (s) => ({
           service: s,
-          builder: s.builderId ? await storage.getBuilder(s.builderId) : null,
+          builder: s.builderId ? (await storage.getBuilder(s.builderId)) ?? null : null,
         }))
       );
       
@@ -5172,7 +5172,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         questions = result;
       } else if (typeof result === 'object' && result !== null) {
         // Try to find the array in the response object
-        questions = result.quizQuestions || result.questions || Object.values(result)[0];
+        const resultObj = result as any;
+        questions = resultObj.quizQuestions || resultObj.questions || Object.values(resultObj)[0];
       } else {
         questions = result;
       }
