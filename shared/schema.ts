@@ -176,6 +176,77 @@ export const services = pgTable("services", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Service Add-ons (Rush delivery, Extra files, etc.)
+export const serviceAddons = pgTable("service_addons", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serviceId: varchar("service_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  deliveryImpact: text("delivery_impact"),
+  icon: text("icon"),
+  active: boolean("active").notNull().default(true),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Service Requirements Templates (Questions for clients)
+export const serviceRequirements = pgTable("service_requirements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serviceId: varchar("service_id").notNull(),
+  question: text("question").notNull(),
+  type: text("type").notNull(),
+  required: boolean("required").notNull().default(true),
+  options: text("options").array(),
+  placeholder: text("placeholder"),
+  order: integer("order").notNull().default(0),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Order Requirements Responses
+export const orderRequirements = pgTable("order_requirements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  requirementId: varchar("requirement_id").notNull(),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Buyer Requests Board
+export const buyerRequests = pgTable("buyer_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id").notNull(),
+  clientName: text("client_name").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(),
+  budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
+  budgetType: text("budget_type").notNull().default("fixed"),
+  deadline: text("deadline"),
+  requiredSkills: text("required_skills").array(),
+  attachments: text("attachments").array(),
+  status: text("status").notNull().default("open"),
+  proposalsCount: integer("proposals_count").notNull().default(0),
+  viewsCount: integer("views_count").notNull().default(0),
+  expiresAt: text("expires_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Builder Proposals for Buyer Requests
+export const builderProposals = pgTable("builder_proposals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  requestId: varchar("request_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  builderName: text("builder_name").notNull(),
+  coverLetter: text("cover_letter").notNull(),
+  proposedPrice: decimal("proposed_price", { precision: 10, scale: 2 }).notNull(),
+  proposedDelivery: text("proposed_delivery").notNull(),
+  attachments: text("attachments").array(),
+  status: text("status").notNull().default("pending"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const reviews = pgTable("reviews", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   builderId: varchar("builder_id").notNull(),
@@ -1853,7 +1924,48 @@ export const insertFilterPresetSchema = createInsertSchema(filterPresets).omit({
   createdAt: true,
 });
 
+export const insertServiceAddonSchema = createInsertSchema(serviceAddons).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertServiceRequirementSchema = createInsertSchema(serviceRequirements).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertOrderRequirementSchema = createInsertSchema(orderRequirements).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBuyerRequestSchema = createInsertSchema(buyerRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertBuilderProposalSchema = createInsertSchema(builderProposals).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
+
+export type InsertServiceAddon = z.infer<typeof insertServiceAddonSchema>;
+export type ServiceAddon = typeof serviceAddons.$inferSelect;
+
+export type InsertServiceRequirement = z.infer<typeof insertServiceRequirementSchema>;
+export type ServiceRequirement = typeof serviceRequirements.$inferSelect;
+
+export type InsertOrderRequirement = z.infer<typeof insertOrderRequirementSchema>;
+export type OrderRequirement = typeof orderRequirements.$inferSelect;
+
+export type InsertBuyerRequest = z.infer<typeof insertBuyerRequestSchema>;
+export type BuyerRequest = typeof buyerRequests.$inferSelect;
+
+export type InsertBuilderProposal = z.infer<typeof insertBuilderProposalSchema>;
+export type BuilderProposal = typeof builderProposals.$inferSelect;
 
 export type InsertUserOnlineStatus = z.infer<typeof insertUserOnlineStatusSchema>;
 export type UserOnlineStatus = typeof userOnlineStatus.$inferSelect;
