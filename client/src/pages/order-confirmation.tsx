@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, Clock, Package, Mail, ArrowRight, MessageCircle, FileText } from "lucide-react";
+import { OrderTimeline } from "@/components/OrderTimeline";
 import type { Order } from "@shared/schema";
 
 export default function OrderConfirmation() {
@@ -163,6 +164,14 @@ export default function OrderConfirmation() {
               </div>
             </CardContent>
           </Card>
+
+          <div className="fadeInUp" style={{ animationDelay: "0.15s" }}>
+            <OrderTimeline
+              orderId={order.id}
+              status={order.status}
+              deliveryDate={new Date(Date.now() + order.deliveryDays * 24 * 60 * 60 * 1000).toISOString()}
+            />
+          </div>
 
           <Card className="bg-primary/5 border-primary/20 fadeInUp" style={{ animationDelay: "0.2s" }}>
             <CardHeader>
