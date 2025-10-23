@@ -112,3 +112,60 @@ Builder profiles are designed to match Fiverr's level of detail with 40+ profile
 - **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
+
+## Recent Changes
+
+### Fiverr-Inspired UX Component Integration (October 2025)
+Successfully integrated 8 out of 10 production-ready Fiverr-inspired UX components to enhance discoverability, trust, and ease of use:
+
+**Integrated Components:**
+1. **PricingComparisonTable** - Service detail pages showing side-by-side package comparison
+2. **VideoIntroduction** - Builder profile About tab for video introductions
+3. **PortfolioLightbox** - Builder profile Portfolio tab with full-screen image viewing
+4. **ReviewWithResponse** - Builder profile Reviews tab showing reviews with builder responses
+5. **ServiceAddons** - Booking dialog with optional add-ons and dynamic pricing
+6. **OrderTimeline** - Order confirmation page showing progress tracking and delivery countdown
+7. **AutocompleteSearch** - Header search with suggestions, recent searches, and popular items
+8. **BuyerRequestsBoard** - New dedicated page (/buyer-requests) for browsing project requests
+
+**Skipped Components:**
+- AdvancedFilterSidebar - Existing filter sidebar provides sufficient functionality
+- RequirementsQuestionnaire - Requires dedicated checkout page (not yet implemented)
+
+**Files Modified:**
+- client/src/pages/service-detail.tsx
+- client/src/pages/builder-profile.tsx
+- client/src/pages/order-confirmation.tsx
+- client/src/components/header.tsx
+- client/src/pages/buyer-requests.tsx (NEW)
+- client/src/App.tsx
+
+### Backend API Requirements (Pending Implementation)
+The following backend API endpoints are required to support the newly integrated components:
+
+**Buyer Requests API:**
+- `GET /api/buyer-requests` - Fetch all active buyer requests with filtering
+- `GET /api/buyer-requests/:id` - Fetch specific buyer request details
+- `POST /api/buyer-requests` - Create new buyer request (client-only)
+- `PATCH /api/buyer-requests/:id` - Update buyer request status
+- `POST /api/buyer-requests/:id/proposals` - Submit proposal for a request (builder-only)
+- `GET /api/buyer-requests/:id/proposals` - Get all proposals for a request
+
+**Storage Methods Required:**
+- `createBuyerRequest(data: InsertBuyerRequest): Promise<BuyerRequest>`
+- `getBuyerRequests(filters?: { category?: string, status?: string }): Promise<BuyerRequest[]>`
+- `getBuyerRequest(id: string): Promise<BuyerRequest | null>`
+- `updateBuyerRequest(id: string, data: Partial<BuyerRequest>): Promise<BuyerRequest>`
+- `submitProposal(requestId: string, builderId: string, proposalData: any): Promise<Proposal>`
+
+**New Page Routes Required:**
+- `/buyer-request/:id/submit-proposal` - Proposal submission form for builders
+
+**Data Model Enhancements:**
+The BuyerRequest schema already exists in shared/schema.ts and includes:
+- Basic request info (title, description, category, budget, deadline)
+- Status tracking (open, in_progress, closed)
+- Metadata (proposalsCount, viewsCount, expiresAt)
+- Client information (clientId, clientName)
+
+A new Proposal schema may be needed to track builder proposals for buyer requests.
