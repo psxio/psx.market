@@ -1,5 +1,5 @@
 ## Overview
-Create.psx is a dual token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its core mission is to ensure quality and exclusivity by requiring users to hold $CREATE or $PSX tokens for platform access. The platform offers comprehensive features including builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term ambition is to establish Create.psx as the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management functionalities.
+Create.psx is a Web3 marketplace with dual token incentives designed to connect premium builders with clients in the memecoin and broader crypto space. The platform is open to all users, but offers exclusive benefits and reduced fees to $CREATE and $PSX token holders. The platform features comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term ambition is to establish Create.psx as the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management functionalities.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -17,13 +17,14 @@ Create.psx utilizes a decoupled frontend and backend architecture to deliver a s
 - **Branding**: Consistent purple/cyan gradient with equal prominence for Create and PSX brands.
 - **Design System**: Built with Tailwind CSS and Shadcn UI, emphasizing a modern, responsive, and mobile-first approach.
 - **Navigation Structure**: Features a header with core navigation (Browse Services, Browse Builders, Find Your Builder, Getting Started, Dashboard, Messages) and a footer for platform links, resources (including Help & FAQ and Admin Portal), and legal links.
-- **Key Features**: Dual token-gated access, detailed builder profiles with portfolios and services, advanced search and filtering capabilities, dedicated admin and client dashboards, a multi-step builder application process, and a visual builder onboarding checklist. Additional features include a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance documentation.
+- **Key Features**: Dual token incentive system ($CREATE & $PSX holders receive platform fee discounts and exclusive benefits), detailed builder profiles with portfolios and services, advanced search and filtering capabilities, dedicated admin and client dashboards, a multi-step builder application process, and a visual builder onboarding checklist. Additional features include a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance documentation.
 - **Browse Pages**: Both service and builder browsing pages feature consistent layouts with sidebar filters (categories, languages, rating, availability), search functionality, and grid-based card displays.
 
 ### Technical Implementations
 - **Frontend**: Developed using React and TypeScript, with TanStack Query for efficient data fetching.
 - **Backend**: Implemented with Express and TypeScript, providing a RESTful API.
-- **Authentication**: Utilizes session-based authentication for administrators and RainbowKit + wagmi for unified wallet authentication, enabling token gating based on $CREATE or $PSX holdings.
+- **Authentication**: Utilizes session-based authentication for administrators and RainbowKit + wagmi for unified wallet authentication, enabling token incentive benefits based on $CREATE or $PSX holdings.
+- **Token Incentive System**: Platform is open to all users, but token holders ($CREATE or $PSX) receive exclusive benefits including: reduced platform fees (1% vs 2.5% standard), priority support, token holder badges, early access to new features, and exclusive service offerings. The system checks token balances in real-time and automatically applies benefits without blocking access to non-holders.
 - **Data Storage**: PostgreSQL database managed with Drizzle ORM, supporting various schemas including Builders, Clients, Services, Orders, and Payments.
 - **Order Management System**: Comprehensive system for managing the entire order lifecycle, including booking, status workflows, and revision tracking.
 - **Smart Contract Escrow System**: An on-chain USDC payment system on the Base blockchain using `USDCEscrow.sol` for milestone-based releases, dispute resolution, platform fees, and automated refunds.
@@ -57,7 +58,7 @@ Builder profiles are highly detailed, featuring over 40 fields to comprehensivel
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
 - **Wallet SDK**: Base Account SDK
 - **Payment Token**: USDC (ERC-20)
-- **Access Tokens**: $CREATE (ERC-20 on Base) and $PSX (ERC-20 on Base)
+- **Incentive Tokens**: $CREATE (ERC-20 on Base) and $PSX (ERC-20 on Base) - holding either token provides platform benefits including reduced fees and exclusive perks
 - **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)

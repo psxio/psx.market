@@ -92,12 +92,12 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline" className="w-fit gap-1.5 border-primary/40 bg-primary/10 text-primary">
-                    <Shield className="h-3 w-3" />
-                    Token-Gated Premium Services
+                    <Gift className="h-3 w-3" />
+                    Token Holder Benefits
                   </Badge>
                   <Badge variant="default" className="w-fit gap-1.5 animate-pulse">
                     <Sparkles className="h-3 w-3" />
-                    First 50 Builders + 2 Clients FREE
+                    Save Up to 60% with Tokens
                   </Badge>
                 </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -107,13 +107,13 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="text-lg text-muted-foreground md:text-xl">
-                  The dual token-gated marketplace connecting premium builders with memecoin
-                  and crypto projects. Quality assured through $CREATE and $PSX holdings.
+                  The open Web3 marketplace connecting premium builders with memecoin
+                  and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
                 </p>
                 <div className="rounded-lg border border-chart-3/30 bg-chart-3/5 p-4">
                   <p className="text-sm font-medium text-chart-3 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" />
-                    Launch Special: The first 50 approved builders and first 2 clients get FREE whitelisted access — no tokens required!
+                    <Gift className="h-4 w-4" />
+                    Token Holder Perks: 60% lower platform fees (1% vs 2.5%), priority support, exclusive badges, and early access to new features!
                   </p>
                 </div>
               </div>
@@ -153,10 +153,10 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-chart-2" />
+                  <Gift className="h-5 w-5 text-chart-2" />
                   <div>
-                    <div className="font-semibold">$CREATE & $PSX Gated</div>
-                    <div className="text-muted-foreground">Quality guaranteed</div>
+                    <div className="font-semibold">Token Holder Benefits</div>
+                    <div className="text-muted-foreground">Exclusive perks & savings</div>
                   </div>
                 </div>
               </div>
@@ -180,6 +180,112 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Token Holder Benefits Section */}
+      <section className="border-b bg-gradient-to-br from-primary/5 via-chart-2/5 to-background py-16">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 gap-1.5 border-primary/40 bg-primary/10 text-primary">
+              <Gift className="h-3 w-3" />
+              Exclusive Rewards
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight mb-3">Token Holder Benefits</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Hold $CREATE or $PSX tokens to unlock exclusive platform perks, discounts, and priority access
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="border-2">
+              <div className="p-6 space-y-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/10">
+                  <DollarSign className="h-6 w-6 text-chart-3" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">60% Lower Fees</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Pay only 1% platform fee instead of 2.5% standard rate on all orders
+                  </p>
+                </div>
+                <Badge variant="secondary" className="w-full justify-center">
+                  Save on every order
+                </Badge>
+              </div>
+            </Card>
+
+            <Card className="border-2">
+              <div className="p-6 space-y-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10">
+                  <Zap className="h-6 w-6 text-chart-2" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Priority Support</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Get faster response times and dedicated assistance from our team
+                  </p>
+                </div>
+                <Badge variant="secondary" className="w-full justify-center">
+                  VIP treatment
+                </Badge>
+              </div>
+            </Card>
+
+            <Card className="border-2">
+              <div className="p-6 space-y-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/10">
+                  <CheckCircle2 className="h-6 w-6 text-chart-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Verified Badge</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Display token holder badge on your profile to build trust with builders
+                  </p>
+                </div>
+                <Badge variant="secondary" className="w-full justify-center">
+                  Stand out
+                </Badge>
+              </div>
+            </Card>
+
+            <Card className="border-2">
+              <div className="p-6 space-y-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Early Access</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Be first to access new features, exclusive services, and premium builders
+                  </p>
+                </div>
+                <Badge variant="secondary" className="w-full justify-center">
+                  Beta features
+                </Badge>
+              </div>
+            </Card>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-sm text-muted-foreground mb-4">
+              Don't have tokens yet? Platform is fully accessible to everyone - benefits are optional rewards!
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" className="gap-2 hover-elevate" data-testid="button-get-tokens">
+                  <ExternalLink className="h-4 w-4" />
+                  Get $PSX Tokens
+                </Button>
+              </a>
+              <Link href="/marketplace">
+                <Button className="gap-2" data-testid="button-browse-without-tokens">
+                  Browse Without Tokens
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

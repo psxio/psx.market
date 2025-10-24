@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useClientAuth } from "@/hooks/use-client-auth";
+import { useAccount } from "wagmi";
+import { erc20Abi } from "viem";
+import { useReadContracts } from "wagmi";
 import {
   Dialog,
   DialogContent,
@@ -18,10 +21,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2, CheckCircle2, Clock, RefreshCcw, Gift } from "lucide-react";
+import { Loader2, CheckCircle2, Clock, RefreshCcw, Gift, Star, TrendingDown } from "lucide-react";
 import type { Service, Builder } from "@shared/schema";
+
+const PSX_TOKEN_ADDRESS = import.meta.env.VITE_PSX_TOKEN_ADDRESS as `0x${string}` || '0x0000000000000000000000000000000000000000' as `0x${string}`;
+const CREATE_TOKEN_ADDRESS = '0x3849cC93e7B71b37885237cd91a215974135cD8D' as `0x${string}`;
 
 interface OrderBookingDialogProps {
   open: boolean;
@@ -39,11 +46,36 @@ export function OrderBookingDialog({
   const { client } = useClientAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const { address } = useAccount();
   const [selectedPackage, setSelectedPackage] = useState<"basic" | "standard" | "premium">("basic");
   const [requirements, setRequirements] = useState("");
   const [offerAllocation, setOfferAllocation] = useState(false);
   const [allocationPercentage, setAllocationPercentage] = useState("");
   const [allocationDetails, setAllocationDetails] = useState("");
+
+  // Check token balances for discounts
+  const { data: tokenData } = useReadContracts({
+    contracts: [
+      {
+        address: PSX_TOKEN_ADDRESS,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: address ? [address] : undefined,
+      },
+      {
+        address: CREATE_TOKEN_ADDRESS,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: address ? [address] : undefined,
+      },
+    ],
+  });
+
+  const psxBalance = tokenData?.[0]?.result;
+  const createBalance = tokenData?.[1]?.result;
+  
+  // User is a token holder if they have either PSX or CREATE tokens
+  const isTokenHolder = (psxBalance && psxBalance > BigInt(0)) || (createBalance && createBalance > BigInt(0));
 
   const packages = [
     {
@@ -73,6 +105,18 @@ export function OrderBookingDialog({
   ];
 
   const selectedPkg = packages.find((p) => p.id === selectedPackage);
+
+  // Calculate platform fees and savings
+  const servicePrice = parseFloat(selectedPkg?.price || "0");
+  const standardFeeRate = 0.025; // 2.5%
+  const tokenHolderFeeRate = 0.01; // 1%
+  
+  const feeRate = isTokenHolder ? tokenHolderFeeRate : standardFeeRate;
+  const platformFee = servicePrice * feeRate;
+  const totalPrice = servicePrice + platformFee;
+  
+  const savings = isTokenHolder ? servicePrice * (standardFeeRate - tokenHolderFeeRate) : 0;
+  const savingsPercentage = isTokenHolder ? ((standardFeeRate - tokenHolderFeeRate) / standardFeeRate * 100).toFixed(0) : 0;
 
   const createOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -304,16 +348,51 @@ export function OrderBookingDialog({
 
           <Separator />
 
+          {isTokenHolder && (
+            <Alert className="border-chart-3 bg-chart-3/10">
+              <Star className="h-4 w-4 text-chart-3" />
+              <AlertDescription className="text-chart-3 font-medium">
+                Token Holder Discount Active! You're saving {savingsPercentage}% on platform fees
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Card className="bg-muted/50">
             <CardContent className="p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-medium">Selected Package</span>
                 <Badge variant="secondary">{selectedPkg?.name}</Badge>
               </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Service Price</span>
+                <span className="font-medium">${servicePrice.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  Platform Fee
+                  {isTokenHolder && (
+                    <Badge variant="outline" className="text-xs gap-1 border-chart-3/40 bg-chart-3/10 text-chart-3">
+                      <TrendingDown className="h-2.5 w-2.5" />
+                      {feeRate * 100}%
+                    </Badge>
+                  )}
+                  {!isTokenHolder && (
+                    <span className="text-muted-foreground">({feeRate * 100}%)</span>
+                  )}
+                </span>
+                <span className="font-medium">${platformFee.toFixed(2)}</span>
+              </div>
+              {isTokenHolder && savings > 0 && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-chart-3 font-medium">Token Holder Savings</span>
+                  <span className="text-chart-3 font-bold">-${savings.toFixed(2)}</span>
+                </div>
+              )}
+              <Separator />
               <div className="flex items-center justify-between">
                 <span className="font-medium">Total Price</span>
                 <span className="text-2xl font-bold text-primary">
-                  ${selectedPkg?.price}
+                  ${totalPrice.toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -326,6 +405,18 @@ export function OrderBookingDialog({
               </div>
             </CardContent>
           </Card>
+
+          {!isTokenHolder && address && (
+            <Alert className="border-primary/40 bg-primary/10">
+              <Gift className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-sm">
+                Hold $CREATE or $PSX tokens to save {savingsPercentage}% on platform fees! 
+                <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer" className="underline ml-1 font-medium">
+                  Get tokens →
+                </a>
+              </AlertDescription>
+            </Alert>
+          )}
 
           <div className="flex gap-3">
             <Button
@@ -349,7 +440,14 @@ export function OrderBookingDialog({
                   Placing Order...
                 </>
               ) : (
-                `Place Order - $${selectedPkg?.price}`
+                <>
+                  Place Order - ${totalPrice.toFixed(2)}
+                  {isTokenHolder && savings > 0 && (
+                    <Badge variant="outline" className="ml-2 text-xs border-chart-3/40 bg-chart-3/10 text-chart-3">
+                      Save ${savings.toFixed(2)}
+                    </Badge>
+                  )}
+                </>
               )}
             </Button>
           </div>
