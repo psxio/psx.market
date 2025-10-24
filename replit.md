@@ -51,6 +51,7 @@ Builder profiles are highly detailed, featuring over 40 fields to comprehensivel
 - **Enhanced Fields**: Languages, location & timezone, education, work experience, availability, specializations, achievement badges, FAQs, and social profiles.
 - **Category-Specific Fields**: Tailored fields for KOLs (follower counts, engagement rate), 3D Artists (software, render engines), Marketers (platforms, case studies), Developers (programming languages, blockchain frameworks), and Volume Traders (trading experience, volume capabilities).
 - **Performance Metrics**: Total earnings, available balance, pending payouts, profile views, response rate, trending status, active orders, total messages received/responded, last active timestamp, and member since date.
+- **Specialized Profile Layouts**: Grant consulting, strategy consulting, and documentation builders receive a distinct agency-focused layout (GrantConsultingProfile component) featuring success metrics (91% success rate, $18M+ raised, 350+ clients), 5-step process visualization, supported verticals, "Why Choose Us" section, and service-focused presentation instead of individual freelancer portfolio display.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
