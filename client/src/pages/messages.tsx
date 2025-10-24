@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useClientAuth } from "@/hooks/use-client-auth";
 import { ChatList } from "@/components/chat-list";
 import { ChatThread } from "@/components/chat-thread";
+import { EmptyState } from "@/components/empty-state";
 import { Card } from "@/components/ui/card";
 import { MessageCircle } from "lucide-react";
 import type { ChatThread as ChatThreadType, Builder, Client, Order } from "@shared/schema";
@@ -66,14 +67,12 @@ export default function MessagesPage() {
                   userType="client"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-center p-8">
-                  <div>
-                    <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No conversation selected</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Select a conversation from the list to start chatting
-                    </p>
-                  </div>
+                <div className="flex items-center justify-center h-full p-8" data-testid="no-conversation-selected">
+                  <EmptyState
+                    icon={MessageCircle}
+                    title="No conversation selected"
+                    description="Select a conversation from the list to start chatting with a builder"
+                  />
                 </div>
               )}
             </Card>
