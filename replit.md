@@ -1,108 +1,56 @@
 ## Overview
-Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the memecoin and crypto space. Its primary purpose is to ensure quality by requiring $CREATE or $PSX token holdings for platform access. The platform features builder profiles, service listings, category-based browsing, administrative dashboards, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading platform for Web3 talent, integrating secure on-chain payments and advanced project management.
+Create.psx is a dual token-gated Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. Its core mission is to ensure quality and exclusivity by requiring users to hold $CREATE or $PSX tokens for platform access. The platform offers comprehensive features including builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term ambition is to establish Create.psx as the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management functionalities.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
 - Design system follows design_guidelines.md
 - Mobile-first responsive design
 - Professional Web3 aesthetic
-- **Typography**: Space Grotesk font (matching time.fun) loaded from Google Fonts, applied site-wide via CSS variable --font-sans
-- **Animations**: Scroll-triggered reveal animations throughout (fadeInUp, fadeInLeft, fadeInRight, fadeInScale, slideInUp, zoomIn, bounceIn)
-- **Navigation**: Help and Admin links moved to footer (not in navbar)
+- Typography: Space Grotesk font (matching time.fun) loaded from Google Fonts, applied site-wide via CSS variable --font-sans
+- Animations: Scroll-triggered reveal animations throughout (fadeInUp, fadeInLeft, fadeInRight, fadeInScale, slideInUp, zoomIn, bounceIn)
+- Navigation: Help and Admin links moved to footer (not in navbar)
 
 ## System Architecture
-Create.psx employs a decoupled frontend and backend architecture.
+Create.psx utilizes a decoupled frontend and backend architecture to deliver a scalable and responsive platform.
 
 ### UI/UX Decisions
 - **Branding**: Consistent purple/cyan gradient with equal prominence for Create and PSX brands.
-- **Design System**: Tailwind CSS and Shadcn UI for a modern, responsive, mobile-first design.
-- **Navigation Structure**: 
-  - Header: Browse Services, Browse Builders, Find Your Builder, Getting Started, Dashboard, Messages
-  - Footer: Platform links, Resources (including Help & FAQ and Admin Portal), Legal links
-- **Key Features**: Dual token-gated access, comprehensive builder profiles with portfolios and services, advanced search and filtering, dedicated admin and client dashboards, a multi-step builder application system, and a visual builder onboarding checklist. The platform also includes a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance pages.
-- **Browse Pages**: Both Browse Services and Browse Builders use consistent filtering layouts with sidebar filters (categories, languages, rating, availability), search functionality, and grid-based card displays.
+- **Design System**: Built with Tailwind CSS and Shadcn UI, emphasizing a modern, responsive, and mobile-first approach.
+- **Navigation Structure**: Features a header with core navigation (Browse Services, Browse Builders, Find Your Builder, Getting Started, Dashboard, Messages) and a footer for platform links, resources (including Help & FAQ and Admin Portal), and legal links.
+- **Key Features**: Dual token-gated access, detailed builder profiles with portfolios and services, advanced search and filtering capabilities, dedicated admin and client dashboards, a multi-step builder application process, and a visual builder onboarding checklist. Additional features include a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance documentation.
+- **Browse Pages**: Both service and builder browsing pages feature consistent layouts with sidebar filters (categories, languages, rating, availability), search functionality, and grid-based card displays.
 
 ### Technical Implementations
-- **Frontend**: React and TypeScript, TanStack Query for data fetching.
-- **Backend**: Express and TypeScript, RESTful API.
-- **Authentication**: Session-based for admin, RainbowKit + wagmi for unified wallet authentication, supporting $CREATE or $PSX token gating.
-- **Data Storage**: PostgreSQL database with Drizzle ORM, managing schemas for Builders, Clients, Services, Orders, Payments, and more.
-- **Order Management System**: Full lifecycle management including booking, status workflows, and revision tracking.
-- **Smart Contract Escrow System**: On-chain USDC payment system on Base blockchain using `USDCEscrow.sol` for milestone-based releases, dispute resolution, platform fees, and automated refunds.
-- **Real-Time Messaging System**: WebSocket-based chat with read receipts and file attachments.
-- **Enhanced Review System**: Comprehensive platform for builder reviews, moderation, and dispute resolution.
-- **Project Management System**: Tracking milestones, deliverables, and document repositories.
-- **Builder Dashboard & Tools**: Interface for managing earnings, orders, services, and availability.
-- **File Upload & Storage**: Replit Object Storage (Google Cloud Storage backend) with ACL and presigned URLs.
-- **Financial Management System**: Admin dashboard with revenue analytics, payout queue, and escrow monitoring.
-- **UI/UX Enhancement System**: Centralized system providing toast notifications, keyboard shortcuts, confirmation modals, loading skeletons, and empty states.
-- **Builder Analytics & Growth Tools**: 8 specialized modules for builders covering profile optimization, service performance, lead management, review automation, pricing intelligence, revenue forecasting, message templates, and client relationship management.
-- **Quick Win UX Enhancements**: Includes USDC balance display, empty state illustrations, breadcrumb navigation, price calculator widget, recently viewed tracker, theme toggle, enhanced keyboard shortcuts, action-enabled toast notifications, an FAQ chatbot, and specialized loading skeletons.
-- **Real-Time Features**: Online/offline status tracking, live builder availability, typing indicators in chat, browser notifications, and unread message counters.
-- **Advanced Search & Filtering System**: Features saved search preferences, builder favorites/collections, search history, filter presets, location/timezone filters, and language/communication preferences.
-- **AI-Powered Builder Discovery & Matching System**: Utilizes OpenAI GPT-4o-mini for a "Find Your Builder Wizard" (quiz-based matching), "Similar Builders Engine" for recommendations, and "Smart Service Recommendations".
+- **Frontend**: Developed using React and TypeScript, with TanStack Query for efficient data fetching.
+- **Backend**: Implemented with Express and TypeScript, providing a RESTful API.
+- **Authentication**: Utilizes session-based authentication for administrators and RainbowKit + wagmi for unified wallet authentication, enabling token gating based on $CREATE or $PSX holdings.
+- **Data Storage**: PostgreSQL database managed with Drizzle ORM, supporting various schemas including Builders, Clients, Services, Orders, and Payments.
+- **Order Management System**: Comprehensive system for managing the entire order lifecycle, including booking, status workflows, and revision tracking.
+- **Smart Contract Escrow System**: An on-chain USDC payment system on the Base blockchain using `USDCEscrow.sol` for milestone-based releases, dispute resolution, platform fees, and automated refunds.
+- **Real-Time Messaging System**: WebSocket-based chat functionality with read receipts and file attachments.
+- **Enhanced Review System**: A platform for comprehensive builder reviews, moderation, and dispute resolution.
+- **Project Management System**: Features for tracking milestones, deliverables, and managing document repositories.
+- **Builder Dashboard & Tools**: Provides builders with interfaces to manage earnings, orders, services, and availability.
+- **File Upload & Storage**: Leverages Replit Object Storage (Google Cloud Storage backend) with ACL and presigned URLs for secure file handling.
+- **Financial Management System**: An admin dashboard offering revenue analytics, payout queue management, and escrow monitoring.
+- **UI/UX Enhancement System**: A centralized system for toast notifications, keyboard shortcuts, confirmation modals, loading skeletons, and empty states.
+- **Builder Analytics & Growth Tools**: Includes 8 specialized modules for profile optimization, service performance, lead management, review automation, pricing intelligence, revenue forecasting, message templates, and client relationship management.
+- **Quick Win UX Enhancements**: Features such as USDC balance display, empty state illustrations, breadcrumb navigation, a price calculator widget, recently viewed tracker, theme toggle, enhanced keyboard shortcuts, action-enabled toast notifications, an FAQ chatbot, and specialized loading skeletons.
+- **Real-Time Features**: Includes online/offline status tracking, live builder availability, typing indicators in chat, browser notifications, and unread message counters.
+- **Advanced Search & Filtering System**: Supports saved search preferences, builder favorites/collections, search history, filter presets, location/timezone filters, and language/communication preferences.
+- **AI-Powered Builder Discovery & Matching System**: Integrates OpenAI GPT-4o-mini for features like a "Find Your Builder Wizard" (quiz-based matching), a "Similar Builders Engine" for recommendations, and "Smart Service Recommendations."
 
-## Service Catalog
-Create.psx features a comprehensive, Fiverr-level detailed service catalog with 12+ professional service offerings across 7 specialized categories:
+### Service Catalog
+Create.psx offers a comprehensive service catalog across 10 specialized categories:
+- **Categories**: Volume Services, 3D & 2D Content Creation, Social Media Management, KOLs & Influencers, Script Development, Graphic Design, Marketing & Growth, Grants & Funding, Strategy Consulting, Documentation & Paperwork.
+- **Featured Services**: A wide array of services (e.g., Custom Volume Generation, 3D & 2D Character Design, Token Launch Video, KOL Management, Website Development, Grant Acceleration, Web3 Strategy Consulting, Tokenomics Design, Pitch Deck & Whitepaper Creation, Market Making & KOL Network Access, DAO Advisory), each with 3-tier pricing (Basic/Standard/Premium), detailed descriptions, deliverables, delivery timeframes, tags, and PSX token requirements.
 
-### Categories
-1. **Volume Services** - Custom volume generation and trend bots for any blockchain
-2. **3D & 2D Content Creation** - Character design, animations, and token launch videos
-3. **Social Media Management** - Professional social media and community management
-4. **KOLs & Influencers** - KOL management, sourcing, and campaign coordination
-5. **Script Development** - Smart contracts, websites, bots, and technical solutions
-6. **Graphic Design** - Branding, marketing materials, and visual identity
-7. **Social Media Management** - Dedicated category for Twitter, Discord, Telegram management
-
-### Featured Services (All with 3-Tier Pricing: Basic/Standard/Premium)
-- **Custom Volume Generation (Any Chain)** - $2.5K/$5K/$10K - Professional volume generation with custom patterns
-- **Custom Makers & Transactions - Trend Bot** - $1.5K/$3.5K/$7.5K - Organic wallet activity and transaction patterns
-- **3D & 2D Character Design** - $800/$1.5K/$3K - Custom characters for NFTs and memecoins
-- **3D & 2D Animations** - $1.2K/$2.5K/$5K - Professional animations for launches and social media
-- **Token Launch Video (3D & 2D)** - $1.5K/$3K/$6K - High-impact cinematic launch videos
-- **Twitter & Social Media Management** - $800/$1.5K/$3K/month - Full social media management
-- **KOL Management (Any Chain)** - $2K/$4K/$8K - End-to-end KOL campaign management
-- **KOL Sourcing & Connecting** - $500/$1.2K/$2.5K - Verified KOL contacts and introductions
-- **Website Landing Page** - $800/$1.5K/$3K - Professional Web3 landing pages
-- **Full-Blown Website** - $3K/$6K/$12K - Complete Web3 platforms with advanced features
-- **Farcaster Apps & Telegram Bots** - $1.2K/$2.5K/$5K - Custom bots and social integrations
-- **Graphic Design - Branding & Marketing** - $400/$800/$1.5K - Complete brand identity packages
-
-Each service includes detailed descriptions, specific deliverables per tier, delivery timeframes, tags, and PSX token requirements.
-
-## Builder Profile System
-Builder profiles are designed to match Fiverr's level of detail with 40+ profile fields:
-
-### Core Profile Fields
-- Name, headline, bio, detailed description
-- Profile image, portfolio media, video showreel
-- Verified status, category, PSX tier
-- Rating, review count, completed projects
-- Response time, success rate, on-time delivery rate
-
-### Enhanced Fiverr-like Fields
-- **Languages** - Multiple language support (e.g., English, Spanish, Mandarin)
-- **Location & Timezone** - Country, city, timezone for coordination
-- **Education** - Degrees, certifications, training
-- **Work Experience** - Detailed work history and years of experience
-- **Availability** - Current status (available/busy/away), hours per week
-- **Specializations** - Specific areas of expertise (array)
-- **Badges** - Achievement badges (Top Rated, Verified, Rising Talent)
-- **FAQs** - Common questions and answers array
-- **Social Profiles** - Twitter, Instagram, YouTube, Telegram, LinkedIn, GitHub, Website
-
-### Category-Specific Fields
-- **KOLs**: Follower counts, engagement rate, audience demographics, brand partnerships
-- **3D Artists**: Software, render engines, style specialties, animation expertise
-- **Marketers**: Platforms, growth strategies, case studies, average ROI
-- **Developers**: Programming languages, blockchain frameworks, deployed contracts, certifications
-- **Volume Traders**: Trading experience, volume capabilities, DEX/CEX expertise, compliance knowledge
-
-### Performance Metrics
-- Total earnings, available balance, pending payouts
-- Profile views, response rate, trending status
-- Active orders, total messages received/responded
-- Last active timestamp, member since date
+### Builder Profile System
+Builder profiles are highly detailed, featuring over 40 fields to comprehensively showcase a builder's capabilities:
+- **Core Profile Fields**: Name, headline, bio, detailed description, profile image, portfolio media, video showreel, verified status, category, PSX tier, rating, review count, completed projects, response time, success rate, on-time delivery rate.
+- **Enhanced Fields**: Languages, location & timezone, education, work experience, availability, specializations, achievement badges, FAQs, and social profiles.
+- **Category-Specific Fields**: Tailored fields for KOLs (follower counts, engagement rate), 3D Artists (software, render engines), Marketers (platforms, case studies), Developers (programming languages, blockchain frameworks), and Volume Traders (trading experience, volume capabilities).
+- **Performance Metrics**: Total earnings, available balance, pending payouts, profile views, response rate, trending status, active orders, total messages received/responded, last active timestamp, and member since date.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
@@ -112,88 +60,3 @@ Builder profiles are designed to match Fiverr's level of detail with 40+ profile
 - **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
-
-## Recent Changes
-
-### Fiverr-Inspired UX Component Integration (October 2025)
-Successfully integrated 8 out of 10 production-ready Fiverr-inspired UX components to enhance discoverability, trust, and ease of use:
-
-**Integrated Components:**
-1. **PricingComparisonTable** - Service detail pages showing side-by-side package comparison
-2. **VideoIntroduction** - Builder profile About tab for video introductions
-3. **PortfolioLightbox** - Builder profile Portfolio tab with full-screen image viewing
-4. **ReviewWithResponse** - Builder profile Reviews tab showing reviews with builder responses
-5. **ServiceAddons** - Booking dialog with optional add-ons and dynamic pricing
-6. **OrderTimeline** - Order confirmation page showing progress tracking and delivery countdown
-7. **AutocompleteSearch** - Header search with suggestions, recent searches, and popular items
-8. **BuyerRequestsBoard** - New dedicated page (/buyer-requests) for browsing project requests
-
-**Skipped Components:**
-- AdvancedFilterSidebar - Existing filter sidebar provides sufficient functionality
-- RequirementsQuestionnaire - Requires dedicated checkout page (not yet implemented)
-
-**Files Modified:**
-- client/src/pages/service-detail.tsx
-- client/src/pages/builder-profile.tsx
-- client/src/pages/order-confirmation.tsx
-- client/src/components/header.tsx
-- client/src/pages/buyer-requests.tsx (NEW)
-- client/src/App.tsx
-
-### Performance Optimization - Initial Page Load (October 23, 2025)
-Optimized critical API endpoints to dramatically improve initial page load performance through database indexing and query optimization:
-
-**Performance Improvements:**
-- `/api/builders/live` - Reduced from 2133ms to 117ms (94% faster)
-- `/api/services/featured` - Reduced from 2303ms to 182ms (92% faster)
-- **Total initial load time: From ~4.5s to ~300ms**
-
-**Optimizations Applied:**
-1. **Database Indexing** - Added 7 strategic indexes on frequently queried columns:
-   - `idx_builders_is_live` - Partial index on `is_live = true`
-   - `idx_builders_is_active` - Partial index on `is_active = true`
-   - `idx_builders_rating` - Descending index for sorting by rating
-   - `idx_builders_category` - Index for category filtering
-   - `idx_services_featured` - Partial index on `featured = true`
-   - `idx_services_builder_id` - Foreign key index for JOIN operations
-   - `idx_builders_verified` - Partial index on `verified = true`
-
-2. **Query Optimization** - Eliminated N+1 query problems:
-   - Created `getFeaturedServicesWithBuilders()` storage method
-   - Replaced sequential queries with single LEFT JOIN query
-   - Reduced 6+ sequential database calls to 1 optimized query
-
-**Files Modified:**
-- server/storage.ts - Added `getFeaturedServicesWithBuilders()` method
-- server/routes.ts - Updated `/api/services/featured` endpoint
-- Database: Added 7 strategic indexes
-
-### Backend API Requirements (Pending Implementation)
-The following backend API endpoints are required to support the newly integrated components:
-
-**Buyer Requests API:**
-- `GET /api/buyer-requests` - Fetch all active buyer requests with filtering
-- `GET /api/buyer-requests/:id` - Fetch specific buyer request details
-- `POST /api/buyer-requests` - Create new buyer request (client-only)
-- `PATCH /api/buyer-requests/:id` - Update buyer request status
-- `POST /api/buyer-requests/:id/proposals` - Submit proposal for a request (builder-only)
-- `GET /api/buyer-requests/:id/proposals` - Get all proposals for a request
-
-**Storage Methods Required:**
-- `createBuyerRequest(data: InsertBuyerRequest): Promise<BuyerRequest>`
-- `getBuyerRequests(filters?: { category?: string, status?: string }): Promise<BuyerRequest[]>`
-- `getBuyerRequest(id: string): Promise<BuyerRequest | null>`
-- `updateBuyerRequest(id: string, data: Partial<BuyerRequest>): Promise<BuyerRequest>`
-- `submitProposal(requestId: string, builderId: string, proposalData: any): Promise<Proposal>`
-
-**New Page Routes Required:**
-- `/buyer-request/:id/submit-proposal` - Proposal submission form for builders
-
-**Data Model Enhancements:**
-The BuyerRequest schema already exists in shared/schema.ts and includes:
-- Basic request info (title, description, category, budget, deadline)
-- Status tracking (open, in_progress, closed)
-- Metadata (proposalsCount, viewsCount, expiresAt)
-- Client information (clientId, clientName)
-
-A new Proposal schema may be needed to track builder proposals for buyer requests.
