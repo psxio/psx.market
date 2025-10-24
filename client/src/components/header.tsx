@@ -40,10 +40,10 @@ export function Header() {
         <div className="flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2" data-testid="link-home">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
-              P
+              4
             </div>
             <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
-              Create x PSX Marketplace
+              port444
             </span>
           </Link>
 

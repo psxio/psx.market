@@ -11,10 +11,10 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
-                P
+                4
               </div>
               <span className="text-lg font-bold tracking-tight">
-                Create x PSX
+                port444
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -181,7 +181,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              &copy; {currentYear} Create x PSX Marketplace. All rights reserved.
+              &copy; {currentYear} port444. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground">
               Powered by <span className="text-primary font-semibold">$CREATE</span> and{" "}

@@ -54,13 +54,13 @@ export function WelcomeModal({ open: controlledOpen, onOpenChange }: WelcomeModa
 
   const steps = [
     {
-      title: "Welcome to Create.psx",
+      title: "Welcome to port444",
       description: "The premier Web3 marketplace connecting top builders with quality clients",
       icon: <Sparkles className="h-12 w-12 text-purple-500" />,
       content: (
         <div className="space-y-4">
           <p className="text-muted-foreground text-center">
-            Create.psx is an open Web3 marketplace where premium builders and clients collaborate on cutting-edge crypto projects. Hold tokens for exclusive benefits!
+            port444 is an open Web3 marketplace where premium builders and clients collaborate on cutting-edge crypto projects. Hold tokens for exclusive benefits!
           </p>
           <div className="grid gap-4 mt-6">
             <div className="flex items-start gap-3">
@@ -174,7 +174,7 @@ export function WelcomeModal({ open: controlledOpen, onOpenChange }: WelcomeModa
     },
     {
       title: "Ready to Get Started?",
-      description: "Choose your path and join the Create.psx community",
+      description: "Choose your path and join the port444 community",
       icon: <CheckCircle className="h-12 w-12 text-green-500" />,
       content: (
         <div className="space-y-6">

@@ -116,7 +116,7 @@ export default function BuildersLanding() {
       period: "6 months",
       rating: 5.0,
       projects: 28,
-      quote: "Create.psx helped me transition from traditional freelancing to Web3. The quality of clients and consistent work has transformed my business.",
+      quote: "port444 helped me transition from traditional freelancing to Web3. The quality of clients and consistent work has transformed my business.",
       tier: "Platinum",
     },
     {
@@ -150,8 +150,8 @@ export default function BuildersLanding() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Join as a Builder - Earn in Web3 | Create.psx"
-        description="Join Create.psx as a Web3 builder. Earn competitive rates with USDC escrow, work with premium crypto projects, and build your Web3 reputation. Apply now!"
+        title="Join as a Builder - Earn in Web3 | port444"
+        description="Join port444 as a Web3 builder. Earn competitive rates with USDC escrow, work with premium crypto projects, and build your Web3 reputation. Apply now!"
         keywords="web3 jobs, crypto freelance, blockchain developer jobs, KOL opportunities, Web3 earnings, USDC payments"
         ogType="website"
       />
@@ -190,14 +190,14 @@ export default function BuildersLanding() {
                   <>
                     Welcome to{" "}
                     <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">
-                      Create.psx
+                      port444
                     </span>
                   </>
                 ) : (
                   <>
                     Build Your Web3 Career on{" "}
                     <span className="bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent">
-                      Create.psx
+                      port444
                     </span>
                   </>
                 )}
@@ -356,7 +356,7 @@ export default function BuildersLanding() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Build on Create.psx?</h2>
+            <h2 className="text-3xl font-bold mb-4">Why Build on port444?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               We provide everything you need to succeed as a Web3 professional
             </p>
@@ -482,7 +482,7 @@ export default function BuildersLanding() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Success Stories</h2>
             <p className="text-xl text-muted-foreground">
-              Real builders sharing their experiences on Create.psx
+              Real builders sharing their experiences on port444
             </p>
           </div>
 
@@ -634,7 +634,7 @@ export default function BuildersLanding() {
               Ready to Start Your Journey?
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Join hundreds of builders already earning on Create.psx. The application takes less than 10 minutes.
+              Join hundreds of builders already earning on port444. The application takes less than 10 minutes.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">

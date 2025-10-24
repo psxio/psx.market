@@ -1,6 +1,6 @@
 {
-  "name": "create.psx - Web3 Services Marketplace",
-  "short_name": "create.psx",
+  "name": "port444 - Web3 Services Marketplace",
+  "short_name": "port444",
   "description": "Token-gated marketplace connecting premium Web3 builders with clients in the memecoin and crypto space",
   "start_url": "/",
   "display": "standalone",

@@ -261,7 +261,7 @@ export default function Marketplace() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Browse Services - Web3 Marketplace | Create.psx"
+        title="Browse Services - Web3 Marketplace | port444"
         description="Discover premium Web3 services: KOLs, 3D artists, developers, marketers, and volume services. Browse verified builders and book services with USDC on Base blockchain."
         keywords="web3 services, crypto services, KOL marketing, 3D design, blockchain development, volume trading, memecoin services"
         ogType="website"

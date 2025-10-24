@@ -1,5 +1,5 @@
 ## Overview
-Create.psx is a Web3 marketplace with dual token incentives designed to connect premium builders with clients in the memecoin and broader crypto space. The platform is open to all users, but offers exclusive benefits and reduced fees to $CREATE and $PSX token holders. The platform features comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term ambition is to establish Create.psx as the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management functionalities.
+port444 is a Web3 marketplace with dual token incentives designed to connect premium builders with clients in the memecoin and broader crypto space. The platform is open to all users, but offers exclusive benefits and reduced fees to $CREATE and $PSX token holders. The platform features comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term ambition is to establish port444 as the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management functionalities.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -11,10 +11,10 @@ Create.psx is a Web3 marketplace with dual token incentives designed to connect 
 - Navigation: Help and Admin links moved to footer (not in navbar)
 
 ## System Architecture
-Create.psx utilizes a decoupled frontend and backend architecture to deliver a scalable and responsive platform.
+port444 utilizes a decoupled frontend and backend architecture to deliver a scalable and responsive platform.
 
 ### UI/UX Decisions
-- **Branding**: Consistent purple/cyan gradient with equal prominence for Create and PSX brands.
+- **Branding**: Marketplace branded as "port444" (matching domain port444.shop) with purple/cyan gradient theme. Still powered by $CREATE and $PSX tokens.
 - **Design System**: Built with Tailwind CSS and Shadcn UI, emphasizing a modern, responsive, and mobile-first approach.
 - **Navigation Structure**: Features a header with core navigation (Browse Services, Browse Builders, Getting Started, Dashboard, Messages) and a footer for platform links, resources (including Help & FAQ and Admin Portal), and legal links.
 - **Homepage ("Buy on Demand")**: Fiverr-style category-driven marketplace with unified hero section merging branding and category browser. Defaults to 3D Artists category. Category pills (no "All Categories" option) filter services in real-time. Each service and builder card displays project token tickers (e.g., $TFUND, $PSX, $DUHCAT, $CREATE) showcasing projects they've worked on. Includes all branding elements: token perks, 3 CTAs, token holder benefits section, and PSX Agency promotion.
@@ -44,7 +44,7 @@ Create.psx utilizes a decoupled frontend and backend architecture to deliver a s
 - **AI-Powered Builder Discovery & Matching System**: Integrates OpenAI GPT-4o-mini for client-facing builder matching. The AI Builder Matching Wizard is located in the Getting Started page (client tab) and provides quiz-based personalized builder recommendations. Also includes a "Similar Builders Engine" for recommendations and "Smart Service Recommendations."
 
 ### Service Catalog
-Create.psx offers a comprehensive service catalog across 10 specialized categories:
+port444 offers a comprehensive service catalog across 10 specialized categories:
 - **Categories**: Volume Services, 3D & 2D Content Creation, Social Media Management, KOLs & Influencers, Script Development, Graphic Design, Marketing & Growth, Grants & Funding, Strategy Consulting, Documentation & Paperwork.
 - **Featured Services**: A wide array of services (e.g., Custom Volume Generation, 3D & 2D Character Design, Token Launch Video, KOL Management, Website Development, Grant Acceleration, Web3 Strategy Consulting, Tokenomics Design, Pitch Deck & Whitepaper Creation, Market Making & KOL Network Access, DAO Advisory), each with 3-tier pricing (Basic/Standard/Premium), detailed descriptions, deliverables, delivery timeframes, tags, and PSX token requirements.
 
