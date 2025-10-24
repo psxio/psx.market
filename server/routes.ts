@@ -716,8 +716,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (categories && typeof categories === "string") {
         const categoryList = categories.split(",");
+        // Map slugs to full category names
+        const slugToName: Record<string, string> = {
+          "kols": "KOLs & Influencers",
+          "3d-content": "3D Content Creation",
+          "marketing": "Marketing & Growth",
+          "development": "Script Development",
+          "volume": "Volume Services",
+          "graphic-design": "Graphic Design",
+          "social-media": "Social Media Management",
+          "grants-funding": "grants-funding",
+          "strategy-consulting": "Strategy Consulting",
+          "documentation": "Documentation & Paperwork",
+        };
+        const categoryNames = categoryList.map(slug => slugToName[slug] || slug);
         filteredResults = filteredResults.filter(({ service }) => 
-          categoryList.includes(service.category)
+          categoryNames.includes(service.category)
         );
       }
 
