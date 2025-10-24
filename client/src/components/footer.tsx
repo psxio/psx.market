@@ -18,7 +18,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              The premier token-gated marketplace connecting elite builders with Web3 projects.
+              The premier Web3 marketplace connecting elite builders with crypto projects. Token holders save 60% on fees!
             </p>
             <div className="flex items-center gap-3">
               <a

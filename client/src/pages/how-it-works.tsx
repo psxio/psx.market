@@ -45,7 +45,7 @@ export default function HowItWorks() {
               </CardHeader>
               <CardContent className="text-muted-foreground">
                 <p>
-                  Connect your Web3 wallet with $CREATE or $PSX tokens to access the marketplace. Token holdings determine your client tier and access level.
+                  Connect your Web3 wallet to start booking services. Hold $CREATE or $PSX tokens to unlock exclusive benefits like 60% lower platform fees (1% vs 2.5%)!
                 </p>
               </CardContent>
             </Card>
@@ -280,16 +280,16 @@ export default function HowItWorks() {
           <h2 className="text-3xl font-bold mb-8 text-center">Key Platform Features</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <Card data-testid="feature-token-gated">
+            <Card data-testid="feature-token-benefits">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-purple-500" />
-                  Token-Gated Access
+                  Token Holder Benefits
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-muted-foreground">
                 <p>
-                  Hold $CREATE or $PSX tokens to access the marketplace. This ensures a quality community of serious clients and skilled builders committed to the Web3 ecosystem.
+                  Hold $CREATE or $PSX tokens to unlock exclusive perks: save 60% on platform fees (1% vs 2.5%), get priority support, verified badges, and early access to new features. Platform remains fully open to all users!
                 </p>
               </CardContent>
             </Card>

@@ -433,9 +433,9 @@ export default function BuilderOnboarding() {
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-chart-3 flex-shrink-0 mt-0.5" />
               <div className="text-left">
-                <p className="font-semibold text-chart-3">Launch Special: First 50 Builders Get FREE Access!</p>
+                <p className="font-semibold text-chart-3">Builder Benefits Available!</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  The first 50 approved builders will be whitelisted with FREE platform access — no $CREATE or $PSX tokens required. {inviteToken ? "You're already on the list!" : "Apply now to secure your spot!"}
+                  Builders don't need tokens to join. {inviteToken ? "You're invited to join our verified builder community!" : "Apply now to become a verified builder and start earning!"}
                 </p>
               </div>
             </div>

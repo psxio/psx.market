@@ -60,14 +60,14 @@ export function WelcomeModal({ open: controlledOpen, onOpenChange }: WelcomeModa
       content: (
         <div className="space-y-4">
           <p className="text-muted-foreground text-center">
-            Create.psx is a dual token-gated marketplace where premium Web3 builders and clients collaborate on cutting-edge crypto projects.
+            Create.psx is an open Web3 marketplace where premium builders and clients collaborate on cutting-edge crypto projects. Hold tokens for exclusive benefits!
           </p>
           <div className="grid gap-4 mt-6">
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium">Token-Gated Access</p>
-                <p className="text-sm text-muted-foreground">Hold $CREATE or $PSX tokens to access premium features</p>
+                <p className="font-medium">Token Holder Benefits</p>
+                <p className="text-sm text-muted-foreground">Hold $CREATE or $PSX for 60% lower fees and exclusive perks</p>
               </div>
             </div>
             <div className="flex items-start gap-3">

@@ -97,20 +97,23 @@ export function WalletConnectButton() {
                 );
               }
 
+              const hasCreateTokens = createBalance !== undefined && Number(createBalance) > 0;
+              const hasPsxTokens = psxBalance !== undefined && Number(psxBalance) > 0;
+              
               return (
                 <div className="flex items-center gap-2">
-                  {createBalance && Number(createBalance) > 0 && (
+                  {hasCreateTokens ? (
                     <Badge variant="secondary" className="px-3 py-1.5 font-mono">
                       <span className="text-chart-2 font-semibold">{formatBalance(createBalance)}</span>
                       <span className="ml-1 text-muted-foreground">$CREATE</span>
                     </Badge>
-                  )}
-                  {psxBalance && Number(psxBalance) > 0 && (
+                  ) : null}
+                  {hasPsxTokens ? (
                     <Badge variant="secondary" className="px-3 py-1.5 font-mono">
                       <span className="text-chart-4 font-semibold">{formatBalance(psxBalance)}</span>
                       <span className="ml-1 text-muted-foreground">$PSX</span>
                     </Badge>
-                  )}
+                  ) : null}
 
                   <button
                     onClick={openChainModal}

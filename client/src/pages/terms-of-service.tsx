@@ -29,20 +29,19 @@ export default function TermsOfService() {
                 If you do not agree to these Terms, please do not use our Platform.
               </p>
               <p>
-                Create.psx is a dual token-gated Web3 marketplace connecting premium builders with clients in the cryptocurrency and memecoin space. 
-                Access to certain features requires holding either $CREATE or $PSX tokens.
+                Create.psx is an open Web3 marketplace connecting premium builders with clients in the cryptocurrency and memecoin space. 
+                Token holders ($CREATE or $PSX) receive exclusive benefits including reduced platform fees and priority support.
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>2. Token-Gated Access</CardTitle>
+              <CardTitle>2. Token Holder Benefits</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
               <p>
-                <strong>Token Requirements:</strong> Access to the marketplace and client tier assignments require holding specific amounts 
-                of either $CREATE or $PSX tokens in your connected Base blockchain wallet. Users only need to hold ONE of these tokens to gain access. Token requirements may change at the platform's discretion.
+                <strong>Token Benefits:</strong> Holding either $CREATE or $PSX tokens in your connected Base blockchain wallet provides exclusive benefits including reduced platform fees (1% vs 2.5% standard), priority support, and verified badges. Users only need to hold ONE of these tokens to receive benefits. Benefit structures may change at the platform's discretion.
               </p>
               <p>
                 <strong>Wallet Connection:</strong> You must connect a compatible Web3 wallet (Base network) to access platform features. 
@@ -74,7 +73,7 @@ export default function TermsOfService() {
                 <strong>Clients:</strong> Users who book services must:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Hold required $CREATE or $PSX tokens to access the marketplace</li>
+                <li>Connect a wallet to book services (token holdings optional but provide benefits)</li>
                 <li>Provide clear project requirements and expectations</li>
                 <li>Release milestone payments when deliverables are satisfactory</li>
                 <li>Communicate professionally and respectfully</li>
@@ -99,7 +98,8 @@ export default function TermsOfService() {
                 <strong>Platform Fees:</strong> create.psx charges a service fee on completed transactions. Current fee structure:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Standard platform fee: 10% of transaction value</li>
+                <li>Standard platform fee: 2.5% of transaction value</li>
+                <li>Token holder discounted fee: 1% of transaction value (60% savings for $CREATE or $PSX holders)</li>
                 <li>Fees may vary based on client tier or promotional programs</li>
                 <li>Fees are subject to change with 30 days notice</li>
               </ul>

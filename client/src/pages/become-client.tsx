@@ -132,9 +132,9 @@ export default function BecomeClient() {
             <div className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-chart-3 flex-shrink-0 mt-0.5" />
               <div className="text-left">
-                <p className="font-semibold text-chart-3">🎉 Launch Special: First 2 Clients Get FREE Access!</p>
+                <p className="font-semibold text-chart-3">Platform Open to Everyone!</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  The first 2 registered clients will be whitelisted with FREE platform access — no $CREATE or $PSX tokens required. Register now to secure your spot!
+                  No tokens required to get started. Hold $CREATE or $PSX tokens to unlock 60% lower fees (1% vs 2.5%) and exclusive benefits. Start now!
                 </p>
               </div>
             </div>
