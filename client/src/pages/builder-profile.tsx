@@ -15,6 +15,7 @@ import { SimilarBuilders } from "@/components/ai/SimilarBuilders";
 import { VideoIntroduction } from "@/components/VideoIntroduction";
 import { PortfolioLightbox } from "@/components/PortfolioLightbox";
 import { ReviewList } from "@/components/ReviewWithResponse";
+import { GrantConsultingProfile } from "@/components/GrantConsultingProfile";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   Star,
@@ -114,6 +115,30 @@ export default function BuilderProfile() {
     .toUpperCase()
     .slice(0, 2);
 
+  // Check if this is a grant/consulting agency profile (special layout)
+  const isGrantConsulting = builder.category === 'grants-funding' || 
+    builder.category === 'strategy-consulting' || 
+    builder.category === 'documentation';
+
+  // Render specialized layout for grant consultants
+  if (isGrantConsulting) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
+          <GrantConsultingProfile 
+            builder={builder}
+            services={services}
+            reviews={reviews}
+            servicesLoading={servicesLoading}
+            reviewsLoading={reviewsLoading}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Default builder profile layout
   return (
     <div className="min-h-screen bg-background">
       <Header />
