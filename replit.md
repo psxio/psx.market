@@ -17,7 +17,10 @@ Create.psx utilizes a decoupled frontend and backend architecture to deliver a s
 - **Branding**: Consistent purple/cyan gradient with equal prominence for Create and PSX brands.
 - **Design System**: Built with Tailwind CSS and Shadcn UI, emphasizing a modern, responsive, and mobile-first approach.
 - **Navigation Structure**: Features a header with core navigation (Browse Services, Browse Builders, Find Your Builder, Getting Started, Dashboard, Messages) and a footer for platform links, resources (including Help & FAQ and Admin Portal), and legal links.
-- **Key Features**: Dual token incentive system ($CREATE & $PSX holders receive platform fee discounts and exclusive benefits), detailed builder profiles with portfolios and services, advanced search and filtering capabilities, dedicated admin and client dashboards, a multi-step builder application process, and a visual builder onboarding checklist. Additional features include a "Buy on Demand" section, PSX Agency promotion, and extensive legal/compliance documentation.
+- **Homepage ("Buy on Demand")**: Fiverr-style category-driven marketplace with unified hero section merging branding and category browser. Defaults to 3D Artists category (not "All Categories"). Category pills filter services in real-time. Includes all branding elements: token perks, 3 CTAs, token holder benefits section, and PSX Agency promotion.
+- **Find Your Builder Page**: Builder-focused homepage/recruitment page featuring builder value proposition, platform benefits, how it works (4-step application process), builder categories, stats ($2.5M+ paid, 500+ builders, 2K+ projects, 4.9★ rating), and dual CTAs (Readiness Quiz, Apply Now). Designed to attract and onboard new builders.
+- **Getting Started Page**: Dual-tab interface (Client/Builder) with comprehensive onboarding guides. Client tab includes AI-Powered Builder Matching tool for personalized builder recommendations via quiz-based matching.
+- **Key Features**: Dual token incentive system ($CREATE & $PSX holders receive platform fee discounts and exclusive benefits), detailed builder profiles with portfolios and services, advanced search and filtering capabilities, dedicated admin and client dashboards, a multi-step builder application process, and a visual builder onboarding checklist. Additional features include "Buy on Demand" homepage, PSX Agency promotion, and extensive legal/compliance documentation.
 - **Browse Pages**: Both service and builder browsing pages feature consistent layouts with sidebar filters (categories, languages, rating, availability), search functionality, and grid-based card displays.
 
 ### Technical Implementations
@@ -39,7 +42,7 @@ Create.psx utilizes a decoupled frontend and backend architecture to deliver a s
 - **Quick Win UX Enhancements**: Features such as USDC balance display, empty state illustrations, breadcrumb navigation, a price calculator widget, recently viewed tracker, theme toggle, enhanced keyboard shortcuts, action-enabled toast notifications, an FAQ chatbot, and specialized loading skeletons.
 - **Real-Time Features**: Includes online/offline status tracking, live builder availability, typing indicators in chat, browser notifications, and unread message counters.
 - **Advanced Search & Filtering System**: Supports saved search preferences, builder favorites/collections, search history, filter presets, location/timezone filters, and language/communication preferences.
-- **AI-Powered Builder Discovery & Matching System**: Integrates OpenAI GPT-4o-mini for features like a "Find Your Builder Wizard" (quiz-based matching), a "Similar Builders Engine" for recommendations, and "Smart Service Recommendations."
+- **AI-Powered Builder Discovery & Matching System**: Integrates OpenAI GPT-4o-mini for client-facing builder matching. The AI Builder Matching Wizard is located in the Getting Started page (client tab) and provides quiz-based personalized builder recommendations. Also includes a "Similar Builders Engine" for recommendations and "Smart Service Recommendations."
 
 ### Service Catalog
 Create.psx offers a comprehensive service catalog across 10 specialized categories:

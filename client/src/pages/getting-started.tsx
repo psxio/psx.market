@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { FindBuilderWizard } from "@/components/ai/FindBuilderWizard";
 import { 
   Wallet, Search, MessageCircle, DollarSign, Star, Shield,
   FileText, Target, TrendingUp, Users, Zap, CheckCircle,
-  ArrowRight, AlertCircle, Book, Play, HelpCircle
+  ArrowRight, AlertCircle, Book, Play, HelpCircle, Sparkles
 } from "lucide-react";
 
 export default function GettingStarted() {
@@ -170,6 +171,51 @@ export default function GettingStarted() {
                       </Button>
                     </Link>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* AI Builder Finder */}
+              <Card data-testid="card-ai-finder" className="border-primary/20 border-2">
+                <CardHeader>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 text-white flex-shrink-0">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        AI-Powered Builder Matching
+                      </CardTitle>
+                      <Badge variant="secondary" className="mt-2 gap-1.5">
+                        <Zap className="h-3 w-3" />
+                        Smart Recommendations
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Not sure which builder is right for you? Use our AI-powered matching tool to get personalized recommendations based on your project needs.
+                  </p>
+                  
+                  <div className="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-lg p-4 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Target className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Precise Matching</p>
+                        <p className="text-sm text-muted-foreground">Answer a few questions about your project and our AI will find builders with the exact skills you need</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Zap className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Instant Results</p>
+                        <p className="text-sm text-muted-foreground">Get personalized builder recommendations in seconds, complete with ratings and portfolios</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <FindBuilderWizard />
                 </CardContent>
               </Card>
 
