@@ -378,11 +378,11 @@ export default function Marketplace() {
                 onAction={() => window.location.reload()}
               />
             ) : servicesData && servicesData.length > 0 ? (
-              <div ref={servicesGrid.ref as any} className={servicesGrid.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}>
-                <div className="mb-4 text-sm text-muted-foreground">
+              <div>
+                <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
                   Showing {servicesData.length} results
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-services">
                   {servicesData.map(({ builder, service }) => (
                     <BuilderCard
                       key={service.id}

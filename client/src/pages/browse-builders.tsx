@@ -330,11 +330,11 @@ export default function BrowseBuilders() {
                 </p>
               </div>
             ) : buildersData && buildersData.length > 0 ? (
-              <div ref={buildersGrid.ref as any} className={buildersGrid.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}>
-                <div className="mb-4 text-sm text-muted-foreground">
+              <div>
+                <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
                   Showing {buildersData.length} results
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-builders">
                   {buildersData.map((builder) => (
                     <Link key={builder.id} href={`/builder/${builder.id}`}>
                       <Card className="h-full hover-elevate active-elevate-2 cursor-pointer transition-all" data-testid={`card-builder-${builder.id}`}>
