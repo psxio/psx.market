@@ -9,6 +9,7 @@ interface SearchSuggestion {
   type: "service" | "builder" | "category" | "recent" | "popular";
   label: string;
   value: string;
+  searchQuery?: string; // The actual query to search for
   subtitle?: string;
   icon?: any;
 }
@@ -36,35 +37,102 @@ export function AutocompleteSearch({
     enabled: query.length > 0,
   });
 
-  // Mock suggestions for now
+  // Comprehensive suggestions covering all categories
   const mockSuggestions: SearchSuggestion[] = [
-    // Recent searches
+    // Recent searches (shown when search is empty)
     ...(query.length === 0
       ? [
-          { type: "recent" as const, label: "Volume Trading", value: "volume", icon: Clock },
-          { type: "recent" as const, label: "3D Character Design", value: "3d character", icon: Clock },
+          { type: "recent" as const, label: "KOL Marketing", value: "kol", searchQuery: "KOL", icon: Clock },
+          { type: "recent" as const, label: "Volume Trading", value: "volume", searchQuery: "Volume", icon: Clock },
+          { type: "recent" as const, label: "Grants & Funding", value: "grants", searchQuery: "Grant", icon: Clock },
         ]
       : []),
     
-    // Popular services
-    ...(query.toLowerCase().includes("vol") || query === ""
+    // KOL & Influencers
+    ...(query.toLowerCase().includes("kol") || query.toLowerCase().includes("influencer") || query.toLowerCase().includes("marketing")
       ? [
-          { type: "popular" as const, label: "Volume Services", value: "volume", subtitle: "Trending", icon: TrendingUp },
+          { type: "category" as const, label: "KOL & Influencer Services", value: "kol", searchQuery: "KOL", subtitle: "Marketing", icon: TrendingUp },
+          { type: "service" as const, label: "KOL Management", value: "kol-management", searchQuery: "KOL Management", subtitle: "Marketing", icon: Briefcase },
         ]
       : []),
     
-    // Services
-    ...(query.toLowerCase().includes("3d") || query.toLowerCase().includes("design")
+    // Volume Services
+    ...(query.toLowerCase().includes("vol") || query.toLowerCase().includes("trading")
       ? [
-          { type: "service" as const, label: "3D Character Design", value: "3d-character", subtitle: "Design", icon: Briefcase },
-          { type: "service" as const, label: "3D Animations", value: "3d-animation", subtitle: "Design", icon: Briefcase },
+          { type: "category" as const, label: "Volume Services", value: "volume", searchQuery: "Volume", subtitle: "Trading", icon: TrendingUp },
+          { type: "service" as const, label: "Custom Volume Generation", value: "volume-gen", searchQuery: "Volume", subtitle: "Trading", icon: Briefcase },
         ]
       : []),
     
-    // Builders
-    ...(query.length > 0
+    // 3D & 2D Content Creation
+    ...(query.toLowerCase().includes("3d") || query.toLowerCase().includes("2d") || query.toLowerCase().includes("design") || query.toLowerCase().includes("art") || query.toLowerCase().includes("character") || query.toLowerCase().includes("animation")
       ? [
-          { type: "builder" as const, label: "Top Rated Developers", value: "developer", subtitle: "50+ builders", icon: User },
+          { type: "category" as const, label: "3D & 2D Content Creation", value: "3d", searchQuery: "3D", subtitle: "Design", icon: TrendingUp },
+          { type: "service" as const, label: "3D Character Design", value: "3d-character", searchQuery: "3D Character", subtitle: "Design", icon: Briefcase },
+          { type: "service" as const, label: "3D Animations", value: "3d-animation", searchQuery: "3D Animation", subtitle: "Design", icon: Briefcase },
+        ]
+      : []),
+    
+    // Grants & Funding
+    ...(query.toLowerCase().includes("grant") || query.toLowerCase().includes("fund") || query.toLowerCase().includes("raise") || query.toLowerCase().includes("investment")
+      ? [
+          { type: "category" as const, label: "Grants & Funding", value: "grants", searchQuery: "Grant", subtitle: "Funding", icon: TrendingUp },
+          { type: "service" as const, label: "Grant Application Support", value: "grant-app", searchQuery: "Grant", subtitle: "Funding", icon: Briefcase },
+          { type: "service" as const, label: "Grant Acceleration", value: "grant-accel", searchQuery: "Grant Acceleration", subtitle: "Funding", icon: Briefcase },
+        ]
+      : []),
+    
+    // Strategy & Consulting
+    ...(query.toLowerCase().includes("strategy") || query.toLowerCase().includes("consult") || query.toLowerCase().includes("tokenomics") || query.toLowerCase().includes("advisor")
+      ? [
+          { type: "category" as const, label: "Strategy Consulting", value: "strategy", searchQuery: "Strategy", subtitle: "Consulting", icon: TrendingUp },
+          { type: "service" as const, label: "Web3 Strategy Consulting", value: "strategy-consult", searchQuery: "Strategy Consulting", subtitle: "Consulting", icon: Briefcase },
+          { type: "service" as const, label: "Tokenomics Design", value: "tokenomics", searchQuery: "Tokenomics", subtitle: "Consulting", icon: Briefcase },
+        ]
+      : []),
+    
+    // Documentation & Paperwork
+    ...(query.toLowerCase().includes("doc") || query.toLowerCase().includes("paper") || query.toLowerCase().includes("whitepaper") || query.toLowerCase().includes("pitch") || query.toLowerCase().includes("deck")
+      ? [
+          { type: "category" as const, label: "Documentation & Paperwork", value: "documentation", searchQuery: "Documentation", subtitle: "Writing", icon: TrendingUp },
+          { type: "service" as const, label: "Whitepaper Creation", value: "whitepaper", searchQuery: "Whitepaper", subtitle: "Documentation", icon: Briefcase },
+          { type: "service" as const, label: "Pitch Deck Design", value: "pitch-deck", searchQuery: "Pitch Deck", subtitle: "Documentation", icon: Briefcase },
+        ]
+      : []),
+    
+    // Script Development (Smart Contracts, Websites, Apps)
+    ...(query.toLowerCase().includes("dev") || query.toLowerCase().includes("code") || query.toLowerCase().includes("smart contract") || query.toLowerCase().includes("website") || query.toLowerCase().includes("app") || query.toLowerCase().includes("script")
+      ? [
+          { type: "category" as const, label: "Script Development", value: "development", searchQuery: "Development", subtitle: "Development", icon: TrendingUp },
+          { type: "service" as const, label: "Smart Contract Development", value: "smart-contract", searchQuery: "Smart Contract", subtitle: "Development", icon: Briefcase },
+          { type: "service" as const, label: "Website Development", value: "website", searchQuery: "Website Development", subtitle: "Development", icon: Briefcase },
+        ]
+      : []),
+    
+    // Social Media Management
+    ...(query.toLowerCase().includes("social") || query.toLowerCase().includes("twitter") || query.toLowerCase().includes("tg") || query.toLowerCase().includes("telegram") || query.toLowerCase().includes("community") || query.toLowerCase().includes("discord")
+      ? [
+          { type: "category" as const, label: "Social Media Management", value: "social", searchQuery: "Social Media", subtitle: "Marketing", icon: TrendingUp },
+          { type: "service" as const, label: "Social Media Management", value: "social-mgmt", searchQuery: "Social Media Management", subtitle: "Marketing", icon: Briefcase },
+          { type: "service" as const, label: "Community Management", value: "community", searchQuery: "Community Management", subtitle: "Marketing", icon: Briefcase },
+        ]
+      : []),
+    
+    // Graphic Design
+    ...(query.toLowerCase().includes("graphic") || query.toLowerCase().includes("logo") || query.toLowerCase().includes("banner") || query.toLowerCase().includes("visual") || query.toLowerCase().includes("branding")
+      ? [
+          { type: "category" as const, label: "Graphic Design", value: "graphic", searchQuery: "Graphic Design", subtitle: "Design", icon: TrendingUp },
+          { type: "service" as const, label: "Logo & Branding", value: "logo", searchQuery: "Logo Design", subtitle: "Design", icon: Briefcase },
+          { type: "service" as const, label: "Banner Design", value: "banner", searchQuery: "Banner Design", subtitle: "Design", icon: Briefcase },
+        ]
+      : []),
+    
+    // Marketing & Growth
+    ...(query.toLowerCase().includes("market") || query.toLowerCase().includes("growth") || query.toLowerCase().includes("promo") || query.toLowerCase().includes("campaign")
+      ? [
+          { type: "category" as const, label: "Marketing & Growth", value: "marketing", searchQuery: "Marketing", subtitle: "Marketing", icon: TrendingUp },
+          { type: "service" as const, label: "Marketing Campaign", value: "campaign", searchQuery: "Marketing Campaign", subtitle: "Marketing", icon: Briefcase },
+          { type: "service" as const, label: "Growth Strategy", value: "growth", searchQuery: "Growth Strategy", subtitle: "Marketing", icon: Briefcase },
         ]
       : []),
   ];
@@ -108,7 +176,8 @@ export function AutocompleteSearch({
       case "Enter":
         e.preventDefault();
         if (filteredSuggestions[selectedIndex]) {
-          handleSearch(filteredSuggestions[selectedIndex].value);
+          const suggestion = filteredSuggestions[selectedIndex];
+          handleSearch(suggestion.searchQuery || suggestion.label);
         } else {
           handleSearch(query);
         }
@@ -158,7 +227,7 @@ export function AutocompleteSearch({
                     <CommandItem
                       key={`${suggestion.type}-${suggestion.value}`}
                       value={suggestion.value}
-                      onSelect={() => handleSearch(suggestion.value)}
+                      onSelect={() => handleSearch(suggestion.searchQuery || suggestion.label)}
                       className={`cursor-pointer ${isSelected ? "bg-accent" : ""}`}
                       data-testid={`suggestion-${index}`}
                     >
