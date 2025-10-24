@@ -167,7 +167,7 @@ export function GrantConsultingProfile({
               <MessageCircle className="h-5 w-5" />
               Start Your Application
             </Button>
-            <Button size="lg" variant="outline" className="gap-2 hover-elevate">
+            <Button size="lg" variant="outline" className="gap-2" data-testid="button-success-stories">
               <FileCheck className="h-5 w-5" />
               View Success Stories
             </Button>
