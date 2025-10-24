@@ -5118,7 +5118,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(results);
     } catch (error) {
       console.error("Error in AI matching:", error);
-      res.status(500).json({ error: "Failed to match builders" });
+      const errorMessage = error instanceof Error && error.message.includes("API key not configured")
+        ? "AI matching service is currently unavailable. Please ensure OpenAI integration is properly configured."
+        : "Failed to match builders. Please try again.";
+      res.status(500).json({ error: errorMessage });
     }
   });
 
@@ -5141,7 +5144,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(similarBuilders);
     } catch (error) {
       console.error("Error finding similar builders:", error);
-      res.status(500).json({ error: "Failed to find similar builders" });
+      const errorMessage = error instanceof Error && error.message.includes("API key not configured")
+        ? "AI recommendation service is currently unavailable."
+        : "Failed to find similar builders.";
+      res.status(500).json({ error: errorMessage });
     }
   });
 
