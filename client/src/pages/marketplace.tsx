@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
+import { EmptyState } from "@/components/empty-state";
+import { SEOHead } from "@/components/seo-head";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -15,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Music, Network, Coins, Lightbulb, FileText } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Music, Network, Coins, Lightbulb, FileText, RefreshCw, AlertCircle } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -258,6 +260,12 @@ export default function Marketplace() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Browse Services - Web3 Marketplace | Create.psx"
+        description="Discover premium Web3 services: KOLs, 3D artists, developers, marketers, and volume services. Browse verified builders and book services with USDC on Base blockchain."
+        keywords="web3 services, crypto services, KOL marketing, 3D design, blockchain development, volume trading, memecoin services"
+        ogType="website"
+      />
       <Header />
 
       <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
@@ -362,12 +370,13 @@ export default function Marketplace() {
                 ))}
               </div>
             ) : isError ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
-                <h3 className="mb-2 text-lg font-semibold">Failed to load services</h3>
-                <p className="text-sm text-muted-foreground">
-                  Please try again later
-                </p>
-              </div>
+              <EmptyState
+                icon={AlertCircle}
+                title="Failed to load services"
+                description="We couldn't load services at this time. Please try again later."
+                actionLabel="Retry"
+                onAction={() => window.location.reload()}
+              />
             ) : servicesData && servicesData.length > 0 ? (
               <div ref={servicesGrid.ref as any} className={servicesGrid.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}>
                 <div className="mb-4 text-sm text-muted-foreground">
@@ -384,13 +393,25 @@ export default function Marketplace() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
-                <Search className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold">No services found</h3>
-                <p className="text-sm text-muted-foreground">
-                  Try adjusting your search or filters
-                </p>
-              </div>
+              <EmptyState
+                icon={Search}
+                title="No services found"
+                description="Try adjusting your search terms or filters to find what you're looking for."
+                actionLabel="Clear Filters"
+                onAction={() => {
+                  setSearchQuery("");
+                  setSelectedCategories([]);
+                  setSelectedTags([]);
+                  setPriceRange([0, 10000]);
+                  setSelectedRating(null);
+                  setSelectedDeliveryTime(null);
+                }}
+                secondaryActionLabel="Browse All"
+                onSecondaryAction={() => {
+                  setSearchQuery("");
+                  setSelectedCategories([]);
+                }}
+              />
             )}
           </div>
         </div>

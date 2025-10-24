@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/empty-state";
 import { MessageCircle, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import type { ChatThread, Builder, Client, Order } from "@shared/schema";
@@ -49,14 +50,16 @@ export function ChatList({ userId, userType, onSelectThread, selectedThreadId }:
 
   if (!threads || threads.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center" data-testid="chat-list-empty">
-        <MessageCircle className="h-16 w-16 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No conversations yet</h3>
-        <p className="text-sm text-muted-foreground">
-          {userType === "client" 
-            ? "Start a conversation with a builder to discuss your project"
-            : "Your client conversations will appear here"}
-        </p>
+      <div className="p-4" data-testid="chat-list-empty">
+        <EmptyState
+          icon={MessageCircle}
+          title="No conversations yet"
+          description={
+            userType === "client" 
+              ? "Start a conversation with a builder to discuss your project"
+              : "Your client conversations will appear here"
+          }
+        />
       </div>
     );
   }

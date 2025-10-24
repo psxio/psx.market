@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/empty-state";
+import { SEOHead } from "@/components/seo-head";
 import {
   ArrowRight,
   ArrowLeft,
@@ -29,6 +31,7 @@ import {
   MessageCircle,
   ChevronRight,
   UserPlus,
+  Search,
 } from "lucide-react";
 import type { Builder } from "@shared/schema";
 
@@ -146,6 +149,12 @@ export default function BuildersLanding() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Join as a Builder - Earn in Web3 | Create.psx"
+        description="Join Create.psx as a Web3 builder. Earn competitive rates with USDC escrow, work with premium crypto projects, and build your Web3 reputation. Apply now!"
+        keywords="web3 jobs, crypto freelance, blockchain developer jobs, KOL opportunities, Web3 earnings, USDC payments"
+        ogType="website"
+      />
       {/* Back Button */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-3 max-w-7xl">
@@ -542,11 +551,15 @@ export default function BuildersLanding() {
 
             <TabsContent value={selectedCategory} className="space-y-4">
               {filteredBuilders.length === 0 ? (
-                <Card>
-                  <CardContent className="pt-6 text-center py-12">
-                    <p className="text-muted-foreground">No builders found in this category</p>
-                  </CardContent>
-                </Card>
+                <EmptyState
+                  icon={Search}
+                  title="No builders in this category"
+                  description="We don't have any featured builders in this category yet. Check back soon or browse all builders."
+                  actionLabel="View All Categories"
+                  onAction={() => setSelectedCategory("all")}
+                  secondaryActionLabel="Browse Marketplace"
+                  onSecondaryAction={() => window.location.href = "/marketplace"}
+                />
               ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredBuilders.slice(0, 6).map((builder) => (
