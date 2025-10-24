@@ -85,7 +85,7 @@ export function AutocompleteSearch({
     if (searchValue.trim()) {
       onSearch?.(searchValue);
       // Navigate to search results
-      setLocation(`/browse-services?search=${encodeURIComponent(searchValue)}`);
+      setLocation(`/marketplace?search=${encodeURIComponent(searchValue)}`);
       setIsOpen(false);
       setQuery("");
     }
