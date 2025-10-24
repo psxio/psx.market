@@ -32,26 +32,27 @@ import {
   Lightbulb,
   Search,
   CheckCircle2,
+  Layers,
 } from "lucide-react";
 import type { Builder, Service } from "@shared/schema";
 
 const serviceCategories = [
-  { name: "3D Artists", slug: "3D & 2D Content Creation", icon: Boxes },
+  { name: "All Categories", slug: "", icon: Layers },
+  { name: "3D Artists", slug: "3D Content Creation", icon: Boxes },
   { name: "KOLs & Influencers", slug: "KOLs & Influencers", icon: Megaphone },
-  { name: "Marketing", slug: "Marketing & Growth", icon: TrendingUp },
   { name: "Developers", slug: "Script Development", icon: Code },
-  { name: "Creative & Design", slug: "Graphic Design", icon: Palette },
-  { name: "Audio & Production", slug: "Audio & Production", icon: Music },
+  { name: "Marketing", slug: "Marketing & Growth", icon: TrendingUp },
+  { name: "Graphic Design", slug: "Graphic Design", icon: Palette },
   { name: "Volume Services", slug: "Volume Services", icon: BarChart3 },
   { name: "Social Media", slug: "Social Media Management", icon: Network },
-  { name: "Grants & Funding", slug: "Grants & Funding", icon: Coins },
+  { name: "Grants & Funding", slug: "grants-funding", icon: Coins },
   { name: "Strategy", slug: "Strategy Consulting", icon: Lightbulb },
   { name: "Documentation", slug: "Documentation & Paperwork", icon: FileText },
 ];
 
 export default function Home() {
   // Default to 3D Artists category
-  const [selectedCategory, setSelectedCategory] = useState("3D & 2D Content Creation");
+  const [selectedCategory, setSelectedCategory] = useState("3D Content Creation");
 
   const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery<
     Array<{ builder: Builder; service: Service }>
@@ -150,12 +151,12 @@ export default function Home() {
                 const Icon = cat.icon;
                 return (
                   <Button
-                    key={cat.slug}
+                    key={cat.slug || 'all'}
                     variant={selectedCategory === cat.slug ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSelectedCategory(cat.slug)}
                     className="gap-2 hover-elevate active-elevate-2 whitespace-nowrap"
-                    data-testid={`button-category-${cat.slug.toLowerCase().replace(/\s+/g, '-')}`}
+                    data-testid={`button-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
                   >
                     <Icon className="h-3.5 w-3.5" />
                     <span>{cat.name}</span>
@@ -199,7 +200,7 @@ export default function Home() {
               <>
                 <div className="mb-4 text-center">
                   <p className="text-sm text-muted-foreground" data-testid="text-services-count">
-                    Showing {servicesData.length} {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : ''} services
+                    Showing {servicesData.length} {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : 'All'} service{servicesData.length !== 1 ? 's' : ''}
                   </p>
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-category-services">
@@ -214,9 +215,9 @@ export default function Home() {
                 
                 {servicesData.length > 0 && (
                   <div className="mt-8 text-center pb-8">
-                    <Link href={`/marketplace?categories=${selectedCategory}`}>
+                    <Link href={selectedCategory ? `/marketplace?categories=${selectedCategory}` : "/marketplace"}>
                       <Button variant="outline" size="lg" className="gap-2 hover-elevate" data-testid="button-view-all-category">
-                        View All {serviceCategories.find(c => c.slug === selectedCategory)?.name} Services
+                        View All {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : ''} Services
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </Link>
