@@ -37,7 +37,6 @@ import {
 import type { Builder, Service } from "@shared/schema";
 
 const serviceCategories = [
-  { name: "All Categories", slug: "", icon: Layers },
   { name: "3D Artists", slug: "3D Content Creation", icon: Boxes },
   { name: "KOLs & Influencers", slug: "KOLs & Influencers", icon: Megaphone },
   { name: "Developers", slug: "Script Development", icon: Code },
