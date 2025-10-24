@@ -525,7 +525,7 @@ export default function Home() {
                   <Shield className="h-5 w-5 text-chart-2" />
                 </div>
                 <div className="text-left">
-                  <div className="font-bold text-foreground">Token Gated</div>
+                  <div className="font-bold text-foreground">Verified</div>
                   <div className="text-muted-foreground text-xs">Quality assured</div>
                 </div>
               </div>

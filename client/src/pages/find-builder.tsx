@@ -70,7 +70,7 @@ export default function FindBuilder() {
                 </div>
                 <h3 className="font-semibold">Verified Experts</h3>
                 <p className="text-sm text-muted-foreground">
-                  All recommendations are token-gated builders with proven track records
+                  All recommendations are verified builders with proven track records
                 </p>
               </CardContent>
             </Card>

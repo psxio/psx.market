@@ -119,7 +119,7 @@ export default function BecomeClient() {
         <div className="mb-8 text-center">
           <Badge variant="outline" className="mb-4 gap-1.5 border-primary/40 bg-primary/10 text-primary">
             <Shield className="h-3 w-3" />
-            Token-Gated Client Access
+            Open Platform with Token Benefits
           </Badge>
           <h1 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">
             Become a Client

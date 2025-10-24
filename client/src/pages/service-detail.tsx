@@ -75,9 +75,9 @@ export default function ServiceDetail() {
 
   const calculateTotalPrice = () => {
     let basePrice = 0;
-    if (selectedPackage === "Basic") basePrice = service?.basicPrice || 0;
-    else if (selectedPackage === "Standard") basePrice = service?.standardPrice || 0;
-    else if (selectedPackage === "Premium") basePrice = service?.premiumPrice || 0;
+    if (selectedPackage === "Basic") basePrice = Number(service?.basicPrice) || 0;
+    else if (selectedPackage === "Standard") basePrice = Number(service?.standardPrice) || 0;
+    else if (selectedPackage === "Premium") basePrice = Number(service?.premiumPrice) || 0;
 
     const addonsPrice = serviceAddons
       .filter((addon) => selectedAddons.includes(addon.id))
@@ -555,7 +555,7 @@ export default function ServiceDetail() {
               <CardContent className="pt-6 space-y-3">
                 <div className="flex items-center gap-2 text-sm">
                   <Shield className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Token-Gated Quality</span>
+                  <span className="font-medium">Verified Quality</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="h-5 w-5 text-chart-3" />
