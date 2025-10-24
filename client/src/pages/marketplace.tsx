@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Music, Network } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Music, Network, Coins, Lightbulb, FileText } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -38,12 +38,18 @@ const popularTags = [
 const categoryIcons: Record<string, any> = {
   "KOLs & Influencers": Users,
   "3D Content Creation": Sparkles,
+  "3D & 2D Content Creation": Sparkles,
   "Marketing & Growth": TrendingUp,
   "Script Development": Code,
   "Volume Services": BarChart3,
   "Creative & Design": Palette,
+  "Graphic Design": Palette,
   "Audio & Production": Music,
   "Connectors & Network": Network,
+  "Social Media Management": Network,
+  "Grants & Funding": Coins,
+  "Strategy Consulting": Lightbulb,
+  "Documentation & Paperwork": FileText,
 };
 
 export default function Marketplace() {
@@ -121,11 +127,11 @@ export default function Marketplace() {
     },
   });
 
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (categorySlug: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
+      prev.includes(categorySlug)
+        ? prev.filter((c) => c !== categorySlug)
+        : [...prev, categorySlug]
     );
   };
 
@@ -148,11 +154,11 @@ export default function Marketplace() {
               <div 
                 key={category.id} 
                 className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
-                onClick={() => toggleCategory(category.name)}
+                onClick={() => toggleCategory(category.slug)}
                 data-testid={`filter-category-${category.slug}`}
               >
                 <Checkbox
-                  checked={selectedCategories.includes(category.name)}
+                  checked={selectedCategories.includes(category.slug)}
                   onCheckedChange={() => {}}
                   className="pointer-events-none"
                   data-testid={`checkbox-category-${category.slug}`}
