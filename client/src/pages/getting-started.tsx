@@ -8,7 +8,8 @@ import { FindBuilderWizard } from "@/components/ai/FindBuilderWizard";
 import { 
   Wallet, Search, MessageCircle, DollarSign, Star, Shield,
   FileText, Target, TrendingUp, Users, Zap, CheckCircle,
-  ArrowRight, AlertCircle, Book, Play, HelpCircle, Sparkles
+  ArrowRight, AlertCircle, Book, Play, HelpCircle, Sparkles,
+  Trophy, Globe, Clock, Palette, Code, BarChart
 } from "lucide-react";
 
 export default function GettingStarted() {
@@ -406,10 +407,169 @@ export default function GettingStarted() {
           {/* Builder Tab */}
           <TabsContent value="builder" className="space-y-8" data-testid="content-builder">
             <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold mb-2">Builder Quick Start</h2>
+              {/* Builder Hero */}
+              <div className="text-center mb-8 space-y-6">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <Badge variant="outline" className="gap-1.5 border-primary/40 bg-primary/10 text-primary">
+                    <Trophy className="h-3 w-3" />
+                    Join Elite Builders
+                  </Badge>
+                  <Badge variant="default" className="gap-1.5">
+                    <Sparkles className="h-3 w-3" />
+                    Earn with Web3 Projects
+                  </Badge>
+                </div>
+                
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  Turn Your Web3 Skills
+                  <span className="block mt-2 bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+                    Into Consistent Income
+                  </span>
+                </h2>
+                
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Join Create.psx and connect with memecoin and crypto projects looking for your expertise. 
+                  Get paid in USDC with secure escrow protection.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/builder-quiz">
+                    <Button size="lg" className="gap-2 text-base" data-testid="button-builder-quiz">
+                      Start Readiness Quiz
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/builder-onboarding">
+                    <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-builder-apply">
+                      Apply Now
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <Card className="text-center">
+                  <CardContent className="pt-4 space-y-1">
+                    <div className="text-2xl font-bold text-primary">$2.5M+</div>
+                    <div className="text-xs text-muted-foreground">Total Earnings Paid</div>
+                  </CardContent>
+                </Card>
+                <Card className="text-center">
+                  <CardContent className="pt-4 space-y-1">
+                    <div className="text-2xl font-bold text-primary">500+</div>
+                    <div className="text-xs text-muted-foreground">Active Builders</div>
+                  </CardContent>
+                </Card>
+                <Card className="text-center">
+                  <CardContent className="pt-4 space-y-1">
+                    <div className="text-2xl font-bold text-primary">2,000+</div>
+                    <div className="text-xs text-muted-foreground">Projects Completed</div>
+                  </CardContent>
+                </Card>
+                <Card className="text-center">
+                  <CardContent className="pt-4 space-y-1">
+                    <div className="text-2xl font-bold text-primary">4.9★</div>
+                    <div className="text-xs text-muted-foreground">Average Rating</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Why Join */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold mb-6 text-center">Why Join Create.psx?</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card className="border-2">
+                    <CardHeader>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-3/10 mb-2">
+                        <Shield className="h-5 w-5 text-chart-3" />
+                      </div>
+                      <CardTitle className="text-base">Secure Escrow Payments</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Get paid in USDC with smart contract escrow. Funds guaranteed when you complete milestones.
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2">
+                    <CardHeader>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-2/10 mb-2">
+                        <Users className="h-5 w-5 text-chart-2" />
+                      </div>
+                      <CardTitle className="text-base">Quality Clients</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Work with verified crypto projects and memecoins. All clients are vetted.
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2">
+                    <CardHeader>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-4/10 mb-2">
+                        <DollarSign className="h-5 w-5 text-chart-4" />
+                      </div>
+                      <CardTitle className="text-base">Set Your Own Rates</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        You control your pricing. Create packages or custom quotes.
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2">
+                    <CardHeader>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 mb-2">
+                        <Trophy className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-base">Build Your Reputation</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Earn reviews and ratings. Top builders get featured placement.
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2">
+                    <CardHeader>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-1/10 mb-2">
+                        <Globe className="h-5 w-5 text-chart-1" />
+                      </div>
+                      <CardTitle className="text-base">Work Remotely</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Connect with global clients from anywhere. Full flexibility.
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2">
+                    <CardHeader>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-5/10 mb-2">
+                        <Sparkles className="h-5 w-5 text-chart-5" />
+                      </div>
+                      <CardTitle className="text-base">Low Platform Fees</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Only 10% platform fee, with special rates for token holders.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold mb-2">How It Works</h3>
                 <p className="text-muted-foreground">
-                  Join the platform and start earning with your Web3 skills
+                  Get started as a builder in 4 simple steps
                 </p>
               </div>
 

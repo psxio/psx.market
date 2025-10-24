@@ -43,7 +43,6 @@ import TermsOfService from "@/pages/terms-of-service";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import CookiePolicy from "@/pages/cookie-policy";
 import FAQ from "@/pages/faq";
-import FindBuilder from "@/pages/find-builder";
 import BuyerRequests from "@/pages/buyer-requests";
 import NotFound from "@/pages/not-found";
 
@@ -58,7 +57,6 @@ function Router() {
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/builders" component={BrowseBuilders} />
       <Route path="/become-builder" component={BuildersLanding} />
-      <Route path="/find-builder" component={FindBuilder} />
       <Route path="/builder-quiz" component={BuilderQuiz} />
       <Route path="/apply" component={Apply} />
       <Route path="/how-it-works" component={HowItWorks} />
