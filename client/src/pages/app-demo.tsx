@@ -188,37 +188,45 @@ export default function AppDemo() {
 
       {/* Slides */}
       <div className="pt-24 pb-8">
-        {/* Slide 0: Homepage Hero */}
+        {/* Slide 0: Homepage - Buy on Demand */}
         {currentSlide === 0 && (
-          <div className="container mx-auto px-4 space-y-8 animate-in fade-in duration-500">
-            <div className="text-center space-y-4 py-12">
+          <div className="container mx-auto px-4 space-y-12 animate-in fade-in duration-500">
+            {/* Hero Section */}
+            <div className="text-center space-y-6 py-8">
               <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                port444
+                Buy on Demand
               </h1>
-              <p className="text-2xl text-muted-foreground max-w-2xl mx-auto">
-                Premier Web3 Marketplace for $CREATE & $PSX Ecosystem
+              <p className="text-3xl font-semibold">
+                Web3 Talent Marketplace
               </p>
-              <p className="text-lg text-muted-foreground">
-                Connect with elite builders across 10 specialized categories
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                The open-hub marketplace connecting premium builders with clients in the memecoin and broader crypto space.
+                Enjoy exclusive benefits when you hold $CREATE or $PSX tokens including lower fees!
               </p>
-              <div className="flex gap-4 justify-center pt-4">
+              <div className="flex gap-4 justify-center pt-2">
                 <Button size="lg" data-testid="button-browse-services">
                   Browse Services
                 </Button>
+                <Button size="lg" variant="outline" data-testid="button-become-builder">
+                  Become a Builder
+                </Button>
                 <Button size="lg" variant="outline" data-testid="button-find-builders">
-                  Find Builders
+                  Become a Client
                 </Button>
               </div>
             </div>
 
             {/* Category Browser */}
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-semibold mb-4 text-center">Browse by Category</h2>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {categories.map((cat) => (
+            <div className="max-w-6xl mx-auto space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Browse by Category</h2>
+                <span className="text-sm text-muted-foreground">Showing: 3D Artists</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat, idx) => (
                   <Badge
                     key={cat}
-                    variant="outline"
+                    variant={idx === 0 ? "default" : "outline"}
                     className="text-sm px-4 py-2 cursor-pointer hover-elevate active-elevate-2"
                   >
                     {cat}
@@ -227,17 +235,49 @@ export default function AppDemo() {
               </div>
             </div>
 
-            {/* Search Demo */}
-            <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search for grants, KOLs, volume, 3D design..."
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border bg-card text-card-foreground"
-                  defaultValue="grants"
-                  data-testid="input-demo-search"
-                />
+            {/* Featured Services Grid */}
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mockServices.map((service) => (
+                  <Card key={service.id} className="overflow-hidden hover-elevate active-elevate-2 cursor-pointer" data-testid={`card-featured-${service.id}`}>
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${service.builder}`}
+                          alt={service.builder}
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{service.builder}</p>
+                        </div>
+                      </div>
+                      <h3 className="font-semibold line-clamp-2">{service.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium">{service.rating}</span>
+                        <span className="text-sm text-muted-foreground">
+                          ({service.reviews} reviews)
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {service.tokens.slice(0, 3).map((token) => (
+                          <Badge key={token} variant="secondary" className="text-xs font-mono">
+                            {token}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between pt-2 border-t">
+                        <span className="font-bold text-xl">{service.price}</span>
+                        <Button size="sm" variant="outline">View Details</Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
               </div>
             </div>
           </div>
