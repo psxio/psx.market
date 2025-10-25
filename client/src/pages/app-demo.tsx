@@ -190,9 +190,8 @@ export default function AppDemo() {
       <div className="pt-24 pb-8">
         {/* Slide 0: Homepage Hero */}
         {currentSlide === 0 && (
-          <div className="container mx-auto px-4 space-y-12 animate-in fade-in duration-500">
-            {/* Hero Section */}
-            <div className="text-center space-y-4 py-8">
+          <div className="container mx-auto px-4 space-y-8 animate-in fade-in duration-500">
+            <div className="text-center space-y-4 py-12">
               <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 port444
               </h1>
@@ -241,102 +240,6 @@ export default function AppDemo() {
                 />
               </div>
             </div>
-
-            {/* Token Holder Benefits */}
-            <div className="max-w-6xl mx-auto space-y-6">
-              <div className="text-center space-y-2">
-                <Badge variant="secondary" className="mb-2">
-                  <Zap className="h-3 w-3 mr-1" />
-                  Exclusive Rewards
-                </Badge>
-                <h2 className="text-3xl font-bold">Token Holder Benefits</h2>
-                <p className="text-muted-foreground">
-                  Hold $CREATE or $PSX tokens to unlock exclusive platform perks, discounts, and priority access
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="p-6 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <DollarSign className="h-6 w-6 text-green-500" />
-                  </div>
-                  <h3 className="font-semibold">60% Lower Fees</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Pay only 1% platform fee instead of 2.5% standard rate on all orders
-                  </p>
-                  <p className="text-xs text-muted-foreground font-medium">Save on every order</p>
-                </Card>
-
-                <Card className="p-6 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-                    <Zap className="h-6 w-6 text-purple-500" />
-                  </div>
-                  <h3 className="font-semibold">Priority Support</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Get faster response times and dedicated assistance from our team
-                  </p>
-                  <p className="text-xs text-muted-foreground font-medium">VIP treatment</p>
-                </Card>
-
-                <Card className="p-6 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
-                    <Shield className="h-6 w-6 text-cyan-500" />
-                  </div>
-                  <h3 className="font-semibold">Verified Badge</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Display token holder badge on your profile to build trust with builders
-                  </p>
-                  <p className="text-xs text-muted-foreground font-medium">Stand out</p>
-                </Card>
-
-                <Card className="p-6 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center">
-                    <TrendingUp className="h-6 w-6 text-yellow-500" />
-                  </div>
-                  <h3 className="font-semibold">Early Access</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Be first to access new features, exclusive services, and premium builders
-                  </p>
-                  <p className="text-xs text-muted-foreground font-medium">Beta features</p>
-                </Card>
-              </div>
-
-              <Card className="p-6 bg-muted/50 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Don't have tokens yet? Platform is fully accessible to everyone - benefits are optional rewards!
-                </p>
-                <div className="flex gap-3 justify-center mt-4">
-                  <Button variant="outline" size="sm">
-                    Get $PSX Tokens
-                  </Button>
-                  <Button size="sm" data-testid="button-browse-without-tokens">
-                    Browse Without Tokens
-                  </Button>
-                </div>
-              </Card>
-            </div>
-
-            {/* PSX Agency Promotion */}
-            <Card className="max-w-6xl mx-auto p-8 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border-purple-500/20">
-              <div className="space-y-4">
-                <Badge variant="secondary" className="mb-2">
-                  <Shield className="h-3 w-3 mr-1" />
-                  Direct B2B Services
-                </Badge>
-                <h2 className="text-2xl font-bold">Need Direct Talent Support?</h2>
-                <p className="text-muted-foreground max-w-2xl">
-                  Visit <span className="font-bold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. Powered by <span className="text-purple-400">Create</span> and <span className="text-cyan-400">PSX</span> tokens. Proudly partnered with <span className="text-purple-400">The Creators</span> at thecreators.com.
-                </p>
-                <div className="flex gap-3">
-                  <Button variant="outline" data-testid="button-visit-psx">
-                    Visit PSX Agency
-                  </Button>
-                  <Button variant="ghost" data-testid="button-the-creators">
-                    The Creators
-                  </Button>
-                </div>
-              </div>
-            </Card>
           </div>
         )}
 
