@@ -1,0 +1,102 @@
+ets write the answers to these questions for our submission of this app to the base batches 002. use the attached to help and reference our codebase for the rest
+
+Skip to content
+Home
+
+Blog
+
+rskagy's avatar
+
+600
+
+600
+
+Create on Base / create.blue
+Internet Capital Market for open source creator infrastructure
+project media
+
+1080
+
+1920
+
+Project links
+
+Builders
+
+Ryan
+
+Kagy
+
+The problem it solves
+
+describe what can people use it for, or how it makes existing tasks easier/safer e.t.c (markdown supported)
+
+Write
+Preview
+
+Start writing from here..
+Challenges I ran into
+
+tell us about any specific bug or hurdle you ran into while building this project. how did you get over it? (markdown supported)
+
+Write
+Preview
+
+Start writing from here..
+Link to the GitHub Repo of your project
+
+Please provide the link to the GitHub Repo of your project
+
+Add a link here
+Live URL of your project
+
+Please provide the live links to your project
+
+Add a link here
+What is your product’s unique value proposition?
+
+Explain what makes your product stand out from others and how your alpha build demonstrates or validates this value.
+
+Write
+Preview
+
+Start writing from here..
+Who is your target customer?
+
+Describe your ideal users and how you’ve confirmed they’re the right audience through research, testing, or feedback.
+
+Write
+Preview
+
+Start writing from here..
+Who are your closest competitors and how are you different?
+
+List your main competitors (include URLs) and clearly outline what makes your product or approach distinct from theirs.
+
+Write
+Preview
+
+Start writing from here..
+What is your distribution strategy and why?
+
+Explain how you plan to reach your users (e.g., direct sales, partnerships, community-driven, paid acquisition) and why this approach fits your product and audience.
+
+Write
+Preview
+
+Start writing from here..
+Technologies used
+
+Platforms
+
+© 2025, NSB Classic PTE LTD
+
+Terms
+
+Privacy
+
+About
+
+Contact us
+
+Copy email address
