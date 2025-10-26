@@ -5210,6 +5210,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Social Proof & Live Activity Routes
+  
+  // Get recent platform activity for live ticker
+  app.get("/api/platform/activity", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 20;
+      const activities = await storage.getPlatformActivity(limit);
+      res.json(activities);
+    } catch (error) {
+      console.error("Error fetching platform activity:", error);
+      res.status(500).json({ error: "Failed to fetch platform activity" });
+    }
+  });
+
+  // Get platform statistics
+  app.get("/api/platform/stats", async (req, res) => {
+    try {
+      const stats = await storage.getPlatformStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching platform stats:", error);
+      res.status(500).json({ error: "Failed to fetch platform statistics" });
+    }
+  });
+
+  // Track service view
+  app.post("/api/services/:id/view", async (req, res) => {
+    try {
+      const serviceId = req.params.id;
+      const viewerId = req.body.viewerId || null;
+      const ipAddress = req.ip || req.headers['x-forwarded-for'] as string || 'unknown';
+      const userAgent = req.headers['user-agent'] || '';
+      const referrer = req.headers.referer || req.headers.referrer as string || '';
+
+      await storage.trackServiceView({
+        serviceId,
+        builderId: req.body.builderId,
+        viewerId,
+        ipAddress,
+        userAgent,
+        referrer,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error tracking service view:", error);
+      res.status(500).json({ error: "Failed to track view" });
+    }
+  });
+
+  // Get service social proof stats
+  app.get("/api/services/:id/social-proof", async (req, res) => {
+    try {
+      const serviceId = req.params.id;
+      const stats = await storage.getServiceSocialProof(serviceId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching service social proof:", error);
+      res.status(500).json({ error: "Failed to fetch service stats" });
+    }
+  });
+
+  // Get recent 5-star reviews for carousel
+  app.get("/api/reviews/recent-highlights", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const reviews = await storage.getRecentHighlightReviews(limit);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching recent reviews:", error);
+      res.status(500).json({ error: "Failed to fetch reviews" });
+    }
+  });
+
   // Register escrow routes
   app.use(escrowRouter);
 

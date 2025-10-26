@@ -85,6 +85,10 @@ import {
   type InsertUserPreferences,
   type FilterPreset,
   type InsertFilterPreset,
+  type PlatformActivity,
+  type InsertPlatformActivity,
+  type ServiceView,
+  type InsertServiceView,
   builders,
   builderProjects,
   services,
@@ -136,6 +140,8 @@ import {
   searchHistory,
   userPreferences,
   filterPresets,
+  platformActivity,
+  serviceViews,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -471,6 +477,29 @@ export interface IStorage {
   createFilterPreset(preset: InsertFilterPreset): Promise<FilterPreset>;
   updateFilterPreset(id: string, data: Partial<FilterPreset>): Promise<FilterPreset>;
   deleteFilterPreset(id: string): Promise<void>;
+  
+  // Social Proof & Activity Tracking
+  getPlatformActivity(limit?: number): Promise<PlatformActivity[]>;
+  createPlatformActivity(activity: InsertPlatformActivity): Promise<PlatformActivity>;
+  getPlatformStats(): Promise<{
+    totalPaidOut: string;
+    totalBuilders: number;
+    totalProjects: number;
+    avgRating: string;
+    onTimeDelivery: string;
+  }>;
+  trackServiceView(view: InsertServiceView): Promise<ServiceView>;
+  getServiceSocialProof(serviceId: string): Promise<{
+    viewsLast24Hours: number;
+    bookingsLastWeek: number;
+    lastBookedAt: string | null;
+    totalBookings: number;
+  }>;
+  getRecentHighlightReviews(limit?: number): Promise<Array<{
+    review: Review;
+    builder: Builder | null;
+    service: Service | null;
+  }>>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -2925,6 +2954,146 @@ export class PostgresStorage implements IStorage {
 
   async deleteFilterPreset(id: string): Promise<void> {
     await db.delete(filterPresets).where(eq(filterPresets.id, id));
+  }
+
+  // Social Proof & Activity Tracking Implementations
+  
+  async getPlatformActivity(limit: number = 20): Promise<PlatformActivity[]> {
+    return await db.select().from(platformActivity)
+      .where(eq(platformActivity.visibility, 'public'))
+      .orderBy(desc(platformActivity.createdAt))
+      .limit(limit);
+  }
+
+  async createPlatformActivity(activity: InsertPlatformActivity): Promise<PlatformActivity> {
+    const result = await db.insert(platformActivity).values(activity).returning();
+    return result[0];
+  }
+
+  async getPlatformStats(): Promise<{
+    totalPaidOut: string;
+    totalBuilders: number;
+    totalProjects: number;
+    avgRating: string;
+    onTimeDelivery: string;
+  }> {
+    // Get total paid out from builders
+    const paidResult = await db.select({
+      total: sqlFunc<string>`COALESCE(SUM(CAST(total_earnings AS DECIMAL)), 0)`
+    }).from(builders);
+
+    // Get total active builders
+    const buildersResult = await db.select({
+      count: sqlFunc<number>`COUNT(*)::int`
+    }).from(builders).where(eq(builders.isActive, true));
+
+    // Get total completed projects
+    const projectsResult = await db.select({
+      count: sqlFunc<number>`COUNT(*)::int`
+    }).from(orders).where(eq(orders.status, 'completed'));
+
+    // Get average rating
+    const ratingResult = await db.select({
+      avg: sqlFunc<string>`COALESCE(AVG(CAST(rating AS DECIMAL)), 0)`
+    }).from(builders).where(eq(builders.isActive, true));
+
+    // Get average on-time delivery rate
+    const deliveryResult = await db.select({
+      avg: sqlFunc<string>`COALESCE(AVG(CAST(on_time_delivery_rate AS DECIMAL)), 0)`
+    }).from(builders).where(eq(builders.isActive, true));
+
+    return {
+      totalPaidOut: paidResult[0]?.total || '0',
+      totalBuilders: buildersResult[0]?.count || 0,
+      totalProjects: projectsResult[0]?.count || 0,
+      avgRating: ratingResult[0]?.avg || '0',
+      onTimeDelivery: deliveryResult[0]?.avg || '0',
+    };
+  }
+
+  async trackServiceView(view: InsertServiceView): Promise<ServiceView> {
+    const result = await db.insert(serviceViews).values(view).returning();
+    return result[0];
+  }
+
+  async getServiceSocialProof(serviceId: string): Promise<{
+    viewsLast24Hours: number;
+    bookingsLastWeek: number;
+    lastBookedAt: string | null;
+    totalBookings: number;
+  }> {
+    // Get views in last 24 hours
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const viewsResult = await db.select({
+      count: sqlFunc<number>`COUNT(*)::int`
+    })
+      .from(serviceViews)
+      .where(and(
+        eq(serviceViews.serviceId, serviceId),
+        sqlFunc`created_at >= ${oneDayAgo}`
+      ));
+
+    // Get bookings in last 7 days
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const bookingsWeekResult = await db.select({
+      count: sqlFunc<number>`COUNT(*)::int`
+    })
+      .from(orders)
+      .where(and(
+        eq(orders.serviceId, serviceId),
+        sqlFunc`created_at >= ${sevenDaysAgo}`
+      ));
+
+    // Get last booked timestamp
+    const lastBooking = await db.select({
+      createdAt: orders.createdAt
+    })
+      .from(orders)
+      .where(eq(orders.serviceId, serviceId))
+      .orderBy(desc(orders.createdAt))
+      .limit(1);
+
+    // Get total bookings
+    const totalBookingsResult = await db.select({
+      count: sqlFunc<number>`COUNT(*)::int`
+    })
+      .from(orders)
+      .where(eq(orders.serviceId, serviceId));
+
+    return {
+      viewsLast24Hours: viewsResult[0]?.count || 0,
+      bookingsLastWeek: bookingsWeekResult[0]?.count || 0,
+      lastBookedAt: lastBooking[0]?.createdAt || null,
+      totalBookings: totalBookingsResult[0]?.count || 0,
+    };
+  }
+
+  async getRecentHighlightReviews(limit: number = 10): Promise<Array<{
+    review: Review;
+    builder: Builder | null;
+    service: Service | null;
+  }>> {
+    const recentReviews = await db.select().from(reviews)
+      .where(and(
+        eq(reviews.rating, 5),
+        eq(reviews.status, 'approved')
+      ))
+      .orderBy(desc(reviews.createdAt))
+      .limit(limit);
+
+    const results = await Promise.all(
+      recentReviews.map(async (review) => {
+        const builder = review.builderId 
+          ? (await this.getBuilder(review.builderId)) ?? null
+          : null;
+        const service = review.serviceId
+          ? (await this.getService(review.serviceId)) ?? null
+          : null;
+        return { review, builder, service };
+      })
+    );
+
+    return results;
   }
 }
 
