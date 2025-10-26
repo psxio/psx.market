@@ -5,6 +5,8 @@ import { Header } from "@/components/header";
 import { WelcomeModal } from "@/components/welcome-modal";
 import { BuilderCard } from "@/components/builder-card";
 import { SEOHead } from "@/components/seo-head";
+import { LiveActivityTicker } from "@/components/live-activity-ticker";
+import { RecentReviewsCarousel } from "@/components/recent-reviews-carousel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -140,6 +142,11 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
+          </div>
+
+          {/* Live Activity Ticker */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <LiveActivityTicker />
           </div>
 
           {/* Category Browser - Main Focal Point */}
@@ -331,6 +338,13 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Recent Reviews Carousel */}
+      <section className="border-b bg-background py-16">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <RecentReviewsCarousel />
         </div>
       </section>
 
