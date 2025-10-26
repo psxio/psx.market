@@ -1,13 +1,29 @@
-import OpenAI from "openai";
 import { storage } from "../storage";
 import type { Builder, Service } from "@shared/schema";
 
-// This is using Replit's AI Integrations service, which provides OpenAI-compatible API access without requiring your own OpenAI API key.
-// the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
-const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-});
+// Lazy-load OpenAI to make it optional
+let openaiClient: any = null;
+let openaiAvailable = false;
+
+async function getOpenAI() {
+  if (openaiClient) return openaiClient;
+  
+  try {
+    const OpenAI = (await import("openai")).default;
+    // This is using Replit's AI Integrations service, which provides OpenAI-compatible API access without requiring your own OpenAI API key.
+    // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+    openaiClient = new OpenAI({
+      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+    });
+    openaiAvailable = true;
+    return openaiClient;
+  } catch (error) {
+    console.warn("OpenAI package not available. AI-powered recommendations will use fallback logic.");
+    openaiAvailable = false;
+    return null;
+  }
+}
 
 export async function getPriceOptimizationSuggestions(
   builderId: string,
