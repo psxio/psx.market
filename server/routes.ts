@@ -17,6 +17,9 @@ import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
 import escrowRouter from "./routes/escrow";
 import { socialIntegrationService } from "./services/socialIntegrations";
+import { registerSitemapRoutes } from "./routes/sitemap-routes";
+import { registerDigestRoutes } from "./routes/digest-routes";
+import { registerRecommendationRoutes } from "./routes/recommendation-routes";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -5286,6 +5289,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register escrow routes
   app.use(escrowRouter);
+
+  // Register SEO routes (sitemap, robots.txt)
+  registerSitemapRoutes(app);
+
+  // Register digest email routes
+  registerDigestRoutes(app);
+
+  // Register recommendation routes
+  registerRecommendationRoutes(app);
 
   return httpServer;
 }
