@@ -19,7 +19,7 @@ export function MobileNav() {
     {
       icon: Home,
       label: "Browse",
-      path: "/",
+      path: "/marketplace",
       testId: "mobile-nav-browse"
     },
     {
@@ -68,7 +68,7 @@ export function MobileNav() {
 
           return (
             <Link
-              key={item.path}
+              key={item.testId}
               href={item.path}
               className={`flex flex-col items-center justify-center gap-1 relative transition-colors ${
                 active
