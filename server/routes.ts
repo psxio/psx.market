@@ -460,6 +460,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get recent 5-star reviews for carousel (must be before /api/reviews/:id)
+  app.get("/api/reviews/recent-highlights", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const reviews = await storage.getRecentHighlightReviews(limit);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching recent reviews:", error);
+      res.status(500).json({ error: "Failed to fetch reviews" });
+    }
+  });
+
   app.get("/api/reviews/:id", async (req, res) => {
     try {
       const review = await storage.getReview(req.params.id);
@@ -5269,18 +5281,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching service social proof:", error);
       res.status(500).json({ error: "Failed to fetch service stats" });
-    }
-  });
-
-  // Get recent 5-star reviews for carousel
-  app.get("/api/reviews/recent-highlights", async (req, res) => {
-    try {
-      const limit = parseInt(req.query.limit as string) || 10;
-      const reviews = await storage.getRecentHighlightReviews(limit);
-      res.json(reviews);
-    } catch (error) {
-      console.error("Error fetching recent reviews:", error);
-      res.status(500).json({ error: "Failed to fetch reviews" });
     }
   });
 

@@ -1902,7 +1902,7 @@ export const platformActivity = pgTable("platform_activity", {
 export const serviceViews = pgTable("service_views", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   serviceId: varchar("service_id").notNull(),
-  builderId: varchar("builder_id").notNull(),
+  builderId: varchar("builder_id"), // Nullable - may not always have builder context
   viewerId: varchar("viewer_id"), // null if anonymous
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
