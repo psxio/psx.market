@@ -58,7 +58,7 @@ function formatTimeAgo(dateString: string): string {
 
 export function RecentReviewsCarousel() {
   const { data: reviews = [], isLoading } = useQuery<ReviewWithDetails[]>({
-    queryKey: ['/api/reviews/highlights'],
+    queryKey: ['/api/reviews/recent-highlights'],
     refetchInterval: 60000, // Refresh every minute
   });
 
