@@ -1931,11 +1931,15 @@ export class PostgresStorage implements IStorage {
       return existing[0];
     }
 
+    // Get builder name for thread title
+    const builder = await this.getBuilder(builderId);
+    const builderName = builder?.name || "Builder";
+
     const result = await db.insert(chatThreads).values({
       clientId,
       builderId,
       orderId,
-      title: `Chat with ${builderId}`,
+      title: `Chat with ${builderName}`,
     }).returning();
 
     return result[0];
