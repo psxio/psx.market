@@ -5,6 +5,7 @@ import { useClientAuth } from "@/hooks/use-client-auth";
 import { useAccount } from "wagmi";
 import { erc20Abi } from "viem";
 import { useReadContracts } from "wagmi";
+import { EscrowPaymentDialog } from "@/components/escrow-payment-dialog";
 import {
   Dialog,
   DialogContent,
@@ -52,6 +53,8 @@ export function OrderBookingDialog({
   const [offerAllocation, setOfferAllocation] = useState(false);
   const [allocationPercentage, setAllocationPercentage] = useState("");
   const [allocationDetails, setAllocationDetails] = useState("");
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [pendingOrder, setPendingOrder] = useState<any>(null);
 
   // Check token balances for discounts
   const { data: tokenData } = useReadContracts({
@@ -75,7 +78,7 @@ export function OrderBookingDialog({
   const createBalance = tokenData?.[1]?.result;
   
   // User is a token holder if they have either PSX or CREATE tokens
-  const isTokenHolder = (psxBalance && psxBalance > BigInt(0)) || (createBalance && createBalance > BigInt(0));
+  const isTokenHolder = Boolean((psxBalance && psxBalance > BigInt(0)) || (createBalance && createBalance > BigInt(0)));
 
   const packages = [
     {
@@ -116,7 +119,7 @@ export function OrderBookingDialog({
   const totalPrice = servicePrice + platformFee;
   
   const savings = isTokenHolder ? servicePrice * (standardFeeRate - tokenHolderFeeRate) : 0;
-  const savingsPercentage = isTokenHolder ? ((standardFeeRate - tokenHolderFeeRate) / standardFeeRate * 100).toFixed(0) : 0;
+  const savingsPercentage = isTokenHolder ? ((standardFeeRate - tokenHolderFeeRate) / standardFeeRate * 100).toFixed(0) : "0";
 
   const createOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -135,20 +138,56 @@ export function OrderBookingDialog({
     onSuccess: (order) => {
       queryClient.invalidateQueries({ queryKey: ["/api/clients/me/orders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
-      onOpenChange(false);
-      setRequirements("");
-      setSelectedPackage("basic");
-      setOfferAllocation(false);
-      setAllocationPercentage("");
-      setAllocationDetails("");
-      // Navigate to order confirmation page
-      navigate(`/order-confirmation/${order.id}`);
+      
+      // Store order and open payment dialog
+      setPendingOrder(order);
+      setShowPaymentDialog(true);
     },
     onError: (error: any) => {
       toast({
         title: "Order Failed",
         description: error.message || "Failed to place order. Please try again.",
         variant: "destructive",
+      });
+    },
+  });
+
+  const updateOrderMutation = useMutation({
+    mutationFn: async ({ orderId, txHash }: { orderId: string; txHash: string }) => {
+      const response = await fetch(`/api/orders/${orderId}/escrow`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          escrowCreatedTxHash: txHash,
+          escrowStatus: "active"
+        }),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update order");
+      }
+      return response.json();
+    },
+    onSuccess: (order) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/clients/me/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      
+      // Close dialogs and reset
+      setShowPaymentDialog(false);
+      onOpenChange(false);
+      setRequirements("");
+      setSelectedPackage("basic");
+      setOfferAllocation(false);
+      setAllocationPercentage("");
+      setAllocationDetails("");
+      
+      // Navigate to order confirmation page
+      navigate(`/order-confirmation/${order.id}`);
+      
+      toast({
+        title: "Order Confirmed",
+        description: "Your escrow payment has been secured on-chain",
       });
     },
   });
@@ -187,9 +226,41 @@ export function OrderBookingDialog({
     });
   };
 
+  const handlePaymentSuccess = (txHash: string) => {
+    if (pendingOrder) {
+      updateOrderMutation.mutate({ orderId: pendingOrder.id, txHash });
+    }
+  };
+
+  const handlePaymentError = (error: string) => {
+    toast({
+      title: "Payment Failed",
+      description: error,
+      variant: "destructive",
+    });
+  };
+
+  // Generate milestones from the selected package
+  const generateMilestones = () => {
+    const servicePrice = parseFloat(selectedPkg?.price || "0");
+    const feeRate = isTokenHolder ? tokenHolderFeeRate : standardFeeRate;
+    const totalWithFee = servicePrice + (servicePrice * feeRate);
+    
+    // For now, create a single milestone for the full amount
+    // In the future, this could be customized per service
+    return [
+      {
+        description: `Complete ${service.title} - ${selectedPkg?.name} Package`,
+        amount: totalWithFee,
+        deadlineDays: parseInt(selectedPkg?.deliveryTime?.match(/\d+/)?.[0] || "7") + 3, // Add 3 days for review
+      }
+    ];
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl">{service.title}</DialogTitle>
           <DialogDescription className="text-sm">
@@ -462,5 +533,26 @@ export function OrderBookingDialog({
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Escrow Payment Dialog */}
+    {pendingOrder && builder.walletAddress && (
+      <EscrowPaymentDialog
+        open={showPaymentDialog}
+        onOpenChange={(open) => {
+          setShowPaymentDialog(open);
+          if (!open) {
+            // If payment dialog is closed without success, clean up
+            setPendingOrder(null);
+          }
+        }}
+        orderId={pendingOrder.id}
+        builderAddress={builder.walletAddress}
+        totalAmount={totalPrice}
+        milestones={generateMilestones()}
+        onSuccess={handlePaymentSuccess}
+        onError={handlePaymentError}
+      />
+    )}
+  </>
   );
 }

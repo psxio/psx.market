@@ -1410,6 +1410,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update order with escrow information
+  app.patch("/api/orders/:id/escrow", requireClientAuth, async (req, res) => {
+    try {
+      const { escrowCreatedTxHash, escrowStatus } = req.body;
+      
+      if (!escrowCreatedTxHash) {
+        return res.status(400).json({ error: "Transaction hash is required" });
+      }
+
+      const order = await storage.getOrder(req.params.id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      // Verify the order belongs to the authenticated client
+      if (order.clientId !== req.session.clientId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      // Update order with escrow information
+      const updatedOrder = await storage.updateOrder(req.params.id, {
+        escrowCreatedTxHash,
+        escrowStatus: escrowStatus || "active",
+        updatedAt: new Date().toISOString(),
+      });
+
+      // Send notification to builder
+      const builder = await storage.getBuilder(order.builderId);
+      if (builder) {
+        const { sendNotification } = await import("./notifications");
+        await sendNotification({
+          recipientId: builder.id,
+          recipientType: "builder",
+          type: "order_update",
+          title: "Payment Secured",
+          message: `Payment for "${order.title}" has been secured in escrow. You can start working on this project.`,
+          actionUrl: `/builder-dashboard?order=${order.id}`,
+          metadata: { orderId: order.id, orderTitle: order.title, txHash: escrowCreatedTxHash },
+        });
+      }
+
+      res.json(updatedOrder);
+    } catch (error: any) {
+      console.error("Error updating order escrow:", error);
+      res.status(500).json({ error: error.message || "Failed to update order escrow" });
+    }
+  });
+
   app.post("/api/orders/:id/cancel", requireClientAuth, async (req, res) => {
     try {
       const { reason, refundAmount } = req.body;
