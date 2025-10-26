@@ -46,6 +46,9 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { useBuilderAuth } from "@/hooks/use-builder-auth";
 import BuilderAnalytics from "@/components/builder-analytics";
+import { ProfileCompletionTracker } from "@/components/profile-completion-tracker";
+import { PricingCalculator } from "@/components/pricing-calculator";
+import { FirstClientChecklist } from "@/components/first-client-checklist";
 import type { Order, Service } from "@shared/schema";
 
 export default function BuilderDashboard() {
@@ -349,6 +352,17 @@ export default function BuilderDashboard() {
       {onboardingData && !onboardingData.isComplete && (
         <OnboardingChecklist builderId={builder.id} onboardingData={onboardingData} />
       )}
+
+      {/* Builder Onboarding Tools */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <ProfileCompletionTracker builder={{ ...builder, hasServices: services.length > 0 }} />
+        {builder.completedProjects === 0 && (
+          <FirstClientChecklist builder={builder} />
+        )}
+        {services.length === 0 && (
+          <PricingCalculator />
+        )}
+      </div>
 
       <Card data-testid="card-quick-actions">
         <CardHeader>

@@ -7,6 +7,8 @@ import { BuilderCard } from "@/components/builder-card";
 import { SEOHead } from "@/components/seo-head";
 import { LiveActivityTicker } from "@/components/live-activity-ticker";
 import { RecentReviewsCarousel } from "@/components/recent-reviews-carousel";
+import { GuestBrowseBanner } from "@/components/guest-browse-banner";
+import { MobileStickyCTA } from "@/components/mobile-sticky-cta";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -91,6 +93,8 @@ export default function Home() {
       />
       <Header />
       <WelcomeModal />
+      <GuestBrowseBanner />
+      <MobileStickyCTA />
 
       {/* Unified Hero + Category Browser Section */}
       <section className="relative overflow-hidden border-b bg-gradient-to-br from-background via-background to-primary/5">
@@ -157,20 +161,20 @@ export default function Home() {
 
           {/* Category Browser - Main Focal Point */}
           <div className="space-y-8">
-            {/* Category Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2">
+            {/* Category Pills - Mobile Optimized */}
+            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
               {serviceCategories.map((cat) => {
                 const Icon = cat.icon;
                 return (
                   <Button
                     key={cat.slug || 'all'}
                     variant={selectedCategory === cat.slug ? "default" : "outline"}
-                    size="sm"
+                    size="default"
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className="gap-2 hover-elevate active-elevate-2 whitespace-nowrap"
+                    className="gap-2 hover-elevate active-elevate-2 whitespace-nowrap min-h-10 md:min-h-9 px-4 md:px-3 text-sm md:text-base"
                     data-testid={`button-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-4 w-4 md:h-3.5 md:w-3.5" />
                     <span>{cat.name}</span>
                   </Button>
                 );
