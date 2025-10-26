@@ -2,8 +2,8 @@ import { ethers } from 'ethers';
 
 // Contract addresses (update after deployment)
 export const ESCROW_CONTRACT_ADDRESSES: { [key: number]: string } = {
-  84532: process.env.VITE_ESCROW_CONTRACT_SEPOLIA || "", // Base Sepolia testnet
-  8453: process.env.VITE_ESCROW_CONTRACT_MAINNET || "",  // Base mainnet
+  84532: import.meta.env.VITE_ESCROW_CONTRACT_SEPOLIA || "", // Base Sepolia testnet
+  8453: import.meta.env.VITE_ESCROW_CONTRACT_MAINNET || "",  // Base mainnet
 };
 
 // USDC addresses on Base
