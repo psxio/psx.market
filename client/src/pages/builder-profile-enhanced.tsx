@@ -284,7 +284,7 @@ export default function BuilderProfileEnhanced() {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-7xl px-4 py-8 md:py-12">
+      <div className="container mx-auto max-w-7xl px-4 pt-8 md:pt-12 pb-16 md:pb-20">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content - 2 columns */}
           <div className="lg:col-span-2 space-y-8">
