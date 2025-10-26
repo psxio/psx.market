@@ -11,6 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   Megaphone,
@@ -235,332 +241,283 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Token Holder Benefits Section - Enhanced */}
-      <section ref={benefitsSection.ref as any} className={`relative border-b bg-gradient-to-br from-primary/5 via-chart-2/5 to-background py-20 overflow-hidden ${benefitsSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+      {/* Token Holder Benefits Section - Compact */}
+      <section ref={benefitsSection.ref as any} className={`relative border-b bg-gradient-to-br from-primary/5 via-chart-2/5 to-background py-12 overflow-hidden ${benefitsSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
         {/* Background decorations */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/20 via-chart-2/20 to-transparent rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-chart-3/20 via-chart-4/20 to-transparent rounded-full blur-3xl" />
         
         <div className="container relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-4 gap-1.5 border-primary/40 bg-primary/10 text-primary animate-pulse">
+          {/* Compact Header with Key Info */}
+          <div className="text-center mb-8">
+            <Badge variant="outline" className="mb-3 gap-1.5 border-primary/40 bg-primary/10 text-primary">
               <Gift className="h-3 w-3" />
-              Exclusive Rewards for Token Holders
+              Token Holder Benefits
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Unlock Premium Benefits
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+              Save 60% with $CREATE or $PSX
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Hold $CREATE or $PSX tokens to unlock exclusive platform perks, massive discounts, and VIP treatment. 
-              Join thousands of holders enjoying premium access.
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-6">
+              Hold either token to unlock 1% platform fees (vs 2.5%), priority support, exclusive badges, and early access
             </p>
-          </div>
 
-          {/* Token Showcase Cards */}
-          <div className="grid gap-6 md:grid-cols-2 mb-12 max-w-4xl mx-auto">
-            {/* $CREATE Token Card */}
-            <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background hover-elevate">
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/20 border border-primary/30">
-                      <Layers className="h-7 w-7 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold">$CREATE</h3>
-                      <p className="text-sm text-muted-foreground">The Creators Token</p>
-                    </div>
-                  </div>
-                  <Badge variant="default" className="gap-1">
-                    <Sparkles className="h-3 w-3" />
-                    Active
-                  </Badge>
-                </div>
-                <div className="space-y-2 pt-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>1% platform fees (60% off)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>Priority support & dispute resolution</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>Exclusive token holder badge</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>Early access to new features</span>
-                  </div>
-                </div>
-                <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer" className="block">
-                  <Button variant="outline" className="w-full gap-2 hover-elevate" data-testid="button-get-create">
-                    <ExternalLink className="h-4 w-4" />
-                    Get $CREATE on Uniswap
-                  </Button>
-                </a>
-              </div>
-            </Card>
-
-            {/* $PSX Token Card */}
-            <Card className="border-2 border-chart-2/30 bg-gradient-to-br from-chart-2/10 via-background to-background hover-elevate">
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-chart-2/20 border border-chart-2/30">
-                      <Zap className="h-7 w-7 text-chart-2" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold">$PSX</h3>
-                      <p className="text-sm text-muted-foreground">PSX Agency Token</p>
-                    </div>
-                  </div>
-                  <Badge variant="default" className="gap-1 bg-chart-2 hover:bg-chart-2">
-                    <Sparkles className="h-3 w-3" />
-                    Active
-                  </Badge>
-                </div>
-                <div className="space-y-2 pt-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>1% platform fees (60% off)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>Priority support & dispute resolution</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>Exclusive token holder badge</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                    <span>Early access to new features</span>
-                  </div>
-                </div>
-                <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer" className="block">
-                  <Button variant="outline" className="w-full gap-2 hover-elevate" data-testid="button-get-psx">
-                    <ExternalLink className="h-4 w-4" />
-                    Get $PSX on Uniswap
-                  </Button>
-                </a>
-              </div>
-            </Card>
-          </div>
-
-          {/* Benefits Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-12">
-            <Card className="border-2 hover-elevate transition-all duration-300">
-              <div className="p-6 space-y-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-chart-3/20 to-chart-3/10 border border-chart-3/30">
-                  <DollarSign className="h-7 w-7 text-chart-3" />
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-3xl font-bold text-chart-3">60%</span>
-                    <span className="text-sm text-muted-foreground">savings</span>
-                  </div>
-                  <h3 className="font-semibold mb-2">Massive Fee Discount</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Pay only 1% vs 2.5% standard rate. Save hundreds on every project.
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="border-2 hover-elevate transition-all duration-300">
-              <div className="p-6 space-y-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-chart-2/20 to-chart-2/10 border border-chart-2/30">
-                  <Zap className="h-7 w-7 text-chart-2" />
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-3xl font-bold text-chart-2">2x</span>
-                    <span className="text-sm text-muted-foreground">faster</span>
-                  </div>
-                  <h3 className="font-semibold mb-2">Priority Support</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Jump the queue with dedicated VIP support and faster response times.
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="border-2 hover-elevate transition-all duration-300">
-              <div className="p-6 space-y-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-chart-4/20 to-chart-4/10 border border-chart-4/30">
-                  <CheckCircle2 className="h-7 w-7 text-chart-4" />
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-3xl font-bold text-chart-4">VIP</span>
-                    <span className="text-sm text-muted-foreground">status</span>
-                  </div>
-                  <h3 className="font-semibold mb-2">Verified Badge</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Stand out with an exclusive token holder badge that builders trust.
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="border-2 hover-elevate transition-all duration-300">
-              <div className="p-6 space-y-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30">
-                  <Sparkles className="h-7 w-7 text-primary" />
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-3xl font-bold text-primary">1st</span>
-                    <span className="text-sm text-muted-foreground">access</span>
-                  </div>
-                  <h3 className="font-semibold mb-2">Beta Features</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Get exclusive early access to new features and premium builders.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Comparison Table */}
-          <Card className="border-2 mb-12 max-w-5xl mx-auto">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4 md:p-6 font-semibold">Feature</th>
-                    <th className="text-center p-4 md:p-6 font-semibold">Standard</th>
-                    <th className="text-center p-4 md:p-6">
-                      <div className="flex flex-col items-center gap-2">
-                        <span className="font-semibold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
-                          Token Holder
-                        </span>
-                        <Badge variant="default" className="gap-1 text-xs">
-                          <Gift className="h-3 w-3" />
-                          Premium
-                        </Badge>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b">
-                    <td className="p-4 md:p-6">Platform Fee</td>
-                    <td className="text-center p-4 md:p-6 text-muted-foreground">2.5%</td>
-                    <td className="text-center p-4 md:p-6">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="font-bold text-chart-3">1%</span>
-                        <Badge variant="secondary" className="text-xs">60% off</Badge>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 md:p-6">Support Response Time</td>
-                    <td className="text-center p-4 md:p-6 text-muted-foreground">24-48h</td>
-                    <td className="text-center p-4 md:p-6">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="font-bold text-chart-2">4-12h</span>
-                        <Badge variant="secondary" className="text-xs">Priority</Badge>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 md:p-6">Dispute Resolution</td>
-                    <td className="text-center p-4 md:p-6 text-muted-foreground">Standard</td>
-                    <td className="text-center p-4 md:p-6">
-                      <div className="flex items-center justify-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                        <span className="font-bold">Priority</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 md:p-6">Profile Badge</td>
-                    <td className="text-center p-4 md:p-6 text-muted-foreground">-</td>
-                    <td className="text-center p-4 md:p-6">
-                      <div className="flex items-center justify-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                        <span className="font-bold">Token Holder</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 md:p-6">Early Access</td>
-                    <td className="text-center p-4 md:p-6 text-muted-foreground">-</td>
-                    <td className="text-center p-4 md:p-6">
-                      <div className="flex items-center justify-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                        <span className="font-bold">Beta Features</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="p-4 md:p-6">Exclusive Services</td>
-                    <td className="text-center p-4 md:p-6 text-muted-foreground">-</td>
-                    <td className="text-center p-4 md:p-6">
-                      <div className="flex items-center justify-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-chart-4" />
-                        <span className="font-bold">Premium Builders</span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
-          {/* CTA Section */}
-          <div className="text-center space-y-6">
-            <div className="max-w-2xl mx-auto">
-              <p className="text-sm text-muted-foreground mb-1">
-                Platform is fully accessible to everyone - token benefits are optional rewards!
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Holding either $CREATE or $PSX unlocks all benefits. No minimum amount required.
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            {/* Inline Token Info & CTAs */}
+            <div className="flex flex-wrap gap-3 justify-center items-center">
+              <Badge variant="default" className="gap-2 px-4 py-2">
+                <Layers className="h-4 w-4" />
+                <span className="font-semibold">$CREATE</span>
+              </Badge>
+              <Badge variant="default" className="gap-2 px-4 py-2 bg-chart-2 hover:bg-chart-2">
+                <Zap className="h-4 w-4" />
+                <span className="font-semibold">$PSX</span>
+              </Badge>
               <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="default" className="gap-2 text-base" data-testid="button-get-tokens">
+                <Button variant="default" className="gap-2" data-testid="button-get-tokens">
                   <Coins className="h-4 w-4" />
-                  Get Tokens & Save 60%
+                  Get Tokens
                 </Button>
               </a>
-              <Link href="/marketplace">
-                <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-browse-without-tokens">
-                  Browse Without Tokens
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+            </div>
+          </div>
+
+          {/* Compact Benefits Summary */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6 max-w-5xl mx-auto">
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-chart-3/10">
+                <DollarSign className="h-5 w-5 text-chart-3" />
+              </div>
+              <div>
+                <div className="font-bold text-chart-3">60% Off</div>
+                <div className="text-xs text-muted-foreground">1% fees vs 2.5%</div>
+              </div>
             </div>
 
-            {/* Social Proof */}
-            <div className="pt-8 border-t">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-primary mb-1">5,000+</div>
-                  <div className="text-xs text-muted-foreground">Token Holders</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-chart-2 mb-1">$2.5M+</div>
-                  <div className="text-xs text-muted-foreground">Fees Saved</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-chart-3 mb-1">2.1K+</div>
-                  <div className="text-xs text-muted-foreground">Projects Completed</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-chart-4 mb-1">4.9/5</div>
-                  <div className="text-xs text-muted-foreground">Average Rating</div>
-                </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-chart-2/10">
+                <Zap className="h-5 w-5 text-chart-2" />
+              </div>
+              <div>
+                <div className="font-bold text-chart-2">2x Faster</div>
+                <div className="text-xs text-muted-foreground">Priority support</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-chart-4/10">
+                <CheckCircle2 className="h-5 w-5 text-chart-4" />
+              </div>
+              <div>
+                <div className="font-bold">VIP Badge</div>
+                <div className="text-xs text-muted-foreground">Stand out</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <div className="font-bold text-primary">Early Access</div>
+                <div className="text-xs text-muted-foreground">Beta features</div>
               </div>
             </div>
           </div>
+
+          {/* Collapsible Details */}
+          <Accordion type="single" collapsible className="max-w-5xl mx-auto">
+            <AccordionItem value="comparison" data-testid="accordion-comparison">
+              <AccordionTrigger className="text-sm font-semibold hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Layers className="h-4 w-4" />
+                  View Full Comparison Table
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="overflow-x-auto pt-4">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-3 font-semibold">Feature</th>
+                        <th className="text-center p-3 font-semibold">Standard</th>
+                        <th className="text-center p-3">
+                          <span className="font-semibold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
+                            Token Holder
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      <tr className="border-b">
+                        <td className="p-3">Platform Fee</td>
+                        <td className="text-center p-3 text-muted-foreground">2.5%</td>
+                        <td className="text-center p-3">
+                          <span className="font-bold text-chart-3">1%</span>
+                          <span className="text-xs text-muted-foreground ml-2">(60% off)</span>
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3">Support Response</td>
+                        <td className="text-center p-3 text-muted-foreground">24-48h</td>
+                        <td className="text-center p-3">
+                          <span className="font-bold text-chart-2">4-12h</span>
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3">Dispute Resolution</td>
+                        <td className="text-center p-3 text-muted-foreground">Standard</td>
+                        <td className="text-center p-3 font-bold">Priority</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3">Profile Badge</td>
+                        <td className="text-center p-3 text-muted-foreground">-</td>
+                        <td className="text-center p-3">
+                          <CheckCircle2 className="h-4 w-4 text-chart-4 inline" />
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-3">Early Access</td>
+                        <td className="text-center p-3 text-muted-foreground">-</td>
+                        <td className="text-center p-3">
+                          <CheckCircle2 className="h-4 w-4 text-chart-4 inline" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3">Exclusive Services</td>
+                        <td className="text-center p-3 text-muted-foreground">-</td>
+                        <td className="text-center p-3">
+                          <CheckCircle2 className="h-4 w-4 text-chart-4 inline" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="token-details" data-testid="accordion-tokens">
+              <AccordionTrigger className="text-sm font-semibold hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Coins className="h-4 w-4" />
+                  Token Details & How to Get Them
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid gap-4 md:grid-cols-2 pt-4">
+                  <div className="p-4 rounded-lg border bg-gradient-to-br from-primary/5 to-background">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Layers className="h-5 w-5 text-primary" />
+                      <h3 className="font-bold">$CREATE</h3>
+                      <Badge variant="default" className="gap-1 text-xs ml-auto">
+                        <Sparkles className="h-3 w-3" />
+                        Active
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      The Creators Token - powering the port444 ecosystem
+                    </p>
+                    <ul className="space-y-1.5 mb-4 text-xs">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>1% platform fees (60% discount)</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>Priority support & dispute resolution</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>Exclusive token holder badge</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>Early access to new features</span>
+                      </li>
+                    </ul>
+                    <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer" className="block">
+                      <Button variant="outline" size="sm" className="w-full gap-2" data-testid="button-get-create">
+                        <ExternalLink className="h-3 w-3" />
+                        Get on Uniswap
+                      </Button>
+                    </a>
+                  </div>
+
+                  <div className="p-4 rounded-lg border bg-gradient-to-br from-chart-2/5 to-background">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Zap className="h-5 w-5 text-chart-2" />
+                      <h3 className="font-bold">$PSX</h3>
+                      <Badge variant="default" className="gap-1 text-xs ml-auto bg-chart-2 hover:bg-chart-2">
+                        <Sparkles className="h-3 w-3" />
+                        Active
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      PSX Agency Token - your gateway to premium access
+                    </p>
+                    <ul className="space-y-1.5 mb-4 text-xs">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>1% platform fees (60% discount)</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>Priority support & dispute resolution</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>Exclusive token holder badge</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <span>Early access to new features</span>
+                      </li>
+                    </ul>
+                    <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer" className="block">
+                      <Button variant="outline" size="sm" className="w-full gap-2" data-testid="button-get-psx">
+                        <ExternalLink className="h-3 w-3" />
+                        Get on Uniswap
+                      </Button>
+                    </a>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground text-center mt-4">
+                  Holding either token unlocks all benefits. No minimum amount required.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="stats" data-testid="accordion-stats">
+              <AccordionTrigger className="text-sm font-semibold hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Platform Stats & Social Proof
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                  <div className="text-center p-4 rounded-lg border bg-card/50">
+                    <div className="text-2xl font-bold text-primary mb-1">5,000+</div>
+                    <div className="text-xs text-muted-foreground">Token Holders</div>
+                  </div>
+                  <div className="text-center p-4 rounded-lg border bg-card/50">
+                    <div className="text-2xl font-bold text-chart-2 mb-1">$2.5M+</div>
+                    <div className="text-xs text-muted-foreground">Fees Saved</div>
+                  </div>
+                  <div className="text-center p-4 rounded-lg border bg-card/50">
+                    <div className="text-2xl font-bold text-chart-3 mb-1">2.1K+</div>
+                    <div className="text-xs text-muted-foreground">Projects Done</div>
+                  </div>
+                  <div className="text-center p-4 rounded-lg border bg-card/50">
+                    <div className="text-2xl font-bold text-chart-4 mb-1">4.9/5</div>
+                    <div className="text-xs text-muted-foreground">Avg Rating</div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Footer Note */}
+          <p className="text-center text-xs text-muted-foreground mt-6">
+            Platform is fully accessible to everyone - token benefits are optional rewards!
+          </p>
         </div>
       </section>
 
