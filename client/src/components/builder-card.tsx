@@ -4,7 +4,8 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, CheckCircle2, Clock, Users, Sparkles, Code, TrendingUp, BarChart3, X, Palette, Music, Network, Flame, MessageCircle } from "lucide-react";
+import { Star, CheckCircle2, Clock, Users, Sparkles, Code, TrendingUp, BarChart3, X, Palette, Music, Network, Flame, MessageCircle, Eye } from "lucide-react";
+import { useServiceStats } from "@/hooks/use-service-stats";
 import type { Builder, Service } from "@shared/schema";
 
 interface BuilderCardProps {
@@ -87,8 +88,38 @@ const getPartnerName = (url: string): string => {
   return url.replace('partner:', '');
 };
 
+function formatTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (seconds < 60) return 'just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  return `${Math.floor(seconds / 604800)}w ago`;
+}
+
 export function BuilderCard({ builder, service }: BuilderCardProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { data: serviceStats } = useServiceStats(service?.id || "");
+
+  // Track view when service card is displayed
+  useEffect(() => {
+    if (service?.id) {
+      // Track view after a brief delay to avoid tracking rapid scrolling
+      const timer = setTimeout(() => {
+        fetch(`/api/services/${service.id}/view`, {
+          method: 'POST',
+          credentials: 'include',
+        }).catch(() => {
+          // Silently fail - view tracking is non-critical
+        });
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [service?.id]);
 
   // Handle services without assigned builder - show as generic service card
   if (!builder && service) {
@@ -273,6 +304,25 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                 <span className="text-muted-foreground">Delivery</span>
                 <span className="font-medium">{service.deliveryTime}</span>
               </div>
+
+              {/* Social Proof Indicators */}
+              {serviceStats && (serviceStats.viewsLast24Hours > 0 || serviceStats.lastBookedAt) && (
+                <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t">
+                  {serviceStats.viewsLast24Hours > 0 && (
+                    <div className="flex items-center gap-1" data-testid="views-count">
+                      <Eye className="h-3 w-3" />
+                      <span>{serviceStats.viewsLast24Hours} views today</span>
+                    </div>
+                  )}
+                  {serviceStats.lastBookedAt && (
+                    <div className="flex items-center gap-1" data-testid="last-booked">
+                      <Clock className="h-3 w-3 text-green-500" />
+                      <span>Booked {formatTimeAgo(serviceStats.lastBookedAt)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <Button variant="default" className="w-full mt-2" size="sm" data-testid="button-view-service">
                 View Service Details
               </Button>
@@ -544,16 +594,36 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
             )}
           </CardContent>
 
-          <CardFooter className="flex items-center justify-between gap-4 pt-0">
+          <CardFooter className="flex flex-col gap-3 pt-0">
             {service ? (
               <>
-                <div className="flex flex-col">
-                  <span className="text-xs text-muted-foreground">Starting at</span>
-                  <span className="text-lg font-bold">${service.basicPrice}</span>
+                <div className="flex items-center justify-between gap-4 w-full">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Starting at</span>
+                    <span className="text-lg font-bold">${service.basicPrice}</span>
+                  </div>
+                  <Button size="sm" variant="outline" className="hover-elevate" data-testid="button-view-service">
+                    View Details
+                  </Button>
                 </div>
-                <Button size="sm" variant="outline" className="hover-elevate" data-testid="button-view-service">
-                  View Details
-                </Button>
+                
+                {/* Social Proof Indicators */}
+                {serviceStats && (serviceStats.viewsLast24Hours > 0 || serviceStats.lastBookedAt) && (
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground w-full pt-2 border-t">
+                    {serviceStats.viewsLast24Hours > 0 && (
+                      <div className="flex items-center gap-1" data-testid="views-count">
+                        <Eye className="h-3 w-3" />
+                        <span>{serviceStats.viewsLast24Hours} views today</span>
+                      </div>
+                    )}
+                    {serviceStats.lastBookedAt && (
+                      <div className="flex items-center gap-1" data-testid="last-booked">
+                        <Clock className="h-3 w-3 text-green-500" />
+                        <span>Booked {formatTimeAgo(serviceStats.lastBookedAt)}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </>
             ) : (
               <>
