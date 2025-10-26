@@ -1884,6 +1884,32 @@ export const filterPresets = pgTable("filter_presets", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Social Proof & Activity Tracking Tables
+export const platformActivity = pgTable("platform_activity", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  type: text("type").notNull(), // "booking", "review", "signup", "milestone", "completion"
+  builderName: text("builder_name"),
+  builderImage: text("builder_image"),
+  clientName: text("client_name"),
+  serviceName: text("service_name"),
+  category: text("category"),
+  amount: text("amount"),
+  rating: integer("rating"),
+  visibility: text("visibility").notNull().default("public"), // "public" or "private"
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const serviceViews = pgTable("service_views", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serviceId: varchar("service_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  viewerId: varchar("viewer_id"), // null if anonymous
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 // Insert Schemas
 
 export const insertUserOnlineStatusSchema = createInsertSchema(userOnlineStatus).omit({
@@ -1950,6 +1976,16 @@ export const insertBuilderProposalSchema = createInsertSchema(builderProposals).
   createdAt: true,
 });
 
+export const insertPlatformActivitySchema = createInsertSchema(platformActivity).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertServiceViewSchema = createInsertSchema(serviceViews).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 
 export type InsertServiceAddon = z.infer<typeof insertServiceAddonSchema>;
@@ -1987,3 +2023,9 @@ export type UserPreferences = typeof userPreferences.$inferSelect;
 
 export type InsertFilterPreset = z.infer<typeof insertFilterPresetSchema>;
 export type FilterPreset = typeof filterPresets.$inferSelect;
+
+export type InsertPlatformActivity = z.infer<typeof insertPlatformActivitySchema>;
+export type PlatformActivity = typeof platformActivity.$inferSelect;
+
+export type InsertServiceView = z.infer<typeof insertServiceViewSchema>;
+export type ServiceView = typeof serviceViews.$inferSelect;
