@@ -45,6 +45,7 @@ import CookiePolicy from "@/pages/cookie-policy";
 import FAQ from "@/pages/faq";
 import BuyerRequests from "@/pages/buyer-requests";
 import AppDemo from "@/pages/app-demo";
+import { MobileNav } from "@/components/mobile-nav";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -95,10 +96,11 @@ function AppContent() {
       <KeyboardShortcutsHelp />
       <FAQChatbot />
       <div className="flex flex-col min-h-screen">
-        <main className="flex-1">
+        <main className="flex-1 mb-16 md:mb-0">
           <Router />
         </main>
         <Footer />
+        <MobileNav />
       </div>
     </>
   );

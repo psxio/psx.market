@@ -629,4 +629,71 @@
     background-size: 50px 50px;
     animation: grid-scan 20s linear infinite;
   }
+
+  /* Mobile-specific utilities */
+  @media (max-width: 768px) {
+    /* Touch-friendly minimum sizes */
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Mobile padding adjustments */
+    .mobile-safe-area {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Prevent zoom on input focus */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    textarea {
+      font-size: 16px;
+    }
+
+    /* Full-screen modal on mobile */
+    .mobile-fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Smooth scroll snap for carousels */
+    .snap-x {
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .snap-center {
+      scroll-snap-align: center;
+    }
+
+    /* Mobile nav bottom spacing */
+    .mobile-bottom-spacing {
+      padding-bottom: 4rem; /* 64px for bottom nav */
+    }
+  }
+
+  /* Swipe gesture feedback */
+  .swipe-indicator {
+    transition: transform 0.2s ease-out;
+  }
+
+  .swipe-indicator.swipe-left {
+    transform: translateX(-10px);
+  }
+
+  .swipe-indicator.swipe-right {
+    transform: translateX(10px);
+  }
 }

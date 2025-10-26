@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
+import { SwipeableServiceGrid } from "@/components/swipeable-service-grid";
 import { EmptyState } from "@/components/empty-state";
 import { SEOHead } from "@/components/seo-head";
 import { Button } from "@/components/ui/button";
@@ -382,7 +383,27 @@ export default function Marketplace() {
                 <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
                   Showing {servicesData.length} results
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-services">
+                
+                {/* Mobile Swipeable Grid */}
+                <SwipeableServiceGrid
+                  services={servicesData.map(({ builder, service }) => ({
+                    id: service.id,
+                    title: service.title,
+                    builderId: builder.id,
+                    builderName: builder.name,
+                    builderProfileImage: builder.profileImage || undefined,
+                    category: service.category,
+                    basicPrice: service.basicPrice,
+                    rating: builder.rating || undefined,
+                    reviewCount: builder.reviewCount,
+                    image: service.portfolioMedia?.[0],
+                    tokenTickers: service.tokenTickers || undefined,
+                    deliveryTime: service.deliveryTime,
+                  }))}
+                />
+
+                {/* Desktop Grid */}
+                <div className="hidden md:grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-services">
                   {servicesData.map(({ builder, service }) => (
                     <BuilderCard
                       key={service.id}
