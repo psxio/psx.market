@@ -34,7 +34,7 @@ import BuilderOnboarding from "@/pages/builder-onboarding";
 import BecomeClient from "@/pages/become-client";
 import ClientDashboard from "@/pages/client-dashboard";
 import BuilderDashboard from "@/pages/builder-dashboard";
-import MessagesPage from "@/pages/messages";
+import MessagesPage from "@/pages/messages-enhanced";
 import NotificationSettings from "@/pages/notification-settings";
 import FileUploadDemo from "@/pages/file-upload-demo";
 import AdminLogin from "@/pages/admin-login";

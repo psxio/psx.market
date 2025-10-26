@@ -26,9 +26,10 @@ interface ChatThreadProps {
   thread: ChatThreadWithDetails;
   userId: string;
   userType: "client" | "builder";
+  hideHeader?: boolean;
 }
 
-export function ChatThread({ thread, userId, userType }: ChatThreadProps) {
+export function ChatThread({ thread, userId, userType, hideHeader = false }: ChatThreadProps) {
   const { toast } = useToast();
   const [messageContent, setMessageContent] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -151,28 +152,30 @@ export function ChatThread({ thread, userId, userType }: ChatThreadProps) {
 
   return (
     <div className="flex flex-col h-full" data-testid="chat-thread">
-      <div className="border-b p-4 bg-card">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={otherUser?.profileImage || undefined} />
-            <AvatarFallback>
-              {otherUser?.name?.substring(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <h3 className="font-semibold" data-testid="thread-title">{thread.title}</h3>
-            <p className="text-sm text-muted-foreground">
-              {otherUser?.name}
-              {isConnected && (
-                <Badge variant="outline" className="ml-2 text-xs">
-                  <span className="h-2 w-2 rounded-full bg-green-500 mr-1" />
-                  Online
-                </Badge>
-              )}
-            </p>
+      {!hideHeader && (
+        <div className="border-b p-4 bg-card">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={otherUser?.profileImage || undefined} />
+              <AvatarFallback>
+                {otherUser?.name?.substring(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h3 className="font-semibold" data-testid="thread-title">{thread.title}</h3>
+              <p className="text-sm text-muted-foreground">
+                {otherUser?.name}
+                {isConnected && (
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    <span className="h-2 w-2 rounded-full bg-green-500 mr-1" />
+                    Online
+                  </Badge>
+                )}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4" data-testid="messages-container">
         {isLoading ? (

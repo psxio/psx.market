@@ -323,7 +323,7 @@ export default function MessagesEnhanced() {
                               <>
                                 <span>•</span>
                                 <span className="shrink-0">
-                                  ⭐ {selectedThread.builder.rating.toFixed(1)}
+                                  ⭐ {parseFloat(selectedThread.builder.rating).toFixed(1)}
                                 </span>
                               </>
                             )}
@@ -366,8 +366,8 @@ export default function MessagesEnhanced() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-hidden">
-                    <ChatThread thread={selectedThread} userId={userId} userType="client" />
+                  <div className="flex-1 overflow-hidden flex flex-col">
+                    <ChatThread thread={selectedThread} userId={userId} userType="client" hideHeader />
                   </div>
                 </>
               ) : (
