@@ -337,6 +337,7 @@ export interface IStorage {
   getMessageReadReceiptsByThread(threadId: string, readerId: string): Promise<MessageReadReceipt[]>;
   createMessageReadReceipt(receipt: InsertMessageReadReceipt): Promise<MessageReadReceipt>;
   markThreadAsRead(threadId: string, readerId: string, readerType: string): Promise<void>;
+  getUnreadMessageCount(userId: string, userType: string): Promise<number>;
 
   getProjectDeliverable(id: string): Promise<ProjectDeliverable | undefined>;
   getProjectDeliverablesByOrder(orderId: string): Promise<ProjectDeliverable[]>;
@@ -414,6 +415,9 @@ export interface IStorage {
   getNotificationPreferences(userId: string, userType: string): Promise<NotificationPreferences | undefined>;
   createNotificationPreferences(preferences: InsertNotificationPreferences): Promise<NotificationPreferences>;
   updateNotificationPreferences(userId: string, userType: string, data: Partial<NotificationPreferences>): Promise<NotificationPreferences>;
+  getUsersForDigest(frequency: string): Promise<Array<{ userId: string; userType: string }>>;
+  getNotificationsSince(userId: string, userType: string, sinceDate: string): Promise<Notification[]>;
+  updateDigestSentTime(userId: string, userType: string): Promise<void>;
   
   createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
   getPushSubscriptions(userId: string, userType: string): Promise<PushSubscription[]>;
@@ -2070,6 +2074,24 @@ export class PostgresStorage implements IStorage {
     await this.updateThreadUnreadCount(threadId, readerType, false);
   }
 
+  async getUnreadMessageCount(userId: string, userType: string): Promise<number> {
+    let threads;
+    if (userType === "client") {
+      threads = await this.getChatThreadsByClient(userId);
+    } else {
+      threads = await this.getChatThreadsByBuilder(userId);
+    }
+
+    const totalUnread = threads.reduce((sum, thread) => {
+      const unreadCount = userType === "client" 
+        ? thread.clientUnreadCount 
+        : thread.builderUnreadCount;
+      return sum + unreadCount;
+    }, 0);
+
+    return totalUnread;
+  }
+
   async getProjectDeliverable(id: string): Promise<ProjectDeliverable | undefined> {
     const result = await db.select().from(projectDeliverables).where(eq(projectDeliverables.id, id));
     return result[0];
@@ -2511,6 +2533,61 @@ export class PostgresStorage implements IStorage {
       .where(eq(notificationPreferences.id, existing.id))
       .returning();
     return result[0];
+  }
+
+  async getUsersForDigest(frequency: string): Promise<Array<{ userId: string; userType: string }>> {
+    const now = new Date();
+    const cutoffDate = new Date();
+    
+    if (frequency === "daily") {
+      cutoffDate.setDate(cutoffDate.getDate() - 1);
+    } else {
+      cutoffDate.setDate(cutoffDate.getDate() - 7);
+    }
+
+    const results = await db.select({
+      userId: notificationPreferences.userId,
+      userType: notificationPreferences.userType,
+    })
+    .from(notificationPreferences)
+    .where(
+      and(
+        eq(notificationPreferences.emailDigestFrequency, frequency),
+        or(
+          eq(notificationPreferences.lastDigestSentAt, null),
+          sql`${notificationPreferences.lastDigestSentAt} < ${cutoffDate.toISOString()}`
+        )
+      )
+    );
+
+    return results;
+  }
+
+  async getNotificationsSince(userId: string, userType: string, sinceDate: string): Promise<Notification[]> {
+    const results = await db.select()
+      .from(notifications)
+      .where(
+        and(
+          eq(notifications.recipientId, userId),
+          eq(notifications.recipientType, userType),
+          sql`${notifications.createdAt} >= ${sinceDate}`
+        )
+      )
+      .orderBy(desc(notifications.createdAt))
+      .limit(50);
+
+    return results;
+  }
+
+  async updateDigestSentTime(userId: string, userType: string): Promise<void> {
+    await db.update(notificationPreferences)
+      .set({ lastDigestSentAt: new Date().toISOString() })
+      .where(
+        and(
+          eq(notificationPreferences.userId, userId),
+          eq(notificationPreferences.userType, userType)
+        )
+      );
   }
 
   async createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription> {
