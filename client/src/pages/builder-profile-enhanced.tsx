@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useRoute } from "wouter";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useRoute, useLocation } from "wouter";
+import { useAccount } from "wagmi";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +50,9 @@ export default function BuilderProfileEnhanced() {
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const { address } = useAccount();
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
   
 
   const { data: builder, isLoading: builderLoading } = useQuery<Builder>({
@@ -68,6 +74,102 @@ export default function BuilderProfileEnhanced() {
     queryKey: ["/api/builders", builderId, "projects"],
     enabled: !!builderId,
   });
+
+  // Check if builder is favorited
+  const { data: favoriteStatus } = useQuery<{ isFavorited: boolean }>({
+    queryKey: ["/api/favorites", address, builderId, "check"],
+    enabled: !!address && !!builderId,
+  });
+
+  // Save/Unsave builder mutation
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      if (!address || !builderId) {
+        throw new Error("Wallet not connected");
+      }
+
+      if (favoriteStatus?.isFavorited) {
+        // Unsave
+        await apiRequest("DELETE", `/api/favorites/${address}/${builderId}`);
+      } else {
+        // Save
+        await apiRequest("POST", "/api/favorites", {
+          userId: address,
+          builderId,
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/favorites", address, builderId, "check"] });
+      toast({
+        title: favoriteStatus?.isFavorited ? "Builder removed from favorites" : "Builder saved to favorites",
+        description: favoriteStatus?.isFavorited 
+          ? "You can find your saved builders in your profile" 
+          : "Builder added to your favorites",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update favorites. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Create chat thread and navigate to messages
+  const sendMessageMutation = useMutation({
+    mutationFn: async () => {
+      if (!address || !builderId) {
+        throw new Error("Wallet not connected");
+      }
+
+      const response = await apiRequest("POST", "/api/chat/threads", {
+        clientId: address,
+        builderId,
+      });
+
+      return await response.json();
+    },
+    onSuccess: (thread: any) => {
+      setLocation(`/messages?thread=${thread.id}`);
+      toast({
+        title: "Message thread created",
+        description: "Redirecting to messages...",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create message thread. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSaveBuilder = () => {
+    if (!address) {
+      toast({
+        title: "Connect wallet",
+        description: "Please connect your wallet to save builders",
+        variant: "destructive",
+      });
+      return;
+    }
+    saveMutation.mutate();
+  };
+
+  const handleSendMessage = () => {
+    if (!address) {
+      toast({
+        title: "Connect wallet",
+        description: "Please connect your wallet to send messages",
+        variant: "destructive",
+      });
+      return;
+    }
+    sendMessageMutation.mutate();
+  };
 
   useEffect(() => {
     if (builderId) {
@@ -270,13 +372,27 @@ export default function BuilderProfileEnhanced() {
                   View Services
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2" data-testid="button-send-message">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="gap-2" 
+                  onClick={handleSendMessage}
+                  disabled={sendMessageMutation.isPending}
+                  data-testid="button-send-message"
+                >
                   <MessageCircle className="h-5 w-5" />
-                  Send Message
+                  {sendMessageMutation.isPending ? "Creating chat..." : "Send Message"}
                 </Button>
-                <Button size="lg" variant="ghost" className="gap-2" data-testid="button-save-builder">
-                  <Heart className="h-5 w-5" />
-                  Save
+                <Button 
+                  size="lg" 
+                  variant={favoriteStatus?.isFavorited ? "default" : "ghost"} 
+                  className="gap-2" 
+                  onClick={handleSaveBuilder}
+                  disabled={saveMutation.isPending}
+                  data-testid="button-save-builder"
+                >
+                  <Heart className={`h-5 w-5 ${favoriteStatus?.isFavorited ? "fill-current" : ""}`} />
+                  {saveMutation.isPending ? "Saving..." : favoriteStatus?.isFavorited ? "Saved" : "Save"}
                 </Button>
               </div>
             </div>
