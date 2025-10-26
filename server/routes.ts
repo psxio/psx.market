@@ -3174,6 +3174,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Builder Favorites Routes
+  app.get("/api/favorites/:userId", async (req, res) => {
+    try {
+      const { collectionName } = req.query;
+      const favorites = await storage.getBuilderFavorites(
+        req.params.userId,
+        collectionName as string | undefined
+      );
+      res.json(favorites);
+    } catch (error) {
+      console.error("Failed to fetch favorites:", error);
+      res.status(500).json({ error: "Failed to fetch favorites" });
+    }
+  });
+
+  app.get("/api/favorites/:userId/:builderId/check", async (req, res) => {
+    try {
+      const { userId, builderId } = req.params;
+      const favorites = await storage.getBuilderFavorites(userId);
+      const isFavorited = favorites.some(fav => fav.builderId === builderId);
+      res.json({ isFavorited });
+    } catch (error) {
+      console.error("Failed to check favorite status:", error);
+      res.status(500).json({ error: "Failed to check favorite status" });
+    }
+  });
+
+  app.post("/api/favorites", async (req, res) => {
+    try {
+      const { userId, builderId, collectionName, notes } = req.body;
+      
+      if (!userId || !builderId) {
+        return res.status(400).json({ error: "userId and builderId are required" });
+      }
+
+      // Check if already favorited
+      const favorites = await storage.getBuilderFavorites(userId);
+      const alreadyFavorited = favorites.some(fav => fav.builderId === builderId);
+      
+      if (alreadyFavorited) {
+        return res.status(400).json({ error: "Builder already favorited" });
+      }
+
+      const favorite = await storage.addBuilderFavorite({
+        userId,
+        builderId,
+        collectionName: collectionName || null,
+        notes: notes || null,
+      });
+      
+      res.json(favorite);
+    } catch (error) {
+      console.error("Failed to add favorite:", error);
+      res.status(500).json({ error: "Failed to add favorite" });
+    }
+  });
+
+  app.delete("/api/favorites/:userId/:builderId", async (req, res) => {
+    try {
+      const { userId, builderId } = req.params;
+      await storage.removeBuilderFavorite(userId, builderId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to remove favorite:", error);
+      res.status(500).json({ error: "Failed to remove favorite" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
