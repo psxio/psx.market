@@ -29,6 +29,10 @@ import {
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
+import { ProfilePreview } from "@/components/onboarding/ProfilePreview";
+import { ProfileStrengthWidget } from "@/components/onboarding/ProfileStrengthWidget";
+import { BioTemplates } from "@/components/onboarding/BioTemplates";
+import { CharacterCounter } from "@/components/onboarding/CharacterCounter";
 import { ImageUploader } from "@/components/ImageUploader";
 import { useAutoSave, loadSavedData, clearSavedData } from "@/hooks/useAutoSave";
 import { 
@@ -401,7 +405,7 @@ export default function BuilderOnboarding() {
 
   return (
     <div className="min-h-screen bg-background py-8">
-      <div className="container max-w-3xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto px-4">
         {/* Back Button */}
         <div className="mb-4">
           <Button
@@ -443,65 +447,49 @@ export default function BuilderOnboarding() {
         </div>
 
         {/* Step Indicator */}
-        <div className="mb-12 pt-4">
+        <div className="mb-12 pt-4 max-w-4xl mx-auto">
           <StepIndicator steps={steps} />
         </div>
 
-        {/* Profile Strength & Time Estimation */}
-        <div className="mb-6 grid gap-4 sm:grid-cols-2">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-chart-3" />
-                  Profile Strength
-                </span>
-                <span className="text-sm font-semibold">{profileStrength}%</span>
-              </div>
-              <Progress value={profileStrength} className="h-2 mb-2" />
-              {profileSuggestions.length > 0 && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  {profileSuggestions[0]}
-                </p>
-              )}
-            </CardContent>
-          </Card>
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Form Column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Time Estimation */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-primary" />
+                    Time Remaining
+                  </span>
+                  <span className="text-sm font-semibold">~{timeRemaining} min</span>
+                </div>
+                <div className="text-xs text-muted-foreground mt-2">
+                  {currentStep === 1 && "Let's get the basics set up"}
+                  {currentStep === 2 && "Share your professional background"}
+                  {currentStep === 3 && "Show us your expertise"}
+                  {currentStep === 4 && "Almost there! Review and submit"}
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-primary" />
-                  Time Remaining
-                </span>
-                <span className="text-sm font-semibold">~{timeRemaining} min</span>
-              </div>
-              <div className="text-xs text-muted-foreground mt-2">
-                {currentStep === 1 && "Let's get the basics set up"}
-                {currentStep === 2 && "Share your professional background"}
-                {currentStep === 3 && "Show us your expertise"}
-                {currentStep === 4 && "Almost there! Review and submit"}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            {/* Validation Errors */}
+            {validationErrors.length > 0 && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <ul className="list-disc list-inside space-y-1">
+                    {validationErrors.map((error, i) => (
+                      <li key={i}>{error}</li>
+                    ))}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            )}
 
-        {/* Validation Errors */}
-        {validationErrors.length > 0 && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              <ul className="list-disc list-inside space-y-1">
-                {validationErrors.map((error, i) => (
-                  <li key={i}>{error}</li>
-                ))}
-              </ul>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Steps */}
-        <Card>
+            {/* Steps */}
+            <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               {currentStep === 1 && <User className="h-5 w-5 text-purple-500" />}
@@ -623,7 +611,21 @@ export default function BuilderOnboarding() {
                   </Select>
                 </div>
 
-                <div>
+                {/* Bio Templates */}
+                {formData.category && (
+                  <BioTemplates
+                    category={formData.category}
+                    onSelectTemplate={(headline, bio) => {
+                      setFormData({
+                        ...formData,
+                        headline,
+                        bio,
+                      });
+                    }}
+                  />
+                )}
+
+                <div className="space-y-2">
                   <Label htmlFor="headline">Professional Headline *</Label>
                   <Input
                     id="headline"
@@ -631,11 +633,17 @@ export default function BuilderOnboarding() {
                     value={formData.headline}
                     onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
                     placeholder="e.g., Expert Web3 KOL with 50K+ Engaged Followers"
+                    maxLength={120}
                     data-testid="input-headline"
+                  />
+                  <CharacterCounter
+                    current={formData.headline.length}
+                    max={120}
+                    recommended={60}
                   />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="bio">Bio *</Label>
                   <Textarea
                     id="bio"
@@ -643,8 +651,15 @@ export default function BuilderOnboarding() {
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                     placeholder="Tell us about yourself and your expertise..."
-                    rows={4}
+                    rows={6}
+                    maxLength={1000}
                     data-testid="textarea-bio"
+                  />
+                  <CharacterCounter
+                    current={formData.bio.length}
+                    min={100}
+                    max={1000}
+                    recommended={200}
                   />
                 </div>
               </>
@@ -1355,6 +1370,26 @@ export default function BuilderOnboarding() {
             </div>
           </CardContent>
         </Card>
+          </div>
+
+          {/* Sidebar Column - Profile Preview & Strength */}
+          <div className="lg:col-span-1 space-y-4">
+            <ProfileStrengthWidget
+              score={profileStrength}
+              suggestions={profileSuggestions}
+            />
+
+            <ProfilePreview
+              name={formData.name}
+              headline={formData.headline}
+              bio={formData.bio}
+              category={formData.category}
+              skills={formData.skills}
+              profileImage={profilePhoto}
+              responseTime={formData.responseTime}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
