@@ -1117,7 +1117,7 @@ export default function BuilderOnboarding() {
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label>Avg Client ROI % (Optional)</Label>
                   <Input
                     type="number"
@@ -1126,9 +1126,14 @@ export default function BuilderOnboarding() {
                     placeholder="150"
                     data-testid="input-avg-roi"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Only claim what you can back up. Clients may ask for receipts 📊
-                  </p>
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-md p-3 space-y-2">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                      ⚠️ Honesty Check
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Self-reported ROI numbers without proof get flagged by clients. Upload case studies with screenshots, analytics, or wallet txns to get a "Verified Metrics ✓" badge. Builders with verified data get 3x more bookings.
+                    </p>
+                  </div>
                 </div>
               </>
             )}
