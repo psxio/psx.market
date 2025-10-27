@@ -2559,7 +2559,7 @@ export class PostgresStorage implements IStorage {
         eq(notificationPreferences.emailDigestFrequency, frequency),
         or(
           eq(notificationPreferences.lastDigestSentAt, null),
-          sql`${notificationPreferences.lastDigestSentAt} < ${cutoffDate.toISOString()}`
+          sqlFunc`${notificationPreferences.lastDigestSentAt} < ${cutoffDate.toISOString()}`
         )
       )
     );
@@ -2574,7 +2574,7 @@ export class PostgresStorage implements IStorage {
         and(
           eq(notifications.recipientId, userId),
           eq(notifications.recipientType, userType),
-          sql`${notifications.createdAt} >= ${sinceDate}`
+          sqlFunc`${notifications.createdAt} >= ${sinceDate}`
         )
       )
       .orderBy(desc(notifications.createdAt))
