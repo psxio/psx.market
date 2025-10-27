@@ -3843,13 +3843,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get upload URL for file upload (requires authentication)
+  // Get upload URL for file upload
+  // NOTE: Permissive to allow uploads during builder onboarding before account creation
   app.post("/api/objects/upload", async (req, res) => {
-    // Require authentication (client, builder, or admin)
-    if (!req.session.clientAddress && !req.session.builderId && !req.session.adminId) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
-
     try {
       const objectStorageService = new ObjectStorageService();
       const uploadURL = await objectStorageService.getObjectEntityUploadURL();
@@ -3861,18 +3857,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Set ACL policy for uploaded portfolio image
+  // NOTE: Permissive to allow uploads during builder onboarding before account creation
   app.put("/api/upload/portfolio-image", async (req, res) => {
-    if (!req.session.clientAddress && !req.session.builderId && !req.session.adminId) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
-
     if (!req.body.imageURL) {
       return res.status(400).json({ error: "imageURL is required" });
     }
 
     try {
       const objectStorageService = new ObjectStorageService();
-      const userId = req.session.clientAddress || req.session.builderId || req.session.adminId || "";
+      // Get userId from session if available, otherwise use anonymous
+      const userId = req.session.clientAddress || req.session.builderId || req.session.adminId || "anonymous";
       
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
         req.body.imageURL,
