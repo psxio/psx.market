@@ -69,13 +69,6 @@ export function Header() {
               </Link>
             </Button>
 
-            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse-portfolios">
-              <Link href="/portfolios">
-                <Image className="h-3.5 w-3.5" />
-                Browse Portfolios
-              </Link>
-            </Button>
-
             <Button asChild variant="default" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex bg-gradient-to-r from-purple-500 to-cyan-500" data-testid="link-getting-started">
               <Link href="/getting-started">
                 <Rocket className="h-3.5 w-3.5" />
@@ -154,13 +147,6 @@ export function Header() {
                       <Link href="/builders">
                         <Grid3x3 className="h-4 w-4" />
                         Browse Builders
-                      </Link>
-                    </Button>
-
-                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-portfolios-mobile">
-                      <Link href="/portfolios">
-                        <Image className="h-4 w-4" />
-                        Browse Portfolios
                       </Link>
                     </Button>
 

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, MapPin, Globe, DollarSign } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, MapPin, Globe, DollarSign, Image } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -272,17 +272,26 @@ export default function BrowseBuilders() {
               </p>
             </div>
 
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sort">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="relevance">Relevance</SelectItem>
-                <SelectItem value="rating">Top Rated</SelectItem>
-                <SelectItem value="recent">Most Recent</SelectItem>
-                <SelectItem value="projects">Most Projects</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <Button asChild variant="outline" className="gap-2" data-testid="link-browse-portfolios">
+                <Link href="/portfolios">
+                  <Image className="h-4 w-4" />
+                  Browse Portfolios
+                </Link>
+              </Button>
+              
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sort">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance">Relevance</SelectItem>
+                  <SelectItem value="rating">Top Rated</SelectItem>
+                  <SelectItem value="recent">Most Recent</SelectItem>
+                  <SelectItem value="projects">Most Projects</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex gap-3">
