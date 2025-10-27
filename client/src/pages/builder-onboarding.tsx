@@ -24,7 +24,8 @@ import {
   Wallet,
   Clock,
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  Save
 } from "lucide-react";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
@@ -132,12 +133,27 @@ export default function BuilderOnboarding() {
   });
 
   // Auto-save form data
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  
   useAutoSave({
     data: formData,
     key: "builder-onboarding-draft",
     delay: 2000,
     enabled: !isSubmitting,
+    onSave: () => {
+      setLastSaved(new Date());
+    },
   });
+
+  // Manual save function
+  const handleManualSave = () => {
+    localStorage.setItem("builder-onboarding-draft", JSON.stringify(formData));
+    setLastSaved(new Date());
+    toast({
+      title: "Progress saved",
+      description: "Your application has been saved. You can continue later.",
+    });
+  };
 
   // Calculate profile strength
   const profileStrength = calculateProfileStrength({ ...formData, profileImage: profilePhoto } as OnboardingFormData);
@@ -1335,6 +1351,15 @@ export default function BuilderOnboarding() {
               </div>
             )}
 
+            {/* Auto-save indicator */}
+            {lastSaved && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground py-2 px-1">
+                <span>
+                  Last saved {new Date().getTime() - lastSaved.getTime() < 5000 ? "just now" : "a moment ago"}
+                </span>
+              </div>
+            )}
+
             {/* Navigation */}
             <div className="flex gap-3 pt-4">
               {currentStep > 1 && (
@@ -1349,6 +1374,18 @@ export default function BuilderOnboarding() {
                   Back
                 </Button>
               )}
+              
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleManualSave}
+                disabled={isSubmitting}
+                data-testid="button-save"
+                className="gap-2"
+              >
+                <Save className="h-4 w-4" />
+                Save Progress
+              </Button>
               
               {currentStep < totalSteps ? (
                 <Button
