@@ -123,6 +123,11 @@ export const builders = pgTable("builders", {
   repeatClientsCount: integer("repeat_clients_count").notNull().default(0),
   videoIntroUrl: text("video_intro_url"),
   rateCard: text("rate_card"),
+  
+  // Pricing Information
+  hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }),
+  minProjectBudget: decimal("min_project_budget", { precision: 10, scale: 2 }),
+  maxProjectBudget: decimal("max_project_budget", { precision: 10, scale: 2 }),
   pricingExpectations: text("pricing_expectations"),
   verificationBadges: text("verification_badges").array(),
   

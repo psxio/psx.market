@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, MapPin, Globe } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, MapPin, Globe, DollarSign } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -32,6 +32,16 @@ const ratings = ["5 Stars", "4+ Stars", "3+ Stars"];
 const availabilityOptions = ["available", "busy", "away"];
 const languages = ["English", "Spanish", "Mandarin", "French", "German", "Japanese", "Portuguese"];
 
+const budgetRanges = [
+  { label: "Under $500", min: 0, max: 500 },
+  { label: "$500 - $1,000", min: 500, max: 1000 },
+  { label: "$1,000 - $2,500", min: 1000, max: 2500 },
+  { label: "$2,500 - $5,000", min: 2500, max: 5000 },
+  { label: "$5,000 - $10,000", min: 5000, max: 10000 },
+  { label: "$10,000 - $20,000", min: 10000, max: 20000 },
+  { label: "$20,000+", min: 20000, max: 999999 },
+];
+
 const categoryIcons: Record<string, any> = {
   "KOLs & Influencers": Users,
   "3D & 2D Content Creation": Sparkles,
@@ -49,6 +59,7 @@ export default function BrowseBuilders() {
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
   const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null);
+  const [selectedBudgetRange, setSelectedBudgetRange] = useState<typeof budgetRanges[0] | null>(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   
   const headerSection = useScrollReveal();
@@ -86,6 +97,11 @@ export default function BrowseBuilders() {
       params.set("availability", selectedAvailability);
     }
     
+    if (selectedBudgetRange) {
+      params.set("minBudget", selectedBudgetRange.min.toString());
+      params.set("maxBudget", selectedBudgetRange.max.toString());
+    }
+    
     const queryString = params.toString();
     return queryString ? `?${queryString}` : "";
   };
@@ -99,6 +115,8 @@ export default function BrowseBuilders() {
       sortBy,
       selectedRating,
       selectedAvailability,
+      selectedBudgetRange?.min,
+      selectedBudgetRange?.max,
     ],
     queryFn: async () => {
       const queryString = buildQueryString();
@@ -210,6 +228,28 @@ export default function BrowseBuilders() {
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer capitalize"
               >
                 {status}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Label className="text-base font-semibold">Budget Range</Label>
+        <div className="space-y-2">
+          {budgetRanges.map((range) => (
+            <div key={range.label} className="flex items-center space-x-2">
+              <Checkbox 
+                id={range.label}
+                checked={selectedBudgetRange?.label === range.label}
+                onCheckedChange={(checked) => setSelectedBudgetRange(checked ? range : null)}
+                data-testid={`checkbox-budget-${range.label.toLowerCase().replace(/[\s$,+]/g, '-')}`}
+              />
+              <label
+                htmlFor={range.label}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                {range.label}
               </label>
             </div>
           ))}
@@ -398,6 +438,24 @@ export default function BrowseBuilders() {
                                   +{builder.specializations.length - 3}
                                 </Badge>
                               )}
+                            </div>
+                          )}
+
+                          {(builder.minProjectBudget || builder.hourlyRate) && (
+                            <div className="flex items-center gap-2 pt-2 border-t">
+                              <DollarSign className="h-4 w-4 text-primary" />
+                              <span className="text-sm font-semibold">
+                                {builder.hourlyRate ? (
+                                  <>Starting ${parseFloat(builder.hourlyRate).toLocaleString()}/hr</>
+                                ) : builder.minProjectBudget ? (
+                                  <>Starting ${parseFloat(builder.minProjectBudget).toLocaleString()}</>
+                                ) : null}
+                                {builder.maxProjectBudget && builder.minProjectBudget && (
+                                  <span className="text-muted-foreground font-normal">
+                                    {' '}- ${parseFloat(builder.maxProjectBudget).toLocaleString()}
+                                  </span>
+                                )}
+                              </span>
                             </div>
                           )}
 

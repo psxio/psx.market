@@ -70,7 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let builders = await storage.getBuilders();
       
-      const { search, categories, sortBy, minRating, psxTier, verified, languages, availability } = req.query;
+      const { search, categories, sortBy, minRating, psxTier, verified, languages, availability, minBudget, maxBudget } = req.query;
 
       // Filter out NSFW builders by default
       let filteredResults = builders.filter((builder) => !builder.isNSFW);
@@ -122,6 +122,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (verified === "true") {
         filteredResults = filteredResults.filter((builder) => builder.verified);
+      }
+
+      if (minBudget && maxBudget) {
+        const minBudgetNum = parseFloat(minBudget as string);
+        const maxBudgetNum = parseFloat(maxBudget as string);
+        filteredResults = filteredResults.filter((builder) => {
+          const builderMin = builder.minProjectBudget ? parseFloat(builder.minProjectBudget) : null;
+          const builderMax = builder.maxProjectBudget ? parseFloat(builder.maxProjectBudget) : null;
+          
+          // Include builder if their range overlaps with the search range
+          if (builderMin !== null && builderMax !== null) {
+            return builderMin <= maxBudgetNum && builderMax >= minBudgetNum;
+          }
+          // If they only have min budget, check if it's within range
+          if (builderMin !== null && builderMax === null) {
+            return builderMin <= maxBudgetNum;
+          }
+          // If no budget set, don't filter them out (show all builders without budget info)
+          return true;
+        });
       }
 
       if (sortBy) {
