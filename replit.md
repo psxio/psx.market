@@ -34,7 +34,7 @@ port444 utilizes a decoupled frontend and backend architecture to deliver a scal
 - **Enhanced Review System**: A platform for comprehensive builder reviews, moderation, and dispute resolution.
 - **Project Management System**: Features for tracking milestones, deliverables, and managing document repositories.
 - **Builder Dashboard & Tools**: Provides builders with interfaces to manage earnings, orders, services, and availability.
-- **File Upload & Storage**: Leverages Replit Object Storage (Google Cloud Storage backend) with ACL and presigned URLs for secure file handling.
+- **File Upload & Storage**: Leverages Replit Object Storage (Google Cloud Storage backend) with ACL and presigned URLs for secure file handling. Upload endpoints are permissive to allow builders to upload profile photos during onboarding before account creation.
 - **Financial Management System**: An admin dashboard offering revenue analytics, payout queue management, and escrow monitoring.
 - **UI/UX Enhancement System**: A centralized system for toast notifications, keyboard shortcuts, confirmation modals, loading skeletons, and empty states.
 - **Builder Analytics & Growth Tools**: Includes 8 specialized modules for profile optimization, service performance, lead management, review automation, pricing intelligence, revenue forecasting, message templates, and client relationship management.
