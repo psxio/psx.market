@@ -52,11 +52,12 @@ interface InviteVerification {
 }
 
 const CATEGORIES = [
-  { value: "kols", label: "KOL / Influencer", icon: "📱" },
-  { value: "3d-artists", label: "3D Artist", icon: "🎨" },
-  { value: "marketers", label: "Marketing & Growth", icon: "📈" },
-  { value: "developers", label: "Smart Contract Dev", icon: "💻" },
-  { value: "volume", label: "Volume Services", icon: "📊" },
+  { value: "kols", label: "KOL / Influencer" },
+  { value: "3d-artists", label: "3D Artist" },
+  { value: "video-editor", label: "Video Editor" },
+  { value: "marketers", label: "Marketing & Growth" },
+  { value: "developers", label: "Smart Contract Dev" },
+  { value: "volume", label: "Volume Services" },
 ];
 
 export default function BuilderOnboarding() {

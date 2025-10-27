@@ -531,6 +531,12 @@ export class PostgresStorage implements IStorage {
         icon: "box",
       },
       {
+        name: "Video Editing",
+        slug: "video-editor",
+        description: "Expert video editors creating viral content, token promos, and high-impact edits for Web3",
+        icon: "film",
+      },
+      {
         name: "Marketing & Growth",
         slug: "marketing",
         description: "Expert marketers driving growth for crypto and memecoin projects",
