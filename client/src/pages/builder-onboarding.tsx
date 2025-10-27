@@ -149,8 +149,8 @@ export default function BuilderOnboarding() {
   // Step indicator data
   const steps = [
     { number: 1, title: "Basic Info", completed: currentStep > 1, current: currentStep === 1 },
-    { number: 2, title: "Professional", completed: currentStep > 2, current: currentStep === 2 },
-    { number: 3, title: "Expertise", completed: currentStep > 3, current: currentStep === 3 },
+    { number: 2, title: "Your Stack", completed: currentStep > 2, current: currentStep === 2 },
+    { number: 3, title: "Proof of Work", completed: currentStep > 3, current: currentStep === 3 },
     { number: 4, title: "Review", completed: false, current: currentStep === 4 },
   ];
 
@@ -468,8 +468,8 @@ export default function BuilderOnboarding() {
                 </div>
                 <div className="text-xs text-muted-foreground mt-2">
                   {currentStep === 1 && "Let's get the basics set up"}
-                  {currentStep === 2 && "Share your professional background"}
-                  {currentStep === 3 && "Show us your expertise"}
+                  {currentStep === 2 && "Show us what you're working with"}
+                  {currentStep === 3 && "Time to flex your track record"}
                   {currentStep === 4 && "Almost there! Review and submit"}
                 </div>
               </CardContent>
@@ -499,16 +499,16 @@ export default function BuilderOnboarding() {
               {currentStep === 4 && <Wallet className="h-5 w-5 text-purple-500" />}
               <CardTitle>
                 {currentStep === 1 && "Basic Information"}
-                {currentStep === 2 && "Professional Details"}
-                {currentStep === 3 && "Category Expertise"}
+                {currentStep === 2 && "Your Tech Stack"}
+                {currentStep === 3 && "Proof of Work"}
                 {currentStep === 4 && "Review & Submit"}
               </CardTitle>
             </div>
             <CardDescription>
-              {currentStep === 1 && "Tell us about yourself"}
-              {currentStep === 2 && "Share your professional background"}
-              {currentStep === 3 && "Showcase your specialized skills"}
-              {currentStep === 4 && "Confirm your information and complete setup"}
+              {currentStep === 1 && "Tell us who you are"}
+              {currentStep === 2 && "Show us what you're working with"}
+              {currentStep === 3 && "Show us what you've shipped"}
+              {currentStep === 4 && "Lock it in and ship your profile"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -569,7 +569,7 @@ export default function BuilderOnboarding() {
                 <div className="space-y-2">
                   <Label>Profile Photo</Label>
                   <p className="text-sm text-muted-foreground mb-2">
-                    Upload a professional photo to build trust with clients (+10% profile strength)
+                    Upload a clear photo so clients know you're real (+10% profile strength)
                   </p>
                   <ImageUploader
                     currentImage={profilePhoto}
@@ -627,13 +627,13 @@ export default function BuilderOnboarding() {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="headline">Professional Headline *</Label>
+                  <Label htmlFor="headline">One-Liner *</Label>
                   <Input
                     id="headline"
                     required
                     value={formData.headline}
                     onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-                    placeholder="e.g., Expert Web3 KOL with 50K+ Engaged Followers"
+                    placeholder="e.g., Web3 KOL with 50K+ Engaged Followers"
                     maxLength={120}
                     data-testid="input-headline"
                   />
@@ -645,13 +645,13 @@ export default function BuilderOnboarding() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Bio *</Label>
+                  <Label htmlFor="bio">About You *</Label>
                   <Textarea
                     id="bio"
                     required
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    placeholder="Tell us about yourself and your expertise..."
+                    placeholder="What do you do? What have you built? Keep it real..."
                     rows={6}
                     maxLength={1000}
                     data-testid="textarea-bio"
@@ -666,13 +666,13 @@ export default function BuilderOnboarding() {
               </>
             )}
 
-            {/* Step 2: Professional Details */}
+            {/* Step 2: Your Stack */}
             {currentStep === 2 && (
               <>
                 <div>
                   <Label>Skills (comma-separated) *</Label>
                   <Input
-                    placeholder="e.g., Web3 Marketing, Community Building, Content Creation"
+                    placeholder="e.g., Community Building, Content Creation, Token Launches"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ',') {
                         e.preventDefault();
@@ -969,7 +969,7 @@ export default function BuilderOnboarding() {
 
             {currentStep === 3 && formData.category === "3d-artists" && (
               <>
-                <h3 className="text-lg font-semibold">3D Expertise</h3>
+                <h3 className="text-lg font-semibold">What You Work With</h3>
                 
                 <div>
                   <Label>3D Software (Press Enter to add)</Label>
@@ -1044,14 +1044,14 @@ export default function BuilderOnboarding() {
                     }
                     data-testid="checkbox-animation"
                   />
-                  <Label htmlFor="animation">I have animation expertise</Label>
+                  <Label htmlFor="animation">I can animate</Label>
                 </div>
               </>
             )}
 
             {currentStep === 3 && formData.category === "marketers" && (
               <>
-                <h3 className="text-lg font-semibold">Marketing Expertise</h3>
+                <h3 className="text-lg font-semibold">Your Marketing Arsenal</h3>
                 
                 <div>
                   <Label>Marketing Platforms (Press Enter to add)</Label>
@@ -1118,7 +1118,7 @@ export default function BuilderOnboarding() {
                 </div>
 
                 <div>
-                  <Label>Average ROI %</Label>
+                  <Label>Avg Client ROI % (Optional)</Label>
                   <Input
                     type="number"
                     value={formData.avgROI}
@@ -1126,6 +1126,9 @@ export default function BuilderOnboarding() {
                     placeholder="150"
                     data-testid="input-avg-roi"
                   />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Only claim what you can back up. Clients may ask for receipts 📊
+                  </p>
                 </div>
               </>
             )}
@@ -1212,7 +1215,7 @@ export default function BuilderOnboarding() {
 
             {currentStep === 3 && formData.category === "volume" && (
               <>
-                <h3 className="text-lg font-semibold">Volume Trading Expertise</h3>
+                <h3 className="text-lg font-semibold">Your Trading Background</h3>
                 
                 <div>
                   <Label>Years of Trading Experience</Label>
@@ -1237,7 +1240,7 @@ export default function BuilderOnboarding() {
                 </div>
 
                 <div>
-                  <Label>DEX Expertise (Press Enter to add)</Label>
+                  <Label>DEXs You Know (Press Enter to add)</Label>
                   <Input
                     placeholder="e.g., Uniswap, PancakeSwap, Raydium"
                     onKeyDown={(e) => {
