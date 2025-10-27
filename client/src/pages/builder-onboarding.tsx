@@ -55,6 +55,7 @@ const CATEGORIES = [
   { value: "kols", label: "KOL / Influencer" },
   { value: "3d-artists", label: "3D Artist" },
   { value: "video-editor", label: "Video Editor" },
+  { value: "mods-raiders", label: "Mod / Raider" },
   { value: "marketers", label: "Marketing & Growth" },
   { value: "developers", label: "Smart Contract Dev" },
   { value: "volume", label: "Volume Services" },

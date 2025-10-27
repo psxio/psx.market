@@ -537,6 +537,12 @@ export class PostgresStorage implements IStorage {
         icon: "film",
       },
       {
+        name: "Mods & Raiders",
+        slug: "mods-raiders",
+        description: "Discord/Telegram mods and raid coordinators running communities and driving engagement",
+        icon: "shield",
+      },
+      {
         name: "Marketing & Growth",
         slug: "marketing",
         description: "Expert marketers driving growth for crypto and memecoin projects",
