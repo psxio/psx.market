@@ -2912,6 +2912,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const message = await storage.createMessage(result.data);
       const attachments: any[] = [];
 
+      // Get thread info to determine recipient
+      const thread = await storage.getChatThread(message.threadId);
+      if (thread) {
+        // Determine recipient based on who sent the message
+        let recipientId: string;
+        let recipientType: "client" | "builder";
+        let senderName: string;
+        
+        if (message.senderType === "client") {
+          recipientId = thread.builderId;
+          recipientType = "builder";
+          const client = await storage.getClient(message.senderId);
+          senderName = client?.name || "A client";
+        } else {
+          recipientId = thread.clientId;
+          recipientType = "client";
+          const builder = await storage.getBuilder(message.senderId);
+          senderName = builder?.name || "A builder";
+        }
+
+        // Send notification to recipient
+        const { sendNotification } = await import("./notifications");
+        await sendNotification({
+          recipientId,
+          recipientType,
+          type: "message",
+          title: "New Message",
+          message: `${senderName} sent you a message`,
+          actionUrl: `/messages?thread=${thread.id}`,
+          metadata: {
+            threadId: thread.id,
+            senderId: message.senderId,
+            senderType: message.senderType,
+            messagePreview: message.content.substring(0, 100),
+          },
+        });
+      }
+
       res.json({ ...message, attachments });
     } catch (error) {
       console.error("Failed to create message:", error);

@@ -99,13 +99,11 @@ async function sendEmailNotification(
     
     if (recipientType === "client") {
       const client = await storage.getClient(recipientId);
-      recipientEmail = client?.email;
+      recipientEmail = client?.email || undefined;
       recipientName = client?.name || "User";
     } else if (recipientType === "builder") {
       const builder = await storage.getBuilder(recipientId);
-      // Builders don't have email in schema - they use wallet-based auth
-      // For future: could add optional email field to builders table
-      recipientEmail = undefined;
+      recipientEmail = builder?.email || undefined;
       recipientName = builder?.name || "Builder";
     }
     
