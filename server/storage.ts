@@ -142,6 +142,12 @@ import {
   filterPresets,
   platformActivity,
   serviceViews,
+  builderAnalytics,
+  serviceAnalytics,
+  messageTemplates,
+  referralCodes,
+  builderBadges,
+  disputeMessages,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -179,6 +185,7 @@ export interface IStorage {
   }>>;
 
   getService(id: string): Promise<Service | undefined>;
+  getBuilderServices(builderId: string): Promise<Service[]>;
   getServices(): Promise<Service[]>;
   getServicesByBuilder(builderId: string): Promise<Service[]>;
   getFeaturedServices(): Promise<Service[]>;
@@ -518,6 +525,47 @@ export interface IStorage {
     builder: Builder | null;
     service: Service | null;
   }>>;
+
+  // Builder Analytics
+  getBuilderAnalytics(builderId: string, startDate: string): Promise<any[]>;
+  getServiceAnalytics(serviceId: string): Promise<any>;
+  trackBuilderView(data: { builderId: string; viewerId: string | null; viewerType: string | null; ipAddress: string; userAgent: string; referrer: string | null }): Promise<void>;
+
+  // Message Templates
+  getBuilderMessageTemplates(builderId: string, category?: string): Promise<any[]>;
+  getMessageTemplate(id: string): Promise<any | undefined>;
+  createMessageTemplate(template: any): Promise<any>;
+  updateMessageTemplate(id: string, data: Partial<any>): Promise<any | undefined>;
+  deleteMessageTemplate(id: string): Promise<void>;
+  incrementTemplateUseCount(id: string): Promise<void>;
+
+  // Referral System
+  getBuilderReferralCode(builderId: string): Promise<any | undefined>;
+  createReferralCode(data: { builderId: string; code: string; isActive: boolean }): Promise<any>;
+  incrementReferralClicks(code: string): Promise<void>;
+  incrementReferralSignups(code: string): Promise<void>;
+  incrementReferralConversions(code: string): Promise<void>;
+  getBuilderReferrals(walletAddress: string): Promise<any[]>;
+  getReferralByWallets(referrerWallet: string, referredWallet: string): Promise<any | undefined>;
+  getReferral(id: string): Promise<any | undefined>;
+  createReferral(data: any): Promise<any>;
+  updateReferral(id: string, data: Partial<any>): Promise<any | undefined>;
+
+  // Badge System
+  getBuilderBadges(builderId: string): Promise<any[]>;
+  createBuilderBadge(badge: any): Promise<any>;
+
+  // Dispute Resolution
+  getAllDisputes(): Promise<any[]>;
+  getDispute(id: string): Promise<any | undefined>;
+  getOrderDisputes(orderId: string): Promise<any[]>;
+  createDispute(dispute: any): Promise<any>;
+  addDisputeEvidence(disputeId: string, evidenceUrls: string[]): Promise<any>;
+  getDisputeMessages(disputeId: string): Promise<any[]>;
+  createDisputeMessage(message: any): Promise<any>;
+  updateDispute(id: string, data: Partial<any>): Promise<any>;
+  getBuilderDisputes(builderId: string): Promise<any[]>;
+  getClientDisputes(clientId: string): Promise<any[]>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -1243,6 +1291,10 @@ export class PostgresStorage implements IStorage {
   async getService(id: string): Promise<Service | undefined> {
     const result = await db.select().from(services).where(eq(services.id, id));
     return result[0];
+  }
+
+  async getBuilderServices(builderId: string): Promise<Service[]> {
+    return await db.select().from(services).where(eq(services.builderId, builderId));
   }
 
   async getServices(): Promise<Service[]> {
@@ -3284,6 +3336,248 @@ export class PostgresStorage implements IStorage {
     );
 
     return results;
+  }
+
+  // Builder Analytics Implementation
+  async getBuilderAnalytics(builderId: string, startDate: string): Promise<any[]> {
+    const analytics = await db.select().from(builderAnalytics)
+      .where(and(
+        eq(builderAnalytics.builderId, builderId),
+        sqlFunc`date >= ${startDate}`
+      ))
+      .orderBy(builderAnalytics.date);
+    return analytics;
+  }
+
+  async getServiceAnalytics(serviceId: string): Promise<any> {
+    const analyticsData = await db.select().from(serviceAnalytics)
+      .where(eq(serviceAnalytics.serviceId, serviceId))
+      .orderBy(desc(serviceAnalytics.date))
+      .limit(1);
+    
+    return analyticsData[0] || {
+      viewCount: 0,
+      inquiryCount: 0,
+      conversionCount: 0,
+      totalRevenue: "0",
+    };
+  }
+
+  async trackBuilderView(data: { builderId: string; viewerId: string | null; viewerType: string | null; ipAddress: string; userAgent: string; referrer: string | null }): Promise<void> {
+    await db.insert(builderViews).values(data);
+    await this.incrementBuilderViews(data.builderId);
+  }
+
+  // Message Templates Implementation
+  async getBuilderMessageTemplates(builderId: string, category?: string): Promise<any[]> {
+    let query = db.select().from(messageTemplates)
+      .where(eq(messageTemplates.builderId, builderId));
+    
+    if (category) {
+      query = query.where(and(
+        eq(messageTemplates.builderId, builderId),
+        eq(messageTemplates.category, category)
+      ));
+    }
+    
+    return await query.orderBy(desc(messageTemplates.createdAt));
+  }
+
+  async getMessageTemplate(id: string): Promise<any | undefined> {
+    const result = await db.select().from(messageTemplates)
+      .where(eq(messageTemplates.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async createMessageTemplate(template: any): Promise<any> {
+    const result = await db.insert(messageTemplates).values(template).returning();
+    return result[0];
+  }
+
+  async updateMessageTemplate(id: string, data: Partial<any>): Promise<any | undefined> {
+    const result = await db.update(messageTemplates)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(messageTemplates.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteMessageTemplate(id: string): Promise<void> {
+    await db.delete(messageTemplates).where(eq(messageTemplates.id, id));
+  }
+
+  async incrementTemplateUseCount(id: string): Promise<void> {
+    await db.update(messageTemplates)
+      .set({ useCount: sqlFunc`use_count + 1` })
+      .where(eq(messageTemplates.id, id));
+  }
+
+  // Referral System Implementation
+  async getBuilderReferralCode(builderId: string): Promise<any | undefined> {
+    const result = await db.select().from(referralCodes)
+      .where(eq(referralCodes.builderId, builderId))
+      .limit(1);
+    return result[0];
+  }
+
+  async createReferralCode(data: { builderId: string; code: string; isActive: boolean }): Promise<any> {
+    const result = await db.insert(referralCodes).values(data).returning();
+    return result[0];
+  }
+
+  async incrementReferralClicks(code: string): Promise<void> {
+    await db.update(referralCodes)
+      .set({ totalClicks: sqlFunc`total_clicks + 1` })
+      .where(eq(referralCodes.code, code));
+  }
+
+  async incrementReferralSignups(code: string): Promise<void> {
+    await db.update(referralCodes)
+      .set({ totalSignups: sqlFunc`total_signups + 1` })
+      .where(eq(referralCodes.code, code));
+  }
+
+  async incrementReferralConversions(code: string): Promise<void> {
+    await db.update(referralCodes)
+      .set({ totalConversions: sqlFunc`total_conversions + 1` })
+      .where(eq(referralCodes.code, code));
+  }
+
+  async getBuilderReferrals(walletAddress: string): Promise<any[]> {
+    return await db.select().from(referrals)
+      .where(eq(referrals.referrerWallet, walletAddress))
+      .orderBy(desc(referrals.createdAt));
+  }
+
+  async getReferralByWallets(referrerWallet: string, referredWallet: string): Promise<any | undefined> {
+    const result = await db.select().from(referrals)
+      .where(and(
+        eq(referrals.referrerWallet, referrerWallet),
+        eq(referrals.referredWallet, referredWallet)
+      ))
+      .limit(1);
+    return result[0];
+  }
+
+  async getReferral(id: string): Promise<any | undefined> {
+    const result = await db.select().from(referrals)
+      .where(eq(referrals.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async createReferral(data: any): Promise<any> {
+    const result = await db.insert(referrals).values(data).returning();
+    return result[0];
+  }
+
+  async updateReferral(id: string, data: Partial<any>): Promise<any | undefined> {
+    const result = await db.update(referrals)
+      .set(data)
+      .where(eq(referrals.id, id))
+      .returning();
+    return result[0];
+  }
+
+  // Badge System Implementation
+  async getBuilderBadges(builderId: string): Promise<any[]> {
+    return await db.select().from(builderBadges)
+      .where(and(
+        eq(builderBadges.builderId, builderId),
+        eq(builderBadges.isActive, true)
+      ))
+      .orderBy(builderBadges.earnedAt);
+  }
+
+  async createBuilderBadge(badge: any): Promise<any> {
+    const result = await db.insert(builderBadges).values(badge).returning();
+    return result[0];
+  }
+
+  // Dispute Resolution Implementation
+  async getAllDisputes(): Promise<any[]> {
+    return await db.select().from(disputes)
+      .orderBy(desc(disputes.createdAt));
+  }
+
+  async getDispute(id: string): Promise<any | undefined> {
+    const result = await db.select().from(disputes)
+      .where(eq(disputes.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async getOrderDisputes(orderId: string): Promise<any[]> {
+    return await db.select().from(disputes)
+      .where(eq(disputes.orderId, orderId))
+      .orderBy(desc(disputes.createdAt));
+  }
+
+  async createDispute(dispute: any): Promise<any> {
+    const result = await db.insert(disputes).values(dispute).returning();
+    return result[0];
+  }
+
+  async addDisputeEvidence(disputeId: string, evidenceUrls: string[]): Promise<any> {
+    const dispute = await this.getDispute(disputeId);
+    if (!dispute) throw new Error('Dispute not found');
+    
+    const existingEvidence = dispute.evidence || [];
+    const updatedEvidence = [...existingEvidence, ...evidenceUrls];
+    
+    const result = await db.update(disputes)
+      .set({ 
+        evidence: updatedEvidence,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(disputes.id, disputeId))
+      .returning();
+    
+    return result[0];
+  }
+
+  async getDisputeMessages(disputeId: string): Promise<any[]> {
+    return await db.select().from(disputeMessages)
+      .where(eq(disputeMessages.disputeId, disputeId))
+      .orderBy(disputeMessages.createdAt);
+  }
+
+  async createDisputeMessage(message: any): Promise<any> {
+    const result = await db.insert(disputeMessages).values(message).returning();
+    return result[0];
+  }
+
+  async updateDispute(id: string, data: Partial<any>): Promise<any> {
+    const result = await db.update(disputes)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(disputes.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async getBuilderDisputes(builderId: string): Promise<any[]> {
+    const builderOrders = await db.select().from(orders)
+      .where(eq(orders.builderId, builderId));
+    
+    const orderIds = builderOrders.map(o => o.id);
+    if (orderIds.length === 0) return [];
+    
+    return await db.select().from(disputes)
+      .where(sqlFunc`order_id IN (${orderIds.join(',')})`)
+      .orderBy(desc(disputes.createdAt));
+  }
+
+  async getClientDisputes(clientId: string): Promise<any[]> {
+    const clientOrders = await db.select().from(orders)
+      .where(eq(orders.clientId, clientId));
+    
+    const orderIds = clientOrders.map(o => o.id);
+    if (orderIds.length === 0) return [];
+    
+    return await db.select().from(disputes)
+      .where(sqlFunc`order_id IN (${orderIds.join(',')})`)
+      .orderBy(desc(disputes.createdAt));
   }
 }
 

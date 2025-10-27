@@ -20,6 +20,11 @@ import { socialIntegrationService } from "./services/socialIntegrations";
 import { registerSitemapRoutes } from "./routes/sitemap-routes";
 import { registerDigestRoutes } from "./routes/digest-routes";
 import { registerRecommendationRoutes } from "./routes/recommendation-routes";
+import { registerAnalyticsRoutes } from "./routes/analytics-routes";
+import { registerTemplateRoutes } from "./routes/template-routes";
+import { registerReferralRoutes } from "./routes/referral-routes";
+import { registerBadgeRoutes } from "./routes/badge-routes";
+import { registerDisputeRoutes } from "./routes/dispute-routes";
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -5524,6 +5529,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register recommendation routes
   registerRecommendationRoutes(app);
+
+  // Register builder analytics routes
+  registerAnalyticsRoutes(app);
+
+  // Register message template routes
+  registerTemplateRoutes(app);
+
+  // Register referral program routes
+  registerReferralRoutes(app);
+
+  // Register badge system routes
+  registerBadgeRoutes(app);
+
+  // Register dispute resolution routes
+  registerDisputeRoutes(app);
 
   return httpServer;
 }
