@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Star, CheckCircle2, Loader2 } from "lucide-react";
-import { Link } from "wouter";
+import { Search, Star, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 interface PortfolioItem {
   id: string;
@@ -23,6 +23,7 @@ interface PortfolioItem {
 }
 
 export default function BrowsePortfolios() {
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -51,6 +52,16 @@ export default function BrowsePortfolios() {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col gap-6 mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => setLocation("/")}
+            className="w-fit gap-2"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+
           <div>
             <h1 className="text-4xl font-bold mb-2">
               Browse for <span className="text-primary">Ideas</span>
