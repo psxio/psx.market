@@ -91,6 +91,7 @@ export default function BuilderOnboarding() {
       portfolioLinks: [] as string[],
       twitterHandle: "",
       discordHandle: "",
+      isNSFW: false,
       responseTime: "24 hours",
       
       // Category-Specific (Step 3)
@@ -289,6 +290,7 @@ export default function BuilderOnboarding() {
         portfolioLinks: formData.portfolioLinks,
         twitterHandle: formData.twitterHandle,
         discordHandle: formData.discordHandle,
+        isNSFW: formData.isNSFW,
         responseTime: formData.responseTime,
         verified: !!inviteToken, // Auto-verify invited builders
         featured: false,
@@ -800,6 +802,23 @@ export default function BuilderOnboarding() {
                   <p className="text-xs text-muted-foreground mt-1">
                     Add your Discord server invite link so clients can contact you (e.g., "abcd1234" or "discord.gg/abcd1234")
                   </p>
+                </div>
+
+                <div className="flex items-start gap-3 p-4 border rounded-md">
+                  <Checkbox
+                    id="isNSFW"
+                    checked={formData.isNSFW}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isNSFW: checked as boolean })}
+                    data-testid="checkbox-nsfw"
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="isNSFW" className="cursor-pointer font-medium">
+                      Adult Content (NSFW)
+                    </Label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Check this if you offer adult-themed services (NSFW art, content creation for adult projects, etc.). Your profile will be filtered from main browse pages but accessible via adult section.
+                    </p>
+                  </div>
                 </div>
 
                 <div>
