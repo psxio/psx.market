@@ -5,9 +5,10 @@ interface UseAutoSaveOptions<T> {
   key: string;
   delay?: number; // milliseconds
   enabled?: boolean;
+  onSave?: () => void; // callback when save occurs
 }
 
-export function useAutoSave<T>({ data, key, delay = 2000, enabled = true }: UseAutoSaveOptions<T>) {
+export function useAutoSave<T>({ data, key, delay = 2000, enabled = true, onSave }: UseAutoSaveOptions<T>) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const previousDataRef = useRef<string>("");
 
@@ -30,6 +31,7 @@ export function useAutoSave<T>({ data, key, delay = 2000, enabled = true }: UseA
         localStorage.setItem(key, currentData);
         previousDataRef.current = currentData;
         console.log(`Auto-saved to ${key}`);
+        onSave?.(); // Call optional callback
       } catch (error) {
         console.error("Auto-save failed:", error);
       }
@@ -40,7 +42,7 @@ export function useAutoSave<T>({ data, key, delay = 2000, enabled = true }: UseA
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [data, key, delay, enabled]);
+  }, [data, key, delay, enabled, onSave]);
 }
 
 export function loadSavedData<T>(key: string, defaultValue: T): T {
