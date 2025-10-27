@@ -90,6 +90,7 @@ export default function BuilderOnboarding() {
       skills: [] as string[],
       portfolioLinks: [] as string[],
       twitterHandle: "",
+      discordHandle: "",
       responseTime: "24 hours",
       
       // Category-Specific (Step 3)
@@ -287,6 +288,7 @@ export default function BuilderOnboarding() {
         skills: formData.skills,
         portfolioLinks: formData.portfolioLinks,
         twitterHandle: formData.twitterHandle,
+        discordHandle: formData.discordHandle,
         responseTime: formData.responseTime,
         verified: !!inviteToken, // Auto-verify invited builders
         featured: false,
@@ -776,7 +778,7 @@ export default function BuilderOnboarding() {
                 </div>
 
                 <div>
-                  <Label htmlFor="twitterHandle">Twitter Handle</Label>
+                  <Label htmlFor="twitterHandle">X/Twitter Handle (Optional)</Label>
                   <Input
                     id="twitterHandle"
                     value={formData.twitterHandle}
@@ -784,6 +786,20 @@ export default function BuilderOnboarding() {
                     placeholder="@yourhandle"
                     data-testid="input-twitter"
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="discordHandle">Discord Server Invite (Optional)</Label>
+                  <Input
+                    id="discordHandle"
+                    value={formData.discordHandle}
+                    onChange={(e) => setFormData({ ...formData, discordHandle: e.target.value })}
+                    placeholder="yourinvitecode or https://discord.gg/yourinvitecode"
+                    data-testid="input-discord"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Add your Discord server invite link so clients can contact you (e.g., "abcd1234" or "discord.gg/abcd1234")
+                  </p>
                 </div>
 
                 <div>

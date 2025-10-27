@@ -19,6 +19,7 @@ export const builders = pgTable("builders", {
   responseTime: text("response_time").default("24 hours"),
   twitterHandle: text("twitter_handle"),
   twitterFollowers: integer("twitter_followers"),
+  discordHandle: text("discord_handle"),
   portfolioLinks: text("portfolio_links").array(),
   skills: text("skills").array(),
   tokenTickers: text("token_tickers").array(),

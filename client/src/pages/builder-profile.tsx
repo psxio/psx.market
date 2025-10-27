@@ -41,6 +41,7 @@ import {
   Shield,
   PlayCircle,
   ImageIcon,
+  MessageSquare,
 } from "lucide-react";
 import type { Builder, Service, Review, BuilderProject } from "@shared/schema";
 
@@ -215,7 +216,27 @@ export default function BuilderProfile() {
                       data-testid="link-twitter"
                     >
                       <Twitter className="h-4 w-4" />
-                      Twitter
+                      X/Twitter
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </Button>
+                )}
+                {builder.discordHandle && (
+                  <Button variant="outline" className="gap-2 hover-elevate" asChild>
+                    <a
+                      href={
+                        builder.discordHandle.startsWith('http') 
+                          ? builder.discordHandle 
+                          : builder.discordHandle.includes('discord.gg/') 
+                            ? `https://${builder.discordHandle}`
+                            : `https://discord.gg/${builder.discordHandle}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-testid="link-discord"
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                      Discord
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   </Button>
