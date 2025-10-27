@@ -248,6 +248,7 @@ export default function BuilderOnboarding() {
       // Build builder data based on category
       const builderData: any = {
         walletAddress: formData.walletAddress,
+        email: formData.email,
         name: formData.name,
         headline: formData.headline,
         bio: formData.bio,
