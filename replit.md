@@ -38,7 +38,7 @@ port444 utilizes a decoupled frontend and backend architecture, built with React
 - **Notification System**: Comprehensive system with browser push, email notifications (for offline builders, daily/weekly digests), real-time counters, and read/unread tracking.
 - **SEO & Discovery**: Dynamic meta tags, OpenGraph, Schema.org structured data, and dynamic sitemap generation.
 - **Smart Recommendations Engine**: Collaborative filtering, AI-powered price optimization, and success prediction scores.
-- **Builder Profile System**: Over 50 fields including core info, enhanced fields (languages, location, education), category-specific fields (KOLs, 3D artists, video editors, mods & raiders, marketers, developers, volume traders), performance metrics, and specialized layouts for certain consulting roles.
+- **Builder Profile System**: Over 50 fields including core info, enhanced fields (languages, location, education), social links (X/Twitter, Discord server invites), category-specific fields (KOLs, 3D artists, video editors, mods & raiders, marketers, developers, volume traders), performance metrics, and specialized layouts for certain consulting roles. Social links are prominently displayed on builder profiles for instant client connection.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
