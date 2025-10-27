@@ -170,6 +170,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/portfolio-items", async (req, res) => {
+    try {
+      const searchQuery = req.query.search as string | undefined;
+      const portfolioItems = await storage.getAllPortfolioItems(searchQuery);
+      res.json(portfolioItems);
+    } catch (error) {
+      console.error("Error fetching portfolio items:", error);
+      res.status(500).json({ error: "Failed to fetch portfolio items" });
+    }
+  });
+
   app.patch("/api/builders/:id/live-status", async (req, res) => {
     if (!req.session.userId || req.session.userType !== "builder") {
       return res.status(401).json({ error: "Unauthorized" });

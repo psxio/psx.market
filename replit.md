@@ -20,7 +20,10 @@ port444 utilizes a decoupled frontend and backend architecture, built with React
 - **Homepage ("Buy on Demand")**: Fiverr-style, category-driven marketplace with a hero section. Features real-time category filtering, project token tickers on service/builder cards, token perks, CTAs, token holder benefits, and PSX Agency promotion.
 - **Getting Started Page**: Dual-tab onboarding for clients (wallet setup, builder search tips, AI matching wizard, workflow, payments, reviews) and builders (value proposition, benefits, 4-step application, payment/escrow flow, CTAs).
 - **Key Features**: Dual token incentive system, detailed builder profiles, advanced search/filtering, admin/client dashboards, multi-step builder application, visual onboarding checklist, "Buy on Demand" homepage, PSX Agency promotion, and legal/compliance documentation.
-- **Browse Pages**: Consistent layouts for services and builders with sidebar filters, search, and grid displays.
+- **Browse Pages**: Consistent layouts for services, builders, and portfolios with search and filtering.
+  - **Browse Services**: Grid-based service listings with category filters
+  - **Browse Builders**: Advanced sidebar filters (categories, delivery time, rating, languages, budget range $0-$20k+ with $500 increments, availability, verified status)
+  - **Browse Portfolios**: NEW Pinterest-style masonry layout (/portfolios) for visual portfolio discovery. Search across all builder work by keywords (e.g., "schizo art", "token launch"), click-through to builder profiles. Aggregates builder portfolioMedia and builderProjects with project details.
 
 ### Technical Implementations
 - **Frontend**: React and TypeScript with TanStack Query.

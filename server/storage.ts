@@ -163,6 +163,20 @@ export interface IStorage {
   getBuilderProjects(builderId: string): Promise<BuilderProject[]>;
   getBuilderProject(id: string): Promise<BuilderProject | undefined>;
   createBuilderProject(project: InsertBuilderProject): Promise<BuilderProject>;
+  getAllPortfolioItems(searchQuery?: string): Promise<Array<{
+    id: string;
+    builderId: string;
+    builderName: string;
+    builderCategory: string;
+    builderVerified: boolean;
+    builderRating: number;
+    mediaUrl: string;
+    title?: string;
+    description?: string;
+    category?: string;
+    tags?: string[];
+    type: 'project' | 'media';
+  }>>;
 
   getService(id: string): Promise<Service | undefined>;
   getServices(): Promise<Service[]>;
@@ -1141,6 +1155,89 @@ export class PostgresStorage implements IStorage {
   async createBuilderProject(project: InsertBuilderProject): Promise<BuilderProject> {
     const result = await db.insert(builderProjects).values(project).returning();
     return result[0];
+  }
+
+  async getAllPortfolioItems(searchQuery?: string): Promise<Array<{
+    id: string;
+    builderId: string;
+    builderName: string;
+    builderCategory: string;
+    builderVerified: boolean;
+    builderRating: number;
+    mediaUrl: string;
+    title?: string;
+    description?: string;
+    category?: string;
+    tags?: string[];
+    type: 'project' | 'media';
+  }>> {
+    const allBuilders = await this.getBuilders();
+    const portfolioItems: Array<{
+      id: string;
+      builderId: string;
+      builderName: string;
+      builderCategory: string;
+      builderVerified: boolean;
+      builderRating: number;
+      mediaUrl: string;
+      title?: string;
+      description?: string;
+      category?: string;
+      tags?: string[];
+      type: 'project' | 'media';
+    }> = [];
+
+    for (const builder of allBuilders) {
+      if (builder.portfolioMedia && builder.portfolioMedia.length > 0) {
+        for (const mediaUrl of builder.portfolioMedia) {
+          portfolioItems.push({
+            id: `media-${builder.id}-${portfolioItems.length}`,
+            builderId: builder.id,
+            builderName: builder.name,
+            builderCategory: builder.category,
+            builderVerified: builder.verified,
+            builderRating: typeof builder.rating === 'number' ? builder.rating : parseFloat(builder.rating || '0'),
+            mediaUrl,
+            type: 'media'
+          });
+        }
+      }
+
+      const projects = await this.getBuilderProjects(builder.id);
+      for (const project of projects) {
+        if (project.mediaUrls && project.mediaUrls.length > 0) {
+          for (const mediaUrl of project.mediaUrls) {
+            portfolioItems.push({
+              id: project.id,
+              builderId: builder.id,
+              builderName: builder.name,
+              builderCategory: builder.category,
+              builderVerified: builder.verified,
+              builderRating: typeof builder.rating === 'number' ? builder.rating : parseFloat(builder.rating || '0'),
+              mediaUrl,
+              title: project.title,
+              description: project.description,
+              category: project.category,
+              type: 'project'
+            });
+          }
+        }
+      }
+    }
+
+    if (searchQuery && searchQuery.trim() !== '') {
+      const query = searchQuery.toLowerCase();
+      return portfolioItems.filter(item => {
+        const titleMatch = item.title?.toLowerCase().includes(query);
+        const descMatch = item.description?.toLowerCase().includes(query);
+        const categoryMatch = item.category?.toLowerCase().includes(query);
+        const builderMatch = item.builderName.toLowerCase().includes(query);
+        const builderCategoryMatch = item.builderCategory.toLowerCase().includes(query);
+        return titleMatch || descMatch || categoryMatch || builderMatch || builderCategoryMatch;
+      });
+    }
+
+    return portfolioItems;
   }
 
   async getService(id: string): Promise<Service | undefined> {

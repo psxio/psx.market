@@ -3,7 +3,7 @@ import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
 import { AutocompleteSearch } from "./AutocompleteSearch";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket } from "lucide-react";
+import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket, Image } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import { useState } from "react";
@@ -66,6 +66,13 @@ export function Header() {
               <Link href="/builders">
                 <Grid3x3 className="h-3.5 w-3.5" />
                 Browse Builders
+              </Link>
+            </Button>
+
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse-portfolios">
+              <Link href="/portfolios">
+                <Image className="h-3.5 w-3.5" />
+                Browse Portfolios
               </Link>
             </Button>
 
@@ -147,6 +154,13 @@ export function Header() {
                       <Link href="/builders">
                         <Grid3x3 className="h-4 w-4" />
                         Browse Builders
+                      </Link>
+                    </Button>
+
+                    <Button asChild variant="ghost" className="w-full justify-start gap-2 hover-elevate" data-testid="link-browse-portfolios-mobile">
+                      <Link href="/portfolios">
+                        <Image className="h-4 w-4" />
+                        Browse Portfolios
                       </Link>
                     </Button>
 
