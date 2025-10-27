@@ -3845,8 +3845,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get upload URL for file upload (requires authentication)
   app.post("/api/objects/upload", async (req, res) => {
-    // Require authentication
-    if (!req.session.clientAddress && !req.session.adminId) {
+    // Require authentication (client, builder, or admin)
+    if (!req.session.clientAddress && !req.session.builderId && !req.session.adminId) {
       return res.status(401).json({ error: "Authentication required" });
     }
 
@@ -3862,7 +3862,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set ACL policy for uploaded portfolio image
   app.put("/api/upload/portfolio-image", async (req, res) => {
-    if (!req.session.clientAddress && !req.session.adminId) {
+    if (!req.session.clientAddress && !req.session.builderId && !req.session.adminId) {
       return res.status(401).json({ error: "Authentication required" });
     }
 
@@ -3872,7 +3872,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const objectStorageService = new ObjectStorageService();
-      const userId = req.session.clientAddress || req.session.adminId || "";
+      const userId = req.session.clientAddress || req.session.builderId || req.session.adminId || "";
       
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
         req.body.imageURL,
@@ -3891,7 +3891,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set ACL policy for uploaded message attachment
   app.put("/api/upload/message-attachment", async (req, res) => {
-    if (!req.session.clientAddress && !req.session.adminId) {
+    if (!req.session.clientAddress && !req.session.builderId && !req.session.adminId) {
       return res.status(401).json({ error: "Authentication required" });
     }
 
@@ -3901,7 +3901,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const objectStorageService = new ObjectStorageService();
-      const userId = req.session.clientAddress || req.session.adminId || "";
+      const userId = req.session.clientAddress || req.session.builderId || req.session.adminId || "";
       
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
         req.body.fileURL,
@@ -3920,7 +3920,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set ACL policy for uploaded deliverable file
   app.put("/api/upload/deliverable", async (req, res) => {
-    if (!req.session.clientAddress && !req.session.adminId) {
+    if (!req.session.clientAddress && !req.session.builderId && !req.session.adminId) {
       return res.status(401).json({ error: "Authentication required" });
     }
 
@@ -3930,7 +3930,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const objectStorageService = new ObjectStorageService();
-      const userId = req.session.clientAddress || req.session.adminId || "";
+      const userId = req.session.clientAddress || req.session.builderId || req.session.adminId || "";
       
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
         req.body.fileURL,
