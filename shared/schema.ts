@@ -188,6 +188,15 @@ export const services = pgTable("services", {
   basicDeliverables: text("basic_deliverables").array(),
   standardDeliverables: text("standard_deliverables").array(),
   premiumDeliverables: text("premium_deliverables").array(),
+  
+  basicDeliveryDays: integer("basic_delivery_days").default(7),
+  standardDeliveryDays: integer("standard_delivery_days").default(5),
+  premiumDeliveryDays: integer("premium_delivery_days").default(3),
+  
+  basicRevisions: integer("basic_revisions").default(1),
+  standardRevisions: integer("standard_revisions").default(2),
+  premiumRevisions: integer("premium_revisions").default(5),
+  
   tags: text("tags").array(),
   tokenTickers: text("token_tickers").array(),
   psxRequired: decimal("psx_required", { precision: 10, scale: 2 }).notNull(),
@@ -872,8 +881,19 @@ export const referrals = pgTable("referrals", {
   referredWallet: text("referred_wallet").notNull(),
   referrerType: text("referrer_type").notNull(),
   referredType: text("referred_type").notNull(),
+  referralCode: text("referral_code").notNull(),
+  
   status: text("status").notNull().default("pending"),
   reward: decimal("reward", { precision: 10, scale: 2 }),
+  rewardPaid: boolean("reward_paid").notNull().default(false),
+  rewardPaidAt: text("reward_paid_at"),
+  
+  firstOrderId: varchar("first_order_id"),
+  firstOrderCompletedAt: text("first_order_completed_at"),
+  
+  totalOrdersGenerated: integer("total_orders_generated").notNull().default(0),
+  totalRevenueGenerated: decimal("total_revenue_generated", { precision: 10, scale: 2 }).default("0"),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   completedAt: text("completed_at"),
 });
@@ -1948,6 +1968,62 @@ export const serviceViews = pgTable("service_views", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Referral Codes for Builders
+export const referralCodes = pgTable("referral_codes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  code: text("code").notNull().unique(),
+  
+  totalClicks: integer("total_clicks").notNull().default(0),
+  totalSignups: integer("total_signups").notNull().default(0),
+  totalConversions: integer("total_conversions").notNull().default(0),
+  totalEarnings: decimal("total_earnings", { precision: 10, scale: 2 }).default("0"),
+  
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Builder Analytics - Daily Aggregations
+export const builderAnalytics = pgTable("builder_analytics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  date: text("date").notNull(), // YYYY-MM-DD
+  
+  profileViews: integer("profile_views").notNull().default(0),
+  uniqueVisitors: integer("unique_visitors").notNull().default(0),
+  
+  serviceImpressions: integer("service_impressions").notNull().default(0),
+  serviceClicks: integer("service_clicks").notNull().default(0),
+  
+  inquiriesReceived: integer("inquiries_received").notNull().default(0),
+  inquiriesResponded: integer("inquiries_responded").notNull().default(0),
+  
+  ordersReceived: integer("orders_received").notNull().default(0),
+  ordersCompleted: integer("orders_completed").notNull().default(0),
+  
+  revenue: decimal("revenue", { precision: 10, scale: 2 }).default("0"),
+  
+  avgResponseTimeMinutes: integer("avg_response_time_minutes"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Dispute Evidence/Messages
+export const disputeMessages = pgTable("dispute_messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  disputeId: varchar("dispute_id").notNull(),
+  
+  senderId: varchar("sender_id").notNull(),
+  senderType: text("sender_type").notNull(), // 'client', 'builder', 'admin'
+  
+  message: text("message").notNull(),
+  attachments: text("attachments").array(),
+  
+  isInternal: boolean("is_internal").notNull().default(false), // Admin-only notes
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 // Insert Schemas
 
 export const insertUserOnlineStatusSchema = createInsertSchema(userOnlineStatus).omit({
@@ -2024,6 +2100,25 @@ export const insertServiceViewSchema = createInsertSchema(serviceViews).omit({
   createdAt: true,
 });
 
+export const insertReferralCodeSchema = createInsertSchema(referralCodes).omit({
+  id: true,
+  totalClicks: true,
+  totalSignups: true,
+  totalConversions: true,
+  totalEarnings: true,
+  createdAt: true,
+});
+
+export const insertBuilderAnalyticsSchema = createInsertSchema(builderAnalytics).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDisputeMessageSchema = createInsertSchema(disputeMessages).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 
 export type InsertServiceAddon = z.infer<typeof insertServiceAddonSchema>;
@@ -2067,3 +2162,12 @@ export type PlatformActivity = typeof platformActivity.$inferSelect;
 
 export type InsertServiceView = z.infer<typeof insertServiceViewSchema>;
 export type ServiceView = typeof serviceViews.$inferSelect;
+
+export type InsertReferralCode = z.infer<typeof insertReferralCodeSchema>;
+export type ReferralCode = typeof referralCodes.$inferSelect;
+
+export type InsertBuilderAnalytics = z.infer<typeof insertBuilderAnalyticsSchema>;
+export type BuilderAnalytics = typeof builderAnalytics.$inferSelect;
+
+export type InsertDisputeMessage = z.infer<typeof insertDisputeMessageSchema>;
+export type DisputeMessage = typeof disputeMessages.$inferSelect;
