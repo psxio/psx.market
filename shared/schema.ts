@@ -43,6 +43,20 @@ export const builders = pgTable("builders", {
   styleSpecialties: text("style_specialties").array(),
   animationExpertise: boolean("animation_expertise"),
   
+  editingSoftware: text("editing_software").array(),
+  editingSpecialties: text("editing_specialties").array(),
+  videoTypes: text("video_types").array(),
+  avgTurnaroundDays: integer("avg_turnaround_days"),
+  portfolioReel: text("portfolio_reel"),
+  
+  platformsManaged: text("platforms_managed").array(),
+  maxCommunitySize: integer("max_community_size"),
+  moderationTools: text("moderation_tools").array(),
+  raidCoordination: boolean("raid_coordination"),
+  eventHosting: boolean("event_hosting"),
+  timezoneAvailability: text("timezone_availability"),
+  spokenLanguages: text("spoken_languages").array(),
+  
   marketingPlatforms: text("marketing_platforms").array(),
   growthStrategies: text("growth_strategies").array(),
   caseStudies: text("case_studies").array(),
@@ -344,6 +358,17 @@ export const builderApplications = pgTable("builder_applications", {
   software3D: text("software_3d").array(),
   renderEngines: text("render_engines").array(),
   styleSpecialties: text("style_specialties").array(),
+  
+  editingSoftware: text("editing_software").array(),
+  editingSpecialties: text("editing_specialties").array(),
+  videoTypes: text("video_types").array(),
+  portfolioReel: text("portfolio_reel"),
+  
+  platformsManaged: text("platforms_managed").array(),
+  maxCommunitySize: integer("max_community_size"),
+  moderationTools: text("moderation_tools").array(),
+  raidCoordination: boolean("raid_coordination"),
+  timezoneAvailability: text("timezone_availability"),
   
   marketingPlatforms: text("marketing_platforms").array(),
   growthStrategies: text("growth_strategies").array(),

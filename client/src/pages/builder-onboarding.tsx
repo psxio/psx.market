@@ -111,6 +111,19 @@ export default function BuilderOnboarding() {
       styleSpecialties: [] as string[],
       animationExpertise: false,
       
+      // Video Editor fields
+      editingSoftware: [] as string[],
+      editingSpecialties: [] as string[],
+      videoTypes: [] as string[],
+      portfolioReel: "",
+      
+      // Mods & Raiders fields
+      platformsManaged: [] as string[],
+      maxCommunitySize: "",
+      moderationTools: [] as string[],
+      raidCoordination: false,
+      timezoneAvailability: "",
+      
       // Marketing fields
       marketingPlatforms: [] as string[],
       growthStrategies: [] as string[],
@@ -300,6 +313,17 @@ export default function BuilderOnboarding() {
         builderData.renderEngines = formData.renderEngines.length > 0 ? formData.renderEngines : undefined;
         builderData.styleSpecialties = formData.styleSpecialties.length > 0 ? formData.styleSpecialties : undefined;
         builderData.animationExpertise = formData.animationExpertise;
+      } else if (formData.category === "video-editor") {
+        builderData.editingSoftware = formData.editingSoftware.length > 0 ? formData.editingSoftware : undefined;
+        builderData.editingSpecialties = formData.editingSpecialties.length > 0 ? formData.editingSpecialties : undefined;
+        builderData.videoTypes = formData.videoTypes.length > 0 ? formData.videoTypes : undefined;
+        builderData.portfolioReel = formData.portfolioReel || undefined;
+      } else if (formData.category === "mods-raiders") {
+        builderData.platformsManaged = formData.platformsManaged.length > 0 ? formData.platformsManaged : undefined;
+        builderData.maxCommunitySize = formData.maxCommunitySize ? parseInt(formData.maxCommunitySize) : undefined;
+        builderData.moderationTools = formData.moderationTools.length > 0 ? formData.moderationTools : undefined;
+        builderData.raidCoordination = formData.raidCoordination;
+        builderData.timezoneAvailability = formData.timezoneAvailability || undefined;
       } else if (formData.category === "marketers") {
         builderData.marketingPlatforms = formData.marketingPlatforms.length > 0 ? formData.marketingPlatforms : undefined;
         builderData.growthStrategies = formData.growthStrategies.length > 0 ? formData.growthStrategies : undefined;
@@ -1152,6 +1176,236 @@ export default function BuilderOnboarding() {
                       Self-reported ROI numbers without proof get flagged by clients. Upload case studies with screenshots, analytics, or wallet txns to get a "Verified Metrics ✓" badge. Builders with verified data get 3x more bookings.
                     </p>
                   </div>
+                </div>
+              </>
+            )}
+
+            {currentStep === 3 && formData.category === "video-editor" && (
+              <>
+                <h3 className="text-lg font-semibold">Your Video Editing Stack</h3>
+                
+                <div>
+                  <Label>Editing Software (Press Enter to add)</Label>
+                  <Input
+                    placeholder="e.g., Premiere Pro, Final Cut, DaVinci Resolve"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.currentTarget.value.trim();
+                        if (value && !formData.editingSoftware.includes(value)) {
+                          setFormData({ ...formData, editingSoftware: [...formData.editingSoftware, value] });
+                          e.currentTarget.value = '';
+                        }
+                      }
+                    }}
+                    data-testid="input-editing-software"
+                  />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.editingSoftware.map((software: string, idx: number) => (
+                      <Badge key={idx} variant="secondary">
+                        {software}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ 
+                            ...formData, 
+                            editingSoftware: formData.editingSoftware.filter((_: string, i: number) => i !== idx) 
+                          })}
+                          className="ml-2"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Specialties (Press Enter to add)</Label>
+                  <Input
+                    placeholder="e.g., Motion Graphics, Color Grading, VFX"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.currentTarget.value.trim();
+                        if (value && !formData.editingSpecialties.includes(value)) {
+                          setFormData({ ...formData, editingSpecialties: [...formData.editingSpecialties, value] });
+                          e.currentTarget.value = '';
+                        }
+                      }
+                    }}
+                    data-testid="input-editing-specialties"
+                  />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.editingSpecialties.map((specialty: string, idx: number) => (
+                      <Badge key={idx} variant="secondary">
+                        {specialty}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ 
+                            ...formData, 
+                            editingSpecialties: formData.editingSpecialties.filter((_: string, i: number) => i !== idx) 
+                          })}
+                          className="ml-2"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Video Types (Press Enter to add)</Label>
+                  <Input
+                    placeholder="e.g., Token Promos, Explainers, Social Content"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.currentTarget.value.trim();
+                        if (value && !formData.videoTypes.includes(value)) {
+                          setFormData({ ...formData, videoTypes: [...formData.videoTypes, value] });
+                          e.currentTarget.value = '';
+                        }
+                      }
+                    }}
+                    data-testid="input-video-types"
+                  />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.videoTypes.map((type: string, idx: number) => (
+                      <Badge key={idx} variant="secondary">
+                        {type}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ 
+                            ...formData, 
+                            videoTypes: formData.videoTypes.filter((_: string, i: number) => i !== idx) 
+                          })}
+                          className="ml-2"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Portfolio Reel Link (YouTube/Vimeo)</Label>
+                  <Input
+                    placeholder="https://youtube.com/watch?v=..."
+                    value={formData.portfolioReel}
+                    onChange={(e) => setFormData({ ...formData, portfolioReel: e.target.value })}
+                    data-testid="input-portfolio-reel"
+                  />
+                </div>
+              </>
+            )}
+
+            {currentStep === 3 && formData.category === "mods-raiders" && (
+              <>
+                <h3 className="text-lg font-semibold">Community Experience</h3>
+                
+                <div>
+                  <Label>Platforms You Manage (Press Enter to add)</Label>
+                  <Input
+                    placeholder="e.g., Discord, Telegram, Twitter Spaces"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.currentTarget.value.trim();
+                        if (value && !formData.platformsManaged.includes(value)) {
+                          setFormData({ ...formData, platformsManaged: [...formData.platformsManaged, value] });
+                          e.currentTarget.value = '';
+                        }
+                      }
+                    }}
+                    data-testid="input-platforms-managed"
+                  />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.platformsManaged.map((platform: string, idx: number) => (
+                      <Badge key={idx} variant="secondary">
+                        {platform}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ 
+                            ...formData, 
+                            platformsManaged: formData.platformsManaged.filter((_: string, i: number) => i !== idx) 
+                          })}
+                          className="ml-2"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Largest Community You've Managed</Label>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 5000"
+                    value={formData.maxCommunitySize}
+                    onChange={(e) => setFormData({ ...formData, maxCommunitySize: e.target.value })}
+                    data-testid="input-max-community-size"
+                  />
+                </div>
+
+                <div>
+                  <Label>Moderation Tools (Press Enter to add)</Label>
+                  <Input
+                    placeholder="e.g., MEE6, Carl-bot, Collab.Land"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.currentTarget.value.trim();
+                        if (value && !formData.moderationTools.includes(value)) {
+                          setFormData({ ...formData, moderationTools: [...formData.moderationTools, value] });
+                          e.currentTarget.value = '';
+                        }
+                      }
+                    }}
+                    data-testid="input-moderation-tools"
+                  />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.moderationTools.map((tool: string, idx: number) => (
+                      <Badge key={idx} variant="secondary">
+                        {tool}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ 
+                            ...formData, 
+                            moderationTools: formData.moderationTools.filter((_: string, i: number) => i !== idx) 
+                          })}
+                          className="ml-2"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Timezone Availability</Label>
+                  <Input
+                    placeholder="e.g., EST, PST, UTC+8"
+                    value={formData.timezoneAvailability}
+                    onChange={(e) => setFormData({ ...formData, timezoneAvailability: e.target.value })}
+                    data-testid="input-timezone-availability"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="raid-coordination"
+                    checked={formData.raidCoordination}
+                    onCheckedChange={(checked) => setFormData({ ...formData, raidCoordination: checked as boolean })}
+                    data-testid="checkbox-raid-coordination"
+                  />
+                  <Label htmlFor="raid-coordination" className="cursor-pointer">
+                    I have experience coordinating raids
+                  </Label>
                 </div>
               </>
             )}
