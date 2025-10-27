@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -21,9 +22,11 @@ import {
 interface QuizQuestion {
   id: string;
   question: string;
+  type: "single" | "multiple";
   options: Array<{
     value: string;
     label: string;
+    description?: string;
     points: {
       kols: number;
       "3d-content": number;
@@ -38,6 +41,7 @@ const quizQuestions: QuizQuestion[] = [
   {
     id: "experience",
     question: "How much professional experience do you have in Web3?",
+    type: "single",
     options: [
       {
         value: "none",
@@ -63,31 +67,79 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: "skills",
-    question: "Which best describes your primary skillset?",
+    question: "What are your primary skills? (Select all that apply)",
+    type: "multiple",
     options: [
       {
-        value: "social",
-        label: "Social media influence and community building",
-        points: { kols: 5, "3d-content": 0, marketing: 3, development: 0, volume: 0 },
+        value: "3d-modeling",
+        label: "3D Modeling & Animation",
+        description: "3D characters, environments, product renders",
+        points: { kols: 0, "3d-content": 5, marketing: 0, development: 0, volume: 0 },
       },
       {
-        value: "creative",
-        label: "3D design, animation, and visual content",
+        value: "video-editing",
+        label: "Video Editing & Production",
+        description: "Token launch videos, promotional content, YouTube editing",
+        points: { kols: 1, "3d-content": 4, marketing: 2, development: 0, volume: 0 },
+      },
+      {
+        value: "motion-graphics",
+        label: "Motion Graphics & VFX",
+        description: "After Effects animations, visual effects, transitions",
         points: { kols: 0, "3d-content": 5, marketing: 1, development: 0, volume: 0 },
       },
       {
-        value: "marketing",
-        label: "Marketing strategy and growth hacking",
+        value: "graphic-design",
+        label: "Graphic Design & Branding",
+        description: "Logos, banners, social media graphics, brand identity",
+        points: { kols: 1, "3d-content": 3, marketing: 2, development: 0, volume: 0 },
+      },
+      {
+        value: "social-influence",
+        label: "Social Media Influence",
+        description: "Large following (10k+), brand partnerships, sponsored posts",
+        points: { kols: 5, "3d-content": 0, marketing: 2, development: 0, volume: 0 },
+      },
+      {
+        value: "community-management",
+        label: "Community Management",
+        description: "Discord/Telegram management, engagement, moderation",
+        points: { kols: 3, "3d-content": 0, marketing: 3, development: 0, volume: 0 },
+      },
+      {
+        value: "content-creation",
+        label: "Content Writing & Strategy",
+        description: "Whitepapers, articles, newsletters, scriptwriting",
+        points: { kols: 2, "3d-content": 1, marketing: 4, development: 0, volume: 0 },
+      },
+      {
+        value: "marketing-strategy",
+        label: "Marketing & Growth Strategy",
+        description: "Go-to-market plans, campaign management, growth hacking",
         points: { kols: 2, "3d-content": 0, marketing: 5, development: 0, volume: 1 },
       },
       {
-        value: "technical",
-        label: "Smart contracts and blockchain development",
+        value: "paid-advertising",
+        label: "Paid Advertising & Media Buying",
+        description: "Google Ads, Facebook Ads, Twitter Ads, influencer marketing",
+        points: { kols: 1, "3d-content": 0, marketing: 4, development: 0, volume: 1 },
+      },
+      {
+        value: "smart-contracts",
+        label: "Smart Contract Development",
+        description: "Solidity, Rust, Web3 backend, blockchain integration",
         points: { kols: 0, "3d-content": 0, marketing: 0, development: 5, volume: 2 },
       },
       {
-        value: "trading",
-        label: "Trading, market making, and volume generation",
+        value: "web-development",
+        label: "Web Development",
+        description: "React, Next.js, dApp frontends, landing pages",
+        points: { kols: 0, "3d-content": 1, marketing: 1, development: 4, volume: 0 },
+      },
+      {
+        value: "trading-volume",
+        label: "Trading & Market Making",
+        description: "Volume generation, liquidity provision, market making strategies",
         points: { kols: 0, "3d-content": 0, marketing: 1, development: 1, volume: 5 },
       },
     ],
@@ -95,6 +147,7 @@ const quizQuestions: QuizQuestion[] = [
   {
     id: "audience",
     question: "Do you have an established audience or client base?",
+    type: "single",
     options: [
       {
         value: "none",
@@ -121,6 +174,7 @@ const quizQuestions: QuizQuestion[] = [
   {
     id: "availability",
     question: "How much time can you dedicate per week?",
+    type: "single",
     options: [
       {
         value: "part-time",
@@ -147,6 +201,7 @@ const quizQuestions: QuizQuestion[] = [
   {
     id: "portfolio",
     question: "Do you have a portfolio of previous work?",
+    type: "single",
     options: [
       {
         value: "none",
@@ -175,18 +230,37 @@ const quizQuestions: QuizQuestion[] = [
 export default function BuilderQuiz() {
   const [, setLocation] = useLocation();
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [showResults, setShowResults] = useState(false);
 
   const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
 
-  const handleAnswer = (value: string) => {
+  const handleSingleAnswer = (value: string) => {
     setAnswers({ ...answers, [quizQuestions[currentQuestion].id]: value });
+  };
+
+  const handleMultipleAnswer = (value: string, checked: boolean) => {
+    const currentAnswers = (answers[quizQuestions[currentQuestion].id] as string[]) || [];
+    
+    if (checked) {
+      setAnswers({ ...answers, [quizQuestions[currentQuestion].id]: [...currentAnswers, value] });
+    } else {
+      setAnswers({
+        ...answers,
+        [quizQuestions[currentQuestion].id]: currentAnswers.filter((v) => v !== value),
+      });
+    }
   };
 
   const handleNext = () => {
     const currentAnswer = answers[quizQuestions[currentQuestion].id];
+    
+    // Check if answer exists and is valid
     if (!currentAnswer) {
+      return;
+    }
+    
+    if (Array.isArray(currentAnswer) && currentAnswer.length === 0) {
       return;
     }
     
@@ -214,11 +288,27 @@ export default function BuilderQuiz() {
 
     Object.entries(answers).forEach(([questionId, answer]) => {
       const question = quizQuestions.find((q) => q.id === questionId);
-      const option = question?.options.find((o) => o.value === answer);
-      if (option) {
-        Object.keys(scores).forEach((category) => {
-          scores[category as keyof typeof scores] += option.points[category as keyof typeof option.points];
+      
+      if (!question) return;
+
+      // Handle multiple choice questions
+      if (Array.isArray(answer)) {
+        answer.forEach((value) => {
+          const option = question.options.find((o) => o.value === value);
+          if (option) {
+            Object.keys(scores).forEach((category) => {
+              scores[category as keyof typeof scores] += option.points[category as keyof typeof option.points];
+            });
+          }
         });
+      } else {
+        // Handle single choice questions
+        const option = question.options.find((o) => o.value === answer);
+        if (option) {
+          Object.keys(scores).forEach((category) => {
+            scores[category as keyof typeof scores] += option.points[category as keyof typeof option.points];
+          });
+        }
       }
     });
 
@@ -236,21 +326,22 @@ export default function BuilderQuiz() {
 
     const categoryNames = {
       kols: "KOL & Influencer",
-      "3d-content": "3D Content Creator",
+      "3d-content": "3D & Visual Content Creator",
       marketing: "Marketing & Growth",
       development: "Smart Contract Developer",
       volume: "Volume Services",
     };
 
     const categoryDescriptions = {
-      kols: "You have strong social presence and community building skills. Perfect for influencer campaigns and brand partnerships.",
-      "3d-content": "Your creative and technical skills in 3D design make you ideal for visual content creation projects.",
-      marketing: "Your strategic thinking and growth expertise are perfect for helping Web3 projects scale.",
-      development: "Your technical blockchain skills are in high demand for smart contract and dApp development.",
-      volume: "Your trading expertise and market knowledge are valuable for liquidity and volume services.",
+      kols: "You have strong social presence and community building skills. Perfect for influencer campaigns, community management, and brand partnerships.",
+      "3d-content": "Your creative and technical skills in visual content creation make you ideal for 3D design, video production, motion graphics, and branding projects.",
+      marketing: "Your strategic thinking and growth expertise are perfect for helping Web3 projects scale through marketing campaigns, content strategy, and paid advertising.",
+      development: "Your technical blockchain skills are in high demand for smart contract development, dApp creation, and Web3 integrations.",
+      volume: "Your trading expertise and market knowledge are valuable for liquidity provision, market making, and volume generation services.",
     };
 
-    const readinessLevel = totalScore >= 12 ? "ready" : totalScore >= 8 ? "almost" : "early";
+    // Adjusted scoring thresholds based on multiple choice question
+    const readinessLevel = totalScore >= 15 ? "ready" : totalScore >= 10 ? "almost" : "early";
 
     return {
       category: topCategory as keyof typeof categoryNames,
@@ -352,7 +443,7 @@ export default function BuilderQuiz() {
                     <h3 className="text-2xl font-bold">{result.categoryName}</h3>
                   </div>
                   <Badge className="text-lg px-4 py-2" data-testid="badge-score">
-                    {result.score}/20
+                    {result.score}/25
                   </Badge>
                 </div>
                 <p className="text-muted-foreground">{result.description}</p>
@@ -365,7 +456,7 @@ export default function BuilderQuiz() {
                   .map(([category, score]) => {
                     const categoryNames = {
                       kols: "KOL & Influencer",
-                      "3d-content": "3D Creator",
+                      "3d-content": "Visual Content",
                       marketing: "Marketing",
                       development: "Development",
                       volume: "Volume Services",
@@ -374,9 +465,9 @@ export default function BuilderQuiz() {
                       <div key={category} className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span>{categoryNames[category as keyof typeof categoryNames]}</span>
-                          <span className="font-bold">{score}/20</span>
+                          <span className="font-bold">{score}/25</span>
                         </div>
-                        <Progress value={(score / 20) * 100} />
+                        <Progress value={(score / 25) * 100} />
                       </div>
                     );
                   })}
@@ -389,7 +480,7 @@ export default function BuilderQuiz() {
                     <p className="font-semibold">You're Ready to Apply!</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Based on your answers, you have the experience and skills to succeed on Create.psx. Apply now to start earning!
+                    Based on your answers, you have the experience and skills to succeed on port444. Apply now to start earning!
                   </p>
                   <Button 
                     className="w-full gap-2" 
@@ -478,6 +569,9 @@ export default function BuilderQuiz() {
 
   const currentQ = quizQuestions[currentQuestion];
   const selectedAnswer = answers[currentQ.id];
+  const isAnswered = currentQ.type === "multiple" 
+    ? Array.isArray(selectedAnswer) && selectedAnswer.length > 0
+    : Boolean(selectedAnswer);
 
   return (
     <div className="min-h-screen bg-background py-12">
@@ -508,27 +602,66 @@ export default function BuilderQuiz() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">{currentQ.question}</CardTitle>
+            {currentQ.type === "multiple" && (
+              <CardDescription>Choose one or more options that apply to you</CardDescription>
+            )}
           </CardHeader>
           <CardContent className="space-y-6">
-            <RadioGroup value={selectedAnswer} onValueChange={handleAnswer}>
+            {currentQ.type === "single" ? (
+              <RadioGroup value={selectedAnswer as string} onValueChange={handleSingleAnswer}>
+                <div className="space-y-3">
+                  {currentQ.options.map((option) => (
+                    <Label
+                      key={option.value}
+                      htmlFor={option.value}
+                      className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors hover-elevate ${
+                        selectedAnswer === option.value
+                          ? "border-primary bg-primary/5"
+                          : "border-border"
+                      }`}
+                      data-testid={`option-${option.value}`}
+                    >
+                      <RadioGroupItem value={option.value} id={option.value} />
+                      <span className="flex-1">{option.label}</span>
+                    </Label>
+                  ))}
+                </div>
+              </RadioGroup>
+            ) : (
               <div className="space-y-3">
-                {currentQ.options.map((option) => (
-                  <Label
-                    key={option.value}
-                    htmlFor={option.value}
-                    className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors hover-elevate ${
-                      selectedAnswer === option.value
-                        ? "border-primary bg-primary/5"
-                        : "border-border"
-                    }`}
-                    data-testid={`option-${option.value}`}
-                  >
-                    <RadioGroupItem value={option.value} id={option.value} />
-                    <span className="flex-1">{option.label}</span>
-                  </Label>
-                ))}
+                {currentQ.options.map((option) => {
+                  const isChecked = Array.isArray(selectedAnswer) && selectedAnswer.includes(option.value);
+                  
+                  return (
+                    <Label
+                      key={option.value}
+                      htmlFor={option.value}
+                      className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors hover-elevate ${
+                        isChecked
+                          ? "border-primary bg-primary/5"
+                          : "border-border"
+                      }`}
+                      data-testid={`option-${option.value}`}
+                    >
+                      <Checkbox
+                        id={option.value}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => handleMultipleAnswer(option.value, checked as boolean)}
+                        className="mt-1"
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium">{option.label}</div>
+                        {option.description && (
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {option.description}
+                          </div>
+                        )}
+                      </div>
+                    </Label>
+                  );
+                })}
               </div>
-            </RadioGroup>
+            )}
 
             <div className="flex gap-3 pt-4">
               {currentQuestion > 0 && (
@@ -545,7 +678,7 @@ export default function BuilderQuiz() {
               <Button
                 className="flex-1 gap-2"
                 onClick={handleNext}
-                disabled={!selectedAnswer}
+                disabled={!isAnswered}
                 data-testid="button-next"
               >
                 {currentQuestion === quizQuestions.length - 1 ? "See Results" : "Next"}
