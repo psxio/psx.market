@@ -26,6 +26,7 @@ import CategoryPage from "@/pages/category";
 import BuildersLanding from "@/pages/builders";
 import BrowseBuilders from "@/pages/browse-builders";
 import BrowsePortfolios from "@/pages/browse-portfolios";
+import AdultBuilders from "@/pages/adult-builders";
 import BuilderQuiz from "@/pages/builder-quiz";
 import Apply from "@/pages/apply";
 import HowItWorks from "@/pages/how-it-works";
@@ -60,6 +61,7 @@ function Router() {
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/builders" component={BrowseBuilders} />
       <Route path="/portfolios" component={BrowsePortfolios} />
+      <Route path="/adult-builders" component={AdultBuilders} />
       <Route path="/become-builder" component={BuildersLanding} />
       <Route path="/builder-quiz" component={BuilderQuiz} />
       <Route path="/apply" component={Apply} />

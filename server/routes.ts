@@ -72,7 +72,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { search, categories, sortBy, minRating, psxTier, verified, languages, availability } = req.query;
 
-      let filteredResults = builders;
+      // Filter out NSFW builders by default
+      let filteredResults = builders.filter((builder) => !builder.isNSFW);
 
       if (search && typeof search === "string") {
         const searchLower = search.toLowerCase();
@@ -148,6 +149,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(filteredResults);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch builders" });
+    }
+  });
+
+  app.get("/api/builders/adult", async (req, res) => {
+    try {
+      let builders = await storage.getBuilders();
+      
+      // Only return NSFW builders
+      let filteredResults = builders.filter((builder) => builder.isNSFW);
+
+      const { search, sortBy } = req.query;
+
+      if (search && typeof search === "string") {
+        const searchLower = search.toLowerCase();
+        filteredResults = filteredResults.filter((builder) => 
+          builder.name.toLowerCase().includes(searchLower) ||
+          builder.category.toLowerCase().includes(searchLower) ||
+          builder.skills?.some((skill) => skill.toLowerCase().includes(searchLower)) ||
+          builder.bio?.toLowerCase().includes(searchLower) ||
+          builder.headline?.toLowerCase().includes(searchLower)
+        );
+      }
+
+      if (sortBy) {
+        switch (sortBy) {
+          case "rating":
+            filteredResults.sort((a, b) => {
+              const ratingA = parseFloat(a.rating || "0");
+              const ratingB = parseFloat(b.rating || "0");
+              return ratingB - ratingA;
+            });
+            break;
+          case "projects":
+            filteredResults.sort((a, b) => b.completedProjects - a.completedProjects);
+            break;
+          case "recent":
+            filteredResults.sort((a, b) => 
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            break;
+        }
+      }
+
+      res.json(filteredResults);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch adult builders" });
     }
   });
 

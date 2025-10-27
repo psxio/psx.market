@@ -174,15 +174,29 @@ export function Footer() {
                   Cookie Policy
                 </Link>
               </li>
+              <li>
+                <Link 
+                  href="/adult-builders"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                  data-testid="link-footer-adult"
+                >
+                  Adult Content (18+)
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-muted-foreground">
-              &copy; {currentYear} port444. All rights reserved.
-            </p>
+            <div className="space-y-1 text-center md:text-left">
+              <p className="text-sm text-muted-foreground">
+                &copy; {currentYear} port444. All rights reserved.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                We do not tolerate racist, discriminatory, or illegal content. Adult services for legitimate Web3 projects only.
+              </p>
+            </div>
             <p className="text-sm text-muted-foreground">
               Powered by <span className="text-primary font-semibold">$CREATE</span> and{" "}
               <span className="text-primary font-semibold">$PSX</span> tokens on Base
