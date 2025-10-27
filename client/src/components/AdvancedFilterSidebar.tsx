@@ -175,31 +175,6 @@ export function AdvancedFilterSidebar({
 
         <Separator />
 
-        {/* Budget Range */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-semibold">Budget Range</Label>
-            <span className="text-sm text-muted-foreground">
-              ${filters.budgetRange[0].toLocaleString()} - ${filters.budgetRange[1].toLocaleString()}
-            </span>
-          </div>
-          <Slider
-            value={filters.budgetRange}
-            onValueChange={(value) => updateFilter("budgetRange", value as [number, number])}
-            min={0}
-            max={20000}
-            step={500}
-            className="pt-2"
-            data-testid="slider-budget"
-          />
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>$0</span>
-            <span>$20,000+</span>
-          </div>
-        </div>
-
-        <Separator />
-
         {/* Delivery Time */}
         <div className="space-y-3">
           <Label className="text-sm font-semibold">Delivery Time</Label>
@@ -247,21 +222,6 @@ export function AdvancedFilterSidebar({
 
         <Separator />
 
-        {/* Verified Only */}
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id="verified"
-            checked={filters.verified}
-            onCheckedChange={(checked) => updateFilter("verified", !!checked)}
-            data-testid="checkbox-verified"
-          />
-          <Label htmlFor="verified" className="text-sm cursor-pointer">
-            Verified builders only
-          </Label>
-        </div>
-
-        <Separator />
-
         {/* Languages */}
         <div className="space-y-3">
           <Label className="text-sm font-semibold">Languages</Label>
@@ -282,6 +242,31 @@ export function AdvancedFilterSidebar({
                 </Label>
               </div>
             ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Budget Range */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-semibold">Budget Range</Label>
+            <span className="text-sm text-muted-foreground">
+              ${filters.budgetRange[0].toLocaleString()} - ${filters.budgetRange[1].toLocaleString()}
+            </span>
+          </div>
+          <Slider
+            value={filters.budgetRange}
+            onValueChange={(value) => updateFilter("budgetRange", value as [number, number])}
+            min={0}
+            max={20000}
+            step={500}
+            className="pt-2"
+            data-testid="slider-budget"
+          />
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>$0</span>
+            <span>$20,000+</span>
           </div>
         </div>
 
@@ -308,6 +293,21 @@ export function AdvancedFilterSidebar({
               </div>
             ))}
           </div>
+        </div>
+
+        <Separator />
+
+        {/* Verified Only */}
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="verified"
+            checked={filters.verified}
+            onCheckedChange={(checked) => updateFilter("verified", !!checked)}
+            data-testid="checkbox-verified"
+          />
+          <Label htmlFor="verified" className="text-sm cursor-pointer">
+            Verified builders only
+          </Label>
         </div>
       </CardContent>
     </Card>
