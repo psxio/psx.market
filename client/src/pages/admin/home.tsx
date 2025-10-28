@@ -677,15 +677,15 @@ export default function AdminHome() {
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px] pr-4">
-            <div className="space-y-3">
+            <div className="space-y-3" data-testid="admin-activity-feed">
               {activitiesLoading ? (
-                <p className="text-center text-muted-foreground py-8">Loading activities...</p>
+                <p className="text-center text-muted-foreground py-8" data-testid="activity-loading">Loading activities...</p>
               ) : activities && activities.length > 0 ? (
                 activities.map((activity) => (
                   <div
                     key={activity.id}
                     className="flex items-start gap-3 p-3 rounded-lg hover-elevate"
-                    data-testid={`activity-${activity.type}`}
+                    data-testid={`activity-item-${activity.type}-${activity.id}`}
                   >
                     <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${getActivityColor(activity.type)} flex items-center justify-center shrink-0`}>
                       {getActivityIcon(activity.type)}
@@ -710,7 +710,7 @@ export default function AdminHome() {
                   </div>
                 ))
               ) : (
-                <p className="text-center text-muted-foreground py-8">No recent activity</p>
+                <p className="text-center text-muted-foreground py-8" data-testid="activity-empty">No recent activity</p>
               )}
             </div>
           </ScrollArea>
