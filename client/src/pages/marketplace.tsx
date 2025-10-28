@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Header } from "@/components/header";
-import { BuilderCard } from "@/components/builder-card";
+import { ServiceCard } from "@/components/service-card";
 import { SwipeableServiceGrid } from "@/components/swipeable-service-grid";
 import { EmptyState } from "@/components/empty-state";
 import { SEOHead } from "@/components/seo-head";
@@ -498,9 +498,9 @@ export default function Marketplace() {
                 />
 
                 {/* Desktop Grid */}
-                <div className="hidden md:grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-services">
+                <div className="hidden md:grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-services">
                   {servicesData.map(({ builder, service }) => (
-                    <BuilderCard
+                    <ServiceCard
                       key={service.id}
                       builder={builder}
                       service={service}

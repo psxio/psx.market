@@ -78,20 +78,25 @@ export function SwipeableServiceGrid({ services, onSave }: SwipeableServiceGridP
               className="flex-[0_0_85%] min-w-0"
               data-testid={`swipeable-card-${service.id}`}
             >
-              <Card className="overflow-hidden h-full">
-                <Link href={`/services/${service.id}`}>
-                  <div className="relative">
+              <Card className="overflow-hidden h-full border-2 hover-elevate active-elevate-2">
+                <Link href={`/service/${service.id}`}>
+                  {/* Image Section - Square Aspect Ratio */}
+                  <div className="relative aspect-square overflow-hidden bg-muted">
                     <img
-                      src={service.image || `https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=250&fit=crop`}
+                      src={service.image || `https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=600&fit=crop`}
                       alt={service.title}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      onError={(e) => {
+                        e.currentTarget.src = `https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=600&fit=crop`;
+                      }}
                     />
                     <button
                       onClick={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         handleSave(service.id);
                       }}
-                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover-elevate active-elevate-2"
+                      className="absolute top-3 right-3 h-9 w-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover-elevate active-elevate-2"
                       data-testid={`save-service-${service.id}`}
                     >
                       <Heart
@@ -105,57 +110,61 @@ export function SwipeableServiceGrid({ services, onSave }: SwipeableServiceGridP
                   </div>
                 </Link>
 
+                {/* Content Section */}
                 <div className="p-4 space-y-3">
-                  <Link href={`/builders/${service.builderId}`}>
-                    <div className="flex items-center gap-2 hover-elevate active-elevate-2 -m-1 p-1 rounded">
+                  {/* Builder Info */}
+                  <Link href={`/builder/${service.builderId}`}>
+                    <div className="flex items-center gap-2 hover-elevate active-elevate-2 -mx-1 -my-1 p-1 rounded-md">
                       <img
                         src={service.builderProfileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${service.builderName}`}
                         alt={service.builderName}
-                        className="w-8 h-8 rounded-full"
+                        className="w-7 h-7 rounded-full"
                       />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{service.builderName}</p>
-                      </div>
+                      <span className="text-sm font-medium truncate">{service.builderName}</span>
                     </div>
                   </Link>
 
-                  <Link href={`/services/${service.id}`}>
-                    <h3 className="font-semibold line-clamp-2 hover:text-primary transition-colors">
+                  {/* Service Title */}
+                  <Link href={`/service/${service.id}`}>
+                    <h3 className="font-semibold text-base line-clamp-2 min-h-[3rem] hover:text-primary transition-colors">
                       {service.title}
                     </h3>
                   </Link>
 
-                  <div className="flex items-center gap-2">
+                  {/* Rating */}
+                  <div className="flex items-center gap-1.5">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium text-sm">{service.rating || "5.0"}</span>
+                    <span className="font-semibold text-sm">{service.rating || "5.0"}</span>
                     <span className="text-sm text-muted-foreground">
                       ({service.reviewCount})
                     </span>
                   </div>
 
+                  {/* Token Tickers */}
                   {service.tokenTickers && service.tokenTickers.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {service.tokenTickers.slice(0, 3).map((token) => (
-                        <Badge key={token} variant="secondary" className="text-xs font-mono">
+                        <Badge key={token} variant="secondary" className="bg-primary/10 text-primary border-primary/20 font-mono text-xs px-2 py-0.5">
                           {token}
                         </Badge>
                       ))}
                       {service.tokenTickers.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs font-mono px-2 py-0.5">
                           +{service.tokenTickers.length - 3}
                         </Badge>
                       )}
                     </div>
                   )}
 
+                  {/* Price and Delivery */}
                   <div className="flex items-center justify-between pt-2 border-t">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Starting at</p>
-                      <p className="font-bold text-lg">${Number(service.basicPrice).toLocaleString()}</p>
-                    </div>
                     <Badge variant="outline" className="text-xs">
                       {service.deliveryTime}
                     </Badge>
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground mb-0.5">Starting at</div>
+                      <div className="font-bold text-lg">${Number(service.basicPrice).toLocaleString()}</div>
+                    </div>
                   </div>
                 </div>
               </Card>
