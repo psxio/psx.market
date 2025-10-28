@@ -3,7 +3,50 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 
 ## Recent Changes (Oct 28, 2025 - Latest)
 
-### 🎨 Marketplace Fiverr-Style Redesign (Latest)
+### 🛍️ Buy on Demand Homepage Implementation (Latest - Oct 28, 2025)
+**Complete homepage restructure with category-driven service discovery and Base blue color scheme**
+
+**Hero Section - Buy on Demand:**
+- ✅ **"Buy on Demand" heading**: Main headline with gradient "Web3 Talent Marketplace" subtitle (primary → purple → cyan)
+- ✅ **Token benefits badges**: Two badges at top of hero ("Token Holder Benefits", "Save Up to 60% with Tokens")
+- ✅ **Inline token benefits card**: Green-bordered card below hero with comprehensive perks description
+- ✅ **Search bar maintained**: Functional autocomplete search with suggestions
+- ✅ **Trust badges**: "Powered by: Base, $CREATE, $PSX" cards
+
+**Category Filtering System:**
+- ✅ **12 category pills with icons**: 3D Artists, Video Editors, Mods & Raiders, KOLs & Influencers, Developers, Marketing, Graphic Design, Volume Services, Social Media, Grants & Funding, Strategy, Documentation
+- ✅ **Active state styling**: Selected category highlighted with primary blue background
+- ✅ **Real-time filtering**: Services refetch based on selected category via TanStack Query
+- ✅ **Service count display**: Shows "Showing X [Category Name]" dynamically
+- ✅ **Default category**: 3D Content Creation selected on page load
+
+**Action Buttons Repositioned:**
+- ✅ **Browse All Services**: Primary button linking to marketplace
+- ✅ **Become a Client**: Outline button linking to getting started (client tab)
+- ✅ **Become a Builder**: Outline button linking to getting started (builder tab)
+- Note: Moved from old hero CTA section to category filtering section
+
+**Services Display:**
+- ✅ **Filtered grid**: Shows up to 8 services from selected category using ServiceCard component
+- ✅ **Loading states**: Skeleton components during data fetch
+- ✅ **Empty state**: Message with CTA when no services found
+- ✅ **View more button**: Appears when category has >8 services
+
+**Color Scheme Update:**
+- ✅ **Base blue primary color**: Changed from purple (262) to Base blue (221)
+  - Light mode: `hsl(221 83% 53%)`
+  - Dark mode: `hsl(221 83% 63%)`
+- ✅ **Site-wide consistency**: Updated all primary, sidebar-primary, and ring colors
+- ✅ **Chart colors**: Updated chart-1 to match blue theme
+
+**Layout Improvements:**
+- ✅ **Natural flow**: Removed heavy background sections, seamless transitions
+- ✅ **Token benefits inline**: No separate section, flows with page content
+- ✅ **Responsive grids**: xl:grid-cols-4, lg:grid-cols-3, sm:grid-cols-2 throughout
+
+**Impact:** Professional "Buy on Demand" marketplace matching user's vision with Base blue branding, category-driven discovery, and seamless token benefits integration
+
+### 🎨 Marketplace Fiverr-Style Redesign
 **Complete visual overhaul of Browse Services page with Fiverr-inspired card design**
 
 **ServiceCard Component:**
