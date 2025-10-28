@@ -653,7 +653,7 @@ export default function Home() {
         </div>
 
         {/* Scroll Down Indicator - Perfectly Centered on Full Viewport */}
-        <div id="scroll-indicator" className="fixed bottom-44 left-0 right-0 z-30 pointer-events-none animate-bounce" style={{ willChange: 'opacity' }}>
+        <div id="scroll-indicator" className="fixed bottom-8 left-0 right-0 z-30 pointer-events-none animate-bounce" style={{ willChange: 'opacity' }}>
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
             <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1 mx-auto">
