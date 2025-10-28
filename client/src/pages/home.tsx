@@ -122,6 +122,22 @@ export default function Home() {
               </span>
             </h1>
 
+            {/* Search Bar */}
+            <div className="max-w-3xl mx-auto">
+              <Link href="/marketplace">
+                <div className="relative group cursor-pointer">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <input
+                    type="text"
+                    placeholder="Search for services... (e.g., 3D artist, KOL, developer)"
+                    className="w-full h-14 pl-12 pr-4 rounded-xl border-2 border-border bg-background text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors group-hover:border-primary/50"
+                    readOnly
+                    data-testid="input-homepage-search"
+                  />
+                </div>
+              </Link>
+            </div>
+
             <p className="text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto leading-relaxed">
               The open Web3 marketplace connecting premium builders with memecoin
               and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
@@ -163,13 +179,13 @@ export default function Home() {
           {/* Category Browser - Main Focal Point */}
           <div className="space-y-12">
             {/* Section Header */}
-            <div className="text-center space-y-4">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Explore Services</h2>
-              <p className="text-muted-foreground text-lg md:text-xl max-w-3xl mx-auto">Browse by category to find the perfect builder for your project</p>
+            <div className="text-center space-y-3">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">Explore Services</h2>
+              <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">Browse by category to find the perfect builder for your project</p>
             </div>
 
-            {/* Large Category Cards Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
+            {/* Category Cards Grid - Smaller */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
               {serviceCategories.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = selectedCategory === cat.slug;
@@ -177,23 +193,23 @@ export default function Home() {
                   <button
                     key={cat.slug || 'all'}
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className={`group relative flex flex-col items-center justify-center p-6 md:p-8 rounded-2xl border-2 transition-all hover-elevate active-elevate-2 ${
+                    className={`group relative flex flex-col items-center justify-center p-4 md:p-5 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
                       isSelected 
                         ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/30' 
                         : 'bg-card border-border hover:border-primary/50'
                     }`}
                     data-testid={`button-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
                   >
-                    <div className={`mb-4 p-4 rounded-xl transition-all ${
+                    <div className={`mb-2 p-2.5 rounded-lg transition-all ${
                       isSelected 
                         ? 'bg-primary-foreground/20' 
                         : 'bg-primary/10 group-hover:bg-primary/20'
                     }`}>
-                      <Icon className={`h-8 w-8 md:h-10 md:w-10 ${
+                      <Icon className={`h-6 w-6 md:h-7 md:w-7 ${
                         isSelected ? 'text-primary-foreground' : 'text-primary'
                       }`} />
                     </div>
-                    <span className={`text-sm md:text-base font-semibold text-center ${
+                    <span className={`text-xs md:text-sm font-semibold text-center ${
                       isSelected ? 'text-primary-foreground' : 'text-foreground'
                     }`}>
                       {cat.name}
