@@ -117,6 +117,7 @@ export default function Home() {
       const heroTitle = document.getElementById('hero-title');
       const heroDescription = document.getElementById('hero-description');
       const heroSearch = document.getElementById('hero-search');
+      const heroPopular = document.getElementById('hero-popular');
       const heroButtons = document.getElementById('hero-buttons');
       const heroBadges = document.getElementById('hero-badges');
       const scrollIndicator = document.getElementById('scroll-indicator');
@@ -155,6 +156,10 @@ export default function Home() {
       if (heroSearch) {
         heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.7}px, 0)`;
         heroSearch.style.opacity = `${Math.max(0, 1 - scrollY / 400)}`;
+      }
+      if (heroPopular) {
+        heroPopular.style.transform = `translate3d(0, ${-scrollY * 0.6}px, 0)`;
+        heroPopular.style.opacity = `${Math.max(0, 1 - scrollY / 450)}`;
       }
       if (heroButtons) {
         heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.55}px, 0)`;
@@ -587,7 +592,7 @@ export default function Home() {
             </div>
 
             {/* Quick-Search Category Pills */}
-            <div className="flex flex-wrap gap-2 justify-center items-center text-sm">
+            <div id="hero-popular" className="flex flex-wrap gap-2 justify-center items-center text-sm" style={{ willChange: 'transform' }}>
               <span className="text-muted-foreground font-medium">Popular:</span>
               {[
                 { name: "3D Artists", slug: "3D Content Creation" },
@@ -654,6 +659,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+        
+        {/* Seamless Blur/Gradient Transition Overlay - Hero to Categories */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-background/50 to-background pointer-events-none z-20 backdrop-blur-sm" />
       </section>
 
 
