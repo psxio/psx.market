@@ -96,30 +96,105 @@ export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const buildersContainerRef = useRef<HTMLDivElement>(null);
 
-  // Add scroll listener for parallax effect - using simple window.onscroll
+  // Comprehensive parallax effect - multiple layers throughout the page
   useEffect(() => {
     const applyParallax = () => {
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
       
+      // Hero section - multiple layers with different speeds
       const heroBackground = document.getElementById('hero-background');
       const heroContent = document.getElementById('hero-content');
-      const buildersContainer = document.getElementById('builders-container');
+      const heroTitle = document.getElementById('hero-title');
+      const heroSearch = document.getElementById('hero-search');
+      const heroButtons = document.getElementById('hero-buttons');
+      const heroBadges = document.getElementById('hero-badges');
       
       if (heroBackground) {
-        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
+        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.6}px, 0)`;
       }
       if (heroContent) {
-        heroContent.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`;
+        heroContent.style.transform = `translate3d(0, ${-scrollY * 0.15}px, 0)`;
       }
+      if (heroTitle) {
+        heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.2}px, 0)`;
+        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 500)}`;
+      }
+      if (heroSearch) {
+        heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`;
+      }
+      if (heroButtons) {
+        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
+      }
+      if (heroBadges) {
+        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.03}px, 0)`;
+      }
+      
+      // Categories section - fade in and parallax
+      const categoriesSection = document.getElementById('categories-section');
+      if (categoriesSection) {
+        const rect = categoriesSection.getBoundingClientRect();
+        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / windowHeight));
+          categoriesSection.style.opacity = `${progress}`;
+          categoriesSection.style.transform = `translate3d(0, ${(1 - progress) * 50}px, 0)`;
+        }
+      }
+      
+      // Service cards - staggered parallax
+      const serviceCards = document.querySelectorAll('.service-card-parallax');
+      serviceCards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+          const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
+          const offset = Math.sin(progress * Math.PI) * 30 * ((index % 2) ? 1 : -1);
+          (card as HTMLElement).style.transform = `translate3d(0, ${offset}px, 0)`;
+          (card as HTMLElement).style.opacity = `${Math.min(1, progress * 1.5)}`;
+        }
+      });
+      
+      // Builders section - wave effect
+      const buildersContainer = document.getElementById('builders-container');
       if (buildersContainer) {
-        buildersContainer.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
+        const rect = buildersContainer.getBoundingClientRect();
+        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+          const progress = (windowHeight - rect.top) / windowHeight;
+          buildersContainer.style.transform = `translate3d(0, ${(1 - progress) * 80}px, 0)`;
+          buildersContainer.style.opacity = `${Math.min(1, progress * 1.2)}`;
+        }
       }
+      
+      // Builder cards - individual parallax
+      const builderCards = document.querySelectorAll('.builder-card-parallax');
+      builderCards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+          const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
+          const delay = index * 0.05;
+          const adjustedProgress = Math.max(0, Math.min(1, progress - delay));
+          const offset = Math.sin(adjustedProgress * Math.PI) * 20;
+          (card as HTMLElement).style.transform = `translate3d(0, ${offset}px, 0) scale(${0.95 + adjustedProgress * 0.05})`;
+          (card as HTMLElement).style.opacity = `${adjustedProgress}`;
+        }
+      });
     };
     
     window.addEventListener('scroll', applyParallax, { passive: true });
+    window.addEventListener('resize', applyParallax, { passive: true });
     applyParallax(); // Initial call
     
-    return () => window.removeEventListener('scroll', applyParallax);
+    return () => {
+      window.removeEventListener('scroll', applyParallax);
+      window.removeEventListener('resize', applyParallax);
+    };
   }, []);
 
   // Fetch top builders sorted by rating and completed projects
@@ -322,7 +397,7 @@ export default function Home() {
           {/* Hero Content - Buy on Demand Style */}
           <div id="hero-content" className="mx-auto max-w-5xl text-center space-y-6" style={{ willChange: 'transform' }}>
 
-            <div className="flex items-center justify-center gap-3">
+            <div id="hero-title" className="flex items-center justify-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 Buy on Demand
                 <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
@@ -373,7 +448,7 @@ export default function Home() {
             </p>
 
             {/* Prominent Search Bar - Functional Autocomplete */}
-            <div className="max-w-3xl mx-auto relative">
+            <div id="hero-search" className="max-w-3xl mx-auto relative">
               <div className="relative">
                 <input
                   ref={searchInputRef}
@@ -475,7 +550,7 @@ export default function Home() {
             </div>
 
             {/* Action Buttons - In Hero */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+            <div id="hero-buttons" className="flex flex-wrap items-center justify-center gap-3 pt-4">
               <Link href="/getting-started?tab=client">
                 <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
                   Become a Client
@@ -489,7 +564,7 @@ export default function Home() {
             </div>
 
             {/* Trust Badges - Clean Style */}
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
+            <div id="hero-badges" className="flex flex-wrap items-center justify-center gap-6 pt-4">
               <span className="text-muted-foreground text-sm font-medium">Powered by:</span>
               <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
                 <Layers className="h-5 w-5 text-primary" />
@@ -511,7 +586,7 @@ export default function Home() {
 
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="bg-background py-16">
-        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+        <div id="categories-section" className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8" style={{ opacity: 0 }}>
           
           {/* Section Heading */}
           <div className="text-center mb-8">
@@ -560,12 +635,13 @@ export default function Home() {
             </div>
           ) : filteredServices && filteredServices.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-filtered-services">
-              {filteredServices.slice(0, 8).map(({ builder, service }) => (
-                <ServiceCard
-                  key={service.id}
-                  builder={builder}
-                  service={service}
-                />
+              {filteredServices.slice(0, 8).map(({ builder, service }, index) => (
+                <div key={service.id} className="service-card-parallax" style={{ opacity: 0 }}>
+                  <ServiceCard
+                    builder={builder}
+                    service={service}
+                  />
+                </div>
               ))}
             </div>
           ) : (
@@ -596,7 +672,7 @@ export default function Home() {
 
       {/* Top Builders Section - Fiverr Style with Parallax */}
       <section className="border-t bg-muted/20 relative overflow-hidden">
-        <div id="builders-container" className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform' }}>
+        <div id="builders-container" className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform', opacity: 0 }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -643,12 +719,13 @@ export default function Home() {
           ) : (
             <>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-top-builders">
-                {topBuilders.slice(0, 8).map((builder) => (
+                {topBuilders.slice(0, 8).map((builder, index) => (
                   <Link
                     key={builder.id}
                     href={`/builder/${builder.id}`}
-                    className="group block"
+                    className="builder-card-parallax group block"
                     data-testid={`link-builder-${builder.id}`}
+                    style={{ opacity: 0 }}
                   >
                     <Card className="overflow-hidden hover-elevate active-elevate-2 h-full border-2">
                       {/* Builder Avatar - Large */}
