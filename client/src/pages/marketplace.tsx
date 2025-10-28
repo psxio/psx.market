@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
 import { SwipeableServiceGrid } from "@/components/swipeable-service-grid";
@@ -56,6 +57,7 @@ const categoryIcons: Record<string, any> = {
 };
 
 export default function Marketplace() {
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -64,10 +66,12 @@ export default function Marketplace() {
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState<string | null>(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   
   const headerSection = useScrollReveal();
   const servicesGrid = useScrollReveal();
 
+  // Read URL parameters on initial load
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const searchParam = params.get("search");
@@ -82,7 +86,27 @@ export default function Marketplace() {
       const categoryArray = categoriesParam.split(',').map(c => c.trim()).filter(Boolean);
       setSelectedCategories(categoryArray);
     }
+    
+    setInitialLoad(false);
   }, []);
+
+  // Sync URL with filter state changes
+  useEffect(() => {
+    // Skip URL update on initial load
+    if (initialLoad) return;
+    
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
+    if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
+    if (sortBy && sortBy !== "relevance") params.set("sortBy", sortBy);
+    
+    const queryString = params.toString();
+    const newUrl = queryString ? `/marketplace?${queryString}` : '/marketplace';
+    
+    // Update URL without adding to history
+    window.history.replaceState({}, '', newUrl);
+  }, [searchQuery, selectedCategories, selectedTags, sortBy, initialLoad]);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
