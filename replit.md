@@ -17,6 +17,10 @@ port444 is a Web3 marketplace designed to connect premium builders with clients 
 ### Builder Onboarding Streamlined
 - **Relaxed Validation**: Changed from 3 skills minimum to 1 skill minimum in Step 2
 - **Portfolio Requirement Removed**: No longer requires portfolio link for application completion
+- **Skills Input UX Fixed**: Users were getting stuck on Step 2 because they didn't know to press Enter after typing skills. Fixed by:
+  - Updated label from "Skills (comma-separated) *" to "Skills (Press Enter or comma to add) *"
+  - Added auto-add on blur - when user clicks away, skill is automatically added
+  - Continue button now properly enables once skill is added to array
 
 ### Testing Verified
 - ✅ Search functionality works without reload (tested with "marketing", "animation")
