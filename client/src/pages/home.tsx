@@ -246,36 +246,33 @@ export default function Home() {
       </section>
 
       {/* Token Holder Benefits Section - Compact */}
-      <section ref={benefitsSection.ref as any} className={`relative border-b bg-gradient-to-br from-primary/5 via-chart-2/5 to-background py-12 overflow-hidden ${benefitsSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-        {/* Background decorations */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10" />
-        
-        <div className="container relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+      <section className="border-b bg-background py-16">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           {/* Compact Header with Key Info */}
-          <div className="text-center mb-8">
-            <Badge variant="outline" className="mb-3 gap-1.5 border-primary/40 bg-primary/10 text-primary">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 gap-1.5">
               <Gift className="h-3 w-3" />
               Token Holder Benefits
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Save 60% with $CREATE or $PSX
             </h2>
-            <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-6">
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
               Hold either token to unlock 1% platform fees (vs 2.5%), priority support, exclusive badges, and early access
             </p>
 
             {/* Inline Token Info & CTAs */}
             <div className="flex flex-wrap gap-3 justify-center items-center">
-              <Badge variant="default" className="gap-2 px-4 py-2">
+              <Badge variant="outline" className="gap-2 px-4 py-2">
                 <Layers className="h-4 w-4" />
                 <span className="font-semibold">$CREATE</span>
               </Badge>
-              <Badge variant="default" className="gap-2 px-4 py-2 bg-chart-2 hover:bg-chart-2">
+              <Badge variant="outline" className="gap-2 px-4 py-2">
                 <Zap className="h-4 w-4" />
                 <span className="font-semibold">$PSX</span>
               </Badge>
               <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer">
-                <Button variant="default" className="gap-2" data-testid="button-get-tokens">
+                <Button className="gap-2" data-testid="button-get-tokens">
                   <Coins className="h-4 w-4" />
                   Get Tokens
                 </Button>
@@ -284,44 +281,44 @@ export default function Home() {
           </div>
 
           {/* Compact Benefits Summary */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6 max-w-5xl mx-auto">
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-chart-3/10">
-                <DollarSign className="h-5 w-5 text-chart-3" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8 max-w-5xl mx-auto">
+            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <DollarSign className="h-5 w-5" />
               </div>
               <div>
-                <div className="font-bold text-chart-3">60% Off</div>
-                <div className="text-xs text-muted-foreground">1% fees vs 2.5%</div>
+                <div className="font-semibold">60% Off</div>
+                <div className="text-sm text-muted-foreground">1% fees vs 2.5%</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-chart-2/10">
-                <Zap className="h-5 w-5 text-chart-2" />
+            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <Zap className="h-5 w-5" />
               </div>
               <div>
-                <div className="font-bold text-chart-2">2x Faster</div>
-                <div className="text-xs text-muted-foreground">Priority support</div>
+                <div className="font-semibold">2x Faster</div>
+                <div className="text-sm text-muted-foreground">Priority support</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-chart-4/10">
-                <CheckCircle2 className="h-5 w-5 text-chart-4" />
+            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <CheckCircle2 className="h-5 w-5" />
               </div>
               <div>
-                <div className="font-bold">VIP Badge</div>
-                <div className="text-xs text-muted-foreground">Stand out</div>
+                <div className="font-semibold">VIP Badge</div>
+                <div className="text-sm text-muted-foreground">Stand out</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card/50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                <Sparkles className="h-5 w-5 text-primary" />
+            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <Sparkles className="h-5 w-5" />
               </div>
               <div>
-                <div className="font-bold text-primary">Early Access</div>
-                <div className="text-xs text-muted-foreground">Beta features</div>
+                <div className="font-semibold">Early Access</div>
+                <div className="text-sm text-muted-foreground">Beta features</div>
               </div>
             </div>
           </div>
@@ -342,10 +339,8 @@ export default function Home() {
                       <tr className="border-b">
                         <th className="text-left p-3 font-semibold">Feature</th>
                         <th className="text-center p-3 font-semibold">Standard</th>
-                        <th className="text-center p-3">
-                          <span className="font-semibold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
-                            Token Holder
-                          </span>
+                        <th className="text-center p-3 font-semibold">
+                          Token Holder
                         </th>
                       </tr>
                     </thead>
@@ -406,33 +401,33 @@ export default function Home() {
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid gap-4 md:grid-cols-2 pt-4">
-                  <div className="p-4 rounded-lg border bg-gradient-to-br from-primary/5 to-background">
+                  <div className="p-4 rounded-lg border bg-card">
                     <div className="flex items-center gap-2 mb-3">
-                      <Layers className="h-5 w-5 text-primary" />
+                      <Layers className="h-5 w-5" />
                       <h3 className="font-bold">$CREATE</h3>
-                      <Badge variant="default" className="gap-1 text-xs ml-auto">
+                      <Badge variant="outline" className="gap-1 text-xs ml-auto">
                         <Sparkles className="h-3 w-3" />
                         Active
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-3">
+                    <p className="text-sm text-muted-foreground mb-3">
                       The Creators Token - powering the port444 ecosystem
                     </p>
-                    <ul className="space-y-1.5 mb-4 text-xs">
+                    <ul className="space-y-2 mb-4 text-sm">
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>1% platform fees (60% discount)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>Priority support & dispute resolution</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>Exclusive token holder badge</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>Early access to new features</span>
                       </li>
                     </ul>
@@ -444,33 +439,33 @@ export default function Home() {
                     </a>
                   </div>
 
-                  <div className="p-4 rounded-lg border bg-gradient-to-br from-chart-2/5 to-background">
+                  <div className="p-4 rounded-lg border bg-card">
                     <div className="flex items-center gap-2 mb-3">
-                      <Zap className="h-5 w-5 text-chart-2" />
+                      <Zap className="h-5 w-5" />
                       <h3 className="font-bold">$PSX</h3>
-                      <Badge variant="default" className="gap-1 text-xs ml-auto bg-chart-2 hover:bg-chart-2">
+                      <Badge variant="outline" className="gap-1 text-xs ml-auto">
                         <Sparkles className="h-3 w-3" />
                         Active
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-3">
+                    <p className="text-sm text-muted-foreground mb-3">
                       PSX Agency Token - your gateway to premium access
                     </p>
-                    <ul className="space-y-1.5 mb-4 text-xs">
+                    <ul className="space-y-2 mb-4 text-sm">
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>1% platform fees (60% discount)</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>Priority support & dispute resolution</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>Exclusive token holder badge</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle2 className="h-3 w-3 text-chart-4 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
                         <span>Early access to new features</span>
                       </li>
                     </ul>
@@ -497,21 +492,21 @@ export default function Home() {
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
-                  <div className="text-center p-4 rounded-lg border bg-card/50">
-                    <div className="text-2xl font-bold text-primary mb-1">5,000+</div>
-                    <div className="text-xs text-muted-foreground">Token Holders</div>
+                  <div className="text-center p-4 rounded-lg border bg-card">
+                    <div className="text-2xl font-bold mb-1">5,000+</div>
+                    <div className="text-sm text-muted-foreground">Token Holders</div>
                   </div>
-                  <div className="text-center p-4 rounded-lg border bg-card/50">
-                    <div className="text-2xl font-bold text-chart-2 mb-1">$2.5M+</div>
-                    <div className="text-xs text-muted-foreground">Fees Saved</div>
+                  <div className="text-center p-4 rounded-lg border bg-card">
+                    <div className="text-2xl font-bold mb-1">$2.5M+</div>
+                    <div className="text-sm text-muted-foreground">Fees Saved</div>
                   </div>
-                  <div className="text-center p-4 rounded-lg border bg-card/50">
-                    <div className="text-2xl font-bold text-chart-3 mb-1">2.1K+</div>
-                    <div className="text-xs text-muted-foreground">Projects Done</div>
+                  <div className="text-center p-4 rounded-lg border bg-card">
+                    <div className="text-2xl font-bold mb-1">2.1K+</div>
+                    <div className="text-sm text-muted-foreground">Projects Done</div>
                   </div>
-                  <div className="text-center p-4 rounded-lg border bg-card/50">
-                    <div className="text-2xl font-bold text-chart-4 mb-1">4.9/5</div>
-                    <div className="text-xs text-muted-foreground">Avg Rating</div>
+                  <div className="text-center p-4 rounded-lg border bg-card">
+                    <div className="text-2xl font-bold mb-1">4.9/5</div>
+                    <div className="text-sm text-muted-foreground">Avg Rating</div>
                   </div>
                 </div>
               </AccordionContent>
@@ -533,12 +528,12 @@ export default function Home() {
       </section>
 
       {/* PSX Agency Section */}
-      <section ref={agencySection.ref as any} className={`border-b bg-gradient-to-r from-primary/10 via-chart-2/10 to-chart-3/10 py-12 ${agencySection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+      <section className="border-b bg-background py-16">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 rounded-xl border bg-card/50 p-8 backdrop-blur-sm lg:flex-row lg:gap-8 hover-lift">
-            <div className="flex flex-1 flex-col gap-3 text-center lg:text-left">
+          <div className="flex flex-col items-center justify-between gap-6 rounded-lg border bg-card p-8 lg:flex-row lg:gap-8">
+            <div className="flex flex-1 flex-col gap-4 text-center lg:text-left">
               <div className="flex items-center justify-center gap-2 lg:justify-start">
-                <Badge variant="outline" className="w-fit gap-1.5 border-chart-2/40 bg-chart-2/10 text-chart-2">
+                <Badge variant="outline" className="w-fit gap-1.5">
                   <Handshake className="h-3 w-3" />
                   Direct B2B Services
                 </Badge>
@@ -546,21 +541,21 @@ export default function Home() {
               <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
                 Need Direct Talent Support?
               </h2>
-              <p className="text-muted-foreground md:text-lg">
+              <p className="text-muted-foreground">
                 Visit <span className="font-semibold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
-                Powered by <span className="font-semibold text-primary">$Create</span> and <span className="font-semibold text-primary">$PSX</span> on Base. 
-                Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
+                Powered by <span className="font-semibold text-foreground">$Create</span> and <span className="font-semibold text-foreground">$PSX</span> on Base. 
+                Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
               <a href="https://psx.agency" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="default" className="gap-2 text-base" data-testid="button-visit-agency">
+                <Button size="lg" className="gap-2" data-testid="button-visit-agency">
                   Visit PSX Agency
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </a>
               <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-based-creators">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="button-based-creators">
                   The Creators
                   <ExternalLink className="h-4 w-4" />
                 </Button>
