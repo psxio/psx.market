@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
-import { useState } from "react";
+import { Link, useLocation } from "wouter";
+import { useState, useRef, useEffect } from "react";
 import { Header } from "@/components/header";
 import { WelcomeModal } from "@/components/welcome-modal";
 import { BuilderCard } from "@/components/builder-card";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import {
   Accordion,
   AccordionContent,
@@ -44,6 +45,8 @@ import {
   CheckCircle2,
   Layers,
   Shield,
+  Clock,
+  Briefcase,
 } from "lucide-react";
 import type { Builder, Service } from "@shared/schema";
 
@@ -62,9 +65,25 @@ const serviceCategories = [
   { name: "Documentation", slug: "Documentation & Paperwork", icon: FileText },
 ];
 
+interface SearchSuggestion {
+  type: "service" | "builder" | "category" | "recent" | "popular";
+  label: string;
+  value: string;
+  searchQuery?: string;
+  subtitle?: string;
+  icon?: any;
+}
+
 export default function Home() {
   // Default to 3D Artists category
   const [selectedCategory, setSelectedCategory] = useState("3D Content Creation");
+  
+  // Search autocomplete state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedSearchIndex, setSelectedSearchIndex] = useState(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [, setLocation] = useLocation();
 
   const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery<
     Array<{ builder: Builder; service: Service }>
@@ -85,6 +104,148 @@ export default function Home() {
 
   const agencySection = useScrollReveal();
   const benefitsSection = useScrollReveal();
+
+  // Search suggestions (same as AutocompleteSearch component)
+  const searchSuggestions: SearchSuggestion[] = [
+    // Recent searches (shown when search is empty)
+    ...(searchQuery.length === 0
+      ? [
+          { type: "recent" as const, label: "KOL Marketing", value: "kol", searchQuery: "KOL", icon: Clock },
+          { type: "recent" as const, label: "Volume Trading", value: "volume", searchQuery: "Volume", icon: Clock },
+          { type: "recent" as const, label: "Grants & Funding", value: "grants", searchQuery: "Grant", icon: Clock },
+        ]
+      : []),
+    
+    // KOL & Influencers
+    ...(searchQuery.toLowerCase().includes("kol") || searchQuery.toLowerCase().includes("influencer") || searchQuery.toLowerCase().includes("marketing")
+      ? [
+          { type: "category" as const, label: "KOL & Influencer Services", value: "kol", searchQuery: "KOL", subtitle: "Marketing", icon: TrendingUp },
+          { type: "service" as const, label: "KOL Management", value: "kol-management", searchQuery: "KOL Management", subtitle: "Marketing", icon: Briefcase },
+        ]
+      : []),
+    
+    // Volume Services
+    ...(searchQuery.toLowerCase().includes("vol") || searchQuery.toLowerCase().includes("trading")
+      ? [
+          { type: "category" as const, label: "Volume Services", value: "volume", searchQuery: "Volume", subtitle: "Trading", icon: TrendingUp },
+          { type: "service" as const, label: "Custom Volume Generation", value: "volume-gen", searchQuery: "Volume", subtitle: "Trading", icon: Briefcase },
+        ]
+      : []),
+    
+    // 3D & 2D Content Creation
+    ...(searchQuery.toLowerCase().includes("3d") || searchQuery.toLowerCase().includes("2d") || searchQuery.toLowerCase().includes("design") || searchQuery.toLowerCase().includes("art") || searchQuery.toLowerCase().includes("character") || searchQuery.toLowerCase().includes("animation")
+      ? [
+          { type: "category" as const, label: "3D & 2D Content Creation", value: "3d", searchQuery: "3D", subtitle: "Design", icon: TrendingUp },
+          { type: "service" as const, label: "3D Character Design", value: "3d-character", searchQuery: "3D Character", subtitle: "Design", icon: Briefcase },
+        ]
+      : []),
+    
+    // Grants & Funding
+    ...(searchQuery.toLowerCase().includes("grant") || searchQuery.toLowerCase().includes("fund") || searchQuery.toLowerCase().includes("raise") || searchQuery.toLowerCase().includes("investment")
+      ? [
+          { type: "category" as const, label: "Grants & Funding", value: "grants", searchQuery: "Grant", subtitle: "Funding", icon: TrendingUp },
+          { type: "service" as const, label: "Grant Application Support", value: "grant-app", searchQuery: "Grant", subtitle: "Funding", icon: Briefcase },
+        ]
+      : []),
+    
+    // Strategy & Consulting
+    ...(searchQuery.toLowerCase().includes("strategy") || searchQuery.toLowerCase().includes("consult") || searchQuery.toLowerCase().includes("tokenomics") || searchQuery.toLowerCase().includes("advisor")
+      ? [
+          { type: "category" as const, label: "Strategy Consulting", value: "strategy", searchQuery: "Strategy", subtitle: "Consulting", icon: TrendingUp },
+          { type: "service" as const, label: "Web3 Strategy Consulting", value: "strategy-consult", searchQuery: "Strategy Consulting", subtitle: "Consulting", icon: Briefcase },
+        ]
+      : []),
+    
+    // Documentation & Paperwork
+    ...(searchQuery.toLowerCase().includes("doc") || searchQuery.toLowerCase().includes("paper") || searchQuery.toLowerCase().includes("whitepaper") || searchQuery.toLowerCase().includes("pitch") || searchQuery.toLowerCase().includes("deck")
+      ? [
+          { type: "category" as const, label: "Documentation & Paperwork", value: "documentation", searchQuery: "Documentation", subtitle: "Writing", icon: TrendingUp },
+          { type: "service" as const, label: "Whitepaper Creation", value: "whitepaper", searchQuery: "Whitepaper", subtitle: "Documentation", icon: Briefcase },
+        ]
+      : []),
+    
+    // Script Development
+    ...(searchQuery.toLowerCase().includes("dev") || searchQuery.toLowerCase().includes("code") || searchQuery.toLowerCase().includes("smart contract") || searchQuery.toLowerCase().includes("website") || searchQuery.toLowerCase().includes("app") || searchQuery.toLowerCase().includes("script")
+      ? [
+          { type: "category" as const, label: "Script Development", value: "development", searchQuery: "Development", subtitle: "Development", icon: TrendingUp },
+          { type: "service" as const, label: "Smart Contract Development", value: "smart-contract", searchQuery: "Smart Contract", subtitle: "Development", icon: Briefcase },
+        ]
+      : []),
+    
+    // Social Media Management
+    ...(searchQuery.toLowerCase().includes("social") || searchQuery.toLowerCase().includes("twitter") || searchQuery.toLowerCase().includes("tg") || searchQuery.toLowerCase().includes("telegram") || searchQuery.toLowerCase().includes("community") || searchQuery.toLowerCase().includes("discord")
+      ? [
+          { type: "category" as const, label: "Social Media Management", value: "social", searchQuery: "Social Media", subtitle: "Marketing", icon: TrendingUp },
+          { type: "service" as const, label: "Community Management", value: "community", searchQuery: "Community Management", subtitle: "Marketing", icon: Briefcase },
+        ]
+      : []),
+    
+    // Graphic Design
+    ...(searchQuery.toLowerCase().includes("graphic") || searchQuery.toLowerCase().includes("logo") || searchQuery.toLowerCase().includes("banner") || searchQuery.toLowerCase().includes("visual") || searchQuery.toLowerCase().includes("branding")
+      ? [
+          { type: "category" as const, label: "Graphic Design", value: "graphic", searchQuery: "Graphic Design", subtitle: "Design", icon: TrendingUp },
+          { type: "service" as const, label: "Logo & Branding", value: "logo", searchQuery: "Logo Design", subtitle: "Design", icon: Briefcase },
+        ]
+      : []),
+    
+    // Marketing & Growth
+    ...(searchQuery.toLowerCase().includes("market") || searchQuery.toLowerCase().includes("growth") || searchQuery.toLowerCase().includes("promo") || searchQuery.toLowerCase().includes("campaign")
+      ? [
+          { type: "category" as const, label: "Marketing & Growth", value: "marketing", searchQuery: "Marketing", subtitle: "Marketing", icon: TrendingUp },
+          { type: "service" as const, label: "Marketing Campaign", value: "campaign", searchQuery: "Marketing Campaign", subtitle: "Marketing", icon: Briefcase },
+        ]
+      : []),
+  ];
+
+  const filteredSearchSuggestions = searchQuery.length > 0
+    ? searchSuggestions.filter(
+        (s) =>
+          s.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.value.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : searchSuggestions.slice(0, 5);
+
+  // Reset selected index when query changes
+  useEffect(() => {
+    setSelectedSearchIndex(0);
+  }, [searchQuery]);
+
+  const handleSearch = (searchValue: string) => {
+    if (searchValue.trim()) {
+      setLocation(`/marketplace?search=${encodeURIComponent(searchValue)}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (!isSearchOpen) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedSearchIndex((prev) =>
+          prev < filteredSearchSuggestions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedSearchIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (filteredSearchSuggestions[selectedSearchIndex]) {
+          const suggestion = filteredSearchSuggestions[selectedSearchIndex];
+          handleSearch(suggestion.searchQuery || suggestion.label);
+        } else {
+          handleSearch(searchQuery);
+        }
+        break;
+      case "Escape":
+        setIsSearchOpen(false);
+        break;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,23 +280,78 @@ export default function Home() {
               </span>
             </h1>
 
-            {/* Prominent Search Bar */}
-            <div className="max-w-3xl mx-auto">
-              <Link href="/marketplace">
-                <div className="relative group cursor-pointer">
-                  <input
-                    type="text"
-                    placeholder="Search for any service..."
-                    className="w-full h-16 pl-6 pr-24 rounded-lg border-2 border-border bg-card text-base text-foreground placeholder:text-muted-foreground shadow-lg hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                    readOnly
-                    data-testid="input-homepage-search"
-                  />
-                  <button className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-6 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors flex items-center gap-2">
-                    <Search className="h-5 w-5" />
-                    Search
-                  </button>
+            {/* Prominent Search Bar - Functional Autocomplete */}
+            <div className="max-w-3xl mx-auto relative">
+              <div className="relative">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setIsSearchOpen(true);
+                  }}
+                  onFocus={() => setIsSearchOpen(true)}
+                  onBlur={() => setTimeout(() => setIsSearchOpen(false), 200)}
+                  onKeyDown={handleSearchKeyDown}
+                  placeholder="Search for any service..."
+                  className="w-full h-16 pl-6 pr-24 rounded-lg border-2 border-border bg-card text-base text-foreground placeholder:text-muted-foreground shadow-lg hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  data-testid="input-homepage-search"
+                />
+                <button 
+                  onClick={() => handleSearch(searchQuery)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-6 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors flex items-center gap-2"
+                  data-testid="button-hero-search"
+                >
+                  <Search className="h-5 w-5" />
+                  Search
+                </button>
+              </div>
+
+              {/* Autocomplete Suggestions Dropdown */}
+              {isSearchOpen && filteredSearchSuggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-background border-2 border-border rounded-lg shadow-lg z-50 overflow-hidden">
+                  <Command>
+                    <CommandList>
+                      {searchQuery.length === 0 && (
+                        <div className="px-3 py-2 text-xs text-muted-foreground border-b">
+                          Recent Searches
+                        </div>
+                      )}
+                      
+                      <CommandGroup>
+                        {filteredSearchSuggestions.map((suggestion, index) => {
+                          const Icon = suggestion.icon || Search;
+                          const isSelected = index === selectedSearchIndex;
+
+                          return (
+                            <CommandItem
+                              key={`${suggestion.type}-${suggestion.value}`}
+                              value={suggestion.value}
+                              onSelect={() => handleSearch(suggestion.searchQuery || suggestion.label)}
+                              className={`cursor-pointer ${isSelected ? "bg-accent" : ""}`}
+                              data-testid={`suggestion-${index}`}
+                            >
+                              <Icon className="h-4 w-4 mr-2 text-muted-foreground" />
+                              <div className="flex-1">
+                                <div className="font-medium">{suggestion.label}</div>
+                                {suggestion.subtitle && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {suggestion.subtitle}
+                                  </div>
+                                )}
+                              </div>
+                              {suggestion.type === "popular" && (
+                                <TrendingUp className="h-3 w-3 text-primary" />
+                              )}
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
                 </div>
-              </Link>
+              )}
             </div>
 
             {/* Quick-Search Category Pills */}

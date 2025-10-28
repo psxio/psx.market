@@ -1,7 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { WalletConnectButton } from "./wallet-connect-button-new";
 import { NotificationCenter } from "./notification-center";
-import { AutocompleteSearch } from "./AutocompleteSearch";
 import { Button } from "@/components/ui/button";
 import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket, Image } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -47,12 +46,6 @@ export function Header() {
             </span>
           </Link>
 
-          <div className="hidden flex-1 max-w-md md:flex">
-            <AutocompleteSearch
-              placeholder="Search services, builders, or categories..."
-              className="w-full"
-            />
-          </div>
 
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="gap-1.5 text-xs hover-elevate hidden md:flex" data-testid="link-browse-services">
