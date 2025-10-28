@@ -41,7 +41,7 @@ const serviceCategories = [
 ];
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState("3D Content Creation");
+  const [selectedCategory, setSelectedCategory] = useState("KOLs & Influencers");
 
   const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery<
     Array<{ builder: Builder; service: Service }>
