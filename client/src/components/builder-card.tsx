@@ -130,25 +130,25 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
     return (
       <Link href={`/service/${service.id}`}>
         <Card 
-          className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-visible transition-all border-l-4 ${visual.borderColor}`}
+          className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-visible transition-all border-2 border-l-[6px] rounded-2xl ${visual.borderColor}`}
           data-testid={`card-service-${service.id}`}
         >
           <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${visual.patternClass}`}>
             <div className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} animate-gradient`} />
           </div>
 
-          <div className="absolute top-3 right-3 z-10">
-            <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
-              <CategoryIcon className="h-4 w-4" />
+          <div className="absolute top-4 right-4 z-10">
+            <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${visual.badgeColor} backdrop-blur-sm border-2 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
+              <CategoryIcon className="h-5 w-5" />
             </div>
           </div>
 
           <div className="relative z-[1]">
-            <CardHeader className="space-y-0 pb-3">
-              <div className="flex items-start justify-between gap-4 pr-10">
+            <CardHeader className="space-y-0 pb-4">
+              <div className="flex items-start justify-between gap-4 pr-12">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-base mb-2">{service.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                  <h3 className="font-bold text-lg mb-2 line-clamp-2">{service.title}</h3>
+                  <p className="text-base text-muted-foreground line-clamp-2 mb-4">
                     {service.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -295,35 +295,35 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
               </div>
             )}
 
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Starting at</span>
-                <span className="font-semibold text-lg">${service.basicPrice}</span>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-base text-muted-foreground">Starting at</span>
+                <span className="font-bold text-xl text-primary">${service.basicPrice}</span>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Delivery</span>
-                <span className="font-medium">{service.deliveryTime}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-base text-muted-foreground">Delivery</span>
+                <span className="font-semibold text-base">{service.deliveryTime}</span>
               </div>
 
               {/* Social Proof Indicators */}
               {serviceStats && (serviceStats.viewsLast24Hours > 0 || serviceStats.lastBookedAt) && (
-                <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground pt-3 border-t">
                   {serviceStats.viewsLast24Hours > 0 && (
-                    <div className="flex items-center gap-1" data-testid="views-count">
-                      <Eye className="h-3 w-3" />
+                    <div className="flex items-center gap-1.5" data-testid="views-count">
+                      <Eye className="h-4 w-4" />
                       <span>{serviceStats.viewsLast24Hours} views today</span>
                     </div>
                   )}
                   {serviceStats.lastBookedAt && (
-                    <div className="flex items-center gap-1" data-testid="last-booked">
-                      <Clock className="h-3 w-3 text-green-500" />
+                    <div className="flex items-center gap-1.5" data-testid="last-booked">
+                      <Clock className="h-4 w-4 text-green-500" />
                       <span>Booked {formatTimeAgo(serviceStats.lastBookedAt)}</span>
                     </div>
                   )}
                 </div>
               )}
 
-              <Button variant="default" className="w-full mt-2" size="sm" data-testid="button-view-service">
+              <Button variant="default" className="w-full mt-4" size="default" data-testid="button-view-service">
                 View Service Details
               </Button>
             </CardContent>
@@ -352,7 +352,7 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
   return (
     <Link href={`/builder/${builder.id}`}>
       <Card 
-        className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-hidden transition-all border-l-4 ${visual.borderColor}`}
+        className={`group hover-elevate active-elevate-2 hover-lift h-full cursor-pointer overflow-hidden transition-all border-2 border-l-[6px] rounded-2xl ${visual.borderColor}`}
         data-testid={`card-builder-${builder.id}`}
       >
         {/* Animated background pattern */}
@@ -361,35 +361,35 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
         </div>
 
         {/* Category indicator badge in top right */}
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-          <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${visual.badgeColor} backdrop-blur-sm border transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
-            <CategoryIcon className="h-4 w-4" />
+        <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${visual.badgeColor} backdrop-blur-sm border-2 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
+            <CategoryIcon className="h-5 w-5" />
           </div>
           {builder.isTrending && (
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/10 text-orange-500 border-orange-500/20 backdrop-blur-sm border transition-all duration-300 group-hover:scale-125" data-testid="badge-trending">
-              <Flame className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 border-orange-500/20 backdrop-blur-sm border-2 transition-all duration-300 group-hover:scale-125" data-testid="badge-trending">
+              <Flame className="h-5 w-5" />
             </div>
           )}
         </div>
 
         <div className="relative z-[1]">
-          <CardHeader className="space-y-0 pb-4">
-            <div className="flex items-start justify-between gap-4 pr-10">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-12 w-12 ring-2 ring-border group-hover:ring-primary/50 transition-all">
+          <CardHeader className="space-y-0 pb-5">
+            <div className="flex items-start justify-between gap-4 pr-12">
+              <div className="flex items-start gap-4">
+                <Avatar className="h-14 w-14 ring-2 ring-border group-hover:ring-primary/50 transition-all">
                   <AvatarImage src={builder.profileImage || undefined} alt={builder.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                  <AvatarFallback className="bg-primary text-primary-foreground font-bold text-base">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <h3 className="font-semibold text-base truncate">{builder.name}</h3>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <h3 className="font-bold text-lg truncate">{builder.name}</h3>
                     {builder.verified && (
-                      <CheckCircle2 className="h-4 w-4 text-chart-3 flex-shrink-0" data-testid="icon-verified" />
+                      <CheckCircle2 className="h-5 w-5 text-chart-3 flex-shrink-0" data-testid="icon-verified" />
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-1">
+                  <p className="text-base text-muted-foreground line-clamp-2">
                     {builder.headline}
                   </p>
                 </div>
@@ -397,12 +397,12 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
             </div>
           </CardHeader>
 
-          <CardContent className="pb-4 space-y-3">
+          <CardContent className="pb-5 space-y-4">
             {service && (
               <>
-                <div className="rounded-md bg-muted/50 p-3 border">
-                  <h4 className="font-medium text-sm mb-1 line-clamp-2">{service.title}</h4>
-                  <p className="text-xs text-muted-foreground line-clamp-2">
+                <div className="rounded-xl bg-muted/50 p-4 border-2">
+                  <h4 className="font-bold text-base mb-2 line-clamp-2">{service.title}</h4>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
                     {service.description}
                   </p>
                   {service.tokenTickers && service.tokenTickers.length > 0 && (
@@ -539,22 +539,22 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
               </>
             )}
 
-            <div className="flex items-center gap-3 text-sm flex-wrap">
-              <div className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-chart-4 text-chart-4" />
-                <span className="font-semibold">{builder.rating || "5.0"}</span>
-                <span className="text-muted-foreground">
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 fill-chart-4 text-chart-4" />
+                <span className="font-bold text-base">{builder.rating || "5.0"}</span>
+                <span className="text-muted-foreground text-sm">
                   ({builder.reviewCount})
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                <Clock className="h-4 w-4" />
                 <span>{builder.responseTime}</span>
               </div>
               {builder.responseRate && parseFloat(builder.responseRate) > 0 && (
-                <div className="flex items-center gap-1" data-testid="response-rate">
-                  <MessageCircle className="h-3.5 w-3.5 text-chart-3" />
-                  <span className="font-medium text-chart-3">{builder.responseRate}%</span>
+                <div className="flex items-center gap-1.5" data-testid="response-rate">
+                  <MessageCircle className="h-4 w-4 text-chart-3" />
+                  <span className="font-semibold text-sm text-chart-3">{builder.responseRate}%</span>
                 </div>
               )}
             </div>
@@ -594,31 +594,31 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
             )}
           </CardContent>
 
-          <CardFooter className="flex flex-col gap-3 pt-0">
+          <CardFooter className="flex flex-col gap-4 pt-0">
             {service ? (
               <>
                 <div className="flex items-center justify-between gap-4 w-full">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Starting at</span>
-                    <span className="text-lg font-bold">${service.basicPrice}</span>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm text-muted-foreground">Starting at</span>
+                    <span className="text-xl font-bold text-primary">${service.basicPrice}</span>
                   </div>
-                  <Button size="sm" variant="outline" className="hover-elevate" data-testid="button-view-service">
+                  <Button size="default" variant="outline" className="hover-elevate" data-testid="button-view-service">
                     View Details
                   </Button>
                 </div>
                 
                 {/* Social Proof Indicators */}
                 {serviceStats && (serviceStats.viewsLast24Hours > 0 || serviceStats.lastBookedAt) && (
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground w-full pt-2 border-t">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground w-full pt-3 border-t">
                     {serviceStats.viewsLast24Hours > 0 && (
-                      <div className="flex items-center gap-1" data-testid="views-count">
-                        <Eye className="h-3 w-3" />
+                      <div className="flex items-center gap-1.5" data-testid="views-count">
+                        <Eye className="h-4 w-4" />
                         <span>{serviceStats.viewsLast24Hours} views today</span>
                       </div>
                     )}
                     {serviceStats.lastBookedAt && (
-                      <div className="flex items-center gap-1" data-testid="last-booked">
-                        <Clock className="h-3 w-3 text-green-500" />
+                      <div className="flex items-center gap-1.5" data-testid="last-booked">
+                        <Clock className="h-4 w-4 text-green-500" />
                         <span>Booked {formatTimeAgo(serviceStats.lastBookedAt)}</span>
                       </div>
                     )}
@@ -627,11 +627,11 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
               </>
             ) : (
               <>
-                <div className="flex flex-col">
-                  <span className="text-xs text-muted-foreground">Projects</span>
-                  <span className="font-semibold">{builder.completedProjects}</span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm text-muted-foreground">Projects</span>
+                  <span className="font-bold text-base">{builder.completedProjects}</span>
                 </div>
-                <Button size="sm" variant="outline" className="hover-elevate" data-testid="button-view-profile">
+                <Button size="default" variant="outline" className="hover-elevate" data-testid="button-view-profile">
                   View Profile
                 </Button>
               </>
