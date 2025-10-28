@@ -17,6 +17,7 @@ import { NotificationToastListener } from "@/components/notification-toast-liste
 import { Footer } from "@/components/footer";
 import { FAQChatbot } from "@/components/faq-chatbot";
 import { KeyboardShortcutsHelp, useKeyboardShortcuts } from "@/components/keyboard-shortcuts-help";
+import { WalletAutoLogin } from "@/components/wallet-auto-login";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile-enhanced";
 import ServiceDetail from "@/pages/service-detail";
@@ -94,6 +95,7 @@ function AppContent() {
   
   return (
     <>
+      <WalletAutoLogin />
       <Toaster />
       <InstallPWAPrompt />
       <NotificationToastListener />

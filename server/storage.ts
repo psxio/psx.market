@@ -146,7 +146,6 @@ import {
   serviceAnalytics,
   messageTemplates,
   referralCodes,
-  builderBadges,
   disputeMessages,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
@@ -527,9 +526,8 @@ export interface IStorage {
   }>>;
 
   // Builder Analytics
-  getBuilderAnalytics(builderId: string, startDate: string): Promise<any[]>;
+  getBuilderAnalytics(builderId: string): Promise<any>;
   getServiceAnalytics(serviceId: string): Promise<any>;
-  trackBuilderView(data: { builderId: string; viewerId: string | null; viewerType: string | null; ipAddress: string; userAgent: string; referrer: string | null }): Promise<void>;
 
   // Message Templates
   getBuilderMessageTemplates(builderId: string, category?: string): Promise<any[]>;
@@ -3339,23 +3337,27 @@ export class PostgresStorage implements IStorage {
   }
 
   // Builder Analytics Implementation
-  async getBuilderAnalytics(builderId: string, startDate: string): Promise<any[]> {
-    const analytics = await db.select().from(builderAnalytics)
-      .where(and(
-        eq(builderAnalytics.builderId, builderId),
-        sqlFunc`date >= ${startDate}`
-      ))
-      .orderBy(builderAnalytics.date);
-    return analytics;
+  async getBuilderAnalytics(builderId: string): Promise<any> {
+    const builder = await this.getBuilder(builderId);
+    if (!builder) return null;
+    
+    return {
+      totalEarnings: builder.totalEarnings,
+      availableBalance: builder.availableBalance,
+      pendingPayouts: builder.pendingPayouts,
+      activeOrders: builder.activeOrders,
+      completedOrders: builder.completedProjects,
+      successRate: builder.successRate,
+      avgResponseTime: builder.avgResponseTimeHours || 0,
+      onTimeDeliveryRate: builder.onTimeDeliveryRate,
+    };
   }
 
   async getServiceAnalytics(serviceId: string): Promise<any> {
-    const analyticsData = await db.select().from(serviceAnalytics)
-      .where(eq(serviceAnalytics.serviceId, serviceId))
-      .orderBy(desc(serviceAnalytics.date))
-      .limit(1);
+    const service = await this.getService(serviceId);
+    if (!service) return null;
     
-    return analyticsData[0] || {
+    return {
       viewCount: 0,
       inquiryCount: 0,
       conversionCount: 0,
@@ -3363,24 +3365,16 @@ export class PostgresStorage implements IStorage {
     };
   }
 
-  async trackBuilderView(data: { builderId: string; viewerId: string | null; viewerType: string | null; ipAddress: string; userAgent: string; referrer: string | null }): Promise<void> {
-    await db.insert(builderViews).values(data);
-    await this.incrementBuilderViews(data.builderId);
-  }
-
   // Message Templates Implementation
   async getBuilderMessageTemplates(builderId: string, category?: string): Promise<any[]> {
-    let query = db.select().from(messageTemplates)
-      .where(eq(messageTemplates.builderId, builderId));
-    
+    let conditions = [eq(messageTemplates.builderId, builderId)];
     if (category) {
-      query = query.where(and(
-        eq(messageTemplates.builderId, builderId),
-        eq(messageTemplates.category, category)
-      ));
+      conditions.push(eq(messageTemplates.category, category));
     }
     
-    return await query.orderBy(desc(messageTemplates.createdAt));
+    return await db.select().from(messageTemplates)
+      .where(and(...conditions))
+      .orderBy(desc(messageTemplates.createdAt));
   }
 
   async getMessageTemplate(id: string): Promise<any | undefined> {
