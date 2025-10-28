@@ -427,7 +427,7 @@ export default function Home() {
       <MobileStickyCTA />
 
       {/* Buy on Demand Hero */}
-      <section className="relative border-b overflow-hidden bg-background min-h-screen flex items-center">
+      <section className="relative border-b overflow-hidden bg-background h-screen flex items-center -mt-16 pt-16">
         {/* Animated Mesh Gradient Background with Parallax */}
         <div id="hero-background" className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
           <div id="hero-blob-1" className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" style={{ willChange: 'transform' }} />
