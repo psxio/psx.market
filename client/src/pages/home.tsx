@@ -28,18 +28,16 @@ import {
 import type { Builder, Service } from "@shared/schema";
 
 const serviceCategories = [
-  { name: "3D Artists", slug: "3D Content Creation", icon: Boxes },
-  { name: "Video Editors", slug: "Video Editing", icon: Music },
-  { name: "Mods & Raiders", slug: "Mods & Raiders", icon: Shield },
   { name: "KOLs", slug: "KOLs & Influencers", icon: Megaphone },
   { name: "Developers", slug: "Script Development", icon: Code },
-  { name: "Marketing", slug: "Marketing & Growth", icon: TrendingUp },
-  { name: "Design", slug: "Graphic Design", icon: Palette },
+  { name: "3D Artists", slug: "3D Content Creation", icon: Boxes },
   { name: "Volume", slug: "Volume Services", icon: BarChart3 },
-  { name: "Social", slug: "Social Media Management", icon: Network },
-  { name: "Grants", slug: "grants-funding", icon: Coins },
+  { name: "Marketing", slug: "Marketing & Growth", icon: TrendingUp },
   { name: "Strategy", slug: "Strategy Consulting", icon: Lightbulb },
+  { name: "Design", slug: "Graphic Design", icon: Palette },
+  { name: "Social", slug: "Social Media Management", icon: Network },
   { name: "Docs", slug: "Documentation & Paperwork", icon: FileText },
+  { name: "Grants", slug: "grants-funding", icon: Coins },
 ];
 
 export default function Home() {
