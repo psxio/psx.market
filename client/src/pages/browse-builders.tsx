@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, MapPin, Globe, DollarSign, Image } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, DollarSign, Image } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -387,17 +387,17 @@ export default function BrowseBuilders() {
                   {buildersData.map((builder) => (
                     <Link key={builder.id} href={`/builder/${builder.id}`}>
                       <Card className="h-full hover-elevate active-elevate-2 cursor-pointer transition-all" data-testid={`card-builder-${builder.id}`}>
-                        <CardHeader className="space-y-4 pb-4">
-                          <div className="flex items-start gap-4">
-                            <Avatar className="h-16 w-16">
+                        <CardHeader className="space-y-3 pb-3">
+                          <div className="flex items-start gap-3">
+                            <Avatar className="h-14 w-14">
                               <AvatarImage src={builder.profileImage || undefined} alt={builder.name} />
-                              <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
+                              <AvatarFallback className="text-base font-bold bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
                                 {builder.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <CardTitle className="text-lg truncate">{builder.name}</CardTitle>
+                                <CardTitle className="text-base truncate">{builder.name}</CardTitle>
                                 {builder.verified && (
                                   <Badge variant="default" className="text-xs shrink-0">
                                     Verified
@@ -411,7 +411,7 @@ export default function BrowseBuilders() {
                           </div>
                         </CardHeader>
                         
-                        <CardContent className="space-y-3">
+                        <CardContent className="space-y-2.5">
                           <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
@@ -424,34 +424,16 @@ export default function BrowseBuilders() {
                               </span>
                               <span className="text-muted-foreground">({builder.reviewCount || 0})</span>
                             </div>
-                            <Badge variant="outline" className="capitalize">
-                              {builder.availability || 'available'}
-                            </Badge>
                           </div>
 
                           {builder.category && (
-                            <Badge variant="secondary" className="w-fit">
+                            <Badge variant="secondary" className="w-fit text-xs">
                               {builder.category}
                             </Badge>
                           )}
 
-                          {builder.specializations && builder.specializations.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {builder.specializations.slice(0, 3).map((spec, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs">
-                                  {spec}
-                                </Badge>
-                              ))}
-                              {builder.specializations.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{builder.specializations.length - 3}
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-
                           {(builder.minProjectBudget || builder.hourlyRate) && (
-                            <div className="flex items-center gap-2 pt-2 border-t">
+                            <div className="flex items-center gap-2 pt-1 border-t">
                               <DollarSign className="h-4 w-4 text-primary" />
                               <span className="text-sm font-semibold">
                                 {builder.hourlyRate ? (
@@ -459,34 +441,9 @@ export default function BrowseBuilders() {
                                 ) : builder.minProjectBudget ? (
                                   <>Starting ${parseFloat(builder.minProjectBudget).toLocaleString()}</>
                                 ) : null}
-                                {builder.maxProjectBudget && builder.minProjectBudget && (
-                                  <span className="text-muted-foreground font-normal">
-                                    {' '}- ${parseFloat(builder.maxProjectBudget).toLocaleString()}
-                                  </span>
-                                )}
                               </span>
                             </div>
                           )}
-
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
-                            {builder.languages && builder.languages.length > 0 && (
-                              <div className="flex items-center gap-1">
-                                <Globe className="h-3 w-3" />
-                                <span>{builder.languages.slice(0, 2).join(', ')}</span>
-                              </div>
-                            )}
-                            {builder.country && (
-                              <div className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />
-                                <span>{builder.country}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="flex items-center justify-between pt-2 border-t text-sm">
-                            <span className="text-muted-foreground">{builder.completedProjects || 0} projects</span>
-                            <span className="font-semibold text-primary">View Profile</span>
-                          </div>
                         </CardContent>
                       </Card>
                     </Link>
