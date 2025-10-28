@@ -91,19 +91,6 @@ export default function Home() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
 
-  // Parallax effect state
-  const [scrollY, setScrollY] = useState(0);
-
-  // Add scroll listener for parallax effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Fetch top builders sorted by rating and completed projects
   const { data: topBuilders, isLoading: buildersLoading, isError: buildersError} = useQuery<Builder[]>({
     queryKey: ["/api/builders", "top"],
@@ -291,23 +278,16 @@ export default function Home() {
       <GuestBrowseBanner />
       <MobileStickyCTA />
 
-      {/* Buy on Demand Hero with Parallax */}
-      <section className="relative border-b overflow-hidden bg-background">
-        {/* Animated Mesh Gradient Background with Parallax */}
-        <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
-        </div>
-        
-        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+      {/* Buy on Demand Hero */}
+      <section className="relative border-b bg-background">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
-          <div className="mx-auto max-w-5xl text-center space-y-6" style={{ transform: `translateY(${-scrollY * 0.1}px)` }}>
+          <div className="mx-auto max-w-5xl text-center space-y-6">
 
             <div className="flex items-center justify-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 Buy on Demand
-                <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+                <span className="block mt-2">
                   Web3 Talent Marketplace
                 </span>
               </h1>
@@ -575,9 +555,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Top Builders Section - Fiverr Style with Parallax */}
-      <section className="border-t bg-muted/20 relative overflow-hidden">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ transform: `translateY(${-scrollY * 0.05}px)` }}>
+      {/* Top Builders Section - Fiverr Style */}
+      <section className="border-t bg-muted/20">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
