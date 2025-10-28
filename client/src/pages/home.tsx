@@ -443,12 +443,13 @@ export default function Home() {
         ogType="website"
       />
       <Header />
+      
+      {/* Buy on Demand Hero */}
+      <section id="hero-section" className="relative border-b overflow-hidden bg-background h-screen flex items-center" style={{ willChange: 'transform, opacity' }}>
+      
       <WelcomeModal />
       <GuestBrowseBanner />
       <MobileStickyCTA />
-
-      {/* Buy on Demand Hero */}
-      <section id="hero-section" className="relative border-b overflow-hidden bg-background h-screen flex items-center -mt-16 pt-16" style={{ willChange: 'transform, opacity' }}>
         {/* Animated Mesh Gradient Background with Parallax */}
         <div id="hero-background" className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
           <div id="hero-blob-1" className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" style={{ willChange: 'transform' }} />
@@ -627,7 +628,7 @@ export default function Home() {
             </div>
 
             {/* Trust Badges - Clean Style */}
-            <div id="hero-badges" className="flex flex-wrap items-center justify-center gap-6 pt-4" style={{ willChange: 'transform' }}>
+            <div id="hero-badges" className="flex flex-wrap items-center justify-center gap-6 pt-4 pb-16" style={{ willChange: 'transform' }}>
               <span className="text-muted-foreground text-sm font-medium">Powered by:</span>
               <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
                 <Layers className="h-5 w-5 text-primary" />
@@ -645,7 +646,7 @@ export default function Home() {
           </div>
 
           {/* Scroll Down Indicator */}
-          <div id="scroll-indicator" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce" style={{ willChange: 'opacity' }}>
+          <div id="scroll-indicator" className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce" style={{ willChange: 'opacity' }}>
             <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
             <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1">
               <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
