@@ -100,54 +100,55 @@ export default function Home() {
       <MobileStickyCTA />
 
       {/* Unified Hero + Category Browser Section */}
-      <section className="border-b bg-background">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8 lg:py-24">
+      <section className="relative border-b bg-gradient-to-b from-muted/30 to-background">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8 lg:py-28">
           {/* Branding Header */}
-          <div className="mx-auto max-w-3xl text-center space-y-6 mb-16">
-            <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="outline" className="gap-1.5">
-                <Gift className="h-3 w-3" />
+          <div className="mx-auto max-w-4xl text-center space-y-8 mb-20">
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Badge variant="outline" className="gap-1.5 px-3 py-1.5 text-xs font-medium">
+                <Gift className="h-3.5 w-3.5" />
                 Token Holder Benefits
               </Badge>
-              <Badge variant="outline" className="gap-1.5">
-                <Sparkles className="h-3 w-3" />
+              <Badge className="gap-1.5 px-3 py-1.5 text-xs font-medium">
+                <Sparkles className="h-3.5 w-3.5" />
                 Save Up to 60% with Tokens
               </Badge>
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+            <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
               Buy on Demand
-              <span className="block mt-2">
+              <span className="block mt-3 text-primary">
                 Web3 Talent Marketplace
               </span>
             </h1>
 
-            <p className="text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto leading-relaxed">
               The open Web3 marketplace connecting premium builders with memecoin
               and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
             </p>
 
-            <div className="rounded-lg border p-4 max-w-2xl mx-auto">
-              <p className="text-sm text-muted-foreground flex items-center justify-center gap-2 flex-wrap">
-                <Gift className="h-4 w-4 text-primary" />
-                Token Holder Perks: 60% lower fees (1% vs 2.5%), priority support, exclusive badges, early access!
+            <div className="rounded-xl border bg-card p-6 max-w-2xl mx-auto shadow-sm">
+              <p className="text-base font-medium flex items-center justify-center gap-2 flex-wrap">
+                <Gift className="h-5 w-5 text-primary" />
+                <span className="text-foreground">Token Holder Perks:</span>
+                <span className="text-muted-foreground">60% lower fees (1% vs 2.5%), priority support, exclusive badges, early access!</span>
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center pt-2">
               <Link href="/marketplace">
-                <Button size="lg" className="gap-2" data-testid="button-browse-all-services">
+                <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-lg shadow-primary/20" data-testid="button-browse-all-services">
                   Browse All Services
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/become-client">
-                <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
+                <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-base font-medium" data-testid="button-become-client">
                   Become a Client
                 </Button>
               </Link>
               <Link href="/apply">
-                <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-builder">
+                <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-base font-medium" data-testid="button-become-builder">
                   Become a Builder
                 </Button>
               </Link>
@@ -246,33 +247,33 @@ export default function Home() {
       </section>
 
       {/* Token Holder Benefits Section - Compact */}
-      <section className="border-b bg-background py-16">
+      <section className="border-b bg-muted/20 py-20">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           {/* Compact Header with Key Info */}
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="mb-4 gap-1.5">
-              <Gift className="h-3 w-3" />
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-6 gap-1.5 px-3 py-1.5 text-xs font-medium">
+              <Gift className="h-3.5 w-3.5" />
               Token Holder Benefits
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-              Save 60% with $CREATE or $PSX
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+              Save 60% with <span className="text-primary">$CREATE</span> or <span className="text-primary">$PSX</span>
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
               Hold either token to unlock 1% platform fees (vs 2.5%), priority support, exclusive badges, and early access
             </p>
 
             {/* Inline Token Info & CTAs */}
-            <div className="flex flex-wrap gap-3 justify-center items-center">
-              <Badge variant="outline" className="gap-2 px-4 py-2">
+            <div className="flex flex-wrap gap-4 justify-center items-center">
+              <Badge variant="outline" className="gap-2 px-5 py-2.5 text-sm font-semibold">
                 <Layers className="h-4 w-4" />
-                <span className="font-semibold">$CREATE</span>
+                $CREATE
               </Badge>
-              <Badge variant="outline" className="gap-2 px-4 py-2">
+              <Badge variant="outline" className="gap-2 px-5 py-2.5 text-sm font-semibold">
                 <Zap className="h-4 w-4" />
-                <span className="font-semibold">$PSX</span>
+                $PSX
               </Badge>
               <a href="https://app.uniswap.org" target="_blank" rel="noopener noreferrer">
-                <Button className="gap-2" data-testid="button-get-tokens">
+                <Button className="gap-2 px-6 shadow-md" data-testid="button-get-tokens">
                   <Coins className="h-4 w-4" />
                   Get Tokens
                 </Button>
@@ -281,43 +282,43 @@ export default function Home() {
           </div>
 
           {/* Compact Benefits Summary */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8 max-w-5xl mx-auto">
-            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <DollarSign className="h-5 w-5" />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8 max-w-6xl mx-auto">
+            <div className="flex items-start gap-4 p-6 rounded-xl border bg-card shadow-sm hover-elevate">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <DollarSign className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">60% Off</div>
+                <div className="font-bold text-lg mb-1">60% Off</div>
                 <div className="text-sm text-muted-foreground">1% fees vs 2.5%</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <Zap className="h-5 w-5" />
+            <div className="flex items-start gap-4 p-6 rounded-xl border bg-card shadow-sm hover-elevate">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <Zap className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">2x Faster</div>
+                <div className="font-bold text-lg mb-1">2x Faster</div>
                 <div className="text-sm text-muted-foreground">Priority support</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <CheckCircle2 className="h-5 w-5" />
+            <div className="flex items-start gap-4 p-6 rounded-xl border bg-card shadow-sm hover-elevate">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <CheckCircle2 className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">VIP Badge</div>
+                <div className="font-bold text-lg mb-1">VIP Badge</div>
                 <div className="text-sm text-muted-foreground">Stand out</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <Sparkles className="h-5 w-5" />
+            <div className="flex items-start gap-4 p-6 rounded-xl border bg-card shadow-sm hover-elevate">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <Sparkles className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <div className="font-semibold">Early Access</div>
+                <div className="font-bold text-lg mb-1">Early Access</div>
                 <div className="text-sm text-muted-foreground">Beta features</div>
               </div>
             </div>
@@ -528,36 +529,36 @@ export default function Home() {
       </section>
 
       {/* PSX Agency Section */}
-      <section className="border-b bg-background py-16">
+      <section className="border-b bg-background py-20">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 rounded-lg border bg-card p-8 lg:flex-row lg:gap-8">
-            <div className="flex flex-1 flex-col gap-4 text-center lg:text-left">
+          <div className="flex flex-col items-center justify-between gap-8 rounded-2xl border bg-card p-10 lg:flex-row lg:gap-12 shadow-lg">
+            <div className="flex flex-1 flex-col gap-5 text-center lg:text-left">
               <div className="flex items-center justify-center gap-2 lg:justify-start">
-                <Badge variant="outline" className="w-fit gap-1.5">
-                  <Handshake className="h-3 w-3" />
+                <Badge variant="outline" className="w-fit gap-1.5 px-3 py-1.5 text-xs font-medium">
+                  <Handshake className="h-3.5 w-3.5" />
                   Direct B2B Services
                 </Badge>
               </div>
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
                 Need Direct Talent Support?
               </h2>
-              <p className="text-muted-foreground">
-                Visit <span className="font-semibold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Visit <span className="font-semibold text-primary">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
                 Powered by <span className="font-semibold text-foreground">$Create</span> and <span className="font-semibold text-foreground">$PSX</span> on Base. 
-                Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
+                Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
               </p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <div className="flex flex-col gap-4 sm:flex-row lg:flex-col">
               <a href="https://psx.agency" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="gap-2" data-testid="button-visit-agency">
+                <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-md" data-testid="button-visit-agency">
                   Visit PSX Agency
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="h-5 w-5" />
                 </Button>
               </a>
               <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="gap-2" data-testid="button-based-creators">
+                <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-base font-medium" data-testid="button-based-creators">
                   The Creators
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="h-5 w-5" />
                 </Button>
               </a>
             </div>
