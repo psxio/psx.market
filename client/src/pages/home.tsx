@@ -445,7 +445,7 @@ export default function Home() {
       <Header />
       
       {/* Buy on Demand Hero */}
-      <section id="hero-section" className="relative border-b overflow-hidden bg-background h-screen flex items-center" style={{ willChange: 'transform, opacity' }}>
+      <section id="hero-section" className="relative overflow-hidden bg-background h-screen flex items-center" style={{ willChange: 'transform, opacity' }}>
       
       <WelcomeModal />
       <GuestBrowseBanner />
@@ -657,7 +657,7 @@ export default function Home() {
 
 
       {/* Buy on Demand - Category Filtering & Services */}
-      <section id="explore-services" className="bg-background py-16">
+      <section id="explore-services" className="relative bg-gradient-to-b from-background via-background to-muted/10 py-24">
         <div id="categories-section" className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8" style={{ willChange: 'transform, opacity', opacity: 0 }}>
           
           {/* Section Heading */}
@@ -743,7 +743,7 @@ export default function Home() {
       </section>
 
       {/* Top Builders Section - Fiverr Style with Parallax */}
-      <section className="border-t bg-muted/20 relative overflow-hidden">
+      <section className="relative overflow-hidden bg-gradient-to-b from-muted/10 to-background">
         <div id="builders-container" className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform' }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
@@ -893,7 +893,7 @@ export default function Home() {
       </section>
 
       {/* Token Holder Benefits Section - Compact */}
-      <section className="border-b bg-muted/20 py-20">
+      <section className="relative bg-gradient-to-b from-background to-muted/10 py-20">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           {/* Compact Header with Key Info */}
           <div className="text-center mb-16">
