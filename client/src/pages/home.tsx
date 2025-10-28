@@ -96,39 +96,30 @@ export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const buildersContainerRef = useRef<HTMLDivElement>(null);
 
-  // Add scroll listener for parallax effect with direct DOM manipulation
+  // Add scroll listener for parallax effect - using simple window.onscroll
   useEffect(() => {
-    let ticking = false;
-    
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          
-          // Apply parallax transforms directly to DOM elements
-          if (heroBackgroundRef.current) {
-            heroBackgroundRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
-          }
-          if (heroContentRef.current) {
-            heroContentRef.current.style.transform = `translateY(${-scrollY * 0.1}px)`;
-          }
-          if (buildersContainerRef.current) {
-            buildersContainerRef.current.style.transform = `translateY(${-scrollY * 0.05}px)`;
-          }
-          
-          ticking = false;
-        });
-        
-        ticking = true;
+    const applyParallax = () => {
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      
+      const heroBackground = document.getElementById('hero-background');
+      const heroContent = document.getElementById('hero-content');
+      const buildersContainer = document.getElementById('builders-container');
+      
+      if (heroBackground) {
+        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
+      }
+      if (heroContent) {
+        heroContent.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`;
+      }
+      if (buildersContainer) {
+        buildersContainer.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
       }
     };
     
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', applyParallax, { passive: true });
+    applyParallax(); // Initial call
     
-    // Call once to set initial position
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', applyParallax);
   }, []);
 
   // Fetch top builders sorted by rating and completed projects
@@ -321,7 +312,7 @@ export default function Home() {
       {/* Buy on Demand Hero */}
       <section className="relative border-b overflow-hidden bg-background">
         {/* Animated Mesh Gradient Background with Parallax */}
-        <div ref={heroBackgroundRef} className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
+        <div id="hero-background" className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
@@ -329,7 +320,7 @@ export default function Home() {
         
         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
-          <div ref={heroContentRef} className="mx-auto max-w-5xl text-center space-y-6" style={{ willChange: 'transform' }}>
+          <div id="hero-content" className="mx-auto max-w-5xl text-center space-y-6" style={{ willChange: 'transform' }}>
 
             <div className="flex items-center justify-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -521,6 +512,12 @@ export default function Home() {
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="bg-background py-16">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          
+          {/* Section Heading */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Browse Categories</h2>
+            <p className="text-muted-foreground text-base md:text-lg">Find the perfect service for your project</p>
+          </div>
 
           {/* Category Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 mb-8">
@@ -599,7 +596,7 @@ export default function Home() {
 
       {/* Top Builders Section - Fiverr Style with Parallax */}
       <section className="border-t bg-muted/20 relative overflow-hidden">
-        <div ref={buildersContainerRef} className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform' }}>
+        <div id="builders-container" className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform' }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
