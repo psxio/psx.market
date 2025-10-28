@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Accordion,
   AccordionContent,
@@ -89,6 +90,19 @@ export default function Home() {
   const [selectedSearchIndex, setSelectedSearchIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
+
+  // Parallax effect state
+  const [scrollY, setScrollY] = useState(0);
+
+  // Add scroll listener for parallax effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch top builders sorted by rating and completed projects
   const { data: topBuilders, isLoading: buildersLoading, isError: buildersError} = useQuery<Builder[]>({
@@ -277,10 +291,10 @@ export default function Home() {
       <GuestBrowseBanner />
       <MobileStickyCTA />
 
-      {/* Buy on Demand Hero */}
+      {/* Buy on Demand Hero with Parallax */}
       <section className="relative border-b overflow-hidden bg-background">
-        {/* Animated Mesh Gradient Background */}
-        <div className="absolute inset-0 z-0">
+        {/* Animated Mesh Gradient Background with Parallax */}
+        <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
@@ -288,28 +302,56 @@ export default function Home() {
         
         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
-          <div className="mx-auto max-w-5xl text-center space-y-6">
-            {/* Token Holder Benefits & Browse All Badge */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-              <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 border-primary/30">
-                <Gift className="h-3.5 w-3.5" />
-                Token Holder Benefits
-              </Badge>
-              <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 border-primary/30">
-                <Sparkles className="h-3.5 w-3.5" />
-                Save Up to 60% with Tokens
-              </Badge>
+          <div className="mx-auto max-w-5xl text-center space-y-6" style={{ transform: `translateY(${-scrollY * 0.1}px)` }}>
+
+            <div className="flex items-center justify-center gap-3">
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                Buy on Demand
+                <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+                  Web3 Talent Marketplace
+                </span>
+              </h1>
+              
+              {/* Token Benefits Tooltip */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 border border-green-500/30 hover:bg-green-500/20 transition-all mt-2">
+                      <Gift className="h-4 w-4 text-green-500" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-sm p-4">
+                    <div className="space-y-2">
+                      <p className="font-semibold text-sm flex items-center gap-2">
+                        <Gift className="h-4 w-4 text-green-500" />
+                        Token Holder Perks
+                      </p>
+                      <ul className="text-xs space-y-1 text-muted-foreground">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>60% lower fees (1% vs 2.5%)</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>Priority customer support</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>Exclusive verified badges</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>Early access to new features</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              Buy on Demand
-              <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
-                Web3 Talent Marketplace
-              </span>
-            </h1>
-
             <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
-              The open Web3 marketplace connecting premium builders with memecoin and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
+              The open Web3 marketplace connecting premium builders with memecoin and crypto projects.
             </p>
 
             {/* Prominent Search Bar - Functional Autocomplete */}
@@ -434,17 +476,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Token Holder Benefits - Inline Card */}
-      <div className="container mx-auto max-w-7xl px-4 py-6 md:px-6 lg:px-8">
-        <div className="rounded-lg border-2 border-green-500/30 bg-green-500/5 p-4 md:p-6">
-          <div className="flex items-center justify-center gap-2 text-sm md:text-base text-center">
-            <Gift className="h-5 w-5 text-green-500 flex-shrink-0" />
-            <p className="text-foreground">
-              <span className="font-semibold">Token Holder Perks:</span> 60% lower fees (1% vs 2.5%), priority support, exclusive badges, early access!
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="bg-background pb-16">
@@ -544,9 +575,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Top Builders Section - Fiverr Style */}
-      <section className="border-t bg-muted/20">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+      {/* Top Builders Section - Fiverr Style with Parallax */}
+      <section className="border-t bg-muted/20 relative overflow-hidden">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ transform: `translateY(${-scrollY * 0.05}px)` }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
