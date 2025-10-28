@@ -912,6 +912,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(filteredResults);
     } catch (error) {
+      console.error("Error fetching services:", error);
       res.status(500).json({ error: "Failed to fetch services" });
     }
   });
