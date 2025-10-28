@@ -99,27 +99,34 @@ export default function Home() {
       <GuestBrowseBanner />
       <MobileStickyCTA />
 
-      {/* Fiverr-Style Hero with Background */}
-      <section className="relative border-b overflow-hidden">
-        {/* Background with gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-background/95 z-0" />
+      {/* Minimal Interactive Hero */}
+      <section className="relative border-b overflow-hidden bg-background">
+        {/* Minimal Animated Mesh Gradient */}
+        <div className="absolute inset-0 z-0">
+          {/* Subtle animated gradient orbs - More visible in dark mode */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/15 dark:bg-purple-500/25 rounded-full blur-3xl animate-float-slower" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-cyan-500/10 dark:bg-cyan-500/20 rounded-full blur-3xl animate-float" />
+        </div>
         
         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-24 lg:px-8 lg:py-32">
-          {/* Fiverr-Style Hero Content */}
+          {/* Hero Content - Clean & Minimal */}
           <div className="mx-auto max-w-4xl text-center space-y-8">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-white">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               Premium Web3 builders
-              <span className="block mt-2">will take it from here</span>
+              <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                will take it from here
+              </span>
             </h1>
 
-            {/* Prominent Fiverr-Style Search Bar */}
+            {/* Prominent Search Bar */}
             <div className="max-w-3xl mx-auto">
               <Link href="/marketplace">
                 <div className="relative group cursor-pointer">
                   <input
                     type="text"
                     placeholder="Search for any service..."
-                    className="w-full h-16 pl-6 pr-24 rounded-lg border-0 bg-white text-base text-foreground placeholder:text-muted-foreground shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+                    className="w-full h-16 pl-6 pr-24 rounded-lg border-2 border-border bg-card text-base text-foreground placeholder:text-muted-foreground shadow-lg hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     readOnly
                     data-testid="input-homepage-search"
                   />
@@ -131,9 +138,9 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Quick-Search Category Pills (Fiverr-style) */}
+            {/* Quick-Search Category Pills */}
             <div className="flex flex-wrap gap-2 justify-center items-center text-sm">
-              <span className="text-white/90 font-medium">Popular:</span>
+              <span className="text-muted-foreground font-medium">Popular:</span>
               {[
                 { name: "3D Artists", slug: "3D Content Creation" },
                 { name: "KOLs", slug: "KOLs & Influencers" },
@@ -147,11 +154,11 @@ export default function Home() {
                     setSelectedCategory(cat.slug);
                     document.getElementById('explore-services')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="px-4 py-2 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/50 transition-all flex items-center gap-2"
+                  className="px-4 py-2 rounded-full border-2 border-border bg-card text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all flex items-center gap-2"
                 >
                   {cat.name}
                   {cat.badge && (
-                    <span className="px-2 py-0.5 rounded-full bg-white text-primary text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-bold">
                       {cat.badge}
                     </span>
                   )}
@@ -159,20 +166,20 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Trust Badges - Fiverr Style */}
+            {/* Trust Badges - Clean Style */}
             <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
-              <span className="text-white/80 text-sm font-medium">Powered by:</span>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <Layers className="h-5 w-5 text-white" />
-                <span className="text-white font-semibold">Base</span>
+              <span className="text-muted-foreground text-sm font-medium">Powered by:</span>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
+                <Layers className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Base</span>
               </div>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <Coins className="h-5 w-5 text-white" />
-                <span className="text-white font-semibold">$CREATE</span>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
+                <Coins className="h-5 w-5 text-primary" />
+                <span className="font-semibold">$CREATE</span>
               </div>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm">
-                <Coins className="h-5 w-5 text-white" />
-                <span className="text-white font-semibold">$PSX</span>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
+                <Coins className="h-5 w-5 text-primary" />
+                <span className="font-semibold">$PSX</span>
               </div>
             </div>
           </div>
