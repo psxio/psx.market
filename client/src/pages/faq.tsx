@@ -8,7 +8,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const faqCategories = [
@@ -253,6 +253,10 @@ const faqCategories = [
 export default function FAQ() {
   const [searchQuery, setSearchQuery] = useState("");
   const headerSection = useScrollReveal();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const filteredCategories = faqCategories.map(category => ({
     ...category,
