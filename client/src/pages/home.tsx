@@ -91,6 +91,19 @@ export default function Home() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
 
+  // Parallax effect state
+  const [scrollY, setScrollY] = useState(0);
+
+  // Add scroll listener for parallax effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Fetch top builders sorted by rating and completed projects
   const { data: topBuilders, isLoading: buildersLoading, isError: buildersError} = useQuery<Builder[]>({
     queryKey: ["/api/builders", "top"],
@@ -279,15 +292,22 @@ export default function Home() {
       <MobileStickyCTA />
 
       {/* Buy on Demand Hero */}
-      <section className="relative border-b bg-background">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+      <section className="relative border-b overflow-hidden bg-background">
+        {/* Animated Mesh Gradient Background with Parallax */}
+        <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
+        </div>
+        
+        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
-          <div className="mx-auto max-w-5xl text-center space-y-6">
+          <div className="mx-auto max-w-5xl text-center space-y-6" style={{ transform: `translateY(${-scrollY * 0.1}px)` }}>
 
             <div className="flex items-center justify-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 Buy on Demand
-                <span className="block mt-2">
+                <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
                   Web3 Talent Marketplace
                 </span>
               </h1>
@@ -436,6 +456,20 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Action Buttons - In Hero */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+              <Link href="/getting-started?tab=client">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
+                  Become a Client
+                </Button>
+              </Link>
+              <Link href="/getting-started?tab=builder">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-builder">
+                  Become a Builder
+                </Button>
+              </Link>
+            </div>
+
             {/* Trust Badges - Clean Style */}
             <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
               <span className="text-muted-foreground text-sm font-medium">Powered by:</span>
@@ -460,25 +494,6 @@ export default function Home() {
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="bg-background pb-16">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
-            <Link href="/marketplace">
-              <Button size="lg" className="gap-2" data-testid="button-browse-all-services">
-                <Search className="h-5 w-5" />
-                Browse All Services
-              </Button>
-            </Link>
-            <Link href="/getting-started?tab=client">
-              <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
-                Become a Client
-              </Button>
-            </Link>
-            <Link href="/getting-started?tab=builder">
-              <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-builder">
-                Become a Builder
-              </Button>
-            </Link>
-          </div>
 
           {/* Category Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 mb-6">
@@ -555,9 +570,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Top Builders Section - Fiverr Style */}
-      <section className="border-t bg-muted/20">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+      {/* Top Builders Section - Fiverr Style with Parallax */}
+      <section className="border-t bg-muted/20 relative overflow-hidden">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ transform: `translateY(${-scrollY * 0.05}px)` }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -614,10 +629,10 @@ export default function Home() {
                     <Card className="overflow-hidden hover-elevate active-elevate-2 h-full border-2">
                       {/* Builder Avatar - Large */}
                       <div className="relative aspect-square w-full overflow-hidden bg-muted">
-                        {builder.profilePicture ? (
+                        {builder.profileImage ? (
                           <img
-                            src={builder.profilePicture}
-                            alt={builder.displayName || builder.username}
+                            src={builder.profileImage}
+                            alt={builder.name}
                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         ) : (
@@ -626,17 +641,8 @@ export default function Home() {
                           </div>
                         )}
                         
-                        {/* Online Status */}
-                        {builder.isAvailable && (
-                          <div className="absolute top-3 right-3">
-                            <Badge variant="default" className="bg-green-500 text-white border-0 shadow-lg">
-                              Online
-                            </Badge>
-                          </div>
-                        )}
-                        
                         {/* Verified Badge */}
-                        {builder.isVerified && (
+                        {builder.verified && (
                           <div className="absolute top-3 left-3">
                             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary shadow-lg">
                               <Shield className="h-4 w-4 text-primary-foreground" />
@@ -647,17 +653,14 @@ export default function Home() {
 
                       {/* Builder Info */}
                       <div className="p-4 space-y-3">
-                        {/* Name and Location */}
+                        {/* Name and Headline */}
                         <div>
                           <h3 className="font-semibold text-lg mb-1 truncate">
-                            {builder.displayName || builder.username}
+                            {builder.name}
                           </h3>
-                          {builder.location && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <MapPin className="h-3 w-3" />
-                              <span className="truncate">{builder.location}</span>
-                            </div>
-                          )}
+                          <p className="text-sm text-muted-foreground line-clamp-1">
+                            {builder.headline || builder.category}
+                          </p>
                         </div>
 
                         {/* Specialization */}
@@ -675,7 +678,7 @@ export default function Home() {
                               {builder.rating ? Number(builder.rating).toFixed(1) : '5.0'}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              ({builder.totalReviews || 0})
+                              ({builder.completedProjects || 0})
                             </span>
                           </div>
                           {builder.completedProjects !== undefined && (
