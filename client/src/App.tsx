@@ -49,6 +49,7 @@ import FAQ from "@/pages/faq";
 import BuyerRequests from "@/pages/buyer-requests";
 import AppDemo from "@/pages/app-demo";
 import { MobileNav } from "@/components/mobile-nav";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -95,6 +96,7 @@ function AppContent() {
   
   return (
     <>
+      <ScrollToTop />
       <WalletAutoLogin />
       <Toaster />
       <InstallPWAPrompt />
