@@ -99,91 +99,131 @@ export default function Home() {
       <GuestBrowseBanner />
       <MobileStickyCTA />
 
-      {/* Unified Hero + Category Browser Section */}
-      <section className="relative border-b bg-gradient-to-b from-muted/30 to-background">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8 lg:py-28">
-          {/* Branding Header */}
-          <div className="mx-auto max-w-4xl text-center space-y-8 mb-20">
-            <div className="flex flex-wrap gap-3 justify-center">
-              <Badge variant="outline" className="gap-1.5 px-3 py-1.5 text-xs font-medium">
-                <Gift className="h-3.5 w-3.5" />
-                Token Holder Benefits
-              </Badge>
-              <Badge className="gap-1.5 px-3 py-1.5 text-xs font-medium">
-                <Sparkles className="h-3.5 w-3.5" />
-                Save Up to 60% with Tokens
-              </Badge>
-            </div>
-
-            <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-              Buy on Demand
-              <span className="block mt-3 text-primary">
-                Web3 Talent Marketplace
-              </span>
+      {/* Fiverr-Style Hero with Background */}
+      <section className="relative border-b overflow-hidden">
+        {/* Background with gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-background/95 z-0" />
+        
+        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-24 lg:px-8 lg:py-32">
+          {/* Fiverr-Style Hero Content */}
+          <div className="mx-auto max-w-4xl text-center space-y-8">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-white">
+              Premium Web3 builders
+              <span className="block mt-2">will take it from here</span>
             </h1>
 
-            {/* Search Bar */}
+            {/* Prominent Fiverr-Style Search Bar */}
             <div className="max-w-3xl mx-auto">
               <Link href="/marketplace">
                 <div className="relative group cursor-pointer">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                   <input
                     type="text"
-                    placeholder="Search for services... (e.g., 3D artist, KOL, developer)"
-                    className="w-full h-14 pl-12 pr-4 rounded-xl border-2 border-border bg-background text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors group-hover:border-primary/50"
+                    placeholder="Search for any service..."
+                    className="w-full h-16 pl-6 pr-24 rounded-lg border-0 bg-white text-base text-foreground placeholder:text-muted-foreground shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     readOnly
                     data-testid="input-homepage-search"
                   />
+                  <button className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-6 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors flex items-center gap-2">
+                    <Search className="h-5 w-5" />
+                    Search
+                  </button>
                 </div>
               </Link>
             </div>
 
-            <p className="text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto leading-relaxed">
-              The open Web3 marketplace connecting premium builders with memecoin
-              and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
-            </p>
-
-            <div className="rounded-xl border bg-card p-6 max-w-2xl mx-auto shadow-sm">
-              <p className="text-base font-medium flex items-center justify-center gap-2 flex-wrap">
-                <Gift className="h-5 w-5 text-primary" />
-                <span className="text-foreground">Token Holder Perks:</span>
-                <span className="text-muted-foreground">60% lower fees (1% vs 2.5%), priority support, exclusive badges, early access!</span>
-              </p>
+            {/* Quick-Search Category Pills (Fiverr-style) */}
+            <div className="flex flex-wrap gap-2 justify-center items-center text-sm">
+              <span className="text-white/90 font-medium">Popular:</span>
+              {[
+                { name: "3D Artists", slug: "3D Content Creation" },
+                { name: "KOLs", slug: "KOLs & Influencers" },
+                { name: "Developers", slug: "Script Development" },
+                { name: "Marketing", slug: "Marketing & Growth" },
+                { name: "Volume Services", slug: "Volume Services", badge: "NEW" }
+              ].map((cat, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setSelectedCategory(cat.slug);
+                    document.getElementById('explore-services')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-4 py-2 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/50 transition-all flex items-center gap-2"
+                >
+                  {cat.name}
+                  {cat.badge && (
+                    <span className="px-2 py-0.5 rounded-full bg-white text-primary text-xs font-bold">
+                      {cat.badge}
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
 
-            <div className="flex flex-wrap gap-4 justify-center pt-2">
-              <Link href="/marketplace">
-                <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-lg shadow-primary/20" data-testid="button-browse-all-services">
-                  Browse All Services
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/become-client">
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-base font-medium" data-testid="button-become-client">
-                  Become a Client
-                </Button>
-              </Link>
-              <Link href="/apply">
-                <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-base font-medium" data-testid="button-become-builder">
-                  Become a Builder
-                </Button>
-              </Link>
+            {/* Trust Badges - Fiverr Style */}
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
+              <span className="text-white/80 text-sm font-medium">Powered by:</span>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <Layers className="h-5 w-5 text-white" />
+                <span className="text-white font-semibold">Base</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <Coins className="h-5 w-5 text-white" />
+                <span className="text-white font-semibold">$CREATE</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <Coins className="h-5 w-5 text-white" />
+                <span className="text-white font-semibold">$PSX</span>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Live Activity Ticker */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <LiveActivityTicker />
+      {/* Token Benefits Banner */}
+      <section className="border-b bg-muted/30">
+        <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-center md:text-left">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <Gift className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold">Token Holder Perks</p>
+                <p className="text-sm text-muted-foreground">60% lower fees with $CREATE or $PSX</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold">Priority Support</p>
+                <p className="text-sm text-muted-foreground">Fast response & exclusive access</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <CheckCircle2 className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold">Verified Badge</p>
+                <p className="text-sm text-muted-foreground">Stand out in the marketplace</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Clean Explore Services Section */}
+      <section id="explore-services" className="bg-background">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">Explore Services</h2>
+            <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">Browse by category to find the perfect builder for your project</p>
           </div>
 
-          {/* Category Browser - Main Focal Point */}
           <div className="space-y-12">
-            {/* Section Header */}
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">Explore Services</h2>
-              <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">Browse by category to find the perfect builder for your project</p>
-            </div>
-
             {/* Category Cards Grid - Smaller */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
               {serviceCategories.map((cat) => {
