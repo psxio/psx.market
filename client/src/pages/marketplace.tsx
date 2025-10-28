@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Header } from "@/components/header";
-import { BuilderCard } from "@/components/builder-card";
-import { SwipeableServiceGrid } from "@/components/swipeable-service-grid";
 import { EmptyState } from "@/components/empty-state";
 import { SEOHead } from "@/components/seo-head";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Music, Network, Coins, Lightbulb, FileText, RefreshCw, AlertCircle } from "lucide-react";
+import { Search, SlidersHorizontal, AlertCircle, Star } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -26,7 +27,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import type { Builder, Service, Category } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 
@@ -38,23 +38,6 @@ const popularTags = [
   "Viral Marketing", "Trading Bots", "Music Production"
 ];
 
-const categoryIcons: Record<string, any> = {
-  "KOLs & Influencers": Users,
-  "3D Content Creation": Sparkles,
-  "3D & 2D Content Creation": Sparkles,
-  "Marketing & Growth": TrendingUp,
-  "Script Development": Code,
-  "Volume Services": BarChart3,
-  "Creative & Design": Palette,
-  "Graphic Design": Palette,
-  "Audio & Production": Music,
-  "Connectors & Network": Network,
-  "Social Media Management": Network,
-  "Grants & Funding": Coins,
-  "Strategy Consulting": Lightbulb,
-  "Documentation & Paperwork": FileText,
-};
-
 export default function Marketplace() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -64,9 +47,6 @@ export default function Marketplace() {
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState<string | null>(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  
-  const headerSection = useScrollReveal();
-  const servicesGrid = useScrollReveal();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -149,37 +129,31 @@ export default function Marketplace() {
   const FilterSidebar = () => (
     <div className="space-y-6">
       <div className="space-y-3">
-        <Label className="text-base font-semibold">Categories</Label>
+        <Label className="text-sm font-medium">Categories</Label>
         <div className="space-y-2">
-          {categories && categories.map((category) => {
-            const CategoryIcon = categoryIcons[category.name] || Code;
-            return (
-              <div 
-                key={category.id} 
-                className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
-                onClick={() => toggleCategory(category.slug)}
-                data-testid={`filter-category-${category.slug}`}
-              >
-                <Checkbox
-                  checked={selectedCategories.includes(category.slug)}
-                  onCheckedChange={() => {}}
-                  className="pointer-events-none"
-                  data-testid={`checkbox-category-${category.slug}`}
-                />
-                <div className="flex items-center gap-2 flex-1">
-                  <CategoryIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">
-                    {category.name}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+          {categories && categories.map((category) => (
+            <div 
+              key={category.id} 
+              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1.5 -mx-2"
+              onClick={() => toggleCategory(category.slug)}
+              data-testid={`filter-category-${category.slug}`}
+            >
+              <Checkbox
+                checked={selectedCategories.includes(category.slug)}
+                onCheckedChange={() => {}}
+                className="pointer-events-none"
+                data-testid={`checkbox-category-${category.slug}`}
+              />
+              <span className="text-sm">
+                {category.name}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="space-y-3">
-        <Label className="text-base font-semibold">Skills & Tools</Label>
+        <Label className="text-sm font-medium">Skills & Tools</Label>
         <div className="flex flex-wrap gap-2">
           {popularTags.map((tag) => (
             <Badge
@@ -196,7 +170,7 @@ export default function Marketplace() {
       </div>
 
       <div className="space-y-3">
-        <Label className="text-base font-semibold">
+        <Label className="text-sm font-medium">
           Price Range: ${priceRange[0]} - ${priceRange[1]}
         </Label>
         <Slider
@@ -210,12 +184,12 @@ export default function Marketplace() {
       </div>
 
       <div className="space-y-3">
-        <Label className="text-base font-semibold">Rating</Label>
+        <Label className="text-sm font-medium">Rating</Label>
         <div className="space-y-2">
           {ratings.map((rating) => (
             <div 
               key={rating} 
-              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1.5 -mx-2"
               onClick={() => setSelectedRating(selectedRating === rating ? null : rating)}
               data-testid={`filter-rating-${rating.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus')}`}
             >
@@ -225,7 +199,7 @@ export default function Marketplace() {
                 className="pointer-events-none"
                 data-testid={`checkbox-rating-${rating.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus')}`}
               />
-              <span className="text-sm font-medium">
+              <span className="text-sm">
                 {rating}
               </span>
             </div>
@@ -234,12 +208,12 @@ export default function Marketplace() {
       </div>
 
       <div className="space-y-3">
-        <Label className="text-base font-semibold">Delivery Time</Label>
+        <Label className="text-sm font-medium">Delivery Time</Label>
         <div className="space-y-2">
           {deliveryTimes.map((time) => (
             <div 
               key={time} 
-              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1.5 -mx-2"
               onClick={() => setSelectedDeliveryTime(selectedDeliveryTime === time ? null : time)}
               data-testid={`filter-delivery-${time.toLowerCase().replace(/\s+/g, '-')}`}
             >
@@ -249,7 +223,7 @@ export default function Marketplace() {
                 className="pointer-events-none"
                 data-testid={`checkbox-delivery-${time.toLowerCase().replace(/\s+/g, '-')}`}
               />
-              <span className="text-sm font-medium">
+              <span className="text-sm">
                 {time}
               </span>
             </div>
@@ -258,6 +232,63 @@ export default function Marketplace() {
       </div>
     </div>
   );
+
+  const ServiceCard = ({ builder, service }: { builder: Builder; service: Service }) => {
+    const initials = builder.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+
+    return (
+      <Link href={`/service/${service.id}`}>
+        <Card 
+          className="p-4 rounded-lg border hover:shadow-md transition-shadow cursor-pointer h-full"
+          data-testid={`card-service-${service.id}`}
+        >
+          <div className="flex items-start gap-3 mb-3">
+            <Avatar className="h-12 w-12">
+              <AvatarImage src={builder.profileImage || undefined} alt={builder.name} />
+              <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{builder.name}</p>
+            </div>
+          </div>
+
+          <h3 className="text-base font-medium mb-2 line-clamp-2">
+            {service.title}
+          </h3>
+
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
+            {service.description}
+          </p>
+
+          {builder.rating && (
+            <div className="flex items-center gap-1 mb-3">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm font-medium">{builder.rating}</span>
+              <span className="text-sm text-muted-foreground">
+                ({builder.reviewCount || 0})
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-3 border-t">
+            <div>
+              <span className="font-semibold">From ${service.basicPrice}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {service.deliveryTime}
+            </span>
+          </div>
+        </Card>
+      </Link>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -269,171 +300,151 @@ export default function Marketplace() {
       />
       <Header />
 
-      <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
-        <div ref={headerSection.ref as any} className={`mb-8 space-y-4 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Browse Services</h1>
-              <p className="mt-2 text-muted-foreground">
-                Find the perfect builder for your project
+      <div className="py-16 md:py-24">
+        <div className="container mx-auto max-w-7xl px-6 md:px-8">
+          <div className="mb-12 space-y-6">
+            <div className="text-center space-y-3">
+              <h1 className="text-4xl font-bold">Browse Services</h1>
+              <p className="text-lg text-muted-foreground">
+                Explore Web3 services by category
               </p>
             </div>
 
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sort">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="relevance">Relevance</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Top Rated</SelectItem>
-                <SelectItem value="recent">Most Recent</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search services, builders, or skills..."
-                className="pl-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                data-testid="input-marketplace-search"
-              />
+            <div className="max-w-2xl mx-auto">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search services, builders, or skills..."
+                  className="h-14 pl-12 bg-background border"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  data-testid="input-marketplace-search"
+                />
+              </div>
             </div>
 
-            <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
-              <SheetTrigger asChild className="lg:hidden">
-                <Button variant="outline" size="default" className="gap-2" data-testid="button-filters">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Filters
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
-                </SheetHeader>
-                <div className="mt-6">
-                  <FilterSidebar />
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+            <div className="flex items-center justify-between gap-4">
+              <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+                <SheetTrigger asChild className="lg:hidden">
+                  <Button variant="outline" size="default" className="gap-2" data-testid="button-filters">
+                    <SlidersHorizontal className="h-4 w-4" />
+                    Filters
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Filters</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6">
+                    <FilterSidebar />
+                  </div>
+                </SheetContent>
+              </Sheet>
 
-          {(selectedCategories.length > 0 || selectedTags.length > 0) && (
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-muted-foreground">Active filters:</span>
-              {selectedCategories.map((category) => (
-                <Button
-                  key={category}
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => toggleCategory(category)}
-                  className="gap-1"
-                  data-testid={`active-filter-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  {category}
-                  <span className="text-muted-foreground">×</span>
-                </Button>
-              ))}
-              {selectedTags.map((tag) => (
-                <Badge
-                  key={tag}
-                  variant="secondary"
-                  className="cursor-pointer no-default-hover-elevate"
-                  onClick={() => toggleTag(tag)}
-                  data-testid={`active-filter-tag-${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  {tag} ×
-                </Badge>
-              ))}
+              <div className="ml-auto">
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-[180px]" data-testid="select-sort">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Relevance</SelectItem>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="rating">Top Rated</SelectItem>
+                    <SelectItem value="recent">Most Recent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-          <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6 rounded-lg border bg-card p-6">
-              <h2 className="text-lg font-semibold">Filters</h2>
-              <FilterSidebar />
-            </div>
-          </aside>
-
-          <div>
-            {isLoading ? (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {[...Array(9)].map((_, i) => (
-                  <Skeleton key={i} className="h-[280px] w-full" />
+            {(selectedCategories.length > 0 || selectedTags.length > 0) && (
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm text-muted-foreground">Active filters:</span>
+                {selectedCategories.map((category) => (
+                  <Button
+                    key={category}
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => toggleCategory(category)}
+                    className="gap-1"
+                    data-testid={`active-filter-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    {category}
+                    <span className="text-muted-foreground">×</span>
+                  </Button>
+                ))}
+                {selectedTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer no-default-hover-elevate"
+                    onClick={() => toggleTag(tag)}
+                    data-testid={`active-filter-tag-${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    {tag} ×
+                  </Badge>
                 ))}
               </div>
-            ) : isError ? (
-              <EmptyState
-                icon={AlertCircle}
-                title="Failed to load services"
-                description="We couldn't load services at this time. Please try again later."
-                actionLabel="Retry"
-                onAction={() => window.location.reload()}
-              />
-            ) : servicesData && servicesData.length > 0 ? (
-              <div>
-                <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
-                  Showing {servicesData.length} results
-                </div>
-                
-                {/* Mobile Swipeable Grid */}
-                <SwipeableServiceGrid
-                  services={servicesData.map(({ builder, service }) => ({
-                    id: service.id,
-                    title: service.title,
-                    builderId: builder.id,
-                    builderName: builder.name,
-                    builderProfileImage: builder.profileImage || undefined,
-                    category: service.category,
-                    basicPrice: service.basicPrice,
-                    rating: builder.rating || undefined,
-                    reviewCount: builder.reviewCount,
-                    image: service.portfolioMedia?.[0],
-                    tokenTickers: service.tokenTickers || undefined,
-                    deliveryTime: service.deliveryTime,
-                  }))}
-                />
+            )}
+          </div>
 
-                {/* Desktop Grid */}
-                <div className="hidden md:grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-services">
-                  {servicesData.map(({ builder, service }) => (
-                    <BuilderCard
-                      key={service.id}
-                      builder={builder}
-                      service={service}
-                    />
+          <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 bg-background border-r pr-6">
+                <FilterSidebar />
+              </div>
+            </aside>
+
+            <div>
+              {isLoading ? (
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {[...Array(9)].map((_, i) => (
+                    <Skeleton key={i} className="h-[240px] w-full" />
                   ))}
                 </div>
-              </div>
-            ) : (
-              <EmptyState
-                icon={Search}
-                title="No services found"
-                description="Try adjusting your search terms or filters to find what you're looking for."
-                actionLabel="Clear Filters"
-                onAction={() => {
-                  setSearchQuery("");
-                  setSelectedCategories([]);
-                  setSelectedTags([]);
-                  setPriceRange([0, 10000]);
-                  setSelectedRating(null);
-                  setSelectedDeliveryTime(null);
-                }}
-                secondaryActionLabel="Browse All"
-                onSecondaryAction={() => {
-                  setSearchQuery("");
-                  setSelectedCategories([]);
-                }}
-              />
-            )}
+              ) : isError ? (
+                <EmptyState
+                  icon={AlertCircle}
+                  title="Failed to load services"
+                  description="We couldn't load services at this time. Please try again later."
+                  actionLabel="Retry"
+                  onAction={() => window.location.reload()}
+                />
+              ) : servicesData && servicesData.length > 0 ? (
+                <div>
+                  <div className="mb-6 text-sm text-muted-foreground" data-testid="text-results-count">
+                    {servicesData.length} {servicesData.length === 1 ? 'service' : 'services'} found
+                  </div>
+                  
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3" data-testid="grid-services">
+                    {servicesData.map(({ builder, service }) => (
+                      <ServiceCard key={service.id} builder={builder} service={service} />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <EmptyState
+                  icon={Search}
+                  title="No services found"
+                  description="Try adjusting your search terms or filters to find what you're looking for."
+                  actionLabel="Clear Filters"
+                  onAction={() => {
+                    setSearchQuery("");
+                    setSelectedCategories([]);
+                    setSelectedTags([]);
+                    setPriceRange([0, 10000]);
+                    setSelectedRating(null);
+                    setSelectedDeliveryTime(null);
+                  }}
+                  secondaryActionLabel="Browse All"
+                  onSecondaryAction={() => {
+                    setSearchQuery("");
+                    setSelectedCategories([]);
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
