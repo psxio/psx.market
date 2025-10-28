@@ -1,6 +1,33 @@
 ## Overview
 port444 is a Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. It features dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform offers comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
+## Recent Changes (Oct 28, 2025)
+
+### Critical Bug Fixes
+- **🔥 CRITICAL: Search/Filter Bug Fixed** - Changed React Query `staleTime` from `Infinity` to `0` in queryClient.ts, fixing the issue where search and filters required page reload to work. All filters now update results instantly without reload.
+
+### UX Polish Completed
+- **FAQ Page**: Added scroll-to-top on mount so users start at the top instead of spawning mid-page
+- **Footer Tagline**: Updated from "Powered by $CREATE and $PSX tokens on Base" to "Powered by $Create and $PSX on Base"
+- **Become a Client Page**: 
+  - Split hero subtitle into two lines: "Join the Web3 talent marketplace" / "and connect with vetted builders for your memecoin and crypto projects"
+  - Equalized feature card heights (all 3 cards now same size)
+- **Browse Builders UI**: Simplified builder cards by removing excessive details (specializations, languages, country, projects count) for cleaner display
+
+### Builder Onboarding Streamlined
+- **Relaxed Validation**: Changed from 3 skills minimum to 1 skill minimum in Step 2
+- **Portfolio Requirement Removed**: No longer requires portfolio link for application completion
+
+### Testing Verified
+- ✅ Search functionality works without reload (tested with "marketing", "animation")
+- ✅ Category filters update instantly without reload
+- ✅ Combined search + filters work correctly
+- ✅ Sort dropdown reorders results immediately
+- ✅ FAQ scroll behavior confirmed
+- ✅ Become a Client card sizing verified
+- ✅ Footer tagline updated correctly
+- ✅ Browse Builders UI simplified as intended
+
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
 - Design system follows design_guidelines.md
