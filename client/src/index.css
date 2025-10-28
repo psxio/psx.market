@@ -14,69 +14,69 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 0 0% 98%;
+  --background: 0 0% 100%;
 
-  --foreground: 222 15% 15%;
+  --foreground: 0 0% 9%;
 
-  --border: 220 12% 88%;
+  --border: 0 0% 90%;
 
   --card: 0 0% 100%;
 
-  --card-foreground: 222 15% 15%;
+  --card-foreground: 0 0% 9%;
 
-  --card-border: 220 12% 92%;
+  --card-border: 0 0% 90%;
 
-  --sidebar: 220 12% 96%;
+  --sidebar: 0 0% 98%;
 
-  --sidebar-foreground: 222 15% 15%;
+  --sidebar-foreground: 0 0% 9%;
 
-  --sidebar-border: 220 12% 90%;
+  --sidebar-border: 0 0% 90%;
 
-  --sidebar-primary: 275 75% 55%;
+  --sidebar-primary: 262 83% 58%;
 
-  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-primary-foreground: 0 0% 100%;
 
-  --sidebar-accent: 220 12% 90%;
+  --sidebar-accent: 0 0% 96%;
 
-  --sidebar-accent-foreground: 222 15% 15%;
+  --sidebar-accent-foreground: 0 0% 9%;
 
-  --sidebar-ring: 275 75% 55%;
+  --sidebar-ring: 262 83% 58%;
 
   --popover: 0 0% 100%;
 
-  --popover-foreground: 222 15% 15%;
+  --popover-foreground: 0 0% 9%;
 
-  --popover-border: 220 12% 90%;
+  --popover-border: 0 0% 90%;
 
-  --primary: 275 75% 55%;
+  --primary: 262 83% 58%;
 
-  --primary-foreground: 0 0% 98%;
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 220 12% 92%;
+  --secondary: 0 0% 96%;
 
-  --secondary-foreground: 222 15% 15%;
+  --secondary-foreground: 0 0% 9%;
 
-  --muted: 220 10% 94%;
+  --muted: 0 0% 96%;
 
-  --muted-foreground: 222 10% 40%;
+  --muted-foreground: 0 0% 45%;
 
-  --accent: 220 12% 90%;
+  --accent: 0 0% 96%;
 
-  --accent-foreground: 222 15% 15%;
+  --accent-foreground: 0 0% 9%;
 
-  --destructive: 0 72% 51%;
+  --destructive: 0 84% 60%;
 
-  --destructive-foreground: 0 0% 98%;
+  --destructive-foreground: 0 0% 100%;
 
-  --input: 220 12% 80%;
-  --ring: 275 75% 55%;
+  --input: 0 0% 90%;
+  --ring: 262 83% 58%;
   --chart-1: 275 75% 55%;
   --chart-2: 160 70% 45%;
   --chart-3: 142 76% 45%;
   --chart-4: 45 93% 60%;
   --chart-5: 38 92% 55%;
 
-  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: 'JetBrains Mono', Menlo, monospace;
   --radius: .75rem;
