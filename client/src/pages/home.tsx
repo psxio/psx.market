@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Header } from "@/components/header";
 import { WelcomeModal } from "@/components/welcome-modal";
 import { BuilderCard } from "@/components/builder-card";
+import { ServiceCard } from "@/components/service-card";
 import { SEOHead } from "@/components/seo-head";
 import { LiveActivityTicker } from "@/components/live-activity-ticker";
 import { RecentReviewsCarousel } from "@/components/recent-reviews-carousel";
@@ -90,7 +91,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
 
   // Fetch top builders sorted by rating and completed projects
-  const { data: topBuilders, isLoading: buildersLoading, isError: buildersError } = useQuery<Builder[]>({
+  const { data: topBuilders, isLoading: buildersLoading, isError: buildersError} = useQuery<Builder[]>({
     queryKey: ["/api/builders", "top"],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -98,6 +99,21 @@ export default function Home() {
         limit: "12"
       });
       const response = await fetch(`/api/builders?${params.toString()}`, { credentials: "include" });
+      if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+      return response.json();
+    },
+  });
+
+  // Fetch services filtered by selected category
+  const { data: filteredServices, isLoading: servicesLoading } = useQuery<Array<{ builder: Builder; service: Service }>>({
+    queryKey: ["/api/services", selectedCategory],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (selectedCategory) {
+        params.set("categories", selectedCategory);
+      }
+      const url = `/api/services${params.toString() ? `?${params.toString()}` : ""}`;
+      const response = await fetch(url, { credentials: "include" });
       if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
       return response.json();
     },
@@ -261,25 +277,40 @@ export default function Home() {
       <GuestBrowseBanner />
       <MobileStickyCTA />
 
-      {/* Minimal Interactive Hero */}
+      {/* Buy on Demand Hero */}
       <section className="relative border-b overflow-hidden bg-background">
-        {/* Minimal Animated Mesh Gradient */}
+        {/* Animated Mesh Gradient Background */}
         <div className="absolute inset-0 z-0">
-          {/* Subtle animated gradient orbs - More visible in dark mode */}
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/15 dark:bg-purple-500/25 rounded-full blur-3xl animate-float-slower" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-cyan-500/10 dark:bg-cyan-500/20 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
         </div>
         
-        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-24 lg:px-8 lg:py-32">
-          {/* Hero Content - Clean & Minimal */}
-          <div className="mx-auto max-w-4xl text-center space-y-8">
+        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+          {/* Hero Content - Buy on Demand Style */}
+          <div className="mx-auto max-w-5xl text-center space-y-6">
+            {/* Token Holder Benefits & Browse All Badge */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+              <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 border-primary/30">
+                <Gift className="h-3.5 w-3.5" />
+                Token Holder Benefits
+              </Badge>
+              <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 border-primary/30">
+                <Sparkles className="h-3.5 w-3.5" />
+                Save Up to 60% with Tokens
+              </Badge>
+            </div>
+
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              Premium Web3 builders
-              <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                will take it from here
+              Buy on Demand
+              <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+                Web3 Talent Marketplace
               </span>
             </h1>
+
+            <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
+              The open Web3 marketplace connecting premium builders with memecoin and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
+            </p>
 
             {/* Prominent Search Bar - Functional Autocomplete */}
             <div className="max-w-3xl mx-auto relative">
@@ -403,84 +434,113 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Token Benefits Banner */}
-      <section className="border-b bg-muted/30">
-        <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-8 text-center md:text-left">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Gift className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold">Token Holder Perks</p>
-                <p className="text-sm text-muted-foreground">60% lower fees with $CREATE or $PSX</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Sparkles className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold">Priority Support</p>
-                <p className="text-sm text-muted-foreground">Fast response & exclusive access</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <CheckCircle2 className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold">Verified Badge</p>
-                <p className="text-sm text-muted-foreground">Stand out in the marketplace</p>
-              </div>
-            </div>
+      {/* Token Holder Benefits - Inline Card */}
+      <div className="container mx-auto max-w-7xl px-4 py-6 md:px-6 lg:px-8">
+        <div className="rounded-lg border-2 border-green-500/30 bg-green-500/5 p-4 md:p-6">
+          <div className="flex items-center justify-center gap-2 text-sm md:text-base text-center">
+            <Gift className="h-5 w-5 text-green-500 flex-shrink-0" />
+            <p className="text-foreground">
+              <span className="font-semibold">Token Holder Perks:</span> 60% lower fees (1% vs 2.5%), priority support, exclusive badges, early access!
+            </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Clean Explore Services Section */}
-      <section id="explore-services" className="bg-background">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
-          {/* Section Header */}
-          <div className="text-center space-y-3 mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">Explore Services</h2>
-            <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">Browse by category to find the perfect builder for your project</p>
+      {/* Buy on Demand - Category Filtering & Services */}
+      <section id="explore-services" className="bg-background pb-16">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+            <Link href="/marketplace">
+              <Button size="lg" className="gap-2" data-testid="button-browse-all-services">
+                <Search className="h-5 w-5" />
+                Browse All Services
+              </Button>
+            </Link>
+            <Link href="/getting-started?tab=client">
+              <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
+                Become a Client
+              </Button>
+            </Link>
+            <Link href="/getting-started?tab=builder">
+              <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-builder">
+                Become a Builder
+              </Button>
+            </Link>
           </div>
 
-          {/* Category Cards Grid - Smaller */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
+          {/* Category Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-6">
             {serviceCategories.map((cat) => {
               const Icon = cat.icon;
               const isSelected = selectedCategory === cat.slug;
               return (
-                <Link
-                  key={cat.slug || 'all'}
-                  href={`/marketplace?categories=${cat.slug}`}
-                  className={`group relative flex flex-col items-center justify-center p-4 md:p-5 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
+                <button
+                  key={cat.slug}
+                  onClick={() => setSelectedCategory(cat.slug)}
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all border-2 ${
                     isSelected 
-                      ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/30' 
-                      : 'bg-card border-border hover:border-primary/50'
+                      ? 'bg-primary text-primary-foreground border-primary shadow-lg' 
+                      : 'bg-background text-foreground border-border hover:border-primary/50 hover-elevate'
                   }`}
-                  data-testid={`link-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
+                  data-testid={`button-category-${cat.slug.toLowerCase().replace(/\s+/g, '-')}`}
                 >
-                  <div className={`mb-2 p-2.5 rounded-lg transition-all ${
-                    isSelected 
-                      ? 'bg-primary-foreground/20' 
-                      : 'bg-primary/10 group-hover:bg-primary/20'
-                  }`}>
-                    <Icon className={`h-6 w-6 md:h-7 md:w-7 ${
-                      isSelected ? 'text-primary-foreground' : 'text-primary'
-                    }`} />
-                  </div>
-                  <span className={`text-xs md:text-sm font-semibold text-center ${
-                    isSelected ? 'text-primary-foreground' : 'text-foreground'
-                  }`}>
-                    {cat.name}
-                  </span>
-                </Link>
+                  <Icon className="h-4 w-4" />
+                  {cat.name}
+                </button>
               );
             })}
           </div>
+
+          {/* Service Count */}
+          {filteredServices && (
+            <div className="text-center mb-8">
+              <p className="text-base md:text-lg font-semibold" data-testid="text-service-count">
+                Showing {filteredServices.length} {serviceCategories.find(c => c.slug === selectedCategory)?.name || 'services'}
+              </p>
+            </div>
+          )}
+
+          {/* Filtered Services Grid */}
+          {servicesLoading ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-[400px] w-full rounded-xl" />
+              ))}
+            </div>
+          ) : filteredServices && filteredServices.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-filtered-services">
+              {filteredServices.slice(0, 8).map(({ builder, service }) => (
+                <ServiceCard
+                  key={service.id}
+                  builder={builder}
+                  service={service}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground">No services found in this category.</p>
+              <Link href="/marketplace">
+                <Button variant="outline" className="mt-4 gap-2">
+                  Browse All Services
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          )}
+
+          {/* View More Button */}
+          {filteredServices && filteredServices.length > 8 && (
+            <div className="text-center mt-10">
+              <Link href={`/marketplace?categories=${selectedCategory}`}>
+                <Button size="lg" variant="outline" className="gap-2">
+                  View All {serviceCategories.find(c => c.slug === selectedCategory)?.name} Services
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
