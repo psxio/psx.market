@@ -100,27 +100,24 @@ export default function Home() {
       <MobileStickyCTA />
 
       {/* Unified Hero + Category Browser Section */}
-      <section className="relative overflow-hidden border-b bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-chart-2/10 via-transparent to-transparent" />
-        
-        <div className="container relative mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16 lg:px-8 lg:py-20">
+      <section className="border-b bg-background">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8 lg:py-24">
           {/* Branding Header */}
-          <div className="mx-auto max-w-4xl text-center space-y-6 mb-12">
+          <div className="mx-auto max-w-3xl text-center space-y-6 mb-16">
             <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="outline" className="gap-1.5 border-primary/40 bg-primary/10 text-primary">
+              <Badge variant="outline" className="gap-1.5">
                 <Gift className="h-3 w-3" />
                 Token Holder Benefits
               </Badge>
-              <Badge variant="default" className="gap-1.5 animate-pulse">
+              <Badge variant="outline" className="gap-1.5">
                 <Sparkles className="h-3 w-3" />
                 Save Up to 60% with Tokens
               </Badge>
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Buy on Demand
-              <span className="block mt-2 bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+              <span className="block mt-2">
                 Web3 Talent Marketplace
               </span>
             </h1>
@@ -130,27 +127,27 @@ export default function Home() {
               and crypto projects. Hold $CREATE or $PSX tokens for exclusive benefits and reduced fees.
             </p>
 
-            <div className="rounded-lg border border-chart-3/30 bg-chart-3/5 p-4 max-w-2xl mx-auto">
-              <p className="text-sm font-medium text-chart-3 flex items-center justify-center gap-2 flex-wrap">
-                <Gift className="h-4 w-4" />
+            <div className="rounded-lg border p-4 max-w-2xl mx-auto">
+              <p className="text-sm text-muted-foreground flex items-center justify-center gap-2 flex-wrap">
+                <Gift className="h-4 w-4 text-primary" />
                 Token Holder Perks: 60% lower fees (1% vs 2.5%), priority support, exclusive badges, early access!
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row justify-center">
+            <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/marketplace">
-                <Button size="lg" className="gap-2 text-base" data-testid="button-browse-all-services">
+                <Button size="lg" className="gap-2" data-testid="button-browse-all-services">
                   Browse All Services
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/become-client">
-                <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-become-client">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
                   Become a Client
                 </Button>
               </Link>
               <Link href="/apply">
-                <Button size="lg" variant="outline" className="gap-2 text-base hover-elevate" data-testid="button-become-builder">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-builder">
                   Become a Builder
                 </Button>
               </Link>
