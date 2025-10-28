@@ -1,151 +1,5 @@
 ## Overview
-port444 is a Web3 marketplace designed to connect premium builders with clients in the memecoin and broader crypto space. It features dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform offers comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
-
-## Recent Changes (Oct 28, 2025)
-
-### 🎨 MAJOR UI REDESIGN IN PROGRESS - Minimalist Overhaul
-**Goal**: Transform port444 from overwhelming, colorful UI to clean, professional, mass-adoption ready design
-
-**Design System Updates**:
-- ✅ New design guidelines generated (design_guidelines.md)
-- ✅ Color scheme: Pure white backgrounds (#FFFFFF), minimal grays, purple accent (#7C3AED) for CTAs only
-- ✅ Typography: Switched from Space Grotesk to Inter for professional, readable aesthetic  
-- ✅ Updated client/src/index.css with minimal color palette
-- ✅ Updated client/index.html to load Inter font
-
-**Redesign Approach** (Reference sites: Fiverr, Upwork, Base.org, Nemesis.trade):
-1. **Homepage**: Fiverr-style large hero image with simple search bar, icon-based categories, white cards
-2. **Browse Pages**: Upwork-inspired clean grids, minimal text, generous white space
-3. **Forms**: Simple inputs, no excessive styling, clear CTAs
-4. **Navigation**: Clean white header, 1px border, minimal links
-5. **Overall**: Remove gradients, reduce text by 50%, maximize breathing room
-
-**Status**: Foundational changes complete (colors, fonts, guidelines). Homepage hero simplified with clean aesthetic.
-
-**Completed Changes - Revamped with Visual Interest** (Inspired by NFT Marketplace Design):
-
-**Hero Section**:
-- ✅ Subtle gradient background (from-muted/30 to-background) for depth
-- ✅ Larger, bolder typography (up to text-8xl on desktop)
-- ✅ Purple accent on "Web3 Talent Marketplace" for brand focus
-- ✅ Enhanced spacing (py-28, space-y-8, mb-20)
-- ✅ Elevated token perks card with shadow and rounded-xl
-- ✅ Primary button with subtle shadow (shadow-lg shadow-primary/20)
-- ✅ Larger button padding (px-8 py-6) for prominence
-
-**Benefits Section**:
-- ✅ Subtle background (bg-muted/20) to distinguish from hero
-- ✅ Purple highlights on $CREATE and $PSX mentions
-- ✅ Larger benefit cards (p-6, rounded-xl) with hover effects
-- ✅ Purple icon backgrounds (bg-primary/10) with larger icons
-- ✅ Enhanced typography hierarchy (text-5xl headings, text-lg body)
-- ✅ Shadows on cards (shadow-sm) with hover-elevate interaction
-
-**PSX Agency Section**:
-- ✅ Large rounded card (rounded-2xl, p-10) with prominent shadow-lg
-- ✅ Purple accent on key links (psx.agency, The Creators)
-- ✅ Larger buttons matching hero style (px-8 py-6)
-- ✅ Enhanced spacing and typography for premium feel
-
-**Marketplace-Inspired Enhancements** (COMPLETE REDESIGN):
-- ✅ **LARGE Category Cards** - Not pills! Full card grid (2-6 columns responsive)
-- ✅ **Giant Icons** - 10x10 icons in purple-tinted backgrounds (bg-primary/10)
-- ✅ **Selected State** - Purple background + white text + massive shadow (shadow-xl shadow-primary/30)
-- ✅ **Section Header** - text-6xl "Explore Services" heading
-- ✅ **Featured Section Header** - Category name as h3, service count, "View All" button
-- ✅ **Grid Layout** - Max 3 columns for larger service cards (not 4)
-- ✅ **Load More Pattern** - Shows 6 services with "Load More" button (not all at once)
-- ✅ **Hover Effects** - Cards elevate on hover with border color change
-- ✅ **Visual Impact** - Much more prominent, marketplace-style browsing experience
-
-**Design Principles Applied**:
-- ✅ Strategic use of purple accent for brand elements
-- ✅ Subtle backgrounds for section hierarchy
-- ✅ Shadows and elevation for depth without gradients
-- ✅ Generous spacing and larger typography
-- ✅ Hover effects on interactive cards
-- ✅ Clean but not "dry" - balanced visual interest
-- ✅ NFT marketplace-inspired layout (prominent categories, featured content)
-
-**Preserved**: All functionality, text, and features intact - enhanced visuals only
-
-### 🎨 Browse Pages Redesign (Oct 28, 2025)
-**Browse Services (/marketplace) & Browse Builders (/builders) - Complete Visual Overhaul**:
-
-**Typography & Spacing**:
-- ✅ Massive headings: text-6xl (was text-3xl) for page titles
-- ✅ Larger subtitles: text-xl (was text-base)
-- ✅ Increased padding: py-12 (was py-8) for vertical breathing room
-- ✅ Enhanced spacing: mb-12, gap-10 (was mb-8, gap-8)
-
-**Search & Filters**:
-- ✅ Larger search bar: h-12 with text-base input (was default size)
-- ✅ Bigger search icon: h-5 w-5 (was h-4 w-4)
-- ✅ Enhanced filter button: size-lg with h-12 px-6
-- ✅ Bold filter sidebar: text-2xl heading, p-8 padding, rounded-2xl borders
-- ✅ Filter labels: text-lg font-bold (was text-base font-semibold)
-- ✅ Increased filter spacing: space-y-8, space-y-4 per section, space-y-2.5 per item
-
-**Grid Layouts**:
-- ✅ Max 3 columns: lg:grid-cols-3 (consistent with homepage pattern)
-- ✅ Larger gaps: gap-8 between cards (was gap-6)
-- ✅ Wider sidebar: 320px (was 280px)
-- ✅ Enhanced skeletons: h-[320px] and h-[360px] with rounded-2xl
-
-**Builder Cards (Browse Builders)**:
-- ✅ Larger avatars: h-16 w-16 with border-2 (was h-14 w-14)
-- ✅ Bigger names: text-lg (was text-base)
-- ✅ Enhanced spacing: space-y-4, gap-4 (was space-y-3, gap-3)
-- ✅ Bold ratings: text-base font-bold with h-5 w-5 stars
-- ✅ Rounded cards: rounded-2xl border-2 (was rounded-lg border)
-- ✅ Larger badges: default size (was text-xs)
-- ✅ Prominent pricing: h-5 w-5 icons, text-sm font-bold
-
-**Results Display**:
-- ✅ Result count: text-lg font-semibold (was text-sm)
-- ✅ Better formatting: "X services found" instead of "Showing X results"
-- ✅ Enhanced empty states: py-24, text-2xl headings, h-16 w-16 icons
-
-**Mobile Filters Sheet**:
-- ✅ Larger title: text-xl (was default)
-- ✅ More spacing: mt-8 (was mt-6)
-
-**Visual Consistency**:
-- ✅ All rounded corners: rounded-2xl for cards and borders
-- ✅ Enhanced shadows: shadow-sm on filter sidebars
-- ✅ Border emphasis: border-2 (was border or border-1)
-- ✅ Consistent hover states: hover-elevate, active-elevate-2
-
-## Recent Changes (Oct 28, 2025) - Previous Updates
-
-### Critical Bug Fixes
-- **🔥 CRITICAL: Search/Filter Bug Fixed** - Changed React Query `staleTime` from `Infinity` to `0` in queryClient.ts, fixing the issue where search and filters required page reload to work. All filters now update results instantly without reload.
-
-### UX Polish Completed
-- **FAQ Page**: Added scroll-to-top on mount so users start at the top instead of spawning mid-page
-- **Footer Tagline**: Updated from "Powered by $CREATE and $PSX tokens on Base" to "Powered by $Create and $PSX on Base"
-- **Become a Client Page**: 
-  - Split hero subtitle into two lines: "Join the Web3 talent marketplace" / "and connect with vetted builders for your memecoin and crypto projects"
-  - Equalized feature card heights (all 3 cards now same size)
-- **Browse Builders UI**: Simplified builder cards by removing excessive details (specializations, languages, country, projects count) for cleaner display
-
-### Builder Onboarding Streamlined
-- **Relaxed Validation**: Changed from 3 skills minimum to 1 skill minimum in Step 2
-- **Portfolio Requirement Removed**: No longer requires portfolio link for application completion
-- **Skills Input UX Fixed**: Users were getting stuck on Step 2 because they didn't know to press Enter after typing skills. Fixed by:
-  - Updated label from "Skills (comma-separated) *" to "Skills (Press Enter or comma to add) *"
-  - Added auto-add on blur - when user clicks away, skill is automatically added
-  - Continue button now properly enables once skill is added to array
-
-### Testing Verified
-- ✅ Search functionality works without reload (tested with "marketing", "animation")
-- ✅ Category filters update instantly without reload
-- ✅ Combined search + filters work correctly
-- ✅ Sort dropdown reorders results immediately
-- ✅ FAQ scroll behavior confirmed
-- ✅ Become a Client card sizing verified
-- ✅ Footer tagline updated correctly
-- ✅ Browse Builders UI simplified as intended
+port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
@@ -162,29 +16,26 @@ port444 utilizes a decoupled frontend and backend architecture, built with React
 ### UI/UX Decisions
 - **Branding**: "port444" with a purple/cyan gradient theme, powered by $CREATE and $PSX tokens.
 - **Design System**: Tailwind CSS and Shadcn UI for a modern, responsive, mobile-first design.
-- **Navigation**: Header with core links (Browse Services, Browse Builders, Getting Started, Dashboard, Messages) and a footer for platform, resources, and legal links.
-- **Homepage ("Buy on Demand")**: Fiverr-style, category-driven marketplace with a hero section. Features real-time category filtering, project token tickers on service/builder cards, token perks, CTAs, token holder benefits, and PSX Agency promotion.
-- **Getting Started Page**: Dual-tab onboarding for clients (wallet setup, builder search tips, AI matching wizard, workflow, payments, reviews) and builders (value proposition, benefits, 4-step application, payment/escrow flow, CTAs).
-- **Key Features**: Dual token incentive system, detailed builder profiles, advanced search/filtering, admin/client dashboards, multi-step builder application, visual onboarding checklist, "Buy on Demand" homepage, PSX Agency promotion, and legal/compliance documentation.
-- **Browse Pages**: Consistent layouts for services, builders, and portfolios with search and filtering.
-  - **Browse Services**: Grid-based service listings with category filters
-  - **Browse Builders**: Advanced sidebar filters (categories, delivery time, rating, languages, budget range $0-$20k+ with $500 increments, availability, verified status)
-  - **Browse Portfolios**: NEW Pinterest-style masonry layout (/portfolios) for visual portfolio discovery. Search across all builder work by keywords (e.g., "schizo art", "token launch"), click-through to builder profiles. Aggregates builder portfolioMedia and builderProjects with project details.
+- **Navigation**: Header with core links and a footer for platform, resources, and legal links.
+- **Homepage ("Buy on Demand")**: Fiverr-style, category-driven marketplace with a hero section, real-time category filtering, project token tickers, token perks, CTAs, token holder benefits, and PSX Agency promotion.
+- **Getting Started Page**: Dual-tab onboarding for clients and builders, covering wallet setup, builder search tips, AI matching, workflow, payments, reviews, value proposition, and application process.
+- **Key Features**: Dual token incentive system, detailed builder profiles, advanced search/filtering, admin/client dashboards, multi-step builder application, visual onboarding checklist, "Buy on Demand" homepage, PSX Agency promotion, and legal/compliance.
+- **Browse Pages**: Consistent layouts for services, builders, and portfolios with search and filtering. Includes an advanced sidebar filter for builders and a Pinterest-style masonry layout for portfolios.
 
 ### Technical Implementations
 - **Frontend**: React and TypeScript with TanStack Query.
 - **Backend**: Express and TypeScript, providing a RESTful API.
-- **Authentication**: Session-based for admins; RainbowKit + wagmi for unified wallet authentication, enabling token-based benefits.
-- **Token Incentive System**: Benefits for $CREATE or $PSX holders include reduced platform fees (1% vs 2.5%), priority support, badges, early access, and exclusive services, applied automatically based on real-time token balance checks.
+- **Authentication**: Session-based for admins; RainbowKit + wagmi for unified wallet authentication with token-based benefits.
+- **Token Incentive System**: Benefits for $CREATE or $PSX holders (reduced fees, priority support, badges, early access) based on real-time token balance checks.
 - **Data Storage**: PostgreSQL with Drizzle ORM, including schemas for Builders, Clients, Services, Orders, and Payments.
-- **Smart Contract Escrow System**: On-chain USDC payments on Base using `USDCEscrow.sol` for milestone releases, dispute resolution, fees, and refunds. Includes frontend UI for USDC approval, balance checks, and transaction tracking.
+- **Smart Contract Escrow System**: On-chain USDC payments on Base using `USDCEscrow.sol` for milestone releases, dispute resolution, fees, and refunds, with integrated frontend UI.
 - **Real-Time Messaging**: WebSocket-based chat with read receipts and file attachments.
 - **File Upload & Storage**: Replit Object Storage (Google Cloud Storage) with ACL and presigned URLs.
 - **AI-Powered Builder Discovery & Matching**: OpenAI GPT-4o-mini for a client-facing matching wizard, "Similar Builders Engine," and "Smart Service Recommendations."
-- **Notification System**: Comprehensive system with browser push, email notifications (for offline builders, daily/weekly digests), real-time counters, and read/unread tracking.
+- **Notification System**: Comprehensive system with browser push, email notifications, real-time counters, and read/unread tracking.
 - **SEO & Discovery**: Dynamic meta tags, OpenGraph, Schema.org structured data, and dynamic sitemap generation.
 - **Smart Recommendations Engine**: Collaborative filtering, AI-powered price optimization, and success prediction scores.
-- **Builder Profile System**: Over 50 fields including core info, enhanced fields (languages, location, education), social links (X/Twitter, Discord server invites), category-specific fields (KOLs, 3D artists, video editors, mods & raiders, marketers, developers, volume traders), performance metrics, and specialized layouts for certain consulting roles. Social links are prominently displayed on builder profiles for instant client connection.
+- **Builder Profile System**: Over 50 fields including core info, enhanced fields, social links, category-specific fields, performance metrics, and specialized layouts.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
