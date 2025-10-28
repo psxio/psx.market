@@ -518,7 +518,7 @@ export default function Home() {
             </p>
 
             {/* Prominent Search Bar - Functional Autocomplete */}
-            <div id="hero-search" className="max-w-3xl mx-auto relative" style={{ willChange: 'transform' }}>
+            <div id="hero-search" className="max-w-3xl mx-auto relative z-[100]" style={{ willChange: 'transform' }}>
               <div className="relative">
                 <input
                   ref={searchInputRef}
@@ -547,7 +547,7 @@ export default function Home() {
 
               {/* Autocomplete Suggestions Dropdown */}
               {isSearchOpen && filteredSearchSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-background border-2 border-border rounded-lg shadow-lg z-50 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-background border-2 border-border rounded-lg shadow-lg z-[200] overflow-hidden">
                   <Command>
                     <CommandList>
                       {searchQuery.length === 0 && (
