@@ -536,7 +536,7 @@ export default function Home() {
                 {topBuilders.slice(0, 8).map((builder) => (
                   <Link
                     key={builder.id}
-                    href={`/builders/${builder.id}`}
+                    href={`/builder/${builder.id}`}
                     className="group block"
                     data-testid={`link-builder-${builder.id}`}
                   >
@@ -601,7 +601,7 @@ export default function Home() {
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                             <span className="font-semibold text-sm">
-                              {builder.rating ? builder.rating.toFixed(1) : '5.0'}
+                              {builder.rating ? Number(builder.rating).toFixed(1) : '5.0'}
                             </span>
                             <span className="text-xs text-muted-foreground">
                               ({builder.totalReviews || 0})

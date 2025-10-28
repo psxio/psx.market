@@ -25,6 +25,18 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 - ✅ **Compact category cards**: p-4 md:p-5 padding, h-6 w-6 md:h-7 md:w-7 icons
 - ✅ **Better spacing**: gap-3 md:gap-4 grid gaps
 - ✅ **Focus on content**: Reduced chrome, more white space
+- ✅ **Category cards as links**: Direct links to marketplace filtered by category
+
+**4. Top Builders Section - Fiverr Style**:
+- ✅ **Image-first builder cards**: Large aspect-square profile images with hover scale effect
+- ✅ **Prominent rating display**: Star icon with rating number and review count
+- ✅ **Key stats**: Completed projects count, starting price, location
+- ✅ **Status badges**: Online status (green badge), verified badge (Shield icon)
+- ✅ **Grid layout**: sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+- ✅ **Sorted by rating**: Fetches top 12 builders sorted by rating via /api/builders
+- ✅ **Clean card design**: border-2, hover-elevate, active-elevate-2
+- ✅ **Builder info**: Name, location (MapPin icon), specialization, hourly rate
+- ✅ **Fixed routing**: Links to /builder/{id} (singular)
 
 **Design Philosophy Applied**:
 - 📐 **NFT Marketplace Principles**: Neutral backgrounds let content shine, information hierarchy, keep it simple
