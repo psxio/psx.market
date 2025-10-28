@@ -96,15 +96,20 @@ export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const buildersContainerRef = useRef<HTMLDivElement>(null);
 
-  // SUBTLE PARALLAX - SMOOTH SCROLLING DEPTH
+  // COMPLETE PARALLAX - HERO TO CATEGORIES FLOW
   useEffect(() => {
     let ticking = false;
     
     const applyParallax = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
+      const heroHeight = windowHeight;
       
-      // ==== HERO SECTION - SUBTLE DEPTH LAYERS ====
+      // Calculate progress through hero section (0 to 1)
+      const heroProgress = Math.min(1, scrollY / heroHeight);
+      
+      // ==== HERO SECTION - COMPLETE PARALLAX LAYERS ====
+      const heroSection = document.getElementById('hero-section');
       const heroBackground = document.getElementById('hero-background');
       const heroBlob1 = document.getElementById('hero-blob-1');
       const heroBlob2 = document.getElementById('hero-blob-2');
@@ -114,55 +119,71 @@ export default function Home() {
       const heroSearch = document.getElementById('hero-search');
       const heroButtons = document.getElementById('hero-buttons');
       const heroBadges = document.getElementById('hero-badges');
+      const scrollIndicator = document.getElementById('scroll-indicator');
       
-      // Background moves DOWN slightly (subtle depth)
-      if (heroBackground) {
-        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.3}px, 0)`;
+      // Entire hero section scales down and fades as you scroll
+      if (heroSection) {
+        const scale = 1 - (heroProgress * 0.05);
+        heroSection.style.transform = `scale(${scale})`;
+        heroSection.style.opacity = `${1 - (heroProgress * 0.3)}`;
       }
-      // Individual blobs move at slightly different speeds
+      
+      // Background moves DOWN creating depth
+      if (heroBackground) {
+        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
+      }
+      // Individual blobs move at different speeds for depth
       if (heroBlob1) {
-        heroBlob1.style.transform = `translate3d(0, ${scrollY * 0.35}px, 0)`;
+        heroBlob1.style.transform = `translate3d(0, ${scrollY * 0.6}px, 0)`;
       }
       if (heroBlob2) {
-        heroBlob2.style.transform = `translate3d(0, ${scrollY * 0.25}px, 0)`;
+        heroBlob2.style.transform = `translate3d(0, ${scrollY * 0.4}px, 0)`;
       }
       if (heroBlob3) {
-        heroBlob3.style.transform = `translate3d(0, ${scrollY * 0.3}px, 0)`;
-      }
-      // Title moves UP gently and fades
-      if (heroTitle) {
-        heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.15}px, 0)`;
-        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 600)}`;
-      }
-      // Description
-      if (heroDescription) {
-        heroDescription.style.transform = `translate3d(0, ${-scrollY * 0.12}px, 0)`;
-        heroDescription.style.opacity = `${Math.max(0, 1 - scrollY / 700)}`;
-      }
-      // Search bar
-      if (heroSearch) {
-        heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`;
-        heroSearch.style.opacity = `${Math.max(0.3, 1 - scrollY / 800)}`;
-      }
-      // Buttons
-      if (heroButtons) {
-        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.08}px, 0)`;
-      }
-      // Badges
-      if (heroBadges) {
-        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
+        heroBlob3.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
       }
       
-      // ==== CATEGORIES SECTION - GENTLE SLIDE UP ====
+      // Content layers move UP at different speeds
+      if (heroTitle) {
+        heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.4}px, 0) scale(${1 - heroProgress * 0.1})`;
+        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 400)}`;
+      }
+      if (heroDescription) {
+        heroDescription.style.transform = `translate3d(0, ${-scrollY * 0.35}px, 0)`;
+        heroDescription.style.opacity = `${Math.max(0, 1 - scrollY / 500)}`;
+      }
+      if (heroSearch) {
+        heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.3}px, 0)`;
+        heroSearch.style.opacity = `${Math.max(0, 1 - scrollY / 600)}`;
+      }
+      if (heroButtons) {
+        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.25}px, 0)`;
+        heroButtons.style.opacity = `${Math.max(0, 1 - scrollY / 700)}`;
+      }
+      if (heroBadges) {
+        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.2}px, 0)`;
+        heroBadges.style.opacity = `${Math.max(0, 1 - scrollY / 800)}`;
+      }
+      
+      // Scroll indicator fades out quickly
+      if (scrollIndicator) {
+        scrollIndicator.style.opacity = `${Math.max(0, 1 - scrollY / 200)}`;
+      }
+      
+      // ==== CATEGORIES SECTION - DRAMATIC ENTRANCE ====
       const categoriesSection = document.getElementById('categories-section');
       if (categoriesSection) {
         const rect = categoriesSection.getBoundingClientRect();
         const isVisible = rect.top < windowHeight && rect.bottom > 0;
         
         if (isVisible) {
-          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.8)));
-          categoriesSection.style.transform = `translate3d(0, ${(1 - progress) * 30}px, 0)`;
-          categoriesSection.style.opacity = `${Math.max(0.3, progress)}`;
+          // Progress from 0 (off screen) to 1 (fully visible)
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.6)));
+          
+          // Slide up and fade in
+          const translateY = (1 - progress) * 80;
+          categoriesSection.style.transform = `translate3d(0, ${translateY}px, 0) scale(${0.95 + progress * 0.05})`;
+          categoriesSection.style.opacity = `${progress}`;
         }
       }
       
@@ -427,7 +448,7 @@ export default function Home() {
       <MobileStickyCTA />
 
       {/* Buy on Demand Hero */}
-      <section className="relative border-b overflow-hidden bg-background h-screen flex items-center -mt-16 pt-16">
+      <section id="hero-section" className="relative border-b overflow-hidden bg-background h-screen flex items-center -mt-16 pt-16" style={{ willChange: 'transform, opacity' }}>
         {/* Animated Mesh Gradient Background with Parallax */}
         <div id="hero-background" className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
           <div id="hero-blob-1" className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" style={{ willChange: 'transform' }} />
@@ -624,7 +645,7 @@ export default function Home() {
           </div>
 
           {/* Scroll Down Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
+          <div id="scroll-indicator" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce" style={{ willChange: 'opacity' }}>
             <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
             <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1">
               <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
@@ -636,7 +657,7 @@ export default function Home() {
 
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="bg-background py-16">
-        <div id="categories-section" className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8" style={{ willChange: 'transform' }}>
+        <div id="categories-section" className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8" style={{ willChange: 'transform, opacity', opacity: 0 }}>
           
           {/* Section Heading */}
           <div className="text-center mb-8">
