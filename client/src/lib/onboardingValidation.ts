@@ -64,14 +64,9 @@ export function validateStep2(data: OnboardingFormData): ValidationResult {
   const errors: string[] = [];
   const missingFields: string[] = [];
 
-  if (!data.skills || data.skills.length < 3) {
-    errors.push("Please add at least 3 skills");
+  if (!data.skills || data.skills.length < 1) {
+    errors.push("Please add at least 1 skill");
     missingFields.push("skills");
-  }
-
-  if (!data.portfolioLinks || data.portfolioLinks.length < 1) {
-    errors.push("Please add at least 1 portfolio link");
-    missingFields.push("portfolioLinks");
   }
 
   if (!data.responseTime) {
