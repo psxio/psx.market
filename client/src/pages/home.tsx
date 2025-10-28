@@ -653,9 +653,9 @@ export default function Home() {
         </div>
 
         {/* Scroll Down Indicator - Centered on viewport, above blur */}
-        <div id="scroll-indicator" className="absolute bottom-44 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 animate-bounce" style={{ willChange: 'opacity' }}>
+        <div id="scroll-indicator" className="absolute bottom-44 left-0 right-0 z-30 flex flex-col items-center gap-2 animate-bounce" style={{ willChange: 'opacity' }}>
           <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
-          <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1">
+          <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1 mx-auto">
             <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
           </div>
         </div>
