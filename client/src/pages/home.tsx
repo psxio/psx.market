@@ -451,7 +451,7 @@ export default function Home() {
       <Header />
       
       {/* Buy on Demand Hero */}
-      <section id="hero-section" className="relative overflow-hidden bg-background h-screen flex items-center" style={{ willChange: 'transform, opacity' }}>
+      <section id="hero-section" className="relative overflow-hidden bg-background h-screen flex items-center justify-center" style={{ willChange: 'transform, opacity' }}>
       
       <WelcomeModal />
       <GuestBrowseBanner />
@@ -652,11 +652,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll Down Indicator - Perfectly Centered */}
-        <div id="scroll-indicator" className="absolute bottom-44 w-full z-30 flex justify-center animate-bounce" style={{ willChange: 'opacity' }}>
+        {/* Scroll Down Indicator - Perfectly Centered on Full Viewport */}
+        <div id="scroll-indicator" className="fixed bottom-44 left-0 right-0 z-30 pointer-events-none animate-bounce" style={{ willChange: 'opacity' }}>
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
-            <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1">
+            <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1 mx-auto">
               <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             </div>
           </div>
