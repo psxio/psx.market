@@ -74,17 +74,58 @@ export default function Marketplace() {
   // Read URL parameters on initial load
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const searchParam = params.get("search");
-    const categoriesParam = params.get("categories");
     
+    // Search query
+    const searchParam = params.get("search");
     if (searchParam) {
       setSearchQuery(searchParam);
     }
     
+    // Categories
+    const categoriesParam = params.get("categories");
     if (categoriesParam) {
-      // Split by comma in case multiple categories are provided
       const categoryArray = categoriesParam.split(',').map(c => c.trim()).filter(Boolean);
       setSelectedCategories(categoryArray);
+    }
+    
+    // Tags
+    const tagsParam = params.get("tags");
+    if (tagsParam) {
+      const tagArray = tagsParam.split(',').map(t => t.trim()).filter(Boolean);
+      setSelectedTags(tagArray);
+    }
+    
+    // Sort
+    const sortByParam = params.get("sortBy");
+    if (sortByParam) {
+      setSortBy(sortByParam);
+    }
+    
+    // Price range
+    const minPriceParam = params.get("minPrice");
+    const maxPriceParam = params.get("maxPrice");
+    if (minPriceParam || maxPriceParam) {
+      setPriceRange([
+        minPriceParam ? parseInt(minPriceParam) : 0,
+        maxPriceParam ? parseInt(maxPriceParam) : 10000
+      ]);
+    }
+    
+    // Rating
+    const minRatingParam = params.get("minRating");
+    if (minRatingParam) {
+      const ratingReverseMap: Record<string, string> = {
+        "5": "5 Stars",
+        "4": "4+ Stars",
+        "3": "3+ Stars",
+      };
+      setSelectedRating(ratingReverseMap[minRatingParam] || null);
+    }
+    
+    // Delivery time
+    const deliveryTimeParam = params.get("deliveryTime");
+    if (deliveryTimeParam) {
+      setSelectedDeliveryTime(deliveryTimeParam);
     }
     
     setInitialLoad(false);
@@ -96,17 +137,37 @@ export default function Marketplace() {
     if (initialLoad) return;
     
     const params = new URLSearchParams();
+    
     if (searchQuery) params.set("search", searchQuery);
     if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
     if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
     if (sortBy && sortBy !== "relevance") params.set("sortBy", sortBy);
+    
+    // Price range
+    if (priceRange[0] > 0) params.set("minPrice", priceRange[0].toString());
+    if (priceRange[1] < 10000) params.set("maxPrice", priceRange[1].toString());
+    
+    // Rating
+    if (selectedRating) {
+      const ratingMap: Record<string, string> = {
+        "5 Stars": "5",
+        "4+ Stars": "4",
+        "3+ Stars": "3",
+      };
+      params.set("minRating", ratingMap[selectedRating]);
+    }
+    
+    // Delivery time
+    if (selectedDeliveryTime) {
+      params.set("deliveryTime", selectedDeliveryTime);
+    }
     
     const queryString = params.toString();
     const newUrl = queryString ? `/marketplace?${queryString}` : '/marketplace';
     
     // Update URL without adding to history
     window.history.replaceState({}, '', newUrl);
-  }, [searchQuery, selectedCategories, selectedTags, sortBy, initialLoad]);
+  }, [searchQuery, selectedCategories, selectedTags, sortBy, priceRange, selectedRating, selectedDeliveryTime, initialLoad]);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
