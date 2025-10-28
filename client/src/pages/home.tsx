@@ -161,21 +161,30 @@ export default function Home() {
           </div>
 
           {/* Category Browser - Main Focal Point */}
-          <div className="space-y-8">
-            {/* Category Pills - Mobile Optimized */}
-            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+          <div className="space-y-10">
+            {/* Section Header */}
+            <div className="text-center space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Explore Services</h2>
+              <p className="text-muted-foreground text-lg">Browse by category to find the perfect builder</p>
+            </div>
+
+            {/* Category Pills - Prominent Design */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
               {serviceCategories.map((cat) => {
                 const Icon = cat.icon;
+                const isSelected = selectedCategory === cat.slug;
                 return (
                   <Button
                     key={cat.slug || 'all'}
-                    variant={selectedCategory === cat.slug ? "default" : "outline"}
-                    size="default"
+                    variant={isSelected ? "default" : "outline"}
+                    size="lg"
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className="gap-2 hover-elevate active-elevate-2 whitespace-nowrap min-h-10 md:min-h-9 px-4 md:px-3 text-sm md:text-base"
+                    className={`gap-2 px-5 py-3 text-sm font-medium whitespace-nowrap transition-all ${
+                      isSelected ? 'shadow-md shadow-primary/20' : ''
+                    }`}
                     data-testid={`button-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
                   >
-                    <Icon className="h-4 w-4 md:h-3.5 md:w-3.5" />
+                    <Icon className="h-4 w-4" />
                     <span>{cat.name}</span>
                   </Button>
                 );
@@ -215,12 +224,18 @@ export default function Home() {
               </div>
             ) : (
               <>
-                <div className="mb-4 text-center">
-                  <p className="text-sm text-muted-foreground" data-testid="text-services-count">
-                    Showing {servicesData.length} {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : 'All'} service{servicesData.length !== 1 ? 's' : ''}
-                  </p>
+                {/* Featured Count Badge */}
+                <div className="flex items-center justify-center gap-3">
+                  <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
+                    <span className="font-bold text-foreground">{servicesData.length}</span>
+                    <span className="text-muted-foreground ml-1">
+                      {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : 'All'} service{servicesData.length !== 1 ? 's' : ''}
+                    </span>
+                  </Badge>
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-category-services">
+
+                {/* Services Grid - Enhanced */}
+                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-category-services">
                   {servicesData.map(({ builder, service }) => (
                     <BuilderCard
                       key={service.id}
@@ -230,12 +245,13 @@ export default function Home() {
                   ))}
                 </div>
                 
+                {/* View All CTA */}
                 {servicesData.length > 0 && (
-                  <div className="mt-8 text-center pb-8">
+                  <div className="mt-12 text-center pb-8">
                     <Link href={selectedCategory ? `/marketplace?categories=${selectedCategory}` : "/marketplace"}>
-                      <Button variant="outline" size="lg" className="gap-2 hover-elevate" data-testid="button-view-all-category">
+                      <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-md" data-testid="button-view-all-category">
                         View All {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : ''} Services
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="h-5 w-5" />
                       </Button>
                     </Link>
                   </div>
