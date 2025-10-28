@@ -1,6 +1,12 @@
 ## Overview
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
+## Recent Changes (October 28, 2025)
+- **Database Seeding**: Created comprehensive seed script (`server/seed-builders.ts`) with 5 professional builder profiles and services
+- **Builder Profile Images**: Generated 5 AI-powered professional headshots and 5 portfolio images for diverse Web3 talent (3D Artist, Developer, KOL, Designer, Video Editor)
+- **Token Benefits UI**: Converted large banner to subtle green hover tooltip next to "Buy on Demand" heading for seamless page flow
+- **Design Cleanup**: Removed animated gradients and parallax effects to align with design_guidelines.md (clean, simple, Base blue aesthetic)
+
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
 - Design system follows design_guidelines.md
@@ -17,7 +23,7 @@ port444 utilizes a decoupled frontend and backend architecture, built with React
 - **Branding**: "port444" with a purple/cyan gradient theme, powered by $CREATE and $PSX tokens, with a Base blue primary color.
 - **Design System**: Tailwind CSS and Shadcn UI for a modern, responsive, mobile-first design, inspired by Fiverr and NFT marketplaces.
 - **Navigation**: Header with core links and a footer for platform, resources, and legal links.
-- **Homepage ("Buy on Demand")**: Fiverr-style, category-driven marketplace with a hero section, real-time category filtering, token perks, CTAs, token holder benefits, and PSX Agency promotion. Features an animated mesh gradient background, gradient text headlines, and a functional autocomplete search bar.
+- **Homepage ("Buy on Demand")**: Fiverr-style, category-driven marketplace with a clean hero section, real-time category filtering, token perks (subtle hover tooltip), CTAs, and PSX Agency promotion. Features a functional autocomplete search bar and follows design guidelines with clean Base blue aesthetic.
 - **Browse Pages**: Consistent Fiverr-style layouts for services, builders, and portfolios with search and advanced sidebar filtering. Services feature an image-first card design with hover effects, prominent ratings, and token tickers. Builder cards include aspect-square profile images, ratings, key stats, and status badges.
 - **Getting Started Page**: Dual-tab onboarding for clients and builders, covering wallet setup, builder search tips, AI matching, workflow, payments, reviews, value proposition, and application process.
 
