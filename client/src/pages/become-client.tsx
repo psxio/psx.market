@@ -125,7 +125,8 @@ export default function BecomeClient() {
             Become a Client
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Join the premier Web3 talent marketplace and connect with vetted builders for your memecoin and crypto projects
+            Join the Web3 talent marketplace<br />
+            and connect with vetted builders for your memecoin and crypto projects
           </p>
           
           <div className="mx-auto mt-6 max-w-2xl rounded-lg border border-chart-3/30 bg-chart-3/5 p-4">
@@ -142,38 +143,38 @@ export default function BecomeClient() {
         </div>
 
         <div className="mb-12 grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="h-full">
+            <CardContent className="pt-6 h-full">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                 <Shield className="h-6 w-6 text-primary" />
               </div>
               <h3 className="mb-2 font-semibold">Verified Builders</h3>
               <p className="text-sm text-muted-foreground">
-                All builders are vetted and hold $PSX tokens, ensuring quality and commitment
+                All builders are vetted and verified professionals
               </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="h-full">
+            <CardContent className="pt-6 h-full">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10">
                 <Zap className="h-6 w-6 text-chart-2" />
               </div>
               <h3 className="mb-2 font-semibold">Fast Matching</h3>
               <p className="text-sm text-muted-foreground">
-                Get matched with specialized builders based on your project needs and budget
+                Get matched with specialized builders instantly
               </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="h-full">
+            <CardContent className="pt-6 h-full">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/10">
                 <Star className="h-6 w-6 text-chart-3" />
               </div>
               <h3 className="mb-2 font-semibold">Quality Guarantee</h3>
               <p className="text-sm text-muted-foreground">
-                Access reviewed portfolios, ratings, and milestone-based payment protection
+                Access reviewed portfolios and secure payments
               </p>
             </CardContent>
           </Card>
