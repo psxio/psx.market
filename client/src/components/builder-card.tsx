@@ -102,6 +102,7 @@ function formatTimeAgo(dateString: string): string {
 
 export function BuilderCard({ builder, service }: BuilderCardProps) {
   const [imageIndex, setImageIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { data: serviceStats } = useServiceStats(service?.id || "");
 
   // Track view when service card is displayed
