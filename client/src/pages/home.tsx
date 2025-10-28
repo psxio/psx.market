@@ -98,18 +98,28 @@ export default function Home() {
 
   // Add scroll listener for parallax effect with direct DOM manipulation
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      
-      // Apply parallax transforms directly to DOM elements
-      if (heroBackgroundRef.current) {
-        heroBackgroundRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
-      }
-      if (heroContentRef.current) {
-        heroContentRef.current.style.transform = `translateY(${-scrollY * 0.1}px)`;
-      }
-      if (buildersContainerRef.current) {
-        buildersContainerRef.current.style.transform = `translateY(${-scrollY * 0.05}px)`;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          
+          // Apply parallax transforms directly to DOM elements
+          if (heroBackgroundRef.current) {
+            heroBackgroundRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
+          }
+          if (heroContentRef.current) {
+            heroContentRef.current.style.transform = `translateY(${-scrollY * 0.1}px)`;
+          }
+          if (buildersContainerRef.current) {
+            buildersContainerRef.current.style.transform = `translateY(${-scrollY * 0.05}px)`;
+          }
+          
+          ticking = false;
+        });
+        
+        ticking = true;
       }
     };
     
@@ -311,7 +321,7 @@ export default function Home() {
       {/* Buy on Demand Hero */}
       <section className="relative border-b overflow-hidden bg-background">
         {/* Animated Mesh Gradient Background with Parallax */}
-        <div ref={heroBackgroundRef} className="absolute inset-0 z-0">
+        <div ref={heroBackgroundRef} className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
@@ -319,7 +329,7 @@ export default function Home() {
         
         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
-          <div ref={heroContentRef} className="mx-auto max-w-5xl text-center space-y-6">
+          <div ref={heroContentRef} className="mx-auto max-w-5xl text-center space-y-6" style={{ willChange: 'transform' }}>
 
             <div className="flex items-center justify-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -509,11 +519,11 @@ export default function Home() {
 
 
       {/* Buy on Demand - Category Filtering & Services */}
-      <section id="explore-services" className="bg-background pb-16">
+      <section id="explore-services" className="bg-background py-16">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
 
           {/* Category Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-6">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-8">
             {serviceCategories.map((cat) => {
               const Icon = cat.icon;
               const isSelected = selectedCategory === cat.slug;
@@ -589,7 +599,7 @@ export default function Home() {
 
       {/* Top Builders Section - Fiverr Style with Parallax */}
       <section className="border-t bg-muted/20 relative overflow-hidden">
-        <div ref={buildersContainerRef} className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+        <div ref={buildersContainerRef} className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform' }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
