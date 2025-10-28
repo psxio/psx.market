@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Star, CheckCircle2 } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, DollarSign, Image } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -21,10 +21,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import type { Builder, Category } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ratings = ["5 Stars", "4+ Stars", "3+ Stars"];
@@ -41,6 +42,16 @@ const budgetRanges = [
   { label: "$20,000+", min: 20000, max: 999999 },
 ];
 
+const categoryIcons: Record<string, any> = {
+  "KOLs & Influencers": Users,
+  "3D & 2D Content Creation": Sparkles,
+  "Marketing & Growth": TrendingUp,
+  "Script Development": Code,
+  "Volume Services": BarChart3,
+  "Graphic Design": Palette,
+  "Social Media Management": Users,
+};
+
 export default function BrowseBuilders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -50,6 +61,9 @@ export default function BrowseBuilders() {
   const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null);
   const [selectedBudgetRange, setSelectedBudgetRange] = useState<typeof budgetRanges[0] | null>(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  
+  const headerSection = useScrollReveal();
+  const buildersGrid = useScrollReveal();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -132,29 +146,52 @@ export default function BrowseBuilders() {
   const FilterSidebar = () => (
     <div className="space-y-6">
       <div className="space-y-3">
-        <Label className="text-sm font-medium">Categories</Label>
+        <Label className="text-base font-semibold">Categories</Label>
         <div className="space-y-2">
-          {categories && categories.map((category) => (
-            <div key={category.id} className="flex items-center space-x-2">
-              <Checkbox
-                id={category.id}
-                checked={selectedCategories.includes(category.name)}
-                onCheckedChange={() => toggleCategory(category.name)}
-                data-testid={`checkbox-category-${category.slug}`}
-              />
-              <label
-                htmlFor={category.id}
-                className="text-sm cursor-pointer flex-1"
-              >
-                {category.name}
-              </label>
-            </div>
+          {categories && categories.map((category) => {
+            const CategoryIcon = categoryIcons[category.name] || Code;
+            return (
+              <div key={category.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={category.id}
+                  checked={selectedCategories.includes(category.name)}
+                  onCheckedChange={() => toggleCategory(category.name)}
+                  data-testid={`checkbox-category-${category.slug}`}
+                />
+                <label
+                  htmlFor={category.id}
+                  className="flex items-center gap-2 flex-1 cursor-pointer"
+                >
+                  <CategoryIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {category.name}
+                  </span>
+                </label>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Label className="text-base font-semibold">Languages</Label>
+        <div className="flex flex-wrap gap-2">
+          {languages.map((language) => (
+            <Badge
+              key={language}
+              variant={selectedLanguages.includes(language) ? "default" : "outline"}
+              className="cursor-pointer no-default-hover-elevate hover-elevate active-elevate-2"
+              onClick={() => toggleLanguage(language)}
+              data-testid={`language-${language.toLowerCase()}`}
+            >
+              {language}
+            </Badge>
           ))}
         </div>
       </div>
 
       <div className="space-y-3">
-        <Label className="text-sm font-medium">Rating</Label>
+        <Label className="text-base font-semibold">Rating</Label>
         <div className="space-y-2">
           {ratings.map((rating) => (
             <div key={rating} className="flex items-center space-x-2">
@@ -166,9 +203,8 @@ export default function BrowseBuilders() {
               />
               <label
                 htmlFor={rating}
-                className="text-sm cursor-pointer flex-1 flex items-center gap-1"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
-                <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
                 {rating}
               </label>
             </div>
@@ -177,21 +213,21 @@ export default function BrowseBuilders() {
       </div>
 
       <div className="space-y-3">
-        <Label className="text-sm font-medium">Languages</Label>
+        <Label className="text-base font-semibold">Availability</Label>
         <div className="space-y-2">
-          {languages.map((language) => (
-            <div key={language} className="flex items-center space-x-2">
+          {availabilityOptions.map((status) => (
+            <div key={status} className="flex items-center space-x-2">
               <Checkbox 
-                id={language}
-                checked={selectedLanguages.includes(language)}
-                onCheckedChange={() => toggleLanguage(language)}
-                data-testid={`language-${language.toLowerCase()}`}
+                id={status}
+                checked={selectedAvailability === status}
+                onCheckedChange={(checked) => setSelectedAvailability(checked ? status : null)}
+                data-testid={`checkbox-availability-${status}`}
               />
               <label
-                htmlFor={language}
-                className="text-sm cursor-pointer flex-1"
+                htmlFor={status}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer capitalize"
               >
-                {language}
+                {status}
               </label>
             </div>
           ))}
@@ -199,7 +235,7 @@ export default function BrowseBuilders() {
       </div>
 
       <div className="space-y-3">
-        <Label className="text-sm font-medium">Budget Range</Label>
+        <Label className="text-base font-semibold">Budget Range</Label>
         <div className="space-y-2">
           {budgetRanges.map((range) => (
             <div key={range.label} className="flex items-center space-x-2">
@@ -211,7 +247,7 @@ export default function BrowseBuilders() {
               />
               <label
                 htmlFor={range.label}
-                className="text-sm cursor-pointer flex-1"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
                 {range.label}
               </label>
@@ -226,29 +262,26 @@ export default function BrowseBuilders() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto max-w-7xl px-6 md:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-3">Browse Builders</h1>
-            <p className="text-lg text-muted-foreground mb-8">Find verified Web3 talent</p>
-            
-            <div className="max-w-2xl mx-auto mb-6">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search builders by name, skills, or expertise..."
-                  className="h-14 pl-12 text-base"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  data-testid="input-builders-search"
-                />
-              </div>
+      <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
+        <div ref={headerSection.ref as any} className={`mb-8 space-y-4 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Browse Builders</h1>
+              <p className="mt-2 text-muted-foreground">
+                Discover talented builders for your Web3 projects
+              </p>
             </div>
 
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <Button asChild variant="outline" className="gap-2" data-testid="link-browse-portfolios">
+                <Link href="/portfolios">
+                  <Image className="h-4 w-4" />
+                  Browse Portfolios
+                </Link>
+              </Button>
+              
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px]" data-testid="select-sort">
+                <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sort">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -258,80 +291,131 @@ export default function BrowseBuilders() {
                   <SelectItem value="projects">Most Projects</SelectItem>
                 </SelectContent>
               </Select>
-
-              <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
-                <SheetTrigger asChild className="lg:hidden">
-                  <Button variant="outline" className="gap-2" data-testid="button-filters">
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Filters
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>Filters</SheetTitle>
-                  </SheetHeader>
-                  <div className="mt-6">
-                    <FilterSidebar />
-                  </div>
-                </SheetContent>
-              </Sheet>
             </div>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-            <aside className="hidden lg:block">
-              <div className="sticky top-24 border-r pr-6">
-                <FilterSidebar />
-              </div>
-            </aside>
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search builders by name, skills, or expertise..."
+                className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                data-testid="input-builders-search"
+              />
+            </div>
 
-            <div>
-              {isLoading ? (
-                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                  {[...Array(9)].map((_, i) => (
-                    <Skeleton key={i} className="h-[240px] w-full" />
-                  ))}
+            <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+              <SheetTrigger asChild className="lg:hidden">
+                <Button variant="outline" size="default" className="gap-2" data-testid="button-filters">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Filters
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>Filters</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6">
+                  <FilterSidebar />
                 </div>
-              ) : isError ? (
-                <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
-                  <h3 className="mb-2 text-lg font-semibold">Failed to load builders</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Please try again later
-                  </p>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {(selectedCategories.length > 0 || selectedLanguages.length > 0) && (
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+              {selectedCategories.map((category) => (
+                <Button
+                  key={category}
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => toggleCategory(category)}
+                  className="gap-1"
+                  data-testid={`active-filter-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
+                >
+                  {category}
+                  <span className="text-muted-foreground">×</span>
+                </Button>
+              ))}
+              {selectedLanguages.map((language) => (
+                <Badge
+                  key={language}
+                  variant="secondary"
+                  className="cursor-pointer no-default-hover-elevate"
+                  onClick={() => toggleLanguage(language)}
+                  data-testid={`active-filter-language-${language.toLowerCase()}`}
+                >
+                  {language} ×
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 space-y-6 rounded-lg border bg-card p-6">
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <FilterSidebar />
+            </div>
+          </aside>
+
+          <div>
+            {isLoading ? (
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {[...Array(9)].map((_, i) => (
+                  <Skeleton key={i} className="h-[320px] w-full" />
+                ))}
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
+                <h3 className="mb-2 text-lg font-semibold">Failed to load builders</h3>
+                <p className="text-sm text-muted-foreground">
+                  Please try again later
+                </p>
+              </div>
+            ) : buildersData && buildersData.length > 0 ? (
+              <div>
+                <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
+                  Showing {buildersData.length} results
                 </div>
-              ) : buildersData && buildersData.length > 0 ? (
-                <div>
-                  <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
-                    {buildersData.length} results
-                  </div>
-                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3" data-testid="grid-builders">
-                    {buildersData.map((builder) => (
-                      <Card key={builder.id} className="p-6 hover:shadow-md transition-shadow" data-testid={`card-builder-${builder.id}`}>
-                        <CardContent className="p-0 space-y-4">
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-builders">
+                  {buildersData.map((builder) => (
+                    <Link key={builder.id} href={`/builder/${builder.id}`}>
+                      <Card className="h-full hover-elevate active-elevate-2 cursor-pointer transition-all" data-testid={`card-builder-${builder.id}`}>
+                        <CardHeader className="space-y-3 pb-3">
                           <div className="flex items-start gap-3">
-                            <Avatar className="h-16 w-16">
+                            <Avatar className="h-14 w-14">
                               <AvatarImage src={builder.profileImage || undefined} alt={builder.name} />
-                              <AvatarFallback className="text-lg font-semibold">
+                              <AvatarFallback className="text-base font-bold bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
                                 {builder.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-lg font-semibold truncate">{builder.name}</h3>
+                                <CardTitle className="text-base truncate">{builder.name}</CardTitle>
                                 {builder.verified && (
-                                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                                  <Badge variant="default" className="text-xs shrink-0">
+                                    Verified
+                                  </Badge>
                                 )}
                               </div>
                               <p className="text-sm text-muted-foreground line-clamp-2">
-                                {builder.headline || "Web3 Builder"}
+                                {builder.headline}
                               </p>
                             </div>
                           </div>
-
-                          <div className="flex items-center gap-4 text-sm">
+                        </CardHeader>
+                        
+                        <CardContent className="space-y-2.5">
+                          <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                              <span className="font-medium">
+                              <span className="font-semibold">
                                 {builder.rating ? 
                                   (Number.isFinite(Number(builder.rating)) ? 
                                     Number(builder.rating).toFixed(1) : 
@@ -340,48 +424,41 @@ export default function BrowseBuilders() {
                               </span>
                               <span className="text-muted-foreground">({builder.reviewCount || 0})</span>
                             </div>
-                            {builder.responseTime && (
-                              <span className="text-muted-foreground">
-                                {builder.responseTime}
-                              </span>
-                            )}
                           </div>
 
-                          {(builder.hourlyRate || builder.minProjectBudget) && (
-                            <div className="text-sm font-medium">
-                              {builder.hourlyRate ? (
-                                <>From ${parseFloat(builder.hourlyRate).toLocaleString()}/hr</>
-                              ) : builder.minProjectBudget ? (
-                                <>From ${parseFloat(builder.minProjectBudget).toLocaleString()}</>
-                              ) : null}
-                            </div>
+                          {builder.category && (
+                            <Badge variant="secondary" className="w-fit text-xs">
+                              {builder.category}
+                            </Badge>
                           )}
 
-                          <Button 
-                            asChild 
-                            variant="outline" 
-                            className="w-full"
-                            data-testid={`button-view-profile-${builder.id}`}
-                          >
-                            <Link href={`/builder/${builder.id}`}>
-                              View Profile
-                            </Link>
-                          </Button>
+                          {(builder.minProjectBudget || builder.hourlyRate) && (
+                            <div className="flex items-center gap-2 pt-1 border-t">
+                              <DollarSign className="h-4 w-4 text-primary" />
+                              <span className="text-sm font-semibold">
+                                {builder.hourlyRate ? (
+                                  <>Starting ${parseFloat(builder.hourlyRate).toLocaleString()}/hr</>
+                                ) : builder.minProjectBudget ? (
+                                  <>Starting ${parseFloat(builder.minProjectBudget).toLocaleString()}</>
+                                ) : null}
+                              </span>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
-                    ))}
-                  </div>
+                    </Link>
+                  ))}
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
-                  <Search className="mb-4 h-12 w-12 text-muted-foreground" />
-                  <h3 className="mb-2 text-lg font-semibold">No builders found</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Try adjusting your search or filters
-                  </p>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
+                <Search className="mb-4 h-12 w-12 text-muted-foreground" />
+                <h3 className="mb-2 text-lg font-semibold">No builders found</h3>
+                <p className="text-sm text-muted-foreground">
+                  Try adjusting your search or filters
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
