@@ -3,6 +3,28 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 
 ## Recent Changes (Oct 28, 2025 - Latest)
 
+### 🔗 Marketplace Filter URL Sync & Navigation (Latest)
+**Complete URL parameter synchronization for shareable filter states**
+
+**Implementation:**
+- ✅ **Scroll-to-top on navigation**: ScrollToTop component automatically scrolls to top when navigating between pages
+- ✅ **Homepage category navigation**: Category cards link to marketplace with pre-selected category filter
+- ✅ **Complete URL parameter sync**: All marketplace filters sync to URL (categories, tags, sortBy, price range, rating, delivery time)
+- ✅ **Shareable URLs**: All filter combinations create bookmarkable URLs that restore exact filter state
+- ✅ **Reload persistence**: Page reload preserves all active filters from URL parameters
+- ✅ **Clean history management**: Uses replaceState to update URL without polluting browser history
+- ✅ **Hydration-safe**: initialLoad flag prevents infinite loops during URL parameter restoration
+
+**Technical Details:**
+- Two useEffect hooks: one reads URL params on mount, one syncs params on filter changes
+- Handles type conversions (e.g., minRating numeric to "4+ Stars" display format)
+- Search query syncs to ?search parameter
+- Categories sync as comma-separated slugs
+- Tags sync as comma-separated names
+- Sort order, price range, rating, and delivery time all reflected in URL
+
+**Impact:** Professional UX matching industry standards (Fiverr, Upwork) with full URL-based state management
+
 ### 🚀 Complete Fiverr-Style UI Redesign
 **Comprehensive homepage transformation based on Fiverr.com and NFT marketplace design principles**
 
