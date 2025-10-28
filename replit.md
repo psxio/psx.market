@@ -2,10 +2,18 @@
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## Recent Changes (October 28, 2025)
+- **Comprehensive Parallax System**: Implemented dramatic multi-layer parallax scrolling throughout homepage with 2-3x intensity for clear visual impact
+  - Hero section: 8 layers moving at different speeds (background blobs, title, description, search, buttons, badges)
+  - Categories: 150px slide-up entrance with 90-100% scale animation
+  - Service cards: 25px wave motion with sine waves
+  - Builder cards: 20px floating motion with staggered delays
+  - All effects use GPU-accelerated translate3d() with requestAnimationFrame for 60fps
+- **Smooth Section Transitions**: Removed all border lines, added gradient overlays between sections for seamless flow
+- **Transparent Navbar**: Fixed positioning with backdrop-blur, floats over hero section
+- **Full-Screen Hero**: Takes entire viewport on load (h-screen), scroll indicator at proper position
 - **Database Seeding**: Created comprehensive seed script (`server/seed-builders.ts`) with 5 professional builder profiles and services
 - **Builder Profile Images**: Generated 5 AI-powered professional headshots and 5 portfolio images for diverse Web3 talent (3D Artist, Developer, KOL, Designer, Video Editor)
 - **Token Benefits UI**: Converted large banner to subtle green hover tooltip next to "Buy on Demand" heading for seamless page flow
-- **Design Cleanup**: Removed animated gradients and parallax effects to align with design_guidelines.md (clean, simple, Base blue aesthetic)
 
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding

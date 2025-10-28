@@ -96,7 +96,7 @@ export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const buildersContainerRef = useRef<HTMLDivElement>(null);
 
-  // COMPLETE PARALLAX - HERO TO CATEGORIES FLOW
+  // COMPLETE PARALLAX - HERO TO CATEGORIES FLOW - DRAMATIC EFFECTS
   useEffect(() => {
     let ticking = false;
     
@@ -108,7 +108,7 @@ export default function Home() {
       // Calculate progress through hero section (0 to 1)
       const heroProgress = Math.min(1, scrollY / heroHeight);
       
-      // ==== HERO SECTION - COMPLETE PARALLAX LAYERS ====
+      // ==== HERO SECTION - DRAMATIC PARALLAX LAYERS ====
       const heroSection = document.getElementById('hero-section');
       const heroBackground = document.getElementById('hero-background');
       const heroBlob1 = document.getElementById('hero-blob-1');
@@ -121,53 +121,53 @@ export default function Home() {
       const heroBadges = document.getElementById('hero-badges');
       const scrollIndicator = document.getElementById('scroll-indicator');
       
-      // Entire hero section scales down and fades as you scroll
+      // Entire hero section scales down and fades DRAMATICALLY
       if (heroSection) {
-        const scale = 1 - (heroProgress * 0.05);
+        const scale = 1 - (heroProgress * 0.15);  // 3x stronger scale
         heroSection.style.transform = `scale(${scale})`;
-        heroSection.style.opacity = `${1 - (heroProgress * 0.3)}`;
+        heroSection.style.opacity = `${1 - (heroProgress * 0.5)}`;  // Fade to 50%
       }
       
-      // Background moves DOWN creating depth
+      // Background moves DOWN creating STRONG depth - 2x speed
       if (heroBackground) {
-        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
+        heroBackground.style.transform = `translate3d(0, ${scrollY * 1.0}px, 0)`;
       }
-      // Individual blobs move at different speeds for depth
+      // Individual blobs move at VERY different speeds for DRAMATIC depth
       if (heroBlob1) {
-        heroBlob1.style.transform = `translate3d(0, ${scrollY * 0.6}px, 0)`;
+        heroBlob1.style.transform = `translate3d(0, ${scrollY * 1.2}px, 0)`;
       }
       if (heroBlob2) {
-        heroBlob2.style.transform = `translate3d(0, ${scrollY * 0.4}px, 0)`;
+        heroBlob2.style.transform = `translate3d(0, ${scrollY * 0.8}px, 0)`;
       }
       if (heroBlob3) {
-        heroBlob3.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
+        heroBlob3.style.transform = `translate3d(0, ${scrollY * 1.0}px, 0)`;
       }
       
-      // Content layers move UP at different speeds
+      // Content layers move UP at MUCH faster speeds - 2.5x stronger
       if (heroTitle) {
-        heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.4}px, 0) scale(${1 - heroProgress * 0.1})`;
-        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 400)}`;
+        heroTitle.style.transform = `translate3d(0, ${-scrollY * 1.0}px, 0) scale(${1 - heroProgress * 0.2})`;
+        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 250)}`;
       }
       if (heroDescription) {
-        heroDescription.style.transform = `translate3d(0, ${-scrollY * 0.35}px, 0)`;
-        heroDescription.style.opacity = `${Math.max(0, 1 - scrollY / 500)}`;
+        heroDescription.style.transform = `translate3d(0, ${-scrollY * 0.85}px, 0)`;
+        heroDescription.style.opacity = `${Math.max(0, 1 - scrollY / 300)}`;
       }
       if (heroSearch) {
-        heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.3}px, 0)`;
-        heroSearch.style.opacity = `${Math.max(0, 1 - scrollY / 600)}`;
+        heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.7}px, 0)`;
+        heroSearch.style.opacity = `${Math.max(0, 1 - scrollY / 400)}`;
       }
       if (heroButtons) {
-        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.25}px, 0)`;
-        heroButtons.style.opacity = `${Math.max(0, 1 - scrollY / 700)}`;
+        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.55}px, 0)`;
+        heroButtons.style.opacity = `${Math.max(0, 1 - scrollY / 500)}`;
       }
       if (heroBadges) {
-        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.2}px, 0)`;
-        heroBadges.style.opacity = `${Math.max(0, 1 - scrollY / 800)}`;
+        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.4}px, 0)`;
+        heroBadges.style.opacity = `${Math.max(0, 1 - scrollY / 600)}`;
       }
       
       // Scroll indicator fades out quickly
       if (scrollIndicator) {
-        scrollIndicator.style.opacity = `${Math.max(0, 1 - scrollY / 200)}`;
+        scrollIndicator.style.opacity = `${Math.max(0, 1 - scrollY / 150)}`;
       }
       
       // ==== CATEGORIES SECTION - DRAMATIC ENTRANCE ====
@@ -178,16 +178,16 @@ export default function Home() {
         
         if (isVisible) {
           // Progress from 0 (off screen) to 1 (fully visible)
-          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.6)));
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.5)));
           
-          // Slide up and fade in
-          const translateY = (1 - progress) * 80;
-          categoriesSection.style.transform = `translate3d(0, ${translateY}px, 0) scale(${0.95 + progress * 0.05})`;
+          // STRONG slide up and fade in - 2x stronger
+          const translateY = (1 - progress) * 150;
+          categoriesSection.style.transform = `translate3d(0, ${translateY}px, 0) scale(${0.9 + progress * 0.1})`;
           categoriesSection.style.opacity = `${progress}`;
         }
       }
       
-      // ==== SERVICE CARDS - SUBTLE FLOAT ====
+      // ==== SERVICE CARDS - NOTICEABLE FLOAT ====
       const serviceCards = document.querySelectorAll('.service-card-parallax');
       serviceCards.forEach((card, index) => {
         const rect = card.getBoundingClientRect();
@@ -196,28 +196,29 @@ export default function Home() {
         if (isVisible) {
           const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
           
-          // Gentle wave motion
-          const wave = Math.sin(progress * Math.PI + index * 0.3) * 10;
+          // STRONGER wave motion - 2.5x stronger
+          const wave = Math.sin(progress * Math.PI + index * 0.3) * 25;
           
-          (card as HTMLElement).style.transform = `translate3d(0, ${wave}px, 0)`;
-          (card as HTMLElement).style.opacity = `${Math.min(1, progress * 1.2)}`;
+          (card as HTMLElement).style.transform = `translate3d(0, ${wave}px, 0) scale(${0.98 + progress * 0.02})`;
+          (card as HTMLElement).style.opacity = `${Math.min(1, progress * 1.5)}`;
         }
       });
       
-      // ==== BUILDERS SECTION - SMOOTH ENTRANCE ====
+      // ==== BUILDERS SECTION - DRAMATIC ENTRANCE ====
       const buildersContainer = document.getElementById('builders-container');
       if (buildersContainer) {
         const rect = buildersContainer.getBoundingClientRect();
         const isVisible = rect.top < windowHeight && rect.bottom > 0;
         
         if (isVisible) {
-          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.7)));
-          buildersContainer.style.transform = `translate3d(0, ${(1 - progress) * 50}px, 0)`;
-          buildersContainer.style.opacity = `${Math.max(0.3, progress)}`;
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.6)));
+          // STRONGER slide - 2x stronger
+          buildersContainer.style.transform = `translate3d(0, ${(1 - progress) * 100}px, 0) scale(${0.95 + progress * 0.05})`;
+          buildersContainer.style.opacity = `${progress}`;
         }
       }
       
-      // ==== BUILDER CARDS - SUBTLE STAGGER ====
+      // ==== BUILDER CARDS - NOTICEABLE STAGGER ====
       const builderCards = document.querySelectorAll('.builder-card-parallax');
       builderCards.forEach((card, index) => {
         const rect = card.getBoundingClientRect();
@@ -230,11 +231,11 @@ export default function Home() {
           const delay = index * 0.05;
           const adjustedProgress = Math.max(0, Math.min(1, (progress - delay) * 1.3));
           
-          // Gentle floating
-          const floatY = Math.sin(adjustedProgress * Math.PI + index * 0.5) * 8;
+          // STRONGER floating - 2.5x stronger
+          const floatY = Math.sin(adjustedProgress * Math.PI + index * 0.5) * 20;
           
-          (card as HTMLElement).style.transform = `translate3d(0, ${floatY}px, 0) scale(${0.98 + adjustedProgress * 0.02})`;
-          (card as HTMLElement).style.opacity = `${Math.max(0.5, adjustedProgress)}`;
+          (card as HTMLElement).style.transform = `translate3d(0, ${floatY}px, 0) scale(${0.95 + adjustedProgress * 0.05})`;
+          (card as HTMLElement).style.opacity = `${Math.max(0.2, adjustedProgress)}`;
         }
       });
       
