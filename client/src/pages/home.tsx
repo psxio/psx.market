@@ -47,6 +47,10 @@ import {
   Shield,
   Clock,
   Briefcase,
+  Star,
+  MapPin,
+  Award,
+  User,
 } from "lucide-react";
 import type { Builder, Service } from "@shared/schema";
 
@@ -85,18 +89,15 @@ export default function Home() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
 
-  const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery<
-    Array<{ builder: Builder; service: Service }>
-  >({
-    queryKey: ["/api/services", selectedCategory],
+  // Fetch top builders sorted by rating and completed projects
+  const { data: topBuilders, isLoading: buildersLoading, isError: buildersError } = useQuery<Builder[]>({
+    queryKey: ["/api/builders", "top"],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (selectedCategory) {
-        params.set("categories", selectedCategory);
-      }
-      const queryString = params.toString();
-      const url = `/api/services${queryString ? `?${queryString}` : ""}`;
-      const response = await fetch(url, { credentials: "include" });
+      const params = new URLSearchParams({
+        sortBy: "rating",
+        limit: "12"
+      });
+      const response = await fetch(`/api/builders?${params.toString()}`, { credentials: "include" });
       if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
       return response.json();
     },
@@ -446,121 +447,201 @@ export default function Home() {
             <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">Browse by category to find the perfect builder for your project</p>
           </div>
 
-          <div className="space-y-12">
-            {/* Category Cards Grid - Smaller */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
-              {serviceCategories.map((cat) => {
-                const Icon = cat.icon;
-                const isSelected = selectedCategory === cat.slug;
-                return (
-                  <button
-                    key={cat.slug || 'all'}
-                    onClick={() => setSelectedCategory(cat.slug)}
-                    className={`group relative flex flex-col items-center justify-center p-4 md:p-5 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
-                      isSelected 
-                        ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/30' 
-                        : 'bg-card border-border hover:border-primary/50'
-                    }`}
-                    data-testid={`button-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
-                  >
-                    <div className={`mb-2 p-2.5 rounded-lg transition-all ${
-                      isSelected 
-                        ? 'bg-primary-foreground/20' 
-                        : 'bg-primary/10 group-hover:bg-primary/20'
-                    }`}>
-                      <Icon className={`h-6 w-6 md:h-7 md:w-7 ${
-                        isSelected ? 'text-primary-foreground' : 'text-primary'
-                      }`} />
-                    </div>
-                    <span className={`text-xs md:text-sm font-semibold text-center ${
-                      isSelected ? 'text-primary-foreground' : 'text-foreground'
-                    }`}>
-                      {cat.name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+          {/* Category Cards Grid - Smaller */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
+            {serviceCategories.map((cat) => {
+              const Icon = cat.icon;
+              const isSelected = selectedCategory === cat.slug;
+              return (
+                <Link
+                  key={cat.slug || 'all'}
+                  href={`/marketplace?categories=${cat.slug}`}
+                  className={`group relative flex flex-col items-center justify-center p-4 md:p-5 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
+                    isSelected 
+                      ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/30' 
+                      : 'bg-card border-border hover:border-primary/50'
+                  }`}
+                  data-testid={`link-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
+                >
+                  <div className={`mb-2 p-2.5 rounded-lg transition-all ${
+                    isSelected 
+                      ? 'bg-primary-foreground/20' 
+                      : 'bg-primary/10 group-hover:bg-primary/20'
+                  }`}>
+                    <Icon className={`h-6 w-6 md:h-7 md:w-7 ${
+                      isSelected ? 'text-primary-foreground' : 'text-primary'
+                    }`} />
+                  </div>
+                  <span className={`text-xs md:text-sm font-semibold text-center ${
+                    isSelected ? 'text-primary-foreground' : 'text-foreground'
+                  }`}>
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-            {/* Services Grid */}
-            {servicesLoading ? (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {[...Array(8)].map((_, i) => (
-                  <Skeleton key={i} className="h-[300px] w-full rounded-lg" />
+      {/* Top Builders Section - Fiverr Style */}
+      <section className="border-t bg-muted/20">
+        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+          {/* Section Header */}
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Top Builders</h2>
+              <p className="text-muted-foreground text-base md:text-lg">Work with the best talent in Web3</p>
+            </div>
+            <Link href="/builders">
+              <Button variant="outline" className="gap-2 hidden md:flex" data-testid="button-view-all-builders">
+                View All Builders
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          {/* Builders Grid */}
+          {buildersLoading ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-[340px] w-full rounded-xl" />
+              ))}
+            </div>
+          ) : buildersError ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
+                <User className="h-8 w-8 text-destructive" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold">Failed to load builders</h3>
+              <p className="text-sm text-muted-foreground">Please try again later</p>
+            </div>
+          ) : !topBuilders || topBuilders.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
+                <User className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold">No builders found</h3>
+              <p className="text-sm text-muted-foreground mb-4">Check back soon or browse our services</p>
+              <Link href="/marketplace">
+                <Button variant="outline" className="gap-2 hover-elevate">
+                  Browse Services
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-top-builders">
+                {topBuilders.slice(0, 8).map((builder) => (
+                  <Link
+                    key={builder.id}
+                    href={`/builders/${builder.id}`}
+                    className="group block"
+                    data-testid={`link-builder-${builder.id}`}
+                  >
+                    <Card className="overflow-hidden hover-elevate active-elevate-2 h-full border-2">
+                      {/* Builder Avatar - Large */}
+                      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+                        {builder.profilePicture ? (
+                          <img
+                            src={builder.profilePicture}
+                            alt={builder.displayName || builder.username}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-primary/10">
+                            <User className="h-20 w-20 text-primary/40" />
+                          </div>
+                        )}
+                        
+                        {/* Online Status */}
+                        {builder.isAvailable && (
+                          <div className="absolute top-3 right-3">
+                            <Badge variant="default" className="bg-green-500 text-white border-0 shadow-lg">
+                              Online
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        {/* Verified Badge */}
+                        {builder.isVerified && (
+                          <div className="absolute top-3 left-3">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary shadow-lg">
+                              <Shield className="h-4 w-4 text-primary-foreground" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Builder Info */}
+                      <div className="p-4 space-y-3">
+                        {/* Name and Location */}
+                        <div>
+                          <h3 className="font-semibold text-lg mb-1 truncate">
+                            {builder.displayName || builder.username}
+                          </h3>
+                          {builder.location && (
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <MapPin className="h-3 w-3" />
+                              <span className="truncate">{builder.location}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Specialization */}
+                        {builder.specializations && builder.specializations.length > 0 && (
+                          <p className="text-sm text-muted-foreground line-clamp-1">
+                            {builder.specializations[0]}
+                          </p>
+                        )}
+
+                        {/* Rating and Stats */}
+                        <div className="flex items-center justify-between pt-2 border-t">
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="font-semibold text-sm">
+                              {builder.rating ? builder.rating.toFixed(1) : '5.0'}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              ({builder.totalReviews || 0})
+                            </span>
+                          </div>
+                          {builder.completedProjects !== undefined && (
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Award className="h-3.5 w-3.5" />
+                              <span>{builder.completedProjects} orders</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Starting Price */}
+                        {builder.hourlyRate && (
+                          <div className="pt-2 border-t">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-xs text-muted-foreground">Starting at</span>
+                              <span className="font-bold text-lg">${builder.hourlyRate}</span>
+                              <span className="text-xs text-muted-foreground">/hr</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </Card>
+                  </Link>
                 ))}
               </div>
-            ) : servicesError ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 mb-4">
-                  <Search className="h-8 w-8 text-destructive" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold">Failed to load services</h3>
-                <p className="text-sm text-muted-foreground">Please try again later</p>
-              </div>
-            ) : !servicesData || servicesData.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed bg-card/50 backdrop-blur-sm py-16 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
-                  <Search className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold">No services found</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {selectedCategory ? `No services available in ${selectedCategory} category` : "Check back soon or try another category"}
-                </p>
-                <Link href="/marketplace">
-                  <Button variant="outline" className="gap-2 hover-elevate">
-                    Browse All Services
-                    <ArrowRight className="h-4 w-4" />
+              
+              {/* Mobile View All Button */}
+              <div className="text-center mt-8 md:hidden">
+                <Link href="/builders">
+                  <Button size="lg" className="gap-2 w-full max-w-md" data-testid="button-view-all-builders-mobile">
+                    View All Builders
+                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
               </div>
-            ) : (
-              <>
-                {/* Featured Section Header */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-bold">
-                        {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : 'All Services'}
-                      </h3>
-                      <p className="text-muted-foreground mt-1">
-                        {servicesData.length} service{servicesData.length !== 1 ? 's' : ''} available
-                      </p>
-                    </div>
-                    <Link href={selectedCategory ? `/marketplace?categories=${selectedCategory}` : "/marketplace"}>
-                      <Button variant="outline" className="gap-2" data-testid="button-view-all-category">
-                        View All
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                  <div className="h-px bg-border" />
-                </div>
-
-                {/* Services Grid - Large Cards */}
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-category-services">
-                  {servicesData.slice(0, 6).map(({ builder, service }) => (
-                    <BuilderCard
-                      key={service.id}
-                      builder={builder}
-                      service={service}
-                    />
-                  ))}
-                </div>
-                
-                {/* Load More CTA */}
-                {servicesData.length > 6 && (
-                  <div className="text-center pt-4">
-                    <Link href={selectedCategory ? `/marketplace?categories=${selectedCategory}` : "/marketplace"}>
-                      <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-lg shadow-primary/20" data-testid="button-load-more">
-                        Load More
-                        <ArrowRight className="h-5 w-5" />
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </section>
 
