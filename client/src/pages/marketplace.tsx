@@ -147,10 +147,10 @@ export default function Marketplace() {
   };
 
   const FilterSidebar = () => (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Categories</Label>
-        <div className="space-y-2">
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Categories</Label>
+        <div className="space-y-2.5">
           {categories && categories.map((category) => {
             const CategoryIcon = categoryIcons[category.name] || Code;
             return (
@@ -178,14 +178,14 @@ export default function Marketplace() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Skills & Tools</Label>
-        <div className="flex flex-wrap gap-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Skills & Tools</Label>
+        <div className="flex flex-wrap gap-2.5">
           {popularTags.map((tag) => (
             <Badge
               key={tag}
               variant={selectedTags.includes(tag) ? "default" : "outline"}
-              className="cursor-pointer no-default-hover-elevate hover-elevate active-elevate-2"
+              className="cursor-pointer no-default-hover-elevate hover-elevate active-elevate-2 text-sm px-3 py-1"
               onClick={() => toggleTag(tag)}
               data-testid={`tag-${tag.toLowerCase().replace(/\s+/g, '-')}`}
             >
@@ -195,8 +195,8 @@ export default function Marketplace() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">
           Price Range: ${priceRange[0]} - ${priceRange[1]}
         </Label>
         <Slider
@@ -209,13 +209,13 @@ export default function Marketplace() {
         />
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Rating</Label>
-        <div className="space-y-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Rating</Label>
+        <div className="space-y-2.5">
           {ratings.map((rating) => (
             <div 
               key={rating} 
-              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+              className="flex items-center space-x-3 cursor-pointer hover-elevate active-elevate-2 rounded-lg px-3 py-2 -mx-3"
               onClick={() => setSelectedRating(selectedRating === rating ? null : rating)}
               data-testid={`filter-rating-${rating.toLowerCase().replace(/\s+/g, '-').replace(/\+/g, 'plus')}`}
             >
@@ -233,13 +233,13 @@ export default function Marketplace() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Delivery Time</Label>
-        <div className="space-y-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Delivery Time</Label>
+        <div className="space-y-2.5">
           {deliveryTimes.map((time) => (
             <div 
               key={time} 
-              className="flex items-center space-x-2 cursor-pointer hover-elevate active-elevate-2 rounded-md px-2 py-1 -mx-2"
+              className="flex items-center space-x-3 cursor-pointer hover-elevate active-elevate-2 rounded-lg px-3 py-2 -mx-3"
               onClick={() => setSelectedDeliveryTime(selectedDeliveryTime === time ? null : time)}
               data-testid={`filter-delivery-${time.toLowerCase().replace(/\s+/g, '-')}`}
             >
@@ -269,18 +269,18 @@ export default function Marketplace() {
       />
       <Header />
 
-      <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
-        <div ref={headerSection.ref as any} className={`mb-8 space-y-4 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Browse Services</h1>
-              <p className="mt-2 text-muted-foreground">
+      <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+        <div ref={headerSection.ref as any} className={`mb-12 space-y-6 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-3">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Browse Services</h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
                 Find the perfect builder for your project
               </p>
             </div>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sort">
+              <SelectTrigger className="w-full sm:w-[200px]" data-testid="select-sort">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -293,13 +293,13 @@ export default function Marketplace() {
             </Select>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search services, builders, or skills..."
-                className="pl-9"
+                className="pl-11 h-12 text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 data-testid="input-marketplace-search"
@@ -308,16 +308,16 @@ export default function Marketplace() {
 
             <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="outline" size="default" className="gap-2" data-testid="button-filters">
-                  <SlidersHorizontal className="h-4 w-4" />
+                <Button variant="outline" size="lg" className="gap-2 h-12 px-6" data-testid="button-filters">
+                  <SlidersHorizontal className="h-5 w-5" />
                   Filters
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] overflow-y-auto">
                 <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
+                  <SheetTitle className="text-xl">Filters</SheetTitle>
                 </SheetHeader>
-                <div className="mt-6">
+                <div className="mt-8">
                   <FilterSidebar />
                 </div>
               </SheetContent>
@@ -355,19 +355,19 @@ export default function Marketplace() {
           )}
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[320px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6 rounded-lg border bg-card p-6">
-              <h2 className="text-lg font-semibold">Filters</h2>
+            <div className="sticky top-24 space-y-8 rounded-2xl border-2 bg-card p-8 shadow-sm">
+              <h2 className="text-2xl font-bold">Filters</h2>
               <FilterSidebar />
             </div>
           </aside>
 
           <div>
             {isLoading ? (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {[...Array(9)].map((_, i) => (
-                  <Skeleton key={i} className="h-[280px] w-full" />
+                  <Skeleton key={i} className="h-[320px] w-full rounded-2xl" />
                 ))}
               </div>
             ) : isError ? (
@@ -379,9 +379,11 @@ export default function Marketplace() {
                 onAction={() => window.location.reload()}
               />
             ) : servicesData && servicesData.length > 0 ? (
-              <div>
-                <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
-                  Showing {servicesData.length} results
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="text-base md:text-lg font-semibold" data-testid="text-results-count">
+                    {servicesData.length} {servicesData.length === 1 ? 'service' : 'services'} found
+                  </div>
                 </div>
                 
                 {/* Mobile Swipeable Grid */}
@@ -403,7 +405,7 @@ export default function Marketplace() {
                 />
 
                 {/* Desktop Grid */}
-                <div className="hidden md:grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-services">
+                <div className="hidden md:grid gap-8 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-services">
                   {servicesData.map(({ builder, service }) => (
                     <BuilderCard
                       key={service.id}

@@ -144,10 +144,10 @@ export default function BrowseBuilders() {
   };
 
   const FilterSidebar = () => (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Categories</Label>
-        <div className="space-y-2">
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Categories</Label>
+        <div className="space-y-2.5">
           {categories && categories.map((category) => {
             const CategoryIcon = categoryIcons[category.name] || Code;
             return (
@@ -173,14 +173,14 @@ export default function BrowseBuilders() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Languages</Label>
-        <div className="flex flex-wrap gap-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Languages</Label>
+        <div className="flex flex-wrap gap-2.5">
           {languages.map((language) => (
             <Badge
               key={language}
               variant={selectedLanguages.includes(language) ? "default" : "outline"}
-              className="cursor-pointer no-default-hover-elevate hover-elevate active-elevate-2"
+              className="cursor-pointer no-default-hover-elevate hover-elevate active-elevate-2 text-sm px-3 py-1"
               onClick={() => toggleLanguage(language)}
               data-testid={`language-${language.toLowerCase()}`}
             >
@@ -190,9 +190,9 @@ export default function BrowseBuilders() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Rating</Label>
-        <div className="space-y-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Rating</Label>
+        <div className="space-y-2.5">
           {ratings.map((rating) => (
             <div key={rating} className="flex items-center space-x-2">
               <Checkbox 
@@ -212,9 +212,9 @@ export default function BrowseBuilders() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Availability</Label>
-        <div className="space-y-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Availability</Label>
+        <div className="space-y-2.5">
           {availabilityOptions.map((status) => (
             <div key={status} className="flex items-center space-x-2">
               <Checkbox 
@@ -234,9 +234,9 @@ export default function BrowseBuilders() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Budget Range</Label>
-        <div className="space-y-2">
+      <div className="space-y-4">
+        <Label className="text-lg font-bold">Budget Range</Label>
+        <div className="space-y-2.5">
           {budgetRanges.map((range) => (
             <div key={range.label} className="flex items-center space-x-2">
               <Checkbox 
@@ -262,26 +262,26 @@ export default function BrowseBuilders() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
-        <div ref={headerSection.ref as any} className={`mb-8 space-y-4 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Browse Builders</h1>
-              <p className="mt-2 text-muted-foreground">
+      <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+        <div ref={headerSection.ref as any} className={`mb-12 space-y-6 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-3">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Browse Builders</h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
                 Discover talented builders for your Web3 projects
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-              <Button asChild variant="outline" className="gap-2" data-testid="link-browse-portfolios">
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <Button asChild variant="outline" size="lg" className="gap-2" data-testid="link-browse-portfolios">
                 <Link href="/portfolios">
-                  <Image className="h-4 w-4" />
+                  <Image className="h-5 w-5" />
                   Browse Portfolios
                 </Link>
               </Button>
               
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-sort">
+                <SelectTrigger className="w-full sm:w-[200px]" data-testid="select-sort">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -294,13 +294,13 @@ export default function BrowseBuilders() {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search builders by name, skills, or expertise..."
-                className="pl-9"
+                className="pl-11 h-12 text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 data-testid="input-builders-search"
@@ -309,16 +309,16 @@ export default function BrowseBuilders() {
 
             <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="outline" size="default" className="gap-2" data-testid="button-filters">
-                  <SlidersHorizontal className="h-4 w-4" />
+                <Button variant="outline" size="lg" className="gap-2 h-12 px-6" data-testid="button-filters">
+                  <SlidersHorizontal className="h-5 w-5" />
                   Filters
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] overflow-y-auto">
                 <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
+                  <SheetTitle className="text-xl">Filters</SheetTitle>
                 </SheetHeader>
-                <div className="mt-6">
+                <div className="mt-8">
                   <FilterSidebar />
                 </div>
               </SheetContent>
@@ -356,48 +356,50 @@ export default function BrowseBuilders() {
           )}
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[320px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6 rounded-lg border bg-card p-6">
-              <h2 className="text-lg font-semibold">Filters</h2>
+            <div className="sticky top-24 space-y-8 rounded-2xl border-2 bg-card p-8 shadow-sm">
+              <h2 className="text-2xl font-bold">Filters</h2>
               <FilterSidebar />
             </div>
           </aside>
 
           <div>
             {isLoading ? (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {[...Array(9)].map((_, i) => (
-                  <Skeleton key={i} className="h-[320px] w-full" />
+                  <Skeleton key={i} className="h-[360px] w-full rounded-2xl" />
                 ))}
               </div>
             ) : isError ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
-                <h3 className="mb-2 text-lg font-semibold">Failed to load builders</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-24 text-center">
+                <h3 className="mb-3 text-2xl font-bold">Failed to load builders</h3>
+                <p className="text-base text-muted-foreground">
                   Please try again later
                 </p>
               </div>
             ) : buildersData && buildersData.length > 0 ? (
-              <div>
-                <div className="mb-4 text-sm text-muted-foreground" data-testid="text-results-count">
-                  Showing {buildersData.length} results
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="text-base md:text-lg font-semibold" data-testid="text-results-count">
+                    {buildersData.length} {buildersData.length === 1 ? 'builder' : 'builders'} found
+                  </div>
                 </div>
-                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="grid-builders">
+                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-builders">
                   {buildersData.map((builder) => (
                     <Link key={builder.id} href={`/builder/${builder.id}`}>
-                      <Card className="h-full hover-elevate active-elevate-2 cursor-pointer transition-all" data-testid={`card-builder-${builder.id}`}>
-                        <CardHeader className="space-y-3 pb-3">
-                          <div className="flex items-start gap-3">
-                            <Avatar className="h-14 w-14">
+                      <Card className="h-full hover-elevate active-elevate-2 cursor-pointer transition-all rounded-2xl border-2" data-testid={`card-builder-${builder.id}`}>
+                        <CardHeader className="space-y-4 pb-4">
+                          <div className="flex items-start gap-4">
+                            <Avatar className="h-16 w-16 border-2 border-border">
                               <AvatarImage src={builder.profileImage || undefined} alt={builder.name} />
-                              <AvatarFallback className="text-base font-bold bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
+                              <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
                                 {builder.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <CardTitle className="text-base truncate">{builder.name}</CardTitle>
+                              <div className="flex items-center gap-2 mb-2">
+                                <CardTitle className="text-lg truncate">{builder.name}</CardTitle>
                                 {builder.verified && (
                                   <Badge variant="default" className="text-xs shrink-0">
                                     Verified
@@ -411,31 +413,31 @@ export default function BrowseBuilders() {
                           </div>
                         </CardHeader>
                         
-                        <CardContent className="space-y-2.5">
-                          <div className="flex items-center justify-between text-sm">
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                              <span className="font-semibold">
+                        <CardContent className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
+                              <span className="font-bold text-base">
                                 {builder.rating ? 
                                   (Number.isFinite(Number(builder.rating)) ? 
                                     Number(builder.rating).toFixed(1) : 
                                     builder.rating) : 
                                   '5.0'}
                               </span>
-                              <span className="text-muted-foreground">({builder.reviewCount || 0})</span>
+                              <span className="text-muted-foreground text-sm">({builder.reviewCount || 0})</span>
                             </div>
                           </div>
 
                           {builder.category && (
-                            <Badge variant="secondary" className="w-fit text-xs">
+                            <Badge variant="secondary" className="w-fit">
                               {builder.category}
                             </Badge>
                           )}
 
                           {(builder.minProjectBudget || builder.hourlyRate) && (
-                            <div className="flex items-center gap-2 pt-1 border-t">
-                              <DollarSign className="h-4 w-4 text-primary" />
-                              <span className="text-sm font-semibold">
+                            <div className="flex items-center gap-2 pt-2 border-t">
+                              <DollarSign className="h-5 w-5 text-primary" />
+                              <span className="text-sm font-bold">
                                 {builder.hourlyRate ? (
                                   <>Starting ${parseFloat(builder.hourlyRate).toLocaleString()}/hr</>
                                 ) : builder.minProjectBudget ? (
@@ -451,10 +453,10 @@ export default function BrowseBuilders() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-16 text-center">
-                <Search className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold">No builders found</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-24 text-center">
+                <Search className="mb-6 h-16 w-16 text-muted-foreground" />
+                <h3 className="mb-3 text-2xl font-bold">No builders found</h3>
+                <p className="text-base text-muted-foreground">
                   Try adjusting your search or filters
                 </p>
               </div>
