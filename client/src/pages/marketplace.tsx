@@ -71,8 +71,16 @@ export default function Marketplace() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const searchParam = params.get("search");
+    const categoriesParam = params.get("categories");
+    
     if (searchParam) {
       setSearchQuery(searchParam);
+    }
+    
+    if (categoriesParam) {
+      // Split by comma in case multiple categories are provided
+      const categoryArray = categoriesParam.split(',').map(c => c.trim()).filter(Boolean);
+      setSelectedCategories(categoryArray);
     }
   }, []);
 
