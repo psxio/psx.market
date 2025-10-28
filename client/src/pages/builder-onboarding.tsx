@@ -716,7 +716,7 @@ export default function BuilderOnboarding() {
             {currentStep === 2 && (
               <>
                 <div>
-                  <Label>Skills (comma-separated) *</Label>
+                  <Label>Skills (Press Enter or comma to add) *</Label>
                   <Input
                     placeholder="e.g., Community Building, Content Creation, Token Launches"
                     onKeyDown={(e) => {
@@ -727,6 +727,13 @@ export default function BuilderOnboarding() {
                           addToArray('skills', value);
                           e.currentTarget.value = '';
                         }
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.currentTarget.value.trim().replace(/,$/g, '');
+                      if (value) {
+                        addToArray('skills', value);
+                        e.currentTarget.value = '';
                       }
                     }}
                     data-testid="input-skills"
