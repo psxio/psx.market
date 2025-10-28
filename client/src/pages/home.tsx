@@ -427,7 +427,7 @@ export default function Home() {
       <MobileStickyCTA />
 
       {/* Buy on Demand Hero */}
-      <section className="relative border-b overflow-hidden bg-background">
+      <section className="relative border-b overflow-hidden bg-background min-h-screen flex items-center">
         {/* Animated Mesh Gradient Background with Parallax */}
         <div id="hero-background" className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
           <div id="hero-blob-1" className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" style={{ willChange: 'transform' }} />
@@ -435,9 +435,9 @@ export default function Home() {
           <div id="hero-blob-3" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" style={{ willChange: 'transform' }} />
         </div>
         
-        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
+        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8 w-full">
           {/* Hero Content - Buy on Demand Style */}
-          <div id="hero-content" className="mx-auto max-w-5xl text-center space-y-6" style={{ willChange: 'transform' }}>
+          <div id="hero-content" className="mx-auto max-w-5xl text-center space-y-6 mb-12" style={{ willChange: 'transform' }}>
 
             <div id="hero-title" className="flex items-center justify-center gap-3" style={{ willChange: 'transform' }}>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -620,6 +620,14 @@ export default function Home() {
                 <Coins className="h-5 w-5 text-primary" />
                 <span className="font-semibold">$PSX</span>
               </div>
+            </div>
+          </div>
+
+          {/* Scroll Down Indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-bounce">
+            <span className="text-sm text-muted-foreground font-medium">Scroll to explore</span>
+            <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1">
+              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             </div>
           </div>
         </div>
