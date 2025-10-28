@@ -1,6 +1,31 @@
 ## Overview
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
+## Recent Changes (Oct 28, 2025 - Latest)
+
+### 🎨 Homepage Hero Enhancements
+**Search Bar & Category Section Refinements**:
+
+**Hero Search Bar**:
+- ✅ Added prominent search bar between hero title and description
+- ✅ h-14 height with rounded-xl borders and border-2
+- ✅ Links to /marketplace for full search experience
+- ✅ Placeholder: "Search for services... (e.g., 3D artist, KOL, developer)"
+- ✅ Icon: h-5 w-5 search icon with hover state (transitions to primary color)
+- ✅ Read-only input that acts as clickable link to marketplace
+
+**Category Section Size Reduction**:
+- ✅ Section heading: text-6xl → **text-5xl** (text-3xl md:text-4xl lg:text-5xl)
+- ✅ Subtitle: text-xl → **text-lg** (text-base md:text-lg)
+- ✅ Category card padding: p-6 md:p-8 → **p-4 md:p-5**
+- ✅ Icon backgrounds: p-4 → **p-2.5** with mb-4 → **mb-2**
+- ✅ Category icons: h-8 w-8 md:h-10 md:w-10 → **h-6 w-6 md:h-7 md:w-7** (30% smaller)
+- ✅ Text size: text-sm md:text-base → **text-xs md:text-sm**
+- ✅ Border radius: rounded-2xl → **rounded-xl** (cards and icon backgrounds)
+- ✅ Grid gaps: gap-4 md:gap-6 → **gap-3 md:gap-4**
+
+**Impact**: More compact, Fiverr-style category browsing with prominent search functionality
+
 ## User Preferences
 - Default theme: Dark mode with purple/cyan branding
 - Design system follows design_guidelines.md
