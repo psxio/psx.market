@@ -96,104 +96,146 @@ export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
   const buildersContainerRef = useRef<HTMLDivElement>(null);
 
-  // Comprehensive parallax effect - multiple layers throughout the page
+  // SUBTLE PARALLAX - SMOOTH SCROLLING DEPTH
   useEffect(() => {
+    let ticking = false;
+    
     const applyParallax = () => {
-      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Hero section - multiple layers with different speeds
+      // ==== HERO SECTION - SUBTLE DEPTH LAYERS ====
       const heroBackground = document.getElementById('hero-background');
-      const heroContent = document.getElementById('hero-content');
+      const heroBlob1 = document.getElementById('hero-blob-1');
+      const heroBlob2 = document.getElementById('hero-blob-2');
+      const heroBlob3 = document.getElementById('hero-blob-3');
       const heroTitle = document.getElementById('hero-title');
+      const heroDescription = document.getElementById('hero-description');
       const heroSearch = document.getElementById('hero-search');
       const heroButtons = document.getElementById('hero-buttons');
       const heroBadges = document.getElementById('hero-badges');
       
+      // Background moves DOWN slightly (subtle depth)
       if (heroBackground) {
-        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.6}px, 0)`;
+        heroBackground.style.transform = `translate3d(0, ${scrollY * 0.3}px, 0)`;
       }
-      if (heroContent) {
-        heroContent.style.transform = `translate3d(0, ${-scrollY * 0.15}px, 0)`;
+      // Individual blobs move at slightly different speeds
+      if (heroBlob1) {
+        heroBlob1.style.transform = `translate3d(0, ${scrollY * 0.35}px, 0)`;
       }
+      if (heroBlob2) {
+        heroBlob2.style.transform = `translate3d(0, ${scrollY * 0.25}px, 0)`;
+      }
+      if (heroBlob3) {
+        heroBlob3.style.transform = `translate3d(0, ${scrollY * 0.3}px, 0)`;
+      }
+      // Title moves UP gently and fades
       if (heroTitle) {
-        heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.2}px, 0)`;
-        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 500)}`;
+        heroTitle.style.transform = `translate3d(0, ${-scrollY * 0.15}px, 0)`;
+        heroTitle.style.opacity = `${Math.max(0, 1 - scrollY / 600)}`;
       }
+      // Description
+      if (heroDescription) {
+        heroDescription.style.transform = `translate3d(0, ${-scrollY * 0.12}px, 0)`;
+        heroDescription.style.opacity = `${Math.max(0, 1 - scrollY / 700)}`;
+      }
+      // Search bar
       if (heroSearch) {
         heroSearch.style.transform = `translate3d(0, ${-scrollY * 0.1}px, 0)`;
+        heroSearch.style.opacity = `${Math.max(0.3, 1 - scrollY / 800)}`;
       }
+      // Buttons
       if (heroButtons) {
-        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
+        heroButtons.style.transform = `translate3d(0, ${-scrollY * 0.08}px, 0)`;
       }
+      // Badges
       if (heroBadges) {
-        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.03}px, 0)`;
+        heroBadges.style.transform = `translate3d(0, ${-scrollY * 0.05}px, 0)`;
       }
       
-      // Categories section - fade in and parallax
+      // ==== CATEGORIES SECTION - GENTLE SLIDE UP ====
       const categoriesSection = document.getElementById('categories-section');
       if (categoriesSection) {
         const rect = categoriesSection.getBoundingClientRect();
         const isVisible = rect.top < windowHeight && rect.bottom > 0;
         
         if (isVisible) {
-          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / windowHeight));
-          categoriesSection.style.opacity = `${progress}`;
-          categoriesSection.style.transform = `translate3d(0, ${(1 - progress) * 50}px, 0)`;
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.8)));
+          categoriesSection.style.transform = `translate3d(0, ${(1 - progress) * 30}px, 0)`;
+          categoriesSection.style.opacity = `${Math.max(0.3, progress)}`;
         }
       }
       
-      // Service cards - staggered parallax
+      // ==== SERVICE CARDS - SUBTLE FLOAT ====
       const serviceCards = document.querySelectorAll('.service-card-parallax');
       serviceCards.forEach((card, index) => {
         const rect = card.getBoundingClientRect();
-        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        const isVisible = rect.top < windowHeight + 50 && rect.bottom > -50;
         
         if (isVisible) {
           const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
-          const offset = Math.sin(progress * Math.PI) * 30 * ((index % 2) ? 1 : -1);
-          (card as HTMLElement).style.transform = `translate3d(0, ${offset}px, 0)`;
-          (card as HTMLElement).style.opacity = `${Math.min(1, progress * 1.5)}`;
+          
+          // Gentle wave motion
+          const wave = Math.sin(progress * Math.PI + index * 0.3) * 10;
+          
+          (card as HTMLElement).style.transform = `translate3d(0, ${wave}px, 0)`;
+          (card as HTMLElement).style.opacity = `${Math.min(1, progress * 1.2)}`;
         }
       });
       
-      // Builders section - wave effect
+      // ==== BUILDERS SECTION - SMOOTH ENTRANCE ====
       const buildersContainer = document.getElementById('builders-container');
       if (buildersContainer) {
         const rect = buildersContainer.getBoundingClientRect();
         const isVisible = rect.top < windowHeight && rect.bottom > 0;
         
         if (isVisible) {
-          const progress = (windowHeight - rect.top) / windowHeight;
-          buildersContainer.style.transform = `translate3d(0, ${(1 - progress) * 80}px, 0)`;
-          buildersContainer.style.opacity = `${Math.min(1, progress * 1.2)}`;
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.7)));
+          buildersContainer.style.transform = `translate3d(0, ${(1 - progress) * 50}px, 0)`;
+          buildersContainer.style.opacity = `${Math.max(0.3, progress)}`;
         }
       }
       
-      // Builder cards - individual parallax
+      // ==== BUILDER CARDS - SUBTLE STAGGER ====
       const builderCards = document.querySelectorAll('.builder-card-parallax');
       builderCards.forEach((card, index) => {
         const rect = card.getBoundingClientRect();
-        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        const isVisible = rect.top < windowHeight + 50 && rect.bottom > -50;
         
         if (isVisible) {
           const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
+          
+          // Staggered delay
           const delay = index * 0.05;
-          const adjustedProgress = Math.max(0, Math.min(1, progress - delay));
-          const offset = Math.sin(adjustedProgress * Math.PI) * 20;
-          (card as HTMLElement).style.transform = `translate3d(0, ${offset}px, 0) scale(${0.95 + adjustedProgress * 0.05})`;
-          (card as HTMLElement).style.opacity = `${adjustedProgress}`;
+          const adjustedProgress = Math.max(0, Math.min(1, (progress - delay) * 1.3));
+          
+          // Gentle floating
+          const floatY = Math.sin(adjustedProgress * Math.PI + index * 0.5) * 8;
+          
+          (card as HTMLElement).style.transform = `translate3d(0, ${floatY}px, 0) scale(${0.98 + adjustedProgress * 0.02})`;
+          (card as HTMLElement).style.opacity = `${Math.max(0.5, adjustedProgress)}`;
         }
       });
+      
+      ticking = false;
     };
     
-    window.addEventListener('scroll', applyParallax, { passive: true });
-    window.addEventListener('resize', applyParallax, { passive: true });
-    applyParallax(); // Initial call
+    const requestTick = () => {
+      if (!ticking) {
+        requestAnimationFrame(applyParallax);
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick, { passive: true });
+    
+    // Initial call
+    applyParallax();
     
     return () => {
-      window.removeEventListener('scroll', applyParallax);
-      window.removeEventListener('resize', applyParallax);
+      window.removeEventListener('scroll', requestTick);
+      window.removeEventListener('resize', requestTick);
     };
   }, []);
 
@@ -388,16 +430,16 @@ export default function Home() {
       <section className="relative border-b overflow-hidden bg-background">
         {/* Animated Mesh Gradient Background with Parallax */}
         <div id="hero-background" className="absolute inset-0 z-0" style={{ willChange: 'transform' }}>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
+          <div id="hero-blob-1" className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" style={{ willChange: 'transform' }} />
+          <div id="hero-blob-2" className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" style={{ willChange: 'transform' }} />
+          <div id="hero-blob-3" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" style={{ willChange: 'transform' }} />
         </div>
         
         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
           <div id="hero-content" className="mx-auto max-w-5xl text-center space-y-6" style={{ willChange: 'transform' }}>
 
-            <div id="hero-title" className="flex items-center justify-center gap-3">
+            <div id="hero-title" className="flex items-center justify-center gap-3" style={{ willChange: 'transform' }}>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 Buy on Demand
                 <span className="block mt-2 bg-gradient-to-r from-primary via-purple-600 to-cyan-500 bg-clip-text text-transparent">
@@ -443,12 +485,12 @@ export default function Home() {
               </TooltipProvider>
             </div>
 
-            <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p id="hero-description" className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto" style={{ willChange: 'transform' }}>
               The open Web3 marketplace connecting premium builders with memecoin and crypto projects.
             </p>
 
             {/* Prominent Search Bar - Functional Autocomplete */}
-            <div id="hero-search" className="max-w-3xl mx-auto relative">
+            <div id="hero-search" className="max-w-3xl mx-auto relative" style={{ willChange: 'transform' }}>
               <div className="relative">
                 <input
                   ref={searchInputRef}
@@ -550,7 +592,7 @@ export default function Home() {
             </div>
 
             {/* Action Buttons - In Hero */}
-            <div id="hero-buttons" className="flex flex-wrap items-center justify-center gap-3 pt-4">
+            <div id="hero-buttons" className="flex flex-wrap items-center justify-center gap-3 pt-4" style={{ willChange: 'transform' }}>
               <Link href="/getting-started?tab=client">
                 <Button size="lg" variant="outline" className="gap-2" data-testid="button-become-client">
                   Become a Client
@@ -564,7 +606,7 @@ export default function Home() {
             </div>
 
             {/* Trust Badges - Clean Style */}
-            <div id="hero-badges" className="flex flex-wrap items-center justify-center gap-6 pt-4">
+            <div id="hero-badges" className="flex flex-wrap items-center justify-center gap-6 pt-4" style={{ willChange: 'transform' }}>
               <span className="text-muted-foreground text-sm font-medium">Powered by:</span>
               <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
                 <Layers className="h-5 w-5 text-primary" />
@@ -586,7 +628,7 @@ export default function Home() {
 
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="bg-background py-16">
-        <div id="categories-section" className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8" style={{ opacity: 0 }}>
+        <div id="categories-section" className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8" style={{ willChange: 'transform' }}>
           
           {/* Section Heading */}
           <div className="text-center mb-8">
@@ -636,7 +678,7 @@ export default function Home() {
           ) : filteredServices && filteredServices.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-filtered-services">
               {filteredServices.slice(0, 8).map(({ builder, service }, index) => (
-                <div key={service.id} className="service-card-parallax" style={{ opacity: 0 }}>
+                <div key={service.id} className="service-card-parallax" style={{ willChange: 'transform' }}>
                   <ServiceCard
                     builder={builder}
                     service={service}
@@ -672,7 +714,7 @@ export default function Home() {
 
       {/* Top Builders Section - Fiverr Style with Parallax */}
       <section className="border-t bg-muted/20 relative overflow-hidden">
-        <div id="builders-container" className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform', opacity: 0 }}>
+        <div id="builders-container" className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ willChange: 'transform' }}>
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -725,7 +767,7 @@ export default function Home() {
                     href={`/builder/${builder.id}`}
                     className="builder-card-parallax group block"
                     data-testid={`link-builder-${builder.id}`}
-                    style={{ opacity: 0 }}
+                    style={{ willChange: 'transform' }}
                   >
                     <Card className="overflow-hidden hover-elevate active-elevate-2 h-full border-2">
                       {/* Builder Avatar - Large */}
