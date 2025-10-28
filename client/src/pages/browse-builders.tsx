@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, DollarSign, Image } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, DollarSign, Image, MapPin, Award, Shield, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -127,11 +127,11 @@ export default function BrowseBuilders() {
     },
   });
 
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (categorySlug: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
+      prev.includes(categorySlug)
+        ? prev.filter((c) => c !== categorySlug)
+        : [...prev, categorySlug]
     );
   };
 
@@ -154,8 +154,8 @@ export default function BrowseBuilders() {
               <div key={category.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={category.id}
-                  checked={selectedCategories.includes(category.name)}
-                  onCheckedChange={() => toggleCategory(category.name)}
+                  checked={selectedCategories.includes(category.slug)}
+                  onCheckedChange={() => toggleCategory(category.slug)}
                   data-testid={`checkbox-category-${category.slug}`}
                 />
                 <label
@@ -262,36 +262,27 @@ export default function BrowseBuilders() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+      <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
         <div ref={headerSection.ref as any} className={`mb-12 space-y-6 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-3">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Browse Builders</h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-                Discover talented builders for your Web3 projects
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Browse Builders</h1>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl">
+                Work with the best Web3 talent in the industry
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <Button asChild variant="outline" size="lg" className="gap-2" data-testid="link-browse-portfolios">
-                <Link href="/portfolios">
-                  <Image className="h-5 w-5" />
-                  Browse Portfolios
-                </Link>
-              </Button>
-              
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-[200px]" data-testid="select-sort">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="rating">Top Rated</SelectItem>
-                  <SelectItem value="recent">Most Recent</SelectItem>
-                  <SelectItem value="projects">Most Projects</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full sm:w-[200px] h-12" data-testid="select-sort">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="relevance">Relevance</SelectItem>
+                <SelectItem value="rating">Top Rated</SelectItem>
+                <SelectItem value="recent">Most Recent</SelectItem>
+                <SelectItem value="projects">Most Projects</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex gap-4">
@@ -328,19 +319,22 @@ export default function BrowseBuilders() {
           {(selectedCategories.length > 0 || selectedLanguages.length > 0) && (
             <div className="flex flex-wrap gap-2">
               <span className="text-sm text-muted-foreground">Active filters:</span>
-              {selectedCategories.map((category) => (
-                <Button
-                  key={category}
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => toggleCategory(category)}
-                  className="gap-1"
-                  data-testid={`active-filter-category-${category.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  {category}
-                  <span className="text-muted-foreground">×</span>
-                </Button>
-              ))}
+              {selectedCategories.map((categorySlug) => {
+                const categoryName = categories?.find(c => c.slug === categorySlug)?.name || categorySlug;
+                return (
+                  <Button
+                    key={categorySlug}
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => toggleCategory(categorySlug)}
+                    className="gap-1"
+                    data-testid={`active-filter-category-${categorySlug.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    {categoryName}
+                    <span className="text-muted-foreground">×</span>
+                  </Button>
+                );
+              })}
               {selectedLanguages.map((language) => (
                 <Badge
                   key={language}
@@ -356,19 +350,19 @@ export default function BrowseBuilders() {
           )}
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[320px_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[280px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-8 rounded-2xl border-2 bg-card p-8 shadow-sm">
-              <h2 className="text-2xl font-bold">Filters</h2>
+            <div className="sticky top-24 space-y-6 rounded-xl border-2 bg-card p-6 shadow-sm">
+              <h2 className="text-xl font-bold">Filters</h2>
               <FilterSidebar />
             </div>
           </aside>
 
           <div>
             {isLoading ? (
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                {[...Array(9)].map((_, i) => (
-                  <Skeleton key={i} className="h-[360px] w-full rounded-2xl" />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[...Array(12)].map((_, i) => (
+                  <Skeleton key={i} className="h-[340px] w-full rounded-xl" />
                 ))}
               </div>
             ) : isError ? (
@@ -385,68 +379,99 @@ export default function BrowseBuilders() {
                     {buildersData.length} {buildersData.length === 1 ? 'builder' : 'builders'} found
                   </div>
                 </div>
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-builders">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-builders">
                   {buildersData.map((builder) => (
-                    <Link key={builder.id} href={`/builder/${builder.id}`}>
-                      <Card className="h-full hover-elevate active-elevate-2 cursor-pointer transition-all rounded-2xl border-2" data-testid={`card-builder-${builder.id}`}>
-                        <CardHeader className="space-y-4 pb-4">
-                          <div className="flex items-start gap-4">
-                            <Avatar className="h-16 w-16 border-2 border-border">
-                              <AvatarImage src={builder.profileImage || undefined} alt={builder.name} />
-                              <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
-                                {builder.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2">
-                                <CardTitle className="text-lg truncate">{builder.name}</CardTitle>
-                                {builder.verified && (
-                                  <Badge variant="default" className="text-xs shrink-0">
-                                    Verified
-                                  </Badge>
-                                )}
+                    <Link 
+                      key={builder.id} 
+                      href={`/builder/${builder.id}`}
+                      className="group block"
+                      data-testid={`link-builder-${builder.id}`}
+                    >
+                      <Card className="overflow-hidden hover-elevate active-elevate-2 h-full border-2">
+                        {/* Builder Avatar - Large Image-First */}
+                        <div className="relative aspect-square w-full overflow-hidden bg-muted">
+                          {builder.profileImage ? (
+                            <img
+                              src={builder.profileImage}
+                              alt={builder.name}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-primary/10">
+                              <User className="h-20 w-20 text-primary/40" />
+                            </div>
+                          )}
+                          
+                          {/* Online Status */}
+                          {builder.availability === 'available' && (
+                            <div className="absolute top-3 right-3">
+                              <Badge variant="default" className="bg-green-500 text-white border-0 shadow-lg">
+                                Online
+                              </Badge>
+                            </div>
+                          )}
+                          
+                          {/* Verified Badge */}
+                          {builder.verified && (
+                            <div className="absolute top-3 left-3">
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary shadow-lg">
+                                <Shield className="h-4 w-4 text-primary-foreground" />
                               </div>
-                              <p className="text-sm text-muted-foreground line-clamp-2">
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Builder Info */}
+                        <div className="p-4 space-y-3">
+                          {/* Name */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-1 truncate">
+                              {builder.name}
+                            </h3>
+                            {builder.headline && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">
                                 {builder.headline}
                               </p>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        
-                        <CardContent className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
-                              <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
-                              <span className="font-bold text-base">
-                                {builder.rating ? 
-                                  (Number.isFinite(Number(builder.rating)) ? 
-                                    Number(builder.rating).toFixed(1) : 
-                                    builder.rating) : 
-                                  '5.0'}
-                              </span>
-                              <span className="text-muted-foreground text-sm">({builder.reviewCount || 0})</span>
-                            </div>
+                            )}
                           </div>
 
+                          {/* Category/Specialization */}
                           {builder.category && (
-                            <Badge variant="secondary" className="w-fit">
+                            <p className="text-sm text-muted-foreground line-clamp-1">
                               {builder.category}
-                            </Badge>
+                            </p>
                           )}
 
-                          {(builder.minProjectBudget || builder.hourlyRate) && (
-                            <div className="flex items-center gap-2 pt-2 border-t">
-                              <DollarSign className="h-5 w-5 text-primary" />
-                              <span className="text-sm font-bold">
-                                {builder.hourlyRate ? (
-                                  <>Starting ${parseFloat(builder.hourlyRate).toLocaleString()}/hr</>
-                                ) : builder.minProjectBudget ? (
-                                  <>Starting ${parseFloat(builder.minProjectBudget).toLocaleString()}</>
-                                ) : null}
+                          {/* Rating and Stats */}
+                          <div className="flex items-center justify-between pt-2 border-t">
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="font-semibold text-sm">
+                                {builder.rating ? Number(builder.rating).toFixed(1) : '5.0'}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                ({builder.reviewCount || 0})
                               </span>
                             </div>
+                            {builder.completedProjects !== undefined && (
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Award className="h-3.5 w-3.5" />
+                                <span>{builder.completedProjects} orders</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Starting Price */}
+                          {builder.hourlyRate && (
+                            <div className="pt-2 border-t">
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-xs text-muted-foreground">Starting at</span>
+                                <span className="font-bold text-lg">${parseFloat(builder.hourlyRate).toFixed(0)}</span>
+                                <span className="text-xs text-muted-foreground">/hr</span>
+                              </div>
+                            </div>
                           )}
-                        </CardContent>
+                        </div>
                       </Card>
                     </Link>
                   ))}

@@ -269,18 +269,18 @@ export default function Marketplace() {
       />
       <Header />
 
-      <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+      <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
         <div ref={headerSection.ref as any} className={`mb-12 space-y-6 ${headerSection.isVisible ? 'scroll-reveal-fade-up' : 'scroll-reveal-hidden'}`}>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-3">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Browse Services</h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-                Find the perfect builder for your project
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Browse Services</h1>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl">
+                Discover premium Web3 services from verified builders
               </p>
             </div>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[200px]" data-testid="select-sort">
+              <SelectTrigger className="w-full sm:w-[200px] h-12" data-testid="select-sort">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -355,19 +355,19 @@ export default function Marketplace() {
           )}
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[320px_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[280px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-8 rounded-2xl border-2 bg-card p-8 shadow-sm">
-              <h2 className="text-2xl font-bold">Filters</h2>
+            <div className="sticky top-24 space-y-6 rounded-xl border-2 bg-card p-6 shadow-sm">
+              <h2 className="text-xl font-bold">Filters</h2>
               <FilterSidebar />
             </div>
           </aside>
 
           <div>
             {isLoading ? (
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[...Array(9)].map((_, i) => (
-                  <Skeleton key={i} className="h-[320px] w-full rounded-2xl" />
+                  <Skeleton key={i} className="h-[340px] w-full rounded-xl" />
                 ))}
               </div>
             ) : isError ? (
@@ -405,7 +405,7 @@ export default function Marketplace() {
                 />
 
                 {/* Desktop Grid */}
-                <div className="hidden md:grid gap-8 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-services">
+                <div className="hidden md:grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-services">
                   {servicesData.map(({ builder, service }) => (
                     <BuilderCard
                       key={service.id}
