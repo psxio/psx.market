@@ -551,7 +551,7 @@ export default function Home() {
               </h2>
               <p className="text-muted-foreground md:text-lg">
                 Visit <span className="font-semibold text-foreground">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
-                Powered by <span className="font-semibold text-primary">Create</span> and <span className="font-semibold text-primary">PSX</span> tokens. 
+                Powered by <span className="font-semibold text-primary">$Create</span> and <span className="font-semibold text-primary">$PSX</span> on Base. 
                 Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
               </p>
             </div>
