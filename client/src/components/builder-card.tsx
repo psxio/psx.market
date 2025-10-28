@@ -101,7 +101,7 @@ function formatTimeAgo(dateString: string): string {
 }
 
 export function BuilderCard({ builder, service }: BuilderCardProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [imageIndex, setImageIndex] = useState(0);
   const { data: serviceStats } = useServiceStats(service?.id || "");
 
   // Track view when service card is displayed
@@ -120,6 +120,16 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
       return () => clearTimeout(timer);
     }
   }, [service?.id]);
+
+  // Cycle through portfolio images on hover
+  useEffect(() => {
+    if (service?.portfolioMedia && service.portfolioMedia.length > 1 && !isPartnerData(service.portfolioMedia[0])) {
+      const interval = setInterval(() => {
+        setImageIndex((prev) => (prev + 1) % Math.min(service.portfolioMedia!.length, 3));
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [service?.portfolioMedia]);
 
   // Handle services without assigned builder - show as generic service card
   if (!builder && service) {
