@@ -2,6 +2,15 @@
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## Recent Changes (October 28, 2025)
+- **Production-Ready Builder Onboarding**: Fixed critical bug in `approveBuilderApplication` function to properly transfer all application data to builder profiles
+  - Email field now correctly transferred from applications to builder profiles
+  - Custom headlines preserved (or auto-generated as fallback)
+  - Skills array properly transferred (was hardcoded to empty array)
+  - All category-specific fields (programming languages, blockchain frameworks, social handles, etc.) now transferred
+  - Profile images, cover images, and response times preserved
+  - First 50 approved builders receive `tokenGateWhitelisted: true` status
+  - System tested end-to-end: application submission → admin approval → builder profile creation
+- **Database Reset for Production**: Removed all test/seeded data (66 services, 53 builders) - ready for real builder onboarding
 - **Comprehensive Parallax System**: Implemented dramatic multi-layer parallax scrolling throughout homepage with 2-3x intensity for clear visual impact
   - Hero section: 8 layers moving at different speeds (background blobs, title, description, search, buttons, badges)
   - Categories: 150px slide-up entrance with 90-100% scale animation
@@ -11,8 +20,6 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 - **Smooth Section Transitions**: Removed all border lines, added gradient overlays between sections for seamless flow
 - **Transparent Navbar**: Fixed positioning with backdrop-blur, floats over hero section
 - **Full-Screen Hero**: Takes entire viewport on load (h-screen), scroll indicator at proper position
-- **Database Seeding**: Created comprehensive seed script (`server/seed-builders.ts`) with 5 professional builder profiles and services
-- **Builder Profile Images**: Generated 5 AI-powered professional headshots and 5 portfolio images for diverse Web3 talent (3D Artist, Developer, KOL, Designer, Video Editor)
 - **Token Benefits UI**: Converted large banner to subtle green hover tooltip next to "Buy on Demand" heading for seamless page flow
 
 ## User Preferences
