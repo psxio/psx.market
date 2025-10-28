@@ -161,32 +161,44 @@ export default function Home() {
           </div>
 
           {/* Category Browser - Main Focal Point */}
-          <div className="space-y-10">
+          <div className="space-y-12">
             {/* Section Header */}
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Explore Services</h2>
-              <p className="text-muted-foreground text-lg">Browse by category to find the perfect builder</p>
+            <div className="text-center space-y-4">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Explore Services</h2>
+              <p className="text-muted-foreground text-lg md:text-xl max-w-3xl mx-auto">Browse by category to find the perfect builder for your project</p>
             </div>
 
-            {/* Category Pills - Prominent Design */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            {/* Large Category Cards Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
               {serviceCategories.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = selectedCategory === cat.slug;
                 return (
-                  <Button
+                  <button
                     key={cat.slug || 'all'}
-                    variant={isSelected ? "default" : "outline"}
-                    size="lg"
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className={`gap-2 px-5 py-3 text-sm font-medium whitespace-nowrap transition-all ${
-                      isSelected ? 'shadow-md shadow-primary/20' : ''
+                    className={`group relative flex flex-col items-center justify-center p-6 md:p-8 rounded-2xl border-2 transition-all hover-elevate active-elevate-2 ${
+                      isSelected 
+                        ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/30' 
+                        : 'bg-card border-border hover:border-primary/50'
                     }`}
                     data-testid={`button-category-${cat.slug ? cat.slug.toLowerCase().replace(/\s+/g, '-') : 'all'}`}
                   >
-                    <Icon className="h-4 w-4" />
-                    <span>{cat.name}</span>
-                  </Button>
+                    <div className={`mb-4 p-4 rounded-xl transition-all ${
+                      isSelected 
+                        ? 'bg-primary-foreground/20' 
+                        : 'bg-primary/10 group-hover:bg-primary/20'
+                    }`}>
+                      <Icon className={`h-8 w-8 md:h-10 md:w-10 ${
+                        isSelected ? 'text-primary-foreground' : 'text-primary'
+                      }`} />
+                    </div>
+                    <span className={`text-sm md:text-base font-semibold text-center ${
+                      isSelected ? 'text-primary-foreground' : 'text-foreground'
+                    }`}>
+                      {cat.name}
+                    </span>
+                  </button>
                 );
               })}
             </div>
@@ -224,19 +236,30 @@ export default function Home() {
               </div>
             ) : (
               <>
-                {/* Featured Count Badge */}
-                <div className="flex items-center justify-center gap-3">
-                  <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
-                    <span className="font-bold text-foreground">{servicesData.length}</span>
-                    <span className="text-muted-foreground ml-1">
-                      {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : 'All'} service{servicesData.length !== 1 ? 's' : ''}
-                    </span>
-                  </Badge>
+                {/* Featured Section Header */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-bold">
+                        {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : 'All Services'}
+                      </h3>
+                      <p className="text-muted-foreground mt-1">
+                        {servicesData.length} service{servicesData.length !== 1 ? 's' : ''} available
+                      </p>
+                    </div>
+                    <Link href={selectedCategory ? `/marketplace?categories=${selectedCategory}` : "/marketplace"}>
+                      <Button variant="outline" className="gap-2" data-testid="button-view-all-category">
+                        View All
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="h-px bg-border" />
                 </div>
 
-                {/* Services Grid - Enhanced */}
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-category-services">
-                  {servicesData.map(({ builder, service }) => (
+                {/* Services Grid - Large Cards */}
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-category-services">
+                  {servicesData.slice(0, 6).map(({ builder, service }) => (
                     <BuilderCard
                       key={service.id}
                       builder={builder}
@@ -245,12 +268,12 @@ export default function Home() {
                   ))}
                 </div>
                 
-                {/* View All CTA */}
-                {servicesData.length > 0 && (
-                  <div className="mt-12 text-center pb-8">
+                {/* Load More CTA */}
+                {servicesData.length > 6 && (
+                  <div className="text-center pt-4">
                     <Link href={selectedCategory ? `/marketplace?categories=${selectedCategory}` : "/marketplace"}>
-                      <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-md" data-testid="button-view-all-category">
-                        View All {selectedCategory ? serviceCategories.find(c => c.slug === selectedCategory)?.name : ''} Services
+                      <Button size="lg" className="gap-2 px-8 py-6 text-base font-medium shadow-lg shadow-primary/20" data-testid="button-load-more">
+                        Load More
                         <ArrowRight className="h-5 w-5" />
                       </Button>
                     </Link>
