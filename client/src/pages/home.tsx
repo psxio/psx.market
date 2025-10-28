@@ -91,16 +91,33 @@ export default function Home() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
 
-  // Parallax effect state
-  const [scrollY, setScrollY] = useState(0);
+  // Parallax refs
+  const heroBackgroundRef = useRef<HTMLDivElement>(null);
+  const heroContentRef = useRef<HTMLDivElement>(null);
+  const buildersContainerRef = useRef<HTMLDivElement>(null);
 
-  // Add scroll listener for parallax effect
+  // Add scroll listener for parallax effect with direct DOM manipulation
   useEffect(() => {
     const handleScroll = () => {
-      setScrollY(window.scrollY);
+      const scrollY = window.scrollY;
+      
+      // Apply parallax transforms directly to DOM elements
+      if (heroBackgroundRef.current) {
+        heroBackgroundRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
+      }
+      if (heroContentRef.current) {
+        heroContentRef.current.style.transform = `translateY(${-scrollY * 0.1}px)`;
+      }
+      if (buildersContainerRef.current) {
+        buildersContainerRef.current.style.transform = `translateY(${-scrollY * 0.05}px)`;
+      }
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Call once to set initial position
+    handleScroll();
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -294,7 +311,7 @@ export default function Home() {
       {/* Buy on Demand Hero */}
       <section className="relative border-b overflow-hidden bg-background">
         {/* Animated Mesh Gradient Background with Parallax */}
-        <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+        <div ref={heroBackgroundRef} className="absolute inset-0 z-0">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 dark:bg-primary/30 rounded-full blur-3xl animate-float-slow" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-500/15 dark:bg-cyan-500/25 rounded-full blur-3xl animate-float-slower" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-3xl animate-float" />
@@ -302,7 +319,7 @@ export default function Home() {
         
         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Hero Content - Buy on Demand Style */}
-          <div className="mx-auto max-w-5xl text-center space-y-6" style={{ transform: `translateY(${-scrollY * 0.1}px)` }}>
+          <div ref={heroContentRef} className="mx-auto max-w-5xl text-center space-y-6">
 
             <div className="flex items-center justify-center gap-3">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -572,7 +589,7 @@ export default function Home() {
 
       {/* Top Builders Section - Fiverr Style with Parallax */}
       <section className="border-t bg-muted/20 relative overflow-hidden">
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8" style={{ transform: `translateY(${-scrollY * 0.05}px)` }}>
+        <div ref={buildersContainerRef} className="container mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 lg:px-8">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-10">
             <div>
