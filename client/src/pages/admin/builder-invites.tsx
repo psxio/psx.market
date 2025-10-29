@@ -120,7 +120,7 @@ export default function AdminBuilderInvites() {
   };
 
   const getInviteLink = (token: string) => {
-    return `${window.location.origin}/builders?invite=${token}`;
+    return `${window.location.origin}/builder-onboarding/${token}`;
   };
 
   const copyToClipboard = (token: string) => {
