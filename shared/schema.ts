@@ -1523,6 +1523,20 @@ export const chaptersInvites = pgTable("chapters_invites", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Cross-platform user mapping between port444 and Based Creators
+export const crossPlatformUsers = pgTable("cross_platform_users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  port444BuilderId: varchar("port444_builder_id").notNull().unique(),
+  basedCreatorsUserId: text("based_creators_user_id"),
+  walletAddress: text("wallet_address").notNull(),
+  email: text("email"),
+  syncStatus: text("sync_status").notNull().default("pending"), // pending, synced, failed
+  lastSyncedAt: text("last_synced_at"),
+  syncError: text("sync_error"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const insertChaptersInviteSchema = createInsertSchema(chaptersInvites).omit({
   id: true,
   createdAt: true,
