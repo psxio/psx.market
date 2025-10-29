@@ -2478,6 +2478,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chapters invite verification (public endpoint)
+  app.get("/api/chapters-invites/verify/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      const invite = await storage.getChaptersInvite(token);
+
+      if (!invite) {
+        return res.json({ valid: false, error: "Invalid invite token" });
+      }
+
+      if (invite.used) {
+        return res.json({ valid: false, error: "Invite already used" });
+      }
+
+      if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
+        return res.json({ valid: false, error: "Invite expired" });
+      }
+
+      res.json({ 
+        valid: true,
+        email: invite.email,
+        region: invite.region,
+      });
+    } catch (error) {
+      console.error("Error verifying chapters invite:", error);
+      res.status(500).json({ error: "Failed to verify invite" });
+    }
+  });
+
   // Admin Analytics Endpoints
   app.get("/api/admin/analytics/activity-feed", requireAdminAuth, async (req, res) => {
     try {

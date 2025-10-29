@@ -34,6 +34,7 @@ import HowItWorks from "@/pages/how-it-works";
 import GettingStarted from "@/pages/getting-started";
 import BuilderInvite from "@/pages/builder-invite";
 import BuilderOnboarding from "@/pages/builder-onboarding";
+import ChaptersOnboarding from "@/pages/chapters-onboarding";
 import BecomeClient from "@/pages/become-client";
 import ClientDashboard from "@/pages/client-dashboard";
 import BuilderDashboard from "@/pages/builder-dashboard";
@@ -71,6 +72,7 @@ function Router() {
       <Route path="/getting-started" component={GettingStarted} />
       <Route path="/builder-invite/:token" component={BuilderInvite} />
       <Route path="/builder-onboarding/:token?" component={BuilderOnboarding} />
+      <Route path="/chapters-onboarding/:token" component={ChaptersOnboarding} />
       <Route path="/become-client" component={BecomeClient} />
       <Route path="/dashboard" component={ClientDashboard} />
       <Route path="/builder-dashboard" component={BuilderDashboard} />
