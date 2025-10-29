@@ -2428,6 +2428,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Chapters Invites (Based Creators Chapters - 2-in-1 onboarding)
+  app.post("/api/admin/chapters-invites", requireAdminAuth, async (req, res) => {
+    try {
+      const adminId = (req.session as any).adminId;
+      if (!adminId) {
+        return res.status(401).json({ error: "Admin not authenticated" });
+      }
+      
+      const admin = await storage.getAdminById(adminId);
+      if (!admin) {
+        return res.status(401).json({ error: "Admin not found" });
+      }
+      
+      const { region, email, notes, expiresIn } = req.body;
+      const token = await storage.createChaptersInvite(
+        admin.id,
+        admin.name || admin.username,
+        region,
+        email,
+        notes,
+        expiresIn
+      );
+      
+      res.json(token);
+    } catch (error) {
+      console.error("Error creating chapters invite:", error);
+      res.status(500).json({ error: "Failed to create chapters invite" });
+    }
+  });
+  
+  app.get("/api/admin/chapters-invites", requireAdminAuth, async (_req, res) => {
+    try {
+      const tokens = await storage.getChaptersInvites();
+      res.json(tokens);
+    } catch (error) {
+      console.error("Error fetching chapters invites:", error);
+      res.status(500).json({ error: "Failed to fetch chapters invites" });
+    }
+  });
+
+  app.delete("/api/admin/chapters-invites/:id", requireAdminAuth, async (req, res) => {
+    try {
+      await storage.deleteChaptersInvite(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting chapters invite:", error);
+      res.status(500).json({ error: "Failed to delete chapters invite" });
+    }
+  });
 
   // Admin Analytics Endpoints
   app.get("/api/admin/analytics/activity-feed", requireAdminAuth, async (req, res) => {

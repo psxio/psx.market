@@ -25,7 +25,8 @@ import {
   LogOut,
   Shield,
   Mail,
-  DollarSign
+  DollarSign,
+  Globe
 } from "lucide-react";
 import AdminBuilders from "./admin/builders";
 import AdminClients from "./admin/clients";
@@ -33,6 +34,7 @@ import AdminServices from "./admin/services";
 import AdminApplications from "./admin/applications";
 import AdminReferrals from "./admin/referrals";
 import AdminBuilderInvites from "./admin/builder-invites";
+import AdminChaptersInvites from "./admin/chapters-invites";
 import AdminHome from "./admin/home";
 import AdminFinancial from "./admin/financial";
 import { NotificationCenter, UndoButton } from "@/components/ui-enhancements";
@@ -72,6 +74,11 @@ const menuItems = [
     title: "Builder Invites",
     url: "/admin/builder-invites",
     icon: Mail,
+  },
+  {
+    title: "Chapters Invites",
+    url: "/admin/chapters-invites",
+    icon: Globe,
   },
   {
     title: "Referrals",
@@ -175,6 +182,7 @@ export default function AdminDashboard() {
               <Route path="/admin/financial" component={AdminFinancial} />
               <Route path="/admin/applications" component={AdminApplications} />
               <Route path="/admin/builder-invites" component={AdminBuilderInvites} />
+              <Route path="/admin/chapters-invites" component={AdminChaptersInvites} />
               <Route path="/admin/referrals" component={AdminReferrals} />
             </Switch>
           </main>

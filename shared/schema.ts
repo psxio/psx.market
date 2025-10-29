@@ -1506,6 +1506,31 @@ export const insertBuilderInviteTokenSchema = createInsertSchema(builderInviteTo
 export type InsertBuilderInviteToken = z.infer<typeof insertBuilderInviteTokenSchema>;
 export type BuilderInviteToken = typeof builderInviteTokens.$inferSelect;
 
+// Chapters Invites - Admin-generated invites for Based Creators Chapters (2-in-1 onboarding)
+export const chaptersInvites = pgTable("chapters_invites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  token: varchar("token", { length: 64 }).notNull().unique(),
+  createdBy: varchar("created_by").notNull(), // Admin ID
+  createdByName: text("created_by_name").notNull(),
+  email: text("email"), // Optional: pre-fill email
+  region: text("region"), // e.g., "West Africa", "Southern Africa"
+  notes: text("notes"), // Admin notes about chapter/region
+  used: boolean("used").notNull().default(false),
+  usedBy: varchar("used_by"), // Builder ID who used this invite
+  usedByName: text("used_by_name"),
+  usedAt: text("used_at"),
+  expiresAt: text("expires_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const insertChaptersInviteSchema = createInsertSchema(chaptersInvites).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertChaptersInvite = z.infer<typeof insertChaptersInviteSchema>;
+export type ChaptersInvite = typeof chaptersInvites.$inferSelect;
+
 export const partners = pgTable("partners", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),

@@ -65,6 +65,8 @@ import {
   type InsertBuilderInviteToken,
   type BuilderInvite,
   type InsertBuilderInvite,
+  type ChaptersInvite,
+  type InsertChaptersInvite,
   type Partner,
   type InsertPartner,
   type PartnerConnectionRequest,
@@ -134,6 +136,7 @@ import {
   notificationPreferences,
   pushSubscriptions,
   builderInviteTokens,
+  chaptersInvites,
   partners,
   partnerConnectionRequests,
   userOnlineStatus,
@@ -459,6 +462,13 @@ export interface IStorage {
   useBuilderInvite(code: string, builderId: string, builderName: string): Promise<BuilderInvite>;
   getRemainingInvites(builderId: string): Promise<number>;
   revokeBuilderInvite(id: string): Promise<void>;
+
+  // Chapters Invites (Admin-generated, 2-in-1 onboarding for basedcreators.xyz + marketplace)
+  createChaptersInvite(adminId: string, adminName: string, region?: string, email?: string, notes?: string, expiresIn?: number): Promise<ChaptersInvite>;
+  getChaptersInvites(): Promise<ChaptersInvite[]>;
+  getChaptersInvite(token: string): Promise<ChaptersInvite | undefined>;
+  useChaptersInvite(token: string, builderId: string, builderName: string): Promise<ChaptersInvite>;
+  deleteChaptersInvite(id: string): Promise<void>;
 
   getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]>;
   getPartner(id: string): Promise<Partner | undefined>;
@@ -2904,6 +2914,52 @@ export class PostgresStorage implements IStorage {
     await db.update(builderInvites)
       .set({ status: 'revoked' })
       .where(eq(builderInvites.id, id));
+  }
+
+  // Chapters Invites (Admin-generated, 2-in-1 onboarding for basedcreators.xyz + marketplace)
+  async createChaptersInvite(adminId: string, adminName: string, region?: string, email?: string, notes?: string, expiresIn?: number): Promise<ChaptersInvite> {
+    const token = randomUUID().replace(/-/g, '');
+    const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000).toISOString() : undefined;
+    
+    const result = await db.insert(chaptersInvites).values({
+      token,
+      createdBy: adminId,
+      createdByName: adminName,
+      region,
+      email,
+      notes,
+      expiresAt,
+      used: false,
+    }).returning();
+    
+    return result[0];
+  }
+  
+  async getChaptersInvites(): Promise<ChaptersInvite[]> {
+    return await db.select().from(chaptersInvites).orderBy(desc(chaptersInvites.createdAt));
+  }
+  
+  async getChaptersInvite(token: string): Promise<ChaptersInvite | undefined> {
+    const result = await db.select().from(chaptersInvites).where(eq(chaptersInvites.token, token));
+    return result[0];
+  }
+  
+  async useChaptersInvite(token: string, builderId: string, builderName: string): Promise<ChaptersInvite> {
+    const result = await db.update(chaptersInvites)
+      .set({
+        used: true,
+        usedBy: builderId,
+        usedByName: builderName,
+        usedAt: new Date().toISOString(),
+      })
+      .where(eq(chaptersInvites.token, token))
+      .returning();
+    
+    return result[0];
+  }
+
+  async deleteChaptersInvite(id: string): Promise<void> {
+    await db.delete(chaptersInvites).where(eq(chaptersInvites.id, id));
   }
 
   async getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]> {
