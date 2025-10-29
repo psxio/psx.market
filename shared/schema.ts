@@ -1545,6 +1545,15 @@ export const insertChaptersInviteSchema = createInsertSchema(chaptersInvites).om
 export type InsertChaptersInvite = z.infer<typeof insertChaptersInviteSchema>;
 export type ChaptersInvite = typeof chaptersInvites.$inferSelect;
 
+export const insertCrossPlatformUserSchema = createInsertSchema(crossPlatformUsers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertCrossPlatformUser = z.infer<typeof insertCrossPlatformUserSchema>;
+export type CrossPlatformUser = typeof crossPlatformUsers.$inferSelect;
+
 export const partners = pgTable("partners", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),

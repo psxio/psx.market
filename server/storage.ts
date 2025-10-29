@@ -2962,6 +2962,35 @@ export class PostgresStorage implements IStorage {
     await db.delete(chaptersInvites).where(eq(chaptersInvites.id, id));
   }
 
+  // Cross-Platform User Management
+  async createCrossPlatformMapping(data: InsertCrossPlatformUser): Promise<CrossPlatformUser> {
+    const result = await db.insert(crossPlatformUsers).values(data).returning();
+    return result[0];
+  }
+
+  async getCrossPlatformUserByPort444Id(port444BuilderId: string): Promise<CrossPlatformUser | undefined> {
+    const result = await db.select().from(crossPlatformUsers).where(eq(crossPlatformUsers.port444BuilderId, port444BuilderId));
+    return result[0];
+  }
+
+  async getCrossPlatformUserByBasedCreatorsId(basedCreatorsUserId: string): Promise<CrossPlatformUser | undefined> {
+    const result = await db.select().from(crossPlatformUsers).where(eq(crossPlatformUsers.basedCreatorsUserId, basedCreatorsUserId));
+    return result[0];
+  }
+
+  async getCrossPlatformUserByWallet(walletAddress: string): Promise<CrossPlatformUser | undefined> {
+    const result = await db.select().from(crossPlatformUsers).where(eq(crossPlatformUsers.walletAddress, walletAddress));
+    return result[0];
+  }
+
+  async updateCrossPlatformMapping(port444BuilderId: string, data: Partial<CrossPlatformUser>): Promise<CrossPlatformUser> {
+    const result = await db.update(crossPlatformUsers)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(crossPlatformUsers.port444BuilderId, port444BuilderId))
+      .returning();
+    return result[0];
+  }
+
   async getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]> {
     const conditions = [];
     if (options?.category) {
