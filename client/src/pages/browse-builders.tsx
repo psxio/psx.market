@@ -463,10 +463,33 @@ export default function BrowseBuilders() {
                             </div>
                           )}
 
+                          {/* Portfolio Media Preview */}
+                          {builder.portfolioMedia && builder.portfolioMedia.length > 0 && (
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {builder.portfolioMedia.slice(0, 4).map((media, idx) => (
+                                <div key={idx} className="aspect-square rounded-md overflow-hidden bg-muted">
+                                  {media.startsWith('partner:') ? (
+                                    <div className="flex h-full items-center justify-center p-1.5 text-center bg-muted/50">
+                                      <span className="text-[9px] font-medium leading-tight line-clamp-2">
+                                        {media.replace('partner:', '')}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <img
+                                      src={media}
+                                      alt={`Portfolio ${idx + 1}`}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
                           {/* Token Tickers from Projects */}
-                          {builder.tokenGateProjects && builder.tokenGateProjects.length > 0 && (
+                          {builder.tokenTickers && builder.tokenTickers.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 min-h-[28px]">
-                              {builder.tokenGateProjects.slice(0, 3).map((project, idx) => (
+                              {builder.tokenTickers.slice(0, 3).map((project, idx) => (
                                 <Badge 
                                   key={idx}
                                   variant="secondary" 
@@ -476,9 +499,9 @@ export default function BrowseBuilders() {
                                   {project}
                                 </Badge>
                               ))}
-                              {builder.tokenGateProjects.length > 3 && (
+                              {builder.tokenTickers.length > 3 && (
                                 <Badge variant="secondary" className="text-xs font-mono">
-                                  +{builder.tokenGateProjects.length - 3}
+                                  +{builder.tokenTickers.length - 3}
                                 </Badge>
                               )}
                             </div>
