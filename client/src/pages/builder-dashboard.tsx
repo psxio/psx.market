@@ -61,7 +61,12 @@ import {
   ArchiveRestore,
   User,
   FileText,
-  Image
+  Image,
+  Copy,
+  Mail,
+  UserPlus,
+  Send,
+  Ban
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
@@ -124,6 +129,24 @@ export default function BuilderDashboard() {
 
   const { data: services = [], isLoading: servicesLoading } = useQuery<Service[]>({
     queryKey: ["/api/builders", builderId, "services"],
+    enabled: !!builderId,
+  });
+
+  const { data: invitesData, isLoading: invitesLoading } = useQuery<{
+    invites: Array<{
+      id: string;
+      code: string;
+      email?: string;
+      status: string;
+      usedBy?: string;
+      usedByName?: string;
+      usedAt?: string;
+      createdAt: string;
+    }>;
+    remaining: number;
+    total: number;
+  }>({
+    queryKey: ["/api/builders", builderId, "invites"],
     enabled: !!builderId,
   });
 
@@ -209,6 +232,46 @@ export default function BuilderDashboard() {
       toast({
         title: "Archive failed",
         description: "Failed to update service status",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createInviteMutation = useMutation({
+    mutationFn: async (email?: string) => {
+      if (!builderId) throw new Error("Builder ID not found");
+      return apiRequest("POST", `/api/builders/${builderId}/invites`, { email });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId, "invites"] });
+      toast({
+        title: "Invite created!",
+        description: "Your invite code has been generated",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to create invite",
+        description: error.message || "You may have reached your invite limit (5 invites)",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const revokeInviteMutation = useMutation({
+    mutationFn: async (inviteId: string) => {
+      return apiRequest("DELETE", `/api/builder-invites/${inviteId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId, "invites"] });
+      toast({
+        title: "Invite revoked",
+        description: "The invite has been revoked successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Failed to revoke invite",
         variant: "destructive",
       });
     },
@@ -567,6 +630,7 @@ export default function BuilderDashboard() {
         <TabsList data-testid="tabs-builder-dashboard">
           <TabsTrigger value="orders" data-testid="tab-orders">Orders</TabsTrigger>
           <TabsTrigger value="services" data-testid="tab-services">Services</TabsTrigger>
+          <TabsTrigger value="invites" data-testid="tab-invites">Invites</TabsTrigger>
           <TabsTrigger value="analytics" data-testid="tab-analytics">Analytics</TabsTrigger>
           <TabsTrigger value="earnings" data-testid="tab-earnings">Earnings</TabsTrigger>
         </TabsList>
@@ -738,6 +802,129 @@ export default function BuilderDashboard() {
                 Detailed earnings breakdown and payout history will be available here.
               </CardDescription>
             </CardHeader>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="invites" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">Builder Invites</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Share port444 with other creators (5 invites available)
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-primary">
+                  {invitesData?.remaining ?? 0}/5
+                </div>
+                <div className="text-xs text-muted-foreground">Remaining</div>
+              </div>
+              <Button 
+                onClick={() => createInviteMutation.mutate()}
+                disabled={createInviteMutation.isPending || (invitesData?.remaining ?? 0) <= 0}
+                data-testid="button-generate-invite"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Generate Invite
+              </Button>
+            </div>
+          </div>
+
+          {invitesLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            </div>
+          ) : (invitesData?.invites?.length ?? 0) === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center py-8">
+                  <UserPlus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No invites generated yet</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Generate invite codes to bring other talented builders to port444
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {invitesData?.invites.map((invite) => (
+                <Card key={invite.id} data-testid={`card-invite-${invite.id}`}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant={invite.status === 'active' ? 'default' : invite.status === 'used' ? 'secondary' : 'destructive'}>
+                            {invite.status}
+                          </Badge>
+                          {invite.email && (
+                            <span className="text-sm text-muted-foreground flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {invite.email}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mb-2">
+                          <code className="px-3 py-1 bg-muted rounded text-sm font-mono">
+                            {invite.code}
+                          </code>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              navigator.clipboard.writeText(`${window.location.origin}/builder-onboarding/${invite.code}`);
+                              toast({
+                                title: "Copied!",
+                                description: "Invite link copied to clipboard",
+                              });
+                            }}
+                            data-testid={`button-copy-invite-${invite.id}`}
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                        </div>
+
+                        <div className="text-xs text-muted-foreground">
+                          Created {new Date(invite.createdAt).toLocaleDateString()}
+                          {invite.usedByName && (
+                            <span className="ml-2">
+                              • Used by {invite.usedByName} on {new Date(invite.usedAt!).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {invite.status === 'active' && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => revokeInviteMutation.mutate(invite.id)}
+                          disabled={revokeInviteMutation.isPending}
+                          data-testid={`button-revoke-invite-${invite.id}`}
+                        >
+                          <Ban className="h-4 w-4 mr-1" />
+                          Revoke
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          <Card className="bg-muted/50">
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-2">How it works</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Each builder gets 5 invite codes to share</li>
+                <li>• Send invite links to talented creators you know</li>
+                <li>• They get fast-tracked through onboarding when they use your code</li>
+                <li>• Build a stronger community of premium builders</li>
+              </ul>
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
