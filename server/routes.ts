@@ -10,8 +10,9 @@ import {
   insertProjectDeliverableSchema,
   insertProgressUpdateSchema,
   insertProjectDocumentSchema,
+  insertServiceSchema,
 } from "@shared/schema";
-import { requireAdminAuth, requireClientAuth, generateAdminToken, revokeAdminToken, verifyAdminToken } from "./middleware/auth";
+import { requireAdminAuth, requireClientAuth, requireBuilderAuth, generateAdminToken, revokeAdminToken, verifyAdminToken } from "./middleware/auth";
 import { WebSocketServer, WebSocket } from "ws";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
@@ -304,6 +305,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(services);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch services" });
+    }
+  });
+
+  // Create service for builder (builder self-service)
+  app.post("/api/builders/:builderId/services", requireBuilderAuth, async (req, res) => {
+    try {
+      const { builderId } = req.params;
+      
+      // Verify the builder is creating their own service
+      if (req.session.builderId !== builderId) {
+        return res.status(403).json({ error: "Forbidden - Can only create services for your own profile" });
+      }
+
+      // Validate request body
+      const serviceData = insertServiceSchema.parse({
+        ...req.body,
+        builderId, // Ensure builderId is set from URL param
+      });
+
+      const service = await storage.createService(serviceData);
+      res.status(201).json(service);
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ 
+          error: "Invalid service data", 
+          details: error.errors 
+        });
+      }
+      console.error("Error creating service:", error);
+      res.status(500).json({ error: "Failed to create service" });
     }
   });
 
