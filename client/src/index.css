@@ -730,4 +730,23 @@
   .swipe-indicator.swipe-right {
     transform: translateX(10px);
   }
+
+  /* Infinite auto-scroll animation for Trusted By section */
+  @keyframes scroll-infinite {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll-infinite {
+    animation: scroll-infinite 30s linear infinite;
+  }
+
+  /* Pause animation on hover */
+  .animate-scroll-infinite:hover {
+    animation-play-state: paused;
+  }
 }

@@ -662,37 +662,74 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-background/50 to-background pointer-events-none z-20 backdrop-blur-sm" />
       </section>
 
-      {/* Trusted By Partners - Integrated with Parallax */}
+      {/* Trusted By Partners - Auto-Scrolling Carousel */}
       <section 
         id="trusted-by-section"
         className="relative bg-gradient-to-b from-background via-background/95 to-background py-8 overflow-hidden border-y border-border/30"
         style={{ willChange: 'transform, opacity', opacity: 0 }}
       >
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+          <div className="flex flex-col gap-4 items-center">
             <span className="text-xs uppercase tracking-wider text-muted-foreground/80 font-semibold whitespace-nowrap">
               Trusted by
             </span>
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">NEMESIS</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">DISTRICT</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">CHABA</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TFUND</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TENGE</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$PSX</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$CREATE</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TITANIUM</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">RYFT</span>
-              <span className="text-muted-foreground/20">•</span>
-              <span className="text-xs text-muted-foreground/70 italic font-medium">50+ projects</span>
+            
+            {/* Auto-scrolling container */}
+            <div className="relative w-full overflow-hidden">
+              {/* Gradient fade edges */}
+              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+              
+              {/* Scrolling content */}
+              <div className="flex gap-6 animate-scroll-infinite">
+                {/* First set of logos */}
+                <div className="flex items-center gap-6 whitespace-nowrap">
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">NEMESIS</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">DISTRICT</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">CHABA</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TFUND</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TENGE</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$PSX</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$CREATE</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TITANIUM</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">RYFT</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-xs text-muted-foreground/70 italic font-medium">50+ projects</span>
+                  <span className="text-muted-foreground/20">•</span>
+                </div>
+                
+                {/* Duplicate for seamless loop */}
+                <div className="flex items-center gap-6 whitespace-nowrap" aria-hidden="true">
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">NEMESIS</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">DISTRICT</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">CHABA</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TFUND</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TENGE</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$PSX</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$CREATE</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TITANIUM</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">RYFT</span>
+                  <span className="text-muted-foreground/20">•</span>
+                  <span className="text-xs text-muted-foreground/70 italic font-medium">50+ projects</span>
+                  <span className="text-muted-foreground/20">•</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
