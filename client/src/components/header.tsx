@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Menu, Shield, MessageCircle, Grid3x3, LayoutDashboard, Sparkles, Rocket, Image } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import psxLogo from "@assets/ezgif.com-webp-maker_1761694278873.webp";
 import {
@@ -20,6 +20,7 @@ export function Header() {
   const { isClient, isBuilder, client, builder } = useWalletAuth();
   const [, setLocation] = useLocation();
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   const handleMobileSearch = (query: string) => {
     if (query.trim()) {
@@ -42,18 +43,20 @@ export function Header() {
             <img 
               src={psxLogo} 
               alt="PSX" 
-              className="h-16 w-auto object-contain brightness-110 hover:brightness-125 transition-[filter] duration-200"
+              className="h-16 w-auto object-contain brightness-110 hover:brightness-125 transition-all duration-500"
               style={{ 
                 imageRendering: 'auto',
-                willChange: 'filter',
+                willChange: 'filter, opacity',
                 transform: 'translateZ(0)',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
                 perspective: 1000,
-                WebkitPerspective: 1000
+                WebkitPerspective: 1000,
+                opacity: logoLoaded ? 1 : 0
               }}
               loading="eager"
               decoding="async"
+              onLoad={() => setLogoLoaded(true)}
             />
           </Link>
 

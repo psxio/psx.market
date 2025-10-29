@@ -1,9 +1,11 @@
 import { Link } from "wouter";
 import { Github, Twitter, MessageCircle } from "lucide-react";
 import psxLogo from "@assets/ezgif.com-webp-maker_1761694278873.webp";
+import { useState } from "react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   return (
     <footer className="border-t bg-background">
@@ -14,7 +16,16 @@ export function Footer() {
               <img 
                 src={psxLogo} 
                 alt="PSX" 
-                className="h-16 w-auto object-contain brightness-110"
+                className="h-16 w-auto object-contain brightness-110 transition-opacity duration-500"
+                style={{
+                  opacity: logoLoaded ? 1 : 0,
+                  willChange: 'opacity',
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden'
+                }}
+                loading="lazy"
+                decoding="async"
+                onLoad={() => setLogoLoaded(true)}
               />
             </div>
             <p className="text-sm text-muted-foreground">
