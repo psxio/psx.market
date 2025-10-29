@@ -26,17 +26,18 @@ export function SEOHead({
     existingMetas.forEach((meta) => meta.remove());
 
     // Create and append new meta tags
+    const baseUrl = window.location.origin;
     const metas = [
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: ogType },
-      { property: "og:image", content: `https://port444.shop${ogImage}` },
-      { property: "og:site_name", content: "port444" },
+      { property: "og:image", content: `${baseUrl}${ogImage}` },
+      { property: "og:site_name", content: "PSX" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
-      { name: "twitter:image", content: `https://port444.shop${ogImage}` },
+      { name: "twitter:image", content: `${baseUrl}${ogImage}` },
     ];
 
     if (keywords) {
