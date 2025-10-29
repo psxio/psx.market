@@ -135,6 +135,21 @@ export const builders = pgTable("builders", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Builder Invites - Each builder gets 5 invites to share
+export const builderInvites = pgTable("builder_invites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  code: text("code").notNull().unique(), // Short invite code (e.g., "PSX-ABC123")
+  createdBy: varchar("created_by").notNull(), // Builder ID who created this invite
+  createdByName: text("created_by_name").notNull(), // Builder name for display
+  email: text("email"), // Optional: pre-assign to specific email
+  status: text("status").notNull().default("active"), // active, used, expired, revoked
+  usedBy: varchar("used_by"), // Builder ID who used this invite
+  usedByName: text("used_by_name"), // Name of builder who used it
+  usedAt: text("used_at"), // When the invite was used
+  expiresAt: text("expires_at"), // Optional expiration date
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const builderProjects = pgTable("builder_projects", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   builderId: varchar("builder_id").notNull(),
@@ -418,6 +433,14 @@ export const insertBuilderSchema = createInsertSchema(builders).omit({
 export const insertBuilderProjectSchema = createInsertSchema(builderProjects).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertBuilderInviteSchema = createInsertSchema(builderInvites).omit({
+  id: true,
+  createdAt: true,
+  usedBy: true,
+  usedByName: true,
+  usedAt: true,
 });
 
 export const insertServiceSchema = createInsertSchema(services).omit({
@@ -1218,6 +1241,9 @@ export type Builder = typeof builders.$inferSelect;
 
 export type InsertBuilderProject = z.infer<typeof insertBuilderProjectSchema>;
 export type BuilderProject = typeof builderProjects.$inferSelect;
+
+export type InsertBuilderInvite = z.infer<typeof insertBuilderInviteSchema>;
+export type BuilderInvite = typeof builderInvites.$inferSelect;
 
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type Service = typeof services.$inferSelect;
