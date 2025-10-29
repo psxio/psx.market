@@ -489,6 +489,14 @@ export function OrderBookingDialog({
             </Alert>
           )}
 
+          {!client && (
+            <Alert className="border-destructive/40 bg-destructive/10">
+              <AlertDescription className="text-sm font-medium">
+                Please connect your wallet to place an order
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="flex gap-3">
             <Button
               variant="outline"
@@ -502,7 +510,7 @@ export function OrderBookingDialog({
             <Button
               onClick={handleSubmit}
               className="flex-1"
-              disabled={createOrderMutation.isPending || !requirements.trim()}
+              disabled={createOrderMutation.isPending || !requirements.trim() || !client}
               data-testid="button-confirm-order"
             >
               {createOrderMutation.isPending ? (
@@ -510,6 +518,8 @@ export function OrderBookingDialog({
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Placing Order...
                 </>
+              ) : !client ? (
+                "Connect Wallet to Order"
               ) : (
                 <>
                   Place Order - ${totalPrice.toFixed(2)}
@@ -522,14 +532,6 @@ export function OrderBookingDialog({
               )}
             </Button>
           </div>
-
-          {!client && (
-            <div className="text-center p-4 bg-muted/50 rounded-md">
-              <p className="text-sm text-muted-foreground">
-                You need to be signed in to place an order
-              </p>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

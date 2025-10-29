@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
+import { useClientAuth } from "@/hooks/use-client-auth";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -44,6 +46,7 @@ export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { client } = useClientAuth();
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [customRequirements, setCustomRequirements] = useState("");
@@ -183,6 +186,15 @@ export default function ServiceDetail() {
   };
 
   const handleConfirmBooking = () => {
+    if (!client) {
+      toast({
+        title: "Authentication Required",
+        description: "Please connect your wallet to place an order.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!service || !builder || !selectedPackage) return;
 
     // Get package details
@@ -645,6 +657,14 @@ export default function ServiceDetail() {
                   </span>
                 </div>
               </div>
+
+              {!client && (
+                <Alert className="border-destructive/40 bg-destructive/10">
+                  <AlertDescription className="text-sm font-medium">
+                    Please connect your wallet to place an order
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
             <DialogFooter>
               <Button
@@ -657,10 +677,10 @@ export default function ServiceDetail() {
               </Button>
               <Button
                 onClick={handleConfirmBooking}
-                data-testid="button-confirm-order"
-                disabled={createOrderMutation.isPending}
+                data-testid="button-place-order"
+                disabled={createOrderMutation.isPending || !client}
               >
-                {createOrderMutation.isPending ? "Creating Order..." : `Place Order - $${calculateTotalPrice().toLocaleString()}`}
+                {createOrderMutation.isPending ? "Creating Order..." : !client ? "Connect Wallet to Order" : `Place Order - $${calculateTotalPrice().toLocaleString()}`}
               </Button>
             </DialogFooter>
           </DialogContent>
