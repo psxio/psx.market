@@ -7,12 +7,11 @@ export default function BuilderInvite() {
   const token = params?.token;
 
   useEffect(() => {
-    // Redirect to the For Builders landing page with invite token
-    // This gives invited builders the full onboarding experience
+    // Redirect to the builder onboarding wizard with invite token
     if (token) {
-      setLocation(`/builders?invite=${token}`);
+      setLocation(`/builder-onboarding/${token}`);
     } else {
-      setLocation("/builders");
+      setLocation("/builder-onboarding");
     }
   }, [token, setLocation]);
 
