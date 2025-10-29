@@ -174,6 +174,20 @@ export default function Home() {
         scrollIndicator.style.opacity = `${Math.max(0, 1 - scrollY / 150)}`;
       }
       
+      // ==== TRUSTED BY SECTION - SMOOTH FADE IN ====
+      const trustedSection = document.getElementById('trusted-by-section');
+      if (trustedSection) {
+        const rect = trustedSection.getBoundingClientRect();
+        const isVisible = rect.top < windowHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+          // Fade in smoothly as it comes into view
+          const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.3)));
+          trustedSection.style.opacity = `${progress}`;
+          trustedSection.style.transform = `translate3d(0, ${(1 - progress) * 30}px, 0)`;
+        }
+      }
+      
       // ==== CATEGORIES SECTION - DRAMATIC ENTRANCE ====
       const categoriesSection = document.getElementById('categories-section');
       if (categoriesSection) {
@@ -648,36 +662,43 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-background/50 to-background pointer-events-none z-20 backdrop-blur-sm" />
       </section>
 
-      {/* Trusted By Partners - Minimalistic */}
-      <section className="relative bg-background border-y border-border/50 py-6 overflow-hidden">
+      {/* Trusted By Partners - Integrated with Parallax */}
+      <section 
+        id="trusted-by-section"
+        className="relative bg-gradient-to-b from-background via-background/95 to-background py-8 overflow-hidden border-y border-border/30"
+        style={{ willChange: 'transform, opacity', opacity: 0 }}
+      >
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-            <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold whitespace-nowrap">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground/80 font-semibold whitespace-nowrap">
               Trusted by
             </span>
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">NEMESIS</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">DISTRICT</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">CHABA</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">TFUND</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">TENGE</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-primary">$PSX</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-primary">$CREATE</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">TITANIUM</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">RYFT</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-xs text-muted-foreground italic">50+ projects</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">NEMESIS</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">DISTRICT</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">CHABA</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TFUND</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TENGE</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$PSX</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-primary hover:brightness-110 transition-all duration-300 hover:scale-105">$CREATE</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">TITANIUM</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-all duration-300 hover:scale-105">RYFT</span>
+              <span className="text-muted-foreground/20">•</span>
+              <span className="text-xs text-muted-foreground/70 italic font-medium">50+ projects</span>
             </div>
           </div>
         </div>
+        
+        {/* Subtle background gradient animation */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-cyan-500/5 pointer-events-none opacity-50" />
       </section>
 
       {/* Buy on Demand - Category Filtering & Services */}
