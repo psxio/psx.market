@@ -442,6 +442,48 @@ export default function BrowseBuilders() {
                             </p>
                           )}
 
+                          {/* Skills */}
+                          {builder.skills && builder.skills.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5">
+                              {builder.skills.slice(0, 3).map((skill, idx) => (
+                                <Badge 
+                                  key={idx}
+                                  variant="secondary" 
+                                  className="text-xs"
+                                  data-testid={`skill-${idx}`}
+                                >
+                                  {skill}
+                                </Badge>
+                              ))}
+                              {builder.skills.length > 3 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{builder.skills.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Token Tickers from Projects */}
+                          {builder.tokenGateProjects && builder.tokenGateProjects.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5">
+                              {builder.tokenGateProjects.slice(0, 3).map((project, idx) => (
+                                <Badge 
+                                  key={idx}
+                                  variant="secondary" 
+                                  className="bg-primary/10 text-primary border-primary/20 font-mono text-xs"
+                                  data-testid={`project-${idx}`}
+                                >
+                                  {project}
+                                </Badge>
+                              ))}
+                              {builder.tokenGateProjects.length > 3 && (
+                                <Badge variant="secondary" className="text-xs font-mono">
+                                  +{builder.tokenGateProjects.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+
                           {/* Rating and Stats */}
                           <div className="flex items-center justify-between pt-2 border-t">
                             <div className="flex items-center gap-1">
@@ -453,12 +495,20 @@ export default function BrowseBuilders() {
                                 ({builder.reviewCount || 0})
                               </span>
                             </div>
-                            {builder.completedProjects !== undefined && (
-                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Award className="h-3.5 w-3.5" />
-                                <span>{builder.completedProjects} orders</span>
-                              </div>
-                            )}
+                            <div className="flex items-center gap-3">
+                              {builder.completedProjects !== undefined && (
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                  <Award className="h-3.5 w-3.5" />
+                                  <span>{builder.completedProjects} orders</span>
+                                </div>
+                              )}
+                              {builder.serviceCount !== undefined && builder.serviceCount > 0 && (
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                  <Briefcase className="h-3.5 w-3.5" />
+                                  <span>{builder.serviceCount} {builder.serviceCount === 1 ? 'service' : 'services'}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
 
                           {/* Starting Price */}
