@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import psxLogo from "@assets/ezgif.com-webp-maker_1761694278873.webp";
 import {
   Sheet,
   SheetContent,
@@ -38,11 +39,13 @@ export function Header() {
       <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2" data-testid="link-home">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
-              4
-            </div>
-            <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
-              port444
+            <img 
+              src={psxLogo} 
+              alt="PSX" 
+              className="h-10 w-auto object-contain brightness-110"
+            />
+            <span className="hidden text-xl font-bold tracking-tight sm:inline-block bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              PSX
             </span>
           </Link>
 

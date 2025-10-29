@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Github, Twitter, MessageCircle } from "lucide-react";
+import psxLogo from "@assets/ezgif.com-webp-maker_1761694278873.webp";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,11 +11,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
-                4
-              </div>
-              <span className="text-lg font-bold tracking-tight">
-                port444
+              <img 
+                src={psxLogo} 
+                alt="PSX" 
+                className="h-10 w-auto object-contain brightness-110"
+              />
+              <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                PSX
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -191,7 +194,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="space-y-1 text-center md:text-left">
               <p className="text-sm text-muted-foreground">
-                &copy; {currentYear} port444. All rights reserved.
+                &copy; {currentYear} PSX. All rights reserved.
               </p>
               <p className="text-xs text-muted-foreground">
                 We do not tolerate racist, discriminatory, or illegal content. Adult services for legitimate Web3 projects only.

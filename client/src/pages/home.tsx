@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import { Header } from "@/components/header";
-import { WelcomeModal } from "@/components/welcome-modal";
 import { BuilderCard } from "@/components/builder-card";
 import { ServiceCard } from "@/components/service-card";
 import { SEOHead } from "@/components/seo-head";
@@ -453,7 +452,6 @@ export default function Home() {
       {/* Buy on Demand Hero */}
       <section id="hero-section" className="relative overflow-hidden bg-background h-screen flex items-center justify-center" style={{ willChange: 'transform, opacity' }}>
       
-      <WelcomeModal />
       <GuestBrowseBanner />
       <MobileStickyCTA />
         {/* Animated Mesh Gradient Background with Parallax */}
