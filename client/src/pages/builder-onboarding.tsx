@@ -187,9 +187,9 @@ export default function BuilderOnboarding() {
     { number: 4, title: "Review", completed: false, current: currentStep === 4 },
   ];
 
-  // Verify invite token if provided
+  // Verify invite token if provided (unified endpoint handles both 8-char builder codes and 64-char admin tokens)
   const { data: verification, isLoading: verifyingToken } = useQuery<InviteVerification>({
-    queryKey: ["/api/builder-invites/verify", inviteToken],
+    queryKey: [`/api/builder-invites/verify/${inviteToken}`],
     enabled: !!inviteToken,
   });
 

@@ -391,29 +391,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/builder-invites/verify/:code", async (req, res) => {
+  // Unified verification endpoint - handles both 8-char builder codes and 64-char admin tokens
+  app.get("/api/builder-invites/verify/:codeOrToken", async (req, res) => {
     try {
-      const { code } = req.params;
-      const invite = await storage.getBuilderInviteByCode(code);
+      const { codeOrToken } = req.params;
+      
+      // Detect invite type by length: 8 chars = builder code, 64 chars = admin token
+      const isBuilderCode = codeOrToken.length === 8;
+      
+      if (isBuilderCode) {
+        // Handle builder-generated invite codes
+        const invite = await storage.getBuilderInviteByCode(codeOrToken);
 
-      if (!invite) {
-        return res.json({ valid: false, error: "Invalid invite code" });
+        if (!invite) {
+          return res.json({ valid: false, error: "Invalid invite code" });
+        }
+
+        if (invite.status !== "active") {
+          return res.json({ valid: false, error: `Invite has been ${invite.status}` });
+        }
+
+        // Check if expired (if expiration is set)
+        if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
+          return res.json({ valid: false, error: "Invite has expired" });
+        }
+
+        return res.json({
+          valid: true,
+          email: invite.email,
+          createdBy: invite.createdByName,
+        });
+      } else {
+        // Handle admin-generated invite tokens
+        const token = await storage.getBuilderInviteToken(codeOrToken);
+        
+        if (!token) {
+          return res.status(404).json({ error: "Invalid invite token" });
+        }
+        
+        if (token.used) {
+          return res.status(400).json({ error: "This invite has already been used" });
+        }
+        
+        if (token.expiresAt && new Date(token.expiresAt) < new Date()) {
+          return res.status(400).json({ error: "This invite has expired" });
+        }
+        
+        return res.json({ valid: true, email: token.email });
       }
-
-      if (invite.status !== "active") {
-        return res.json({ valid: false, error: `Invite has been ${invite.status}` });
-      }
-
-      // Check if expired (if expiration is set)
-      if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
-        return res.json({ valid: false, error: "Invite has expired" });
-      }
-
-      res.json({
-        valid: true,
-        email: invite.email,
-        createdBy: invite.createdByName,
-      });
     } catch (error) {
       console.error("Error verifying invite:", error);
       res.status(500).json({ error: "Failed to verify invite" });
@@ -2403,28 +2428,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.get("/api/builder-invites/verify/:token", async (req, res) => {
-    try {
-      const token = await storage.getBuilderInviteToken(req.params.token);
-      
-      if (!token) {
-        return res.status(404).json({ error: "Invalid invite token" });
-      }
-      
-      if (token.used) {
-        return res.status(400).json({ error: "This invite has already been used" });
-      }
-      
-      if (token.expiresAt && new Date(token.expiresAt) < new Date()) {
-        return res.status(400).json({ error: "This invite has expired" });
-      }
-      
-      res.json({ valid: true, email: token.email });
-    } catch (error) {
-      console.error("Error verifying invite token:", error);
-      res.status(500).json({ error: "Failed to verify invite token" });
-    }
-  });
 
   // Admin Analytics Endpoints
   app.get("/api/admin/analytics/activity-feed", requireAdminAuth, async (req, res) => {
