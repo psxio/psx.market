@@ -442,7 +442,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="port444 - Web3 Talent Marketplace | $CREATE & $PSX"
+        title="PSX - Web3 Talent Marketplace | $CREATE & $PSX"
         description="Open Web3 marketplace connecting premium builders with memecoin and crypto projects. Hold $CREATE or $PSX tokens for 60% lower fees, priority support, and exclusive benefits."
         keywords="web3, marketplace, crypto, memecoin, builders, freelancers, KOLs, developers, $CREATE, $PSX, Base blockchain"
         ogType="website"
