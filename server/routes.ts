@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import rateLimit from "express-rate-limit";
+import bcrypt from "bcryptjs";
 import { storage } from "./storage";
 import { 
   insertBuilderApplicationSchema, 
@@ -1647,6 +1648,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(activity);
     } catch (error) {
       res.status(500).json({ error: "Failed to create activity" });
+    }
+  });
+
+  // Admin Registration - Simple endpoint for creating admin accounts
+  app.post("/api/admin/register", async (req, res) => {
+    try {
+      const { username, password, email, name } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: "Username and password required" });
+      }
+
+      // Check if admin already exists
+      const existingAdmin = await storage.getAdmin(username);
+      if (existingAdmin) {
+        return res.status(400).json({ error: "Admin already exists" });
+      }
+
+      // Hash password
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      // Create admin
+      const admin = await storage.createAdmin({
+        username,
+        passwordHash,
+        email: email || `${username}@port444.com`,
+        name: name || username,
+        role: "admin",
+      });
+
+      res.json({
+        id: admin.id,
+        username: admin.username,
+        email: admin.email,
+        name: admin.name,
+        message: "Admin account created successfully! You can now login.",
+      });
+    } catch (error) {
+      console.error("Admin registration error:", error);
+      res.status(500).json({ error: "Registration failed" });
     }
   });
 
