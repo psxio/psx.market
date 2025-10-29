@@ -631,22 +631,6 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Trust Badges - Clean Style */}
-            <div id="hero-badges" className="flex flex-wrap items-center justify-center gap-6 pt-4 pb-16" style={{ willChange: 'transform' }}>
-              <span className="text-muted-foreground text-sm font-medium">Powered by:</span>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
-                <Layers className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Base</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
-                <Coins className="h-5 w-5 text-primary" />
-                <span className="font-semibold">$CREATE</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-card border-2 border-border hover-elevate">
-                <Coins className="h-5 w-5 text-primary" />
-                <span className="font-semibold">$PSX</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -664,6 +648,37 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-background/50 to-background pointer-events-none z-20 backdrop-blur-sm" />
       </section>
 
+      {/* Trusted By Partners - Compact Section */}
+      <section className="relative bg-background border-y border-border/50 py-6 overflow-hidden">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold whitespace-nowrap">
+              Trusted by
+            </span>
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">NEMESIS</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">DISTRICT</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">CHABA</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">TFUND</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">TENGE</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-primary">$PSX</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-primary">$CREATE</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">TITANIUM</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">RYFT</span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="text-xs text-muted-foreground italic">50+ projects</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Buy on Demand - Category Filtering & Services */}
       <section id="explore-services" className="relative bg-gradient-to-b from-background via-background to-muted/10 py-24">
@@ -1199,7 +1214,7 @@ export default function Home() {
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Visit <span className="font-semibold text-primary">psx.agency</span> for our dedicated talent line offering direct B2B and coin-to-coin business partnerships. 
-                Powered by <span className="font-semibold text-foreground">$Create</span> and <span className="font-semibold text-foreground">$PSX</span> on Base. 
+                Trusted by <span className="font-semibold text-foreground">$Create</span> and <span className="font-semibold text-foreground">$PSX</span> on Base. 
                 Proudly partnered with <a href="https://thecreators.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">The Creators</a> at <span className="font-semibold text-foreground">thecreators.com</span>.
               </p>
             </div>

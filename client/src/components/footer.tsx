@@ -201,7 +201,7 @@ export function Footer() {
               </p>
             </div>
             <p className="text-sm text-muted-foreground">
-              Powered by <span className="text-primary font-semibold">$Create</span> and{" "}
+              Trusted by <span className="text-primary font-semibold">$Create</span> and{" "}
               <span className="text-primary font-semibold">$PSX</span> on Base
             </p>
           </div>
