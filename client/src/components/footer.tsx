@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Github, Twitter, MessageCircle } from "lucide-react";
+import { Github, Twitter, MessageCircle, Globe } from "lucide-react";
 import psxLogo from "@assets/psx-logo-optimized.webp";
 import { useState } from "react";
 
@@ -100,6 +100,18 @@ export function Footer() {
                 >
                   Hire Builders
                 </Link>
+              </li>
+              <li>
+                <a 
+                  href="https://basedcreators.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                  data-testid="link-footer-chapters"
+                >
+                  <Globe className="h-3.5 w-3.5" />
+                  Based Creators Chapters
+                </a>
               </li>
             </ul>
           </div>
