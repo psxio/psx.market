@@ -2,6 +2,16 @@
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## Recent Changes (October 29, 2025)
+- **✅ BASED CREATORS CHAPTERS INVITE SYSTEM**: Implemented 2-in-1 onboarding system for Based Creators chapters
+  - Separate chapters invite system with dedicated database table (`chaptersInvites`) including region support
+  - Admin can generate chapters invites from `/admin/chapters-invites` with Globe icon in sidebar
+  - Region selection: West Africa, Southern Africa, North America, Europe, Asia Pacific, Latin America, Middle East, Global Chapter
+  - 2-in-1 onboarding flow at `/chapters-onboarding/:token` creates profiles on both basedcreators.xyz and port444 marketplace
+  - Streamlined 3-step onboarding: Basic Info → Professional Details → Profile Photo & Review
+  - Backend verification endpoint: GET /api/chapters-invites/verify/:token validates token before onboarding
+  - Chapters invites tracked separately from regular builder invites (builderInviteTokens) and peer invites (builderInvites)
+  - Email and region pre-fill support for seamless member onboarding experience
+  - Used/unused status tracking with expiration dates and revocation capability
 - **✅ BUILDER INVITE SYSTEM LIVE**: Implemented invite-only builder access with peer-to-peer network growth
   - Each builder receives 5 invite codes they can generate and share with talented creators
   - New "Invites" tab in Builder Dashboard with full invite management UI
