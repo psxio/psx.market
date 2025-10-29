@@ -648,33 +648,33 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-background/50 to-background pointer-events-none z-20 backdrop-blur-sm" />
       </section>
 
-      {/* Trusted By Partners - Compact Section */}
-      <section className="relative bg-background border-y border-border/50 py-6 overflow-hidden">
+      {/* Trusted By Partners - Bigger Section */}
+      <section className="relative bg-background border-y border-border/50 py-12 overflow-hidden">
         <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-            <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold whitespace-nowrap">
+          <div className="flex flex-col items-center justify-center gap-6">
+            <span className="text-sm uppercase tracking-widest text-muted-foreground font-bold">
               Trusted by
             </span>
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">NEMESIS</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">DISTRICT</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">CHABA</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">TFUND</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">TENGE</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-primary">$PSX</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-primary">$CREATE</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">TITANIUM</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-sm font-semibold text-foreground/80 hover:text-foreground transition-colors">RYFT</span>
-              <span className="text-muted-foreground/30">•</span>
-              <span className="text-xs text-muted-foreground italic">50+ projects</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">NEMESIS</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">DISTRICT</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">CHABA</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">TFUND</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">TENGE</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-primary cursor-default">$PSX</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-primary cursor-default">$CREATE</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">TITANIUM</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-xl md:text-2xl font-bold text-foreground/80 hover:text-foreground transition-colors cursor-default">RYFT</span>
+              <span className="text-muted-foreground/30 text-2xl">•</span>
+              <span className="text-base text-muted-foreground italic font-medium">50+ projects</span>
             </div>
           </div>
         </div>

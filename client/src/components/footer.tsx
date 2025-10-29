@@ -10,15 +10,12 @@ export function Footer() {
       <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               <img 
                 src={psxLogo} 
                 alt="PSX" 
-                className="h-10 w-auto object-contain brightness-110"
+                className="h-12 w-auto object-contain brightness-110"
               />
-              <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                PSX
-              </span>
             </div>
             <p className="text-sm text-muted-foreground">
               The premier Web3 marketplace connecting elite builders with crypto projects. Token holders save 60% on fees!
