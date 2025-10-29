@@ -37,6 +37,96 @@ const loginLimiter = rateLimit({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // External API endpoint for Based Creators to create port444 builder accounts
+  app.post("/api/external/create-builder", async (req, res) => {
+    try {
+      // Authenticate using API key from Based Creators
+      const apiKey = req.headers['x-api-key'];
+      const sourcePlatform = req.headers['x-source-platform'];
+      
+      if (!apiKey || apiKey !== process.env.PORT444_EXTERNAL_API_KEY) {
+        return res.status(401).json({ error: 'Unauthorized - Invalid API key' });
+      }
+      
+      if (sourcePlatform !== 'basedcreators') {
+        return res.status(400).json({ error: 'Invalid source platform' });
+      }
+      
+      const { 
+        name, 
+        email, 
+        walletAddress, 
+        region, 
+        chapterRole, 
+        headline, 
+        bio, 
+        category, 
+        skills,
+        profileImage,
+        twitterHandle,
+        discordHandle
+      } = req.body;
+      
+      // Validate required fields
+      if (!name || !walletAddress) {
+        return res.status(400).json({ error: 'Missing required fields: name, walletAddress' });
+      }
+      
+      // Check if builder already exists with this wallet
+      const existingByWallet = await storage.getBuilderByWallet(walletAddress);
+      if (existingByWallet) {
+        // Check if cross-platform mapping already exists
+        const mapping = await storage.getCrossPlatformUserByPort444Id(existingByWallet.id);
+        if (mapping) {
+          return res.json({ 
+            success: true, 
+            builderId: existingByWallet.id,
+            message: 'Builder already exists and is linked' 
+          });
+        } else {
+          // Builder exists but not linked - just return the ID
+          return res.json({ 
+            success: true, 
+            builderId: existingByWallet.id,
+            message: 'Builder already exists' 
+          });
+        }
+      }
+      
+      // Create new builder profile
+      const newBuilder = await storage.createBuilder({
+        name: name,
+        email: email || `${walletAddress.substring(0, 10)}@port444.placeholder`,
+        walletAddress: walletAddress,
+        headline: headline || `${name} - Based Creators Chapter ${region || 'Member'}`,
+        bio: bio || `Web3 creator from Based Creators Chapters (${region || 'Global'})`,
+        category: category || 'web3',
+        skills: skills || [],
+        region: region,
+        profileImage: profileImage,
+        twitterHandle: twitterHandle,
+        discordHandle: discordHandle,
+        tokenGateWhitelisted: true, // Based Creators members get whitelisted
+        verificationStatus: 'verified',
+        availability: 'available',
+      });
+      
+      res.json({ 
+        success: true, 
+        builderId: newBuilder.id,
+        message: 'Builder account created successfully' 
+      });
+      
+    } catch (error) {
+      console.error('Error creating builder via external API:', error);
+      res.status(500).json({ 
+        error: 'Failed to create builder account',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+  
   app.get("/api/categories", async (_req, res) => {
     try {
       const categories = await storage.getCategories();
