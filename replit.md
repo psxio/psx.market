@@ -2,6 +2,22 @@
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## Recent Changes (October 29, 2025)
+- **Getting Started Page Complete Redesign**: Modernized to match new home page aesthetic
+  - Full-height hero section with parallax scrolling effects and gradient blobs
+  - Generous spacing (py-24) and large typography (text-5xl to text-7xl)
+  - Purple-to-cyan gradient design system throughout
+  - Enhanced card layouts with left accent bars and gradient overlays
+  - Condensed step cards with better visual hierarchy
+  - Stats section for builders showing key metrics
+  - Modern resource cards with gradient icon backgrounds
+- **Default Theme Changed to Light Mode**: Site now loads in light mode by default
+  - Updated ThemeProvider to default to "light" instead of "dark"
+  - Dark mode still available via theme toggle in header
+  - Better first impression for mainstream users
+- **Logo Performance Optimizations**: Added aggressive GPU acceleration to PSX logo
+  - Added perspective, backfaceVisibility, and transform3d optimizations
+  - Eager loading and async decoding for faster render
+  - Note: Logo file is 5.7MB (ideally should be 50-500KB for optimal performance)
 - **✅ BUILDERS NOW FULLY SELF-SUFFICIENT**: Implemented complete builder self-service for creating services
   - Added POST /api/builders/:builderId/services endpoint with requireBuilderAuth middleware
   - Comprehensive service creation dialog with all package tiers (Basic, Standard, Premium)
@@ -38,7 +54,7 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 - **Token Benefits UI**: Converted large banner to subtle green hover tooltip next to "Buy on Demand" heading for seamless page flow
 
 ## User Preferences
-- Default theme: Dark mode with purple/cyan branding
+- Default theme: Light mode with purple/cyan branding (dark mode available via toggle)
 - Design system follows design_guidelines.md
 - Mobile-first responsive design
 - Professional Web3 aesthetic
