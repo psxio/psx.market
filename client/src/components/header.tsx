@@ -42,7 +42,8 @@ export function Header() {
             <img 
               src={psxLogo} 
               alt="PSX" 
-              className="h-16 w-auto object-contain brightness-110 hover:brightness-125 transition-all"
+              className="h-16 w-auto object-contain brightness-110 hover:brightness-125 transition-[filter] duration-200"
+              style={{ imageRendering: 'auto', willChange: 'filter' }}
             />
           </Link>
 
