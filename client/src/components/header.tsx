@@ -42,7 +42,7 @@ export function Header() {
             <img 
               src={psxLogo} 
               alt="PSX" 
-              className="h-12 w-auto object-contain brightness-110 hover:brightness-125 transition-all"
+              className="h-16 w-auto object-contain brightness-110 hover:brightness-125 transition-all"
             />
           </Link>
 

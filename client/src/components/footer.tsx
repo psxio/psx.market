@@ -14,7 +14,7 @@ export function Footer() {
               <img 
                 src={psxLogo} 
                 alt="PSX" 
-                className="h-12 w-auto object-contain brightness-110"
+                className="h-16 w-auto object-contain brightness-110"
               />
             </div>
             <p className="text-sm text-muted-foreground">
