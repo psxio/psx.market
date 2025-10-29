@@ -1,7 +1,22 @@
 ## Overview
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
-## Recent Changes (October 28, 2025)
+## Recent Changes (October 29, 2025)
+- **✅ BUILDERS NOW FULLY SELF-SUFFICIENT**: Implemented complete builder self-service for creating services
+  - Added POST /api/builders/:builderId/services endpoint with requireBuilderAuth middleware
+  - Comprehensive service creation dialog with all package tiers (Basic, Standard, Premium)
+  - Form includes: title, description, category, delivery time, pricing, deliverables, revisions, PSX requirements, and tags
+  - **Security**: Enforced builderId from authenticated session (req.session.builderId) - prevents cross-account service creation
+  - Authorization check ensures builders can only create services for their own profile
+  - Success feedback with toast notifications and automatic cache invalidation
+  - Builders can now independently add services without admin intervention
+- **Authentication Frontend Guards**: Added wallet connection requirement to booking dialogs
+  - Disabled "Book Now" button when user not authenticated
+  - Clear "Connect Wallet to Order" messaging on unauthenticated state
+  - Prevents confusing 401 errors by blocking API calls before submission
+  - Defense-in-depth: frontend guards + backend requireClientAuth middleware
+
+## Previous Changes (October 28, 2025)
 - **Production-Ready Builder Onboarding**: Fixed critical bug in `approveBuilderApplication` function to properly transfer all application data to builder profiles
   - Email field now correctly transferred from applications to builder profiles
   - Custom headlines preserved (or auto-generated as fallback)
