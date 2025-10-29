@@ -179,6 +179,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get builders by category with their services grouped
+  app.get("/api/builders/by-category", async (req, res) => {
+    try {
+      const { category } = req.query;
+      
+      // Get all builders
+      let builders = await storage.getBuilders();
+      
+      // Filter by category if provided
+      if (category && typeof category === "string") {
+        builders = builders.filter((builder) => builder.category === category);
+      }
+      
+      // Get all services
+      const allServices = await storage.getServices();
+      
+      // Group services by builder
+      const buildersWithServices = builders.map((builder) => {
+        const builderServices = allServices.filter(
+          (service) => service.builderId === builder.id && service.active
+        );
+        return {
+          builder,
+          services: builderServices,
+        };
+      });
+      
+      // Filter out builders with no services
+      const buildersWithActiveServices = buildersWithServices.filter(
+        ({ services }) => services.length > 0
+      );
+      
+      // Sort by rating and completed projects
+      buildersWithActiveServices.sort((a, b) => {
+        const ratingA = parseFloat(a.builder.rating || "0");
+        const ratingB = parseFloat(b.builder.rating || "0");
+        const projectsA = a.builder.completedProjects || 0;
+        const projectsB = b.builder.completedProjects || 0;
+        
+        // Sort by rating first, then by projects
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+        return projectsB - projectsA;
+      });
+      
+      res.json(buildersWithActiveServices);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch builders by category" });
+    }
+  });
+
   app.get("/api/builders/adult", async (req, res) => {
     try {
       let builders = await storage.getBuilders();

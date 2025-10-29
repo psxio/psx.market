@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Header } from "@/components/header";
 import { BuilderCard } from "@/components/builder-card";
 import { ServiceCard } from "@/components/service-card";
+import { BuilderCategoryCard } from "@/components/BuilderCategoryCard";
 import { SEOHead } from "@/components/seo-head";
 import { LiveActivityTicker } from "@/components/live-activity-ticker";
 import { RecentReviewsCarousel } from "@/components/recent-reviews-carousel";
@@ -293,15 +294,15 @@ export default function Home() {
     },
   });
 
-  // Fetch services filtered by selected category
-  const { data: filteredServices, isLoading: servicesLoading } = useQuery<Array<{ builder: Builder; service: Service }>>({
-    queryKey: ["/api/services", selectedCategory],
+  // Fetch builders by category with their services grouped
+  const { data: categoryBuilders, isLoading: servicesLoading } = useQuery<Array<{ builder: Builder; services: Service[] }>>({
+    queryKey: ["/api/builders/by-category", selectedCategory],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (selectedCategory) {
-        params.set("categories", selectedCategory);
+        params.set("category", selectedCategory);
       }
-      const url = `/api/services${params.toString() ? `?${params.toString()}` : ""}`;
+      const url = `/api/builders/by-category${params.toString() ? `?${params.toString()}` : ""}`;
       const response = await fetch(url, { credentials: "include" });
       if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
       return response.json();
@@ -771,39 +772,39 @@ export default function Home() {
             })}
           </div>
 
-          {/* Service Count */}
-          {filteredServices && (
+          {/* Builder Count */}
+          {categoryBuilders && (
             <div className="text-center mb-8">
-              <p className="text-base md:text-lg font-semibold" data-testid="text-service-count">
-                Showing {filteredServices.length} {serviceCategories.find(c => c.slug === selectedCategory)?.name || 'services'}
+              <p className="text-base md:text-lg font-semibold" data-testid="text-builder-count">
+                Showing {categoryBuilders.length} {serviceCategories.find(c => c.slug === selectedCategory)?.name || 'builders'}
               </p>
             </div>
           )}
 
-          {/* Filtered Services Grid */}
+          {/* Filtered Builders Grid (with services) */}
           {servicesLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[...Array(8)].map((_, i) => (
-                <Skeleton key={i} className="h-[400px] w-full rounded-xl" />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-[500px] w-full rounded-xl" />
               ))}
             </div>
-          ) : filteredServices && filteredServices.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-testid="grid-filtered-services">
-              {filteredServices.slice(0, 8).map(({ builder, service }, index) => (
-                <div key={service.id} className="service-card-parallax" style={{ willChange: 'transform' }}>
-                  <ServiceCard
+          ) : categoryBuilders && categoryBuilders.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="grid-category-builders">
+              {categoryBuilders.slice(0, 6).map(({ builder, services }) => (
+                <div key={builder.id} className="service-card-parallax" style={{ willChange: 'transform' }}>
+                  <BuilderCategoryCard
                     builder={builder}
-                    service={service}
+                    services={services}
                   />
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-16">
-              <p className="text-muted-foreground">No services found in this category.</p>
-              <Link href="/marketplace">
+              <p className="text-muted-foreground">No builders found in this category.</p>
+              <Link href="/builders">
                 <Button variant="outline" className="mt-4 gap-2">
-                  Browse All Services
+                  Browse All Builders
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -811,11 +812,11 @@ export default function Home() {
           )}
 
           {/* View More Button */}
-          {filteredServices && filteredServices.length > 8 && (
+          {categoryBuilders && categoryBuilders.length > 6 && (
             <div className="text-center mt-10">
-              <Link href={`/marketplace?categories=${selectedCategory}`}>
+              <Link href={`/builders?category=${selectedCategory}`}>
                 <Button size="lg" variant="outline" className="gap-2">
-                  View All {serviceCategories.find(c => c.slug === selectedCategory)?.name} Services
+                  View All {serviceCategories.find(c => c.slug === selectedCategory)?.name}
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
