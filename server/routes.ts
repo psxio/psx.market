@@ -313,15 +313,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { builderId } = req.params;
       
-      // Verify the builder is creating their own service
+      // CRITICAL SECURITY: Verify the authenticated builder matches the route parameter
       if (req.session.builderId !== builderId) {
         return res.status(403).json({ error: "Forbidden - Can only create services for your own profile" });
       }
 
-      // Validate request body
+      // Validate request body and FORCE builderId from authenticated session (ignore any builderId in request body)
       const serviceData = insertServiceSchema.parse({
         ...req.body,
-        builderId, // Ensure builderId is set from URL param
+        builderId: req.session.builderId, // Use authenticated builderId, not path param or request body
       });
 
       const service = await storage.createService(serviceData);
