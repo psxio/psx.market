@@ -63,6 +63,8 @@ import {
   type InsertPushSubscription,
   type BuilderInviteToken,
   type InsertBuilderInviteToken,
+  type BuilderInvite,
+  type InsertBuilderInvite,
   type Partner,
   type InsertPartner,
   type PartnerConnectionRequest,
@@ -91,6 +93,7 @@ import {
   type InsertServiceView,
   builders,
   builderProjects,
+  builderInvites,
   services,
   categories,
   reviews,
@@ -448,6 +451,14 @@ export interface IStorage {
   getBuilderInviteToken(token: string): Promise<BuilderInviteToken | undefined>;
   useBuilderInviteToken(token: string, builderId: string, builderName: string): Promise<BuilderInviteToken>;
   deleteBuilderInviteToken(id: string): Promise<void>;
+
+  // Builder-Generated Invites (5 per builder)
+  createBuilderInvite(builderId: string, builderName: string, email?: string): Promise<BuilderInvite>;
+  getBuilderInvites(builderId: string): Promise<BuilderInvite[]>;
+  getBuilderInviteByCode(code: string): Promise<BuilderInvite | undefined>;
+  useBuilderInvite(code: string, builderId: string, builderName: string): Promise<BuilderInvite>;
+  getRemainingInvites(builderId: string): Promise<number>;
+  revokeBuilderInvite(id: string): Promise<void>;
 
   getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]>;
   getPartner(id: string): Promise<Partner | undefined>;
@@ -2824,6 +2835,75 @@ export class PostgresStorage implements IStorage {
 
   async deleteBuilderInviteToken(id: string): Promise<void> {
     await db.delete(builderInviteTokens).where(eq(builderInviteTokens.id, id));
+  }
+
+  // Builder-Generated Invites (5 per builder)
+  async createBuilderInvite(builderId: string, builderName: string, email?: string): Promise<BuilderInvite> {
+    // Check if builder has invites remaining
+    const remaining = await this.getRemainingInvites(builderId);
+    if (remaining <= 0) {
+      throw new Error('No invites remaining. Each builder gets 5 invites.');
+    }
+
+    // Generate a short, memorable invite code (e.g., "PSX-A7C9B2")
+    const randomPart = randomUUID().replace(/-/g, '').substring(0, 6).toUpperCase();
+    const code = `PSX-${randomPart}`;
+
+    const result = await db.insert(builderInvites).values({
+      code,
+      createdBy: builderId,
+      createdByName: builderName,
+      email,
+      status: 'active',
+    }).returning();
+
+    return result[0];
+  }
+
+  async getBuilderInvites(builderId: string): Promise<BuilderInvite[]> {
+    return await db.select()
+      .from(builderInvites)
+      .where(eq(builderInvites.createdBy, builderId))
+      .orderBy(desc(builderInvites.createdAt));
+  }
+
+  async getBuilderInviteByCode(code: string): Promise<BuilderInvite | undefined> {
+    const result = await db.select()
+      .from(builderInvites)
+      .where(eq(builderInvites.code, code));
+    return result[0];
+  }
+
+  async useBuilderInvite(code: string, builderId: string, builderName: string): Promise<BuilderInvite> {
+    const result = await db.update(builderInvites)
+      .set({
+        status: 'used',
+        usedBy: builderId,
+        usedByName: builderName,
+        usedAt: new Date().toISOString(),
+      })
+      .where(eq(builderInvites.code, code))
+      .returning();
+
+    return result[0];
+  }
+
+  async getRemainingInvites(builderId: string): Promise<number> {
+    const MAX_INVITES = 5;
+    
+    // Count total invites created by this builder
+    const totalInvites = await db.select({ count: sqlFunc<number>`count(*)` })
+      .from(builderInvites)
+      .where(eq(builderInvites.createdBy, builderId));
+
+    const used = Number(totalInvites[0]?.count || 0);
+    return Math.max(0, MAX_INVITES - used);
+  }
+
+  async revokeBuilderInvite(id: string): Promise<void> {
+    await db.update(builderInvites)
+      .set({ status: 'revoked' })
+      .where(eq(builderInvites.id, id));
   }
 
   async getPartners(options?: { category?: string; featured?: boolean; active?: boolean }): Promise<Partner[]> {
