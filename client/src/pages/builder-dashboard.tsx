@@ -1,11 +1,32 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { NotificationCenter } from "@/components/notification-center";
 import {
   Dialog,
@@ -51,11 +72,34 @@ import { PricingCalculator } from "@/components/pricing-calculator";
 import { FirstClientChecklist } from "@/components/first-client-checklist";
 import type { Order, Service } from "@shared/schema";
 
+// Service creation form schema
+const serviceFormSchema = z.object({
+  title: z.string().min(10, "Title must be at least 10 characters").max(100),
+  description: z.string().min(50, "Description must be at least 50 characters").max(2000),
+  category: z.string().min(1, "Category is required"),
+  deliveryTime: z.string().min(1, "Delivery time is required"),
+  basicPrice: z.string().min(1, "Basic price is required"),
+  basicDescription: z.string().min(20, "Basic description must be at least 20 characters"),
+  basicDeliveryDays: z.string().optional(),
+  basicRevisions: z.string().optional(),
+  standardPrice: z.string().optional(),
+  standardDescription: z.string().optional(),
+  standardDeliveryDays: z.string().optional(),
+  standardRevisions: z.string().optional(),
+  premiumPrice: z.string().optional(),
+  premiumDescription: z.string().optional(),
+  premiumDeliveryDays: z.string().optional(),
+  premiumRevisions: z.string().optional(),
+  psxRequired: z.string().min(1, "PSX requirement is required"),
+  tags: z.string().optional(),
+});
+
 export default function BuilderDashboard() {
   const { builder, isLoading: builderLoading } = useBuilderAuth();
   const { toast } = useToast();
   const [deleteServiceId, setDeleteServiceId] = useState<string | null>(null);
   const [archiveServiceId, setArchiveServiceId] = useState<string | null>(null);
+  const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
 
   const builderId = builder?.id;
 
@@ -165,6 +209,82 @@ export default function BuilderDashboard() {
       toast({
         title: "Archive failed",
         description: "Failed to update service status",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Service creation form
+  const form = useForm<z.infer<typeof serviceFormSchema>>({
+    resolver: zodResolver(serviceFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      category: "",
+      deliveryTime: "1-3 days",
+      basicPrice: "",
+      basicDescription: "",
+      basicDeliveryDays: "7",
+      basicRevisions: "1",
+      standardPrice: "",
+      standardDescription: "",
+      standardDeliveryDays: "5",
+      standardRevisions: "2",
+      premiumPrice: "",
+      premiumDescription: "",
+      premiumDeliveryDays: "3",
+      premiumRevisions: "5",
+      psxRequired: "0",
+      tags: "",
+    },
+  });
+
+  const createServiceMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof serviceFormSchema>) => {
+      if (!builderId) throw new Error("Builder ID not found");
+      
+      // Transform form data to match API schema
+      const serviceData = {
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        deliveryTime: data.deliveryTime,
+        basicPrice: data.basicPrice,
+        basicDescription: data.basicDescription,
+        basicDeliveryDays: data.basicDeliveryDays ? parseInt(data.basicDeliveryDays) : 7,
+        basicRevisions: data.basicRevisions ? parseInt(data.basicRevisions) : 1,
+        psxRequired: data.psxRequired,
+        tags: data.tags ? data.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+        ...(data.standardPrice && {
+          standardPrice: data.standardPrice,
+          standardDescription: data.standardDescription || "",
+          standardDeliveryDays: data.standardDeliveryDays ? parseInt(data.standardDeliveryDays) : 5,
+          standardRevisions: data.standardRevisions ? parseInt(data.standardRevisions) : 2,
+        }),
+        ...(data.premiumPrice && {
+          premiumPrice: data.premiumPrice,
+          premiumDescription: data.premiumDescription || "",
+          premiumDeliveryDays: data.premiumDeliveryDays ? parseInt(data.premiumDeliveryDays) : 3,
+          premiumRevisions: data.premiumRevisions ? parseInt(data.premiumRevisions) : 5,
+        }),
+      };
+      
+      return apiRequest("POST", `/api/builders/${builderId}/services`, serviceData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId, "services"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/builders", builderId, "onboarding"] });
+      toast({
+        title: "Service created! 🎉",
+        description: "Your new service is now live on the marketplace",
+      });
+      setIsServiceDialogOpen(false);
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to create service",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     },
@@ -521,7 +641,10 @@ export default function BuilderDashboard() {
         <TabsContent value="services" className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Your Services</h2>
-            <Button data-testid="button-add-service">
+            <Button 
+              data-testid="button-add-service"
+              onClick={() => setIsServiceDialogOpen(true)}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Service
             </Button>
@@ -618,6 +741,429 @@ export default function BuilderDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Service Creation Dialog */}
+      <Dialog open={isServiceDialogOpen} onOpenChange={setIsServiceDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Service</DialogTitle>
+            <DialogDescription>
+              Add a new service to your portfolio. Fill in the details to help clients understand what you offer.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit((data) => createServiceMutation.mutate(data))} className="space-y-6">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Basic Information</h3>
+                
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Service Title *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g., I will create a professional smart contract for your project" 
+                          {...field}
+                          data-testid="input-service-title"
+                        />
+                      </FormControl>
+                      <FormDescription>Be specific and clear about what you're offering</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description *</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Describe your service in detail. What will clients receive? What makes your service unique?"
+                          className="min-h-[120px]"
+                          {...field}
+                          data-testid="input-service-description"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger data-testid="select-service-category">
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="smart-contracts">Smart Contract Development</SelectItem>
+                            <SelectItem value="nft-collections">NFT Collection Launch</SelectItem>
+                            <SelectItem value="token-marketing">Token Marketing</SelectItem>
+                            <SelectItem value="3d-art">3D NFT Art</SelectItem>
+                            <SelectItem value="community-management">Community Management</SelectItem>
+                            <SelectItem value="defi-development">DeFi Development</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="deliveryTime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Typical Delivery Time *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger data-testid="select-delivery-time">
+                              <SelectValue placeholder="Select delivery time" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="1-3 days">1-3 days</SelectItem>
+                            <SelectItem value="3-7 days">3-7 days</SelectItem>
+                            <SelectItem value="1-2 weeks">1-2 weeks</SelectItem>
+                            <SelectItem value="2-4 weeks">2-4 weeks</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g., Solidity, ERC-20, Web3 (comma-separated)" 
+                          {...field}
+                          data-testid="input-service-tags"
+                        />
+                      </FormControl>
+                      <FormDescription>Help clients find your service with relevant keywords</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Basic Package */}
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="font-semibold text-lg">Basic Package *</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="basicPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price (USDC) *</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="100"
+                            {...field}
+                            data-testid="input-basic-price"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="basicDeliveryDays"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Delivery Days</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="7"
+                            {...field}
+                            data-testid="input-basic-delivery"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="basicRevisions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Revisions</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="1"
+                            {...field}
+                            data-testid="input-basic-revisions"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="basicDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Package Description *</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="What's included in the basic package?"
+                          {...field}
+                          data-testid="input-basic-description"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Standard Package (Optional) */}
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="font-semibold text-lg">Standard Package (Optional)</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="standardPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price (USDC)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="200"
+                            {...field}
+                            data-testid="input-standard-price"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="standardDeliveryDays"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Delivery Days</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="5"
+                            {...field}
+                            data-testid="input-standard-delivery"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="standardRevisions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Revisions</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="2"
+                            {...field}
+                            data-testid="input-standard-revisions"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="standardDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Package Description</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="What's included in the standard package?"
+                          {...field}
+                          data-testid="input-standard-description"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Premium Package (Optional) */}
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="font-semibold text-lg">Premium Package (Optional)</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="premiumPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price (USDC)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="500"
+                            {...field}
+                            data-testid="input-premium-price"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="premiumDeliveryDays"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Delivery Days</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="3"
+                            {...field}
+                            data-testid="input-premium-delivery"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="premiumRevisions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Revisions</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="5"
+                            {...field}
+                            data-testid="input-premium-revisions"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="premiumDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Package Description</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="What's included in the premium package?"
+                          {...field}
+                          data-testid="input-premium-description"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Token Requirements */}
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="font-semibold text-lg">Token Requirements</h3>
+                
+                <FormField
+                  control={form.control}
+                  name="psxRequired"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PSX Tokens Required *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number"
+                          placeholder="0"
+                          {...field}
+                          data-testid="input-psx-required"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Set to 0 for no requirement, or specify minimum PSX tokens needed
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsServiceDialogOpen(false);
+                    form.reset();
+                  }}
+                  data-testid="button-cancel-service"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createServiceMutation.isPending}
+                  data-testid="button-submit-service"
+                >
+                  {createServiceMutation.isPending ? "Creating..." : "Create Service"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!deleteServiceId} onOpenChange={(open) => !open && setDeleteServiceId(null)}>
         <AlertDialogContent>
