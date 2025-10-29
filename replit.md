@@ -2,6 +2,15 @@
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## Recent Changes (October 29, 2025)
+- **✅ BUILDER INVITE SYSTEM LIVE**: Implemented invite-only builder access with peer-to-peer network growth
+  - Each builder receives 5 invite codes they can generate and share with talented creators
+  - New "Invites" tab in Builder Dashboard with full invite management UI
+  - Generate invite codes (8-character unique codes), copy shareable links, track usage status, and revoke unused invites
+  - Backend API: POST /api/builders/:builderId/invites (create), GET (list), DELETE (revoke)
+  - Database: `builderInvites` table tracks code, creator, recipient, status (active/used/expired/revoked), and timestamps
+  - Builder onboarding wizard now redirects to /builder-dashboard (not marketplace) after completion
+  - Security: Builders can only create/manage their own invites via session-based auth (req.session.builderId)
+  - Status tracking: Active invites can be revoked to free up slots, used invites show recipient name and timestamp
 - **✅ CRITICAL LOGO OPTIMIZATION**: Reduced PSX logo from 5.7MB to 136KB (42x reduction)
   - Optimized 72-frame animated WebP from 1920x1080 to 200x113px (36 frames)
   - Added opacity-based load detection to prevent stuttering during initial load
