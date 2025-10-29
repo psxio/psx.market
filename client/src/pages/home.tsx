@@ -57,7 +57,7 @@ import {
 import type { Builder, Service } from "@shared/schema";
 
 const serviceCategories = [
-  { name: "3D Artists", slug: "3D Content Creation", icon: Boxes },
+  { name: "3D Artists", slug: "3D & 2D Content Creation", icon: Boxes },
   { name: "Video Editors", slug: "Video Editing", icon: Music },
   { name: "Mods & Raiders", slug: "Mods & Raiders", icon: Shield },
   { name: "KOLs & Influencers", slug: "KOLs & Influencers", icon: Megaphone },
@@ -66,7 +66,7 @@ const serviceCategories = [
   { name: "Graphic Design", slug: "Graphic Design", icon: Palette },
   { name: "Volume Services", slug: "Volume Services", icon: BarChart3 },
   { name: "Social Media", slug: "Social Media Management", icon: Network },
-  { name: "Grants & Funding", slug: "grants-funding", icon: Coins },
+  { name: "Grants & Funding", slug: "Grants & Funding", icon: Coins },
   { name: "Strategy", slug: "Strategy Consulting", icon: Lightbulb },
   { name: "Documentation", slug: "Documentation & Paperwork", icon: FileText },
 ];
@@ -82,7 +82,7 @@ interface SearchSuggestion {
 
 export default function Home() {
   // Default to 3D Artists category
-  const [selectedCategory, setSelectedCategory] = useState("3D Content Creation");
+  const [selectedCategory, setSelectedCategory] = useState("3D & 2D Content Creation");
   
   // Search autocomplete state
   const [searchQuery, setSearchQuery] = useState("");

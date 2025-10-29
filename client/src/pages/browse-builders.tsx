@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, DollarSign, Image, MapPin, Award, Shield, User } from "lucide-react";
+import { Search, SlidersHorizontal, Users, Sparkles, TrendingUp, Code, BarChart3, Palette, Star, DollarSign, Image, MapPin, Award, Shield, User, Briefcase } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -384,10 +384,10 @@ export default function BrowseBuilders() {
                     <Link 
                       key={builder.id} 
                       href={`/builder/${builder.id}`}
-                      className="group block"
+                      className="group block h-full"
                       data-testid={`link-builder-${builder.id}`}
                     >
-                      <Card className="overflow-hidden hover-elevate active-elevate-2 h-full border-2">
+                      <Card className="overflow-hidden hover-elevate active-elevate-2 flex flex-col h-full border-2">
                         {/* Builder Avatar - Large Image-First */}
                         <div className="relative aspect-square w-full overflow-hidden bg-muted">
                           {builder.profileImage ? (
@@ -422,7 +422,7 @@ export default function BrowseBuilders() {
                         </div>
 
                         {/* Builder Info */}
-                        <div className="p-4 space-y-3">
+                        <div className="p-4 space-y-3 flex flex-col flex-1">
                           {/* Name */}
                           <div>
                             <h3 className="font-semibold text-lg mb-1 truncate">
@@ -444,7 +444,7 @@ export default function BrowseBuilders() {
 
                           {/* Skills */}
                           {builder.skills && builder.skills.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="flex flex-wrap gap-1.5 min-h-[28px]">
                               {builder.skills.slice(0, 3).map((skill, idx) => (
                                 <Badge 
                                   key={idx}
@@ -465,7 +465,7 @@ export default function BrowseBuilders() {
 
                           {/* Token Tickers from Projects */}
                           {builder.tokenGateProjects && builder.tokenGateProjects.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="flex flex-wrap gap-1.5 min-h-[28px]">
                               {builder.tokenGateProjects.slice(0, 3).map((project, idx) => (
                                 <Badge 
                                   key={idx}
@@ -483,6 +483,9 @@ export default function BrowseBuilders() {
                               )}
                             </div>
                           )}
+
+                          {/* Spacer to push rating to bottom */}
+                          <div className="flex-1" />
 
                           {/* Rating and Stats */}
                           <div className="flex items-center justify-between pt-2 border-t">

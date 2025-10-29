@@ -19,8 +19,8 @@ export function BuilderCategoryCard({ builder, services }: BuilderCategoryCardPr
   );
 
   return (
-    <Card className="group overflow-hidden hover-elevate transition-all duration-300">
-      <CardContent className="p-0">
+    <Card className="group overflow-hidden hover-elevate transition-all duration-300 flex flex-col h-full">
+      <CardContent className="p-0 flex flex-col flex-1">
         {/* Builder Header */}
         <div className="p-6 bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20">
           <div className="flex items-start gap-4">
@@ -60,7 +60,7 @@ export function BuilderCategoryCard({ builder, services }: BuilderCategoryCardPr
         </div>
 
         {/* Services Preview */}
-        <div className="p-6 pt-4 space-y-3">
+        <div className="p-6 pt-4 space-y-3 flex flex-col flex-1">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Available Services
@@ -73,7 +73,7 @@ export function BuilderCategoryCard({ builder, services }: BuilderCategoryCardPr
             )}
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 flex-1">
             {topServices.map((service) => (
               <Link key={service.id} href={`/service/${service.id}`}>
                 <div 
