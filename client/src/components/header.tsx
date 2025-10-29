@@ -43,7 +43,17 @@ export function Header() {
               src={psxLogo} 
               alt="PSX" 
               className="h-16 w-auto object-contain brightness-110 hover:brightness-125 transition-[filter] duration-200"
-              style={{ imageRendering: 'auto', willChange: 'filter' }}
+              style={{ 
+                imageRendering: 'auto',
+                willChange: 'filter',
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                perspective: 1000,
+                WebkitPerspective: 1000
+              }}
+              loading="eager"
+              decoding="async"
             />
           </Link>
 
