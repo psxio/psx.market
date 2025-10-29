@@ -339,6 +339,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Builder Invite System (5 invites per builder)
+  app.post("/api/builders/:builderId/invites", requireBuilderAuth, async (req, res) => {
+    try {
+      const { builderId } = req.params;
+      
+      // CRITICAL SECURITY: Verify the authenticated builder matches the route parameter
+      if (req.session.builderId !== builderId) {
+        return res.status(403).json({ error: "Forbidden - Can only create invites for your own profile" });
+      }
+
+      const builder = await storage.getBuilder(builderId);
+      if (!builder) {
+        return res.status(404).json({ error: "Builder not found" });
+      }
+
+      // Optional: assign invite to specific email
+      const { email } = req.body;
+
+      const invite = await storage.createBuilderInvite(builderId, builder.name, email);
+      res.status(201).json(invite);
+    } catch (error: any) {
+      console.error("Error creating invite:", error);
+      if (error.message && error.message.includes("No invites remaining")) {
+        return res.status(400).json({ error: error.message });
+      }
+      res.status(500).json({ error: "Failed to create invite" });
+    }
+  });
+
+  app.get("/api/builders/:builderId/invites", requireBuilderAuth, async (req, res) => {
+    try {
+      const { builderId } = req.params;
+      
+      // Verify the authenticated builder matches the route parameter
+      if (req.session.builderId !== builderId) {
+        return res.status(403).json({ error: "Forbidden - Can only view your own invites" });
+      }
+
+      const invites = await storage.getBuilderInvites(builderId);
+      const remaining = await storage.getRemainingInvites(builderId);
+
+      res.json({
+        invites,
+        remaining,
+        total: 5,
+      });
+    } catch (error) {
+      console.error("Error fetching invites:", error);
+      res.status(500).json({ error: "Failed to fetch invites" });
+    }
+  });
+
+  app.get("/api/builder-invites/verify/:code", async (req, res) => {
+    try {
+      const { code } = req.params;
+      const invite = await storage.getBuilderInviteByCode(code);
+
+      if (!invite) {
+        return res.json({ valid: false, error: "Invalid invite code" });
+      }
+
+      if (invite.status !== "active") {
+        return res.json({ valid: false, error: `Invite has been ${invite.status}` });
+      }
+
+      // Check if expired (if expiration is set)
+      if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
+        return res.json({ valid: false, error: "Invite has expired" });
+      }
+
+      res.json({
+        valid: true,
+        email: invite.email,
+        createdBy: invite.createdByName,
+      });
+    } catch (error) {
+      console.error("Error verifying invite:", error);
+      res.status(500).json({ error: "Failed to verify invite" });
+    }
+  });
+
+  app.delete("/api/builder-invites/:id", requireBuilderAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Get the invite to verify ownership
+      const invites = await storage.getBuilderInvites(req.session.builderId!);
+      const invite = invites.find(i => i.id === id);
+
+      if (!invite) {
+        return res.status(404).json({ error: "Invite not found or not owned by you" });
+      }
+
+      await storage.revokeBuilderInvite(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error revoking invite:", error);
+      res.status(500).json({ error: "Failed to revoke invite" });
+    }
+  });
+
   app.get("/api/builders/:id/reviews", async (req, res) => {
     try {
       const reviews = await storage.getReviewsByBuilder(req.params.id);
