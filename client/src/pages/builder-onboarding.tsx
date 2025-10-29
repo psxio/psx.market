@@ -363,7 +363,7 @@ export default function BuilderOnboarding() {
         });
         
         setTimeout(() => {
-          setLocation("/marketplace");
+          setLocation("/builder-dashboard");
         }, 1500);
       } else {
         await apiRequest("POST", "/api/builder-applications", builderData);
