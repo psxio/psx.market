@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Github, Twitter, MessageCircle } from "lucide-react";
-import psxLogo from "@assets/ezgif.com-webp-maker_1761694278873.webp";
+import psxLogo from "@assets/psx-logo-optimized.webp";
 import { useState } from "react";
 
 export function Footer() {

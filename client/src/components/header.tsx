@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import { useState, useEffect } from "react";
 import { ThemeToggle } from "./theme-toggle";
-import psxLogo from "@assets/ezgif.com-webp-maker_1761694278873.webp";
+import psxLogo from "@assets/psx-logo-optimized.webp";
 import {
   Sheet,
   SheetContent,

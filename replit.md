@@ -2,6 +2,17 @@
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
 ## Recent Changes (October 29, 2025)
+- **✅ CRITICAL LOGO OPTIMIZATION**: Reduced PSX logo from 5.7MB to 136KB (42x reduction)
+  - Optimized 72-frame animated WebP from 1920x1080 to 200x113px (36 frames)
+  - Added opacity-based load detection to prevent stuttering during initial load
+  - Smooth 500ms fade-in transition once logo fully loaded
+  - Instant load times - no more multi-second delays or animation stuttering
+  - GPU acceleration maintained for silky-smooth post-load animations
+- **Auto-Scrolling "Trusted By" Carousel**: Implemented infinite scroll animation
+  - 30-second seamless loop with pause-on-hover functionality
+  - Gradient fade edges (left/right) for polished appearance
+  - Pure CSS animation - no JavaScript overhead
+  - Displays: NEMESIS → DISTRICT → CHABA → TFUND → TENGE → $PSX → $CREATE → TITANIUM → RYFT → 50+ projects
 - **Getting Started Page Complete Redesign**: Modernized to match new home page aesthetic
   - Full-height hero section with parallax scrolling effects and gradient blobs
   - Generous spacing (py-24) and large typography (text-5xl to text-7xl)
@@ -14,10 +25,6 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
   - Updated ThemeProvider to default to "light" instead of "dark"
   - Dark mode still available via theme toggle in header
   - Better first impression for mainstream users
-- **Logo Performance Optimizations**: Added aggressive GPU acceleration to PSX logo
-  - Added perspective, backfaceVisibility, and transform3d optimizations
-  - Eager loading and async decoding for faster render
-  - Note: Logo file is 5.7MB (ideally should be 50-500KB for optimal performance)
 - **✅ BUILDERS NOW FULLY SELF-SUFFICIENT**: Implemented complete builder self-service for creating services
   - Added POST /api/builders/:builderId/services endpoint with requireBuilderAuth middleware
   - Comprehensive service creation dialog with all package tiers (Basic, Standard, Premium)
