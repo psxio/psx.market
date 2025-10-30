@@ -31,6 +31,7 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **Smart Contract Escrow System**: On-chain USDC payments on Base using `USDCEscrow.sol` for milestone releases, dispute resolution, fees, and refunds, with integrated frontend UI.
 - **Real-Time Messaging**: WebSocket-based chat with read receipts and file attachments.
 - **File Upload & Storage**: Replit Object Storage with ACL and presigned URLs.
+- **Twitter/X API Integration**: Full Twitter API v2 integration for profile verification, auto-fill during onboarding, real-time follower counts, verified status checking, and social profile data fetching. Uses OAuth 2.0 Bearer token for authenticated requests.
 - **AI-Powered Builder Discovery & Matching**: OpenAI GPT-4o-mini for a client-facing matching wizard, "Similar Builders Engine," and "Smart Service Recommendations."
 - **Notification System**: Comprehensive system with browser push, email notifications, real-time counters, and read/unread tracking.
 - **SEO & Discovery**: Dynamic meta tags, OpenGraph, Schema.org structured data, and dynamic sitemap generation.
@@ -46,5 +47,6 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **Payment Token**: USDC (ERC-20)
 - **Incentive Tokens**: $CREATE (ERC-20 on Base), $PSX (ERC-20 on Base)
 - **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations
+- **Twitter/X API**: Twitter API v2 with OAuth 2.0 for profile verification and social data
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
