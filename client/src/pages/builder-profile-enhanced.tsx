@@ -374,7 +374,17 @@ export default function BuilderProfileEnhanced() {
 
               {/* Enhanced CTAs */}
               <div className="flex flex-wrap gap-3">
-                <Button size="lg" className="gap-2" data-testid="button-view-services">
+                <Button 
+                  size="lg" 
+                  className="gap-2" 
+                  onClick={() => {
+                    const servicesSection = document.querySelector('[data-testid="section-services"]');
+                    if (servicesSection) {
+                      servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  data-testid="button-view-services"
+                >
                   <Package className="h-5 w-5" />
                   View Services
                   <ArrowRight className="h-4 w-4" />

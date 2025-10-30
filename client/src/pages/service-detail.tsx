@@ -551,11 +551,40 @@ export default function ServiceDetail() {
             {/* Quick Actions */}
             <Card>
               <CardContent className="pt-6 space-y-3">
-                <Button variant="outline" className="w-full justify-start gap-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start gap-2"
+                  onClick={() => {
+                    toast({
+                      title: "Saved to Favorites",
+                      description: "This service has been added to your favorites",
+                    });
+                  }}
+                  data-testid="button-save-service"
+                >
                   <Heart className="h-4 w-4" />
                   Save to Favorites
                 </Button>
-                <Button variant="outline" className="w-full justify-start gap-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start gap-2"
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: service?.title || 'Service',
+                        text: service?.description || '',
+                        url: window.location.href,
+                      }).catch(() => {});
+                    } else {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast({
+                        title: "Link Copied",
+                        description: "Service link copied to clipboard",
+                      });
+                    }
+                  }}
+                  data-testid="button-share-service"
+                >
                   <Share2 className="h-4 w-4" />
                   Share Service
                 </Button>

@@ -489,7 +489,14 @@ export function OrderBookingDialog({
             </Alert>
           )}
 
-          {!client && (
+          {!client && address && (
+            <Alert className="border-destructive/40 bg-destructive/10">
+              <AlertDescription className="text-sm font-medium">
+                Please sign in as a client to place an order
+              </AlertDescription>
+            </Alert>
+          )}
+          {!address && (
             <Alert className="border-destructive/40 bg-destructive/10">
               <AlertDescription className="text-sm font-medium">
                 Please connect your wallet to place an order
