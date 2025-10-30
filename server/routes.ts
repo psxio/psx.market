@@ -2668,6 +2668,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         profileImage,
         inviteToken,
         isChaptersMember,
+        service, // New: Service data from chapters onboarding
       } = req.body;
 
       // Validate required fields
@@ -2780,6 +2781,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn('Based Creators API not configured - skipping cross-platform sync');
       }
 
+      // Create service if provided (from chapters onboarding Step 4)
+      let createdService = null;
+      if (service && service.title && service.description) {
+        try {
+          createdService = await storage.createService({
+            builderId: newBuilder.id,
+            builderName: newBuilder.name,
+            builderSlug: newBuilder.name.toLowerCase().replace(/\s+/g, '-'),
+            title: service.title,
+            description: service.description,
+            category: service.category || category || 'web3',
+            deliveryTime: service.deliveryTime || '7 days',
+            basicPrice: service.basicPrice || 0,
+            basicDeliverables: service.basicDeliverables || [],
+            status: 'active',
+            views: 0,
+            favorites: 0,
+          });
+          
+          console.log(`✅ Created service ${createdService.id} for builder ${newBuilder.id}`);
+        } catch (serviceError) {
+          console.error('Error creating service during onboarding:', serviceError);
+          // Don't fail the entire onboarding if service creation fails
+        }
+      }
+
       // Mark chapters invite as used
       if (inviteToken) {
         await storage.useChaptersInvite(inviteToken, newBuilder.id, name);
@@ -2793,7 +2820,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         builderId: newBuilder.id,
         basedCreatorsUserId,
-        message: 'Account created successfully on both platforms',
+        serviceId: createdService?.id,
+        message: 'Account created successfully on both platforms' + (createdService ? ' with service live' : ''),
       });
 
     } catch (error) {
