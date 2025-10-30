@@ -82,6 +82,13 @@ export default function ChaptersOnboarding() {
     // Chapters-specific
     region: "",
     chapterRole: "",
+    
+    // Service/Offering
+    serviceTitle: "",
+    serviceDescription: "",
+    serviceDeliveryTime: "7 days",
+    serviceBasicPrice: "",
+    serviceBasicDeliverables: [] as string[],
   });
 
   // Verify chapters invite
@@ -139,6 +146,14 @@ export default function ChaptersOnboarding() {
       }
     }
     
+    if (step === 4) {
+      if (!formData.serviceTitle.trim()) errors.push("Service title is required");
+      if (!formData.serviceDescription.trim()) errors.push("Service description is required");
+      if (formData.serviceDescription.length < 100) errors.push("Description must be at least 100 characters");
+      if (!formData.serviceBasicPrice || parseFloat(formData.serviceBasicPrice) <= 0) errors.push("Enter a valid price");
+      if (formData.serviceBasicDeliverables.length === 0) errors.push("Add at least one deliverable");
+    }
+    
     setValidationErrors(errors);
     return errors.length === 0;
   };
@@ -169,6 +184,15 @@ export default function ChaptersOnboarding() {
         profileImage: profilePhoto,
         inviteToken,
         isChaptersMember: true,
+        // Include service data
+        service: {
+          title: formData.serviceTitle,
+          description: formData.serviceDescription,
+          category: formData.category,
+          deliveryTime: formData.serviceDeliveryTime,
+          basicPrice: parseFloat(formData.serviceBasicPrice),
+          basicDeliverables: formData.serviceBasicDeliverables,
+        },
       };
 
       const response = await apiRequest("POST", "/api/builders/onboard", applicationData);
@@ -176,8 +200,8 @@ export default function ChaptersOnboarding() {
 
       if (response.ok) {
         toast({
-          title: "Welcome to Based Creators!",
-          description: "You're now part of both the chapters network and port444 marketplace.",
+          title: "Welcome to the Network!",
+          description: "You're now part of Based Creators chapters and port444 marketplace with your first service live!",
         });
         setLocation("/builder-dashboard");
       } else {
@@ -295,10 +319,10 @@ export default function ChaptersOnboarding() {
               ))}
             </div>
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              Step {currentStep} of 3
+              Step {currentStep} of 4
             </span>
           </div>
-          <Progress value={(currentStep / 3) * 100} className="h-2" />
+          <Progress value={(currentStep / 4) * 100} className="h-2" />
         </div>
 
         {/* Validation Errors */}
@@ -550,7 +574,7 @@ export default function ChaptersOnboarding() {
                   Back
                 </Button>
                 <Button onClick={handleNext} size="lg" data-testid="button-next-step2">
-                  Continue to Review
+                  Continue to Profile Photo
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
@@ -558,18 +582,18 @@ export default function ChaptersOnboarding() {
           </Card>
         )}
 
-        {/* Step 3: Profile Photo & Review */}
+        {/* Step 3: Profile Photo */}
         {currentStep === 3 && (
           <Card className="border-gray-200 dark:border-gray-800">
             <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-950 flex items-center justify-center">
-                  <Sparkles className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-gray-900 dark:text-white">Almost There!</CardTitle>
+                  <CardTitle className="text-gray-900 dark:text-white">Your Profile Photo</CardTitle>
                   <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Add your photo and review your profile
+                    Add a professional photo to build trust
                   </CardDescription>
                 </div>
               </div>
@@ -587,25 +611,148 @@ export default function ChaptersOnboarding() {
                 />
               </div>
 
+              <div className="flex justify-between pt-4">
+                <Button onClick={handleBack} variant="outline" size="lg">
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Back
+                </Button>
+                <Button onClick={handleNext} size="lg" data-testid="button-next-step3">
+                  Continue to Service Creation
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 4: Create Your First Service */}
+        {currentStep === 4 && (
+          <Card className="border-gray-200 dark:border-gray-800">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-gray-900 dark:text-white">Create Your First Service</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                    What service will you offer to clients on port444?
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              <Alert className="border-purple-200 dark:border-purple-900 bg-purple-50 dark:bg-purple-950">
+                <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <AlertDescription className="text-sm text-purple-800 dark:text-purple-200">
+                  This service will be live on port444 marketplace immediately after you join. Clients can discover and book you right away!
+                </AlertDescription>
+              </Alert>
+
+              <div>
+                <Label htmlFor="serviceTitle" className="text-gray-900 dark:text-white">Service Title *</Label>
+                <Input
+                  id="serviceTitle"
+                  value={formData.serviceTitle}
+                  onChange={(e) => setFormData({ ...formData, serviceTitle: e.target.value })}
+                  placeholder="e.g., I will create professional 3D character models"
+                  maxLength={80}
+                  className="mt-1.5"
+                  data-testid="input-service-title"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {formData.serviceTitle.length}/80 characters
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="serviceDescription" className="text-gray-900 dark:text-white">Service Description *</Label>
+                <Textarea
+                  id="serviceDescription"
+                  value={formData.serviceDescription}
+                  onChange={(e) => setFormData({ ...formData, serviceDescription: e.target.value })}
+                  placeholder="Describe what you'll deliver, your process, and what makes your service unique..."
+                  rows={8}
+                  maxLength={2000}
+                  className="mt-1.5"
+                  data-testid="input-service-description"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {formData.serviceDescription.length}/2000 characters (minimum 100)
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="serviceBasicPrice" className="text-gray-900 dark:text-white">Price (USDC) *</Label>
+                  <Input
+                    id="serviceBasicPrice"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.serviceBasicPrice}
+                    onChange={(e) => setFormData({ ...formData, serviceBasicPrice: e.target.value })}
+                    placeholder="500"
+                    className="mt-1.5"
+                    data-testid="input-service-price"
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Set your base price in USDC
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="serviceDeliveryTime" className="text-gray-900 dark:text-white">Delivery Time</Label>
+                  <Select
+                    value={formData.serviceDeliveryTime}
+                    onValueChange={(value) => setFormData({ ...formData, serviceDeliveryTime: value })}
+                  >
+                    <SelectTrigger id="serviceDeliveryTime" className="mt-1.5">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="24 hours">24 hours</SelectItem>
+                      <SelectItem value="3 days">3 days</SelectItem>
+                      <SelectItem value="7 days">7 days</SelectItem>
+                      <SelectItem value="14 days">14 days</SelectItem>
+                      <SelectItem value="30 days">30 days</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="serviceDeliverables" className="text-gray-900 dark:text-white">What's Included (comma-separated) *</Label>
+                <Input
+                  id="serviceDeliverables"
+                  value={formData.serviceBasicDeliverables.join(", ")}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    serviceBasicDeliverables: e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                  })}
+                  placeholder="3D model, texture files, source files, commercial use rights"
+                  className="mt-1.5"
+                  data-testid="input-service-deliverables"
+                />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.serviceBasicDeliverables.map((item, i) => (
+                    <Badge key={i} variant="secondary" className="bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300">
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      {item}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-xl p-6 border border-blue-200 dark:border-blue-900">
                 <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white mb-4">
-                  <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  Your Profile Summary
+                  <Network className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Your Complete Profile
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Name</p>
                     <p className="font-medium text-gray-900 dark:text-white">{formData.name}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Email</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{formData.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Category</p>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {CATEGORIES.find(c => c.value === formData.category)?.label || formData.category}
-                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Chapter</p>
@@ -614,37 +761,44 @@ export default function ChaptersOnboarding() {
                       <p className="font-medium text-gray-900 dark:text-white">{formData.region || "Global"}</p>
                     </div>
                   </div>
-                  <div className="col-span-1 md:col-span-2">
-                    <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Headline</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{formData.headline}</p>
+                  <div>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Category</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {CATEGORIES.find(c => c.value === formData.category)?.label || formData.category}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Service Price</p>
+                    <p className="font-medium text-gray-900 dark:text-white">${formData.serviceBasicPrice} USDC</p>
                   </div>
                   <div className="col-span-1 md:col-span-2">
                     <p className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider mb-2">Skills</p>
                     <div className="flex flex-wrap gap-1">
-                      {formData.skills.map((skill, i) => (
-                        <Badge key={i} variant="secondary" className="bg-white dark:bg-gray-900 text-blue-700 dark:text-blue-300">
+                      {formData.skills.slice(0, 5).map((skill, i) => (
+                        <Badge key={i} variant="secondary" className="bg-white dark:bg-gray-900 text-blue-700 dark:text-blue-300 text-xs">
                           {skill}
                         </Badge>
                       ))}
+                      {formData.skills.length > 5 && (
+                        <Badge variant="secondary" className="bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs">
+                          +{formData.skills.length - 5} more
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <Alert className="border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950">
+              <Alert className="border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950">
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                      <Network className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                  </div>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">Dual Access Unlocked</h4>
-                    <AlertDescription className="text-blue-800 dark:text-blue-200">
-                      You'll get instant access to:
+                    <h4 className="font-semibold text-green-900 dark:text-green-100 mb-1">Dual Platform Access</h4>
+                    <AlertDescription className="text-sm text-green-800 dark:text-green-200">
+                      Upon completion, you'll have profiles on:
                       <ul className="list-disc list-inside mt-2 space-y-1">
-                        <li><strong>Based Creators</strong> — Your local chapter network for collaboration and referrals</li>
-                        <li><strong>port444</strong> — Global marketplace to offer and sell your services</li>
+                        <li><strong>Based Creators</strong> — Chapter network for local connections</li>
+                        <li><strong>port444</strong> — Global marketplace with your service live</li>
                       </ul>
                     </AlertDescription>
                   </div>
@@ -660,13 +814,13 @@ export default function ChaptersOnboarding() {
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
                   data-testid="button-submit"
                 >
-                  {isSubmitting ? "Creating Profile..." : (
+                  {isSubmitting ? "Creating Your Accounts..." : (
                     <>
                       <Handshake className="mr-2 h-5 w-5" />
-                      Join the Network
+                      Launch My Profile
                     </>
                   )}
                 </Button>
