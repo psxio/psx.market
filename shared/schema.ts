@@ -91,6 +91,7 @@ export const builders = pgTable("builders", {
   activeOrders: integer("active_orders").notNull().default(0),
   lastActiveAt: text("last_active_at"),
   tokenGateWhitelisted: boolean("token_gate_whitelisted").notNull().default(false),
+  isChaptersMember: boolean("is_chapters_member").notNull().default(false),
   
   responseRate: decimal("response_rate", { precision: 5, scale: 2 }).default("100"),
   totalMessagesReceived: integer("total_messages_received").notNull().default(0),
