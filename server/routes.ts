@@ -845,6 +845,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Auto-fill profile data from Twitter (used during account creation/onboarding)
+  app.post("/api/twitter/fetch-profile", async (req, res) => {
+    try {
+      const { username } = req.body;
+      
+      if (!username) {
+        return res.status(400).json({ error: "Twitter username is required" });
+      }
+
+      // Extract username from various input formats
+      const cleanUsername = socialIntegrationService.extractTwitterUsername(username);
+      
+      if (!cleanUsername) {
+        return res.status(400).json({ error: "Invalid Twitter username or URL" });
+      }
+
+      // Fetch real Twitter profile data using Twitter API v2
+      const twitterProfile = await socialIntegrationService.getTwitterProfile(cleanUsername);
+      
+      if (!twitterProfile) {
+        return res.status(404).json({ error: "Twitter account not found" });
+      }
+
+      // Return profile data for auto-filling forms
+      res.json({
+        success: true,
+        profile: {
+          username: twitterProfile.username,
+          handle: `@${twitterProfile.username}`,
+          name: twitterProfile.name,
+          bio: twitterProfile.description,
+          location: twitterProfile.location,
+          profileImage: twitterProfile.profile_image_url,
+          followers: twitterProfile.followers_count,
+          following: twitterProfile.following_count,
+          tweets: twitterProfile.tweet_count,
+          verified: twitterProfile.verified,
+          verifiedType: twitterProfile.verified_type,
+          profileUrl: `https://x.com/${twitterProfile.username}`,
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching Twitter profile:", error);
+      res.status(500).json({ error: "Failed to fetch Twitter profile" });
+    }
+  });
+
   app.get("/api/builders/:id/orders", async (req, res) => {
     try {
       const orders = await storage.getOrdersByBuilder(req.params.id);
