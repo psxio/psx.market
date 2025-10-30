@@ -20,6 +20,7 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **Homepage ("Buy on Demand")**: Fiverr-style, category-driven marketplace with a clean hero section, real-time category filtering, token perks, CTAs, and PSX Agency promotion. Features an autocomplete search bar and follows design guidelines with clean Base blue aesthetic.
 - **Browse Pages**: Consistent Fiverr-style layouts for services, builders, and portfolios with search and advanced sidebar filtering.
 - **Getting Started Page**: Dual-tab onboarding for clients and builders, covering wallet setup, builder search tips, AI matching, workflow, payments, reviews, value proposition, and application process.
+- **Chapters Onboarding**: Complete 4-step onboarding flow for Based Creators chapters members: (1) Basic Info, (2) Professional Details, (3) Profile Photo, (4) Service Creation. Creates accounts on both port444 and Based Creators with services live immediately.
 
 ### Technical Implementations
 - **Frontend**: React and TypeScript with TanStack Query.
@@ -37,7 +38,7 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **Builder Profile System**: Comprehensive fields including core info, enhanced fields, social links, category-specific fields, performance metrics, and specialized layouts.
 - **URL Synchronization**: Complete URL parameter synchronization for shareable filter states across marketplace pages, maintaining filter persistence on reload.
 - **Cross-Platform Integration**: Seamless 2-way account synchronization between port444 and Based Creators using a `cross_platform_users` table and API endpoints for account creation and linking.
-- **Invite Systems**: Builder invite system (peer-to-peer) and Based Creators Chapters invite system with dedicated onboarding flows.
+- **Invite Systems**: Builder invite system (peer-to-peer) and Based Creators Chapters invite system with dedicated 4-step onboarding including mandatory service creation during registration.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
