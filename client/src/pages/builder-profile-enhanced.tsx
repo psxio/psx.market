@@ -517,7 +517,12 @@ export default function BuilderProfileEnhanced() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {featuredServices.map((service) => (
-                    <Card key={service.id} className="hover-elevate cursor-pointer" data-testid={`card-service-${service.id}`}>
+                    <Card 
+                      key={service.id} 
+                      className="hover-elevate cursor-pointer" 
+                      onClick={() => setLocation(`/services/${service.id}`)}
+                      data-testid={`card-service-${service.id}`}
+                    >
                       <CardHeader>
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
@@ -540,10 +545,14 @@ export default function BuilderProfileEnhanced() {
                               {service.deliveryTime}
                             </span>
                           </div>
-                          <Button size="sm" onClick={() => {
-                            setSelectedService(service);
-                            setBookingDialogOpen(true);
-                          }}>
+                          <Button 
+                            size="sm" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedService(service);
+                              setBookingDialogOpen(true);
+                            }}
+                          >
                             Book Now
                           </Button>
                         </div>

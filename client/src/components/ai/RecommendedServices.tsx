@@ -70,48 +70,50 @@ export function RecommendedServices({ serviceId }: RecommendedServicesProps) {
       <CardContent>
         <div className="space-y-4">
           {recommendations.map((rec) => (
-            <Card key={rec.service.id} className="hover-elevate">
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h4 className="font-semibold">{rec.service.title}</h4>
-                        {rec.builder && (
-                          <p className="text-sm text-muted-foreground">
-                            by {rec.builder.name}
-                          </p>
-                        )}
+            <Link key={rec.service.id} href={`/services/${rec.service.id}`}>
+              <Card className="hover-elevate cursor-pointer" data-testid={`card-recommended-${rec.service.id}`}>
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h4 className="font-semibold">{rec.service.title}</h4>
+                          {rec.builder && (
+                            <p className="text-sm text-muted-foreground">
+                              by {rec.builder.name}
+                            </p>
+                          )}
+                        </div>
+                        <Badge className="text-xs">{rec.service.category}</Badge>
                       </div>
-                      <Badge className="text-xs">{rec.service.category}</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {rec.service.description}
-                    </p>
-                    <p className="text-xs text-primary italic">
-                      <Sparkles className="h-3 w-3 inline mr-1" />
-                      {rec.reasoning}
-                    </p>
-                    <div className="flex items-center justify-between pt-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold">
-                          From ${rec.service.basicPrice}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {rec.service.deliveryTime}
-                        </span>
-                      </div>
-                      <Link href={`/services/${rec.service.id}`}>
-                        <Button size="sm" variant="outline" data-testid={`button-view-service-${rec.service.id}`}>
-                          View Service
-                          <ArrowRight className="h-3 w-3 ml-2" />
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {rec.service.description}
+                      </p>
+                      <p className="text-xs text-primary italic">
+                        <Sparkles className="h-3 w-3 inline mr-1" />
+                        {rec.reasoning}
+                      </p>
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold">
+                            From ${rec.service.basicPrice}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {rec.service.deliveryTime}
+                          </span>
+                        </div>
+                        <Button size="sm" variant="outline" data-testid={`button-view-service-${rec.service.id}`} asChild>
+                          <span>
+                            View Service
+                            <ArrowRight className="h-3 w-3 ml-2" />
+                          </span>
                         </Button>
-                      </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </CardContent>
