@@ -103,7 +103,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         bio: bio || `Web3 creator from Based Creators Chapters (${region || 'Global'})`,
         category: category || 'web3',
         skills: skills || [],
-        region: region,
         profileImage: profileImage,
         twitterHandle: twitterHandle,
         discordHandle: discordHandle,
@@ -2679,7 +2678,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Verify chapters invite if provided
       if (inviteToken) {
         const invite = await storage.getChaptersInvite(inviteToken);
-        if (!invite || invite.used || invite.revokedAt) {
+        if (!invite || invite.used) {
           return res.status(400).json({ error: 'Invalid or expired chapters invite' });
         }
       }
@@ -2703,7 +2702,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         twitterHandle,
         discordHandle,
         responseTime: responseTime || '24 hours',
-        region,
         profileImage,
         tokenGateWhitelisted: true,
         verificationStatus: 'verified',

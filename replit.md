@@ -1,7 +1,18 @@
 ## Overview
 port444 is a Web3 marketplace connecting premium builders with clients in the memecoin and broader crypto space. It offers dual token incentives ($CREATE and $PSX) for reduced fees and exclusive benefits. The platform provides comprehensive builder profiles, service listings, category-based browsing, administrative tools, legal compliance, robust builder onboarding, and AI-powered builder discovery and matching. The long-term vision is to become the leading hub for Web3 talent, integrating secure on-chain payments and advanced project management.
 
-## Recent Changes (October 29, 2025)
+## Recent Changes (October 30, 2025)
+- **✅ COMPLETE CROSS-PLATFORM INTEGRATION**: Seamless 2-way account synchronization between port444 and Based Creators
+  - **Database**: `cross_platform_users` table tracks linked accounts via wallet address as primary identifier
+  - **API Endpoints**:
+    - Public endpoint: POST /api/external/create-builder (for Based Creators to create port444 accounts)
+    - Onboarding endpoint: POST /api/builders/onboard (creates accounts on BOTH platforms)
+  - **Authentication**: API key-based authentication with environment variables (BASED_CREATORS_API_KEY, PORT444_EXTERNAL_API_KEY)
+  - **Sync Flow**: When user signs up on either platform, API call automatically creates account on the other
+  - **Cross-Platform Mapping**: Tracks port444_builder_id, based_creators_user_id, wallet_address, sync_status
+  - **Error Handling**: Graceful failures with retry logic - users still get accounts even if one platform is down
+  - **Status Tracking**: pending/synced/failed status with lastSyncedAt timestamps and error messages
+  - **Complete Documentation**: CROSS_PLATFORM_INTEGRATION.md with setup guide, API specs, testing procedures
 - **✅ BASED CREATORS CHAPTERS INVITE SYSTEM**: Implemented 2-in-1 onboarding system for Based Creators chapters
   - Separate chapters invite system with dedicated database table (`chaptersInvites`) including region support
   - Admin can generate chapters invites from `/admin/chapters-invites` with Globe icon in sidebar
@@ -11,7 +22,7 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
   - Backend verification endpoint: GET /api/chapters-invites/verify/:token validates token before onboarding
   - Chapters invites tracked separately from regular builder invites (builderInviteTokens) and peer invites (builderInvites)
   - Email and region pre-fill support for seamless member onboarding experience
-  - Used/unused status tracking with expiration dates and revocation capability
+  - Used/unused status tracking with expiration dates
 - **✅ BUILDER INVITE SYSTEM LIVE**: Implemented invite-only builder access with peer-to-peer network growth
   - Each builder receives 5 invite codes they can generate and share with talented creators
   - New "Invites" tab in Builder Dashboard with full invite management UI
