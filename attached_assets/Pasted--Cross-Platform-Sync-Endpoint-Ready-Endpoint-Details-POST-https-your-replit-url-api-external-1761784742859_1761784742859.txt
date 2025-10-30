@@ -1,0 +1,51 @@
+🔄 Cross-Platform Sync Endpoint Ready!
+Endpoint Details:
+POST https://[your-replit-url]/api/external/create-account
+
+Authentication (port444 will send):
+Headers:
+  X-API-Key: 34fa4f2a760a9560a60ae5abf3113746826125db07efdf50590e50ad8d0d47d2
+  X-Source-Platform: port444
+  Content-Type: application/json
+
+Request Body Format:
+{
+  "name": "John Doe",              // Required - will be split into firstName/lastName
+  "email": "john@example.com",     // Required
+  "walletAddress": "0x...",        // Required - primary identifier
+  "region": "West Africa",         // Optional - for reference
+  "role": "Creator",               // Optional - mapped to industry field
+  "bio": "...",                    // Optional
+  "profileImage": "https://...",   // Optional
+  "twitterHandle": "@username",    // Optional - mapped to xProfile
+  "discordHandle": "user#1234",    // Optional
+  "skills": ["Design", "Web3"],    // Optional
+  "builderId": "port444-id"        // Optional but recommended for linking
+}
+
+Response:
+{
+  "success": true,
+  "userId": "based-creators-user-id",
+  "message": "User account created successfully"
+}
+
+Key Features:
+✅ Validates API key from port444 (34fa4f2a760a9560a60ae5abf3113746826125db07efdf50590e50ad8d0d47d2)
+✅ Checks for existing users by wallet address
+✅ Creates cross-platform mapping when builderId is provided
+✅ Idempotent - safe to retry if needed
+✅ Returns 401 for invalid API key
+✅ Returns 400 for missing required fields
+✅ Returns 500 with error details if creation fails
+
+Default Values Applied:
+New accounts are created as "member" role (permission level)
+Account is immediately active/verified (trusted platform)
+What You Can Tell port444:
+✅ The endpoint is LIVE and ready at: https://[your-replit-url]/api/external/create-account
+✅ Use API key: 34fa4f2a760a9560a60ae5abf3113746826125db07efdf50590e50ad8d0d47d2
+✅ Send X-Source-Platform: port444 header
+✅ Include builderId in the request body to enable cross-platform account linking
+
+The bi-directional sync is fully operational! When someone signs up on port444 (especially via chapter invites), they'll automatically get a Based Creators account too. 🚀

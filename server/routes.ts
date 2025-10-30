@@ -2649,6 +2649,164 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chapters onboarding - Creates accounts on BOTH port444 and Based Creators
+  app.post("/api/builders/onboard", async (req, res) => {
+    try {
+      const {
+        name,
+        email,
+        walletAddress,
+        headline,
+        bio,
+        category,
+        skills,
+        portfolioLinks,
+        twitterHandle,
+        discordHandle,
+        responseTime,
+        region,
+        chapterRole,
+        profileImage,
+        inviteToken,
+        isChaptersMember,
+      } = req.body;
+
+      // Validate required fields
+      if (!name || !email || !walletAddress) {
+        return res.status(400).json({ error: 'Missing required fields: name, email, walletAddress' });
+      }
+
+      // Verify chapters invite if provided
+      if (inviteToken) {
+        const invite = await storage.getChaptersInvite(inviteToken);
+        if (!invite || invite.used || invite.revokedAt) {
+          return res.status(400).json({ error: 'Invalid or expired chapters invite' });
+        }
+      }
+
+      // Check if builder already exists
+      const existingBuilder = await storage.getBuilderByWallet(walletAddress);
+      if (existingBuilder) {
+        return res.status(400).json({ error: 'Builder account already exists with this wallet' });
+      }
+
+      // Create builder on port444
+      const newBuilder = await storage.createBuilder({
+        name,
+        email,
+        walletAddress,
+        headline: headline || `${name} - Based Creators Chapter Member`,
+        bio: bio || `Web3 creator from Based Creators Chapters${region ? ` (${region})` : ''}`,
+        category: category || 'web3',
+        skills: skills || [],
+        portfolioLinks: portfolioLinks || [],
+        twitterHandle,
+        discordHandle,
+        responseTime: responseTime || '24 hours',
+        region,
+        profileImage,
+        tokenGateWhitelisted: true,
+        verificationStatus: 'verified',
+        availability: 'available',
+      });
+
+      // Sync with Based Creators platform
+      let basedCreatorsUserId: string | null = null;
+      const basedCreatorsApiUrl = process.env.BASED_CREATORS_API_URL;
+      const basedCreatorsApiKey = process.env.BASED_CREATORS_API_KEY;
+
+      if (basedCreatorsApiUrl && basedCreatorsApiKey) {
+        try {
+          const basedCreatorsResponse = await fetch(`${basedCreatorsApiUrl}/external/create-account`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': basedCreatorsApiKey,
+              'X-Source-Platform': 'port444',
+            },
+            body: JSON.stringify({
+              name,
+              email,
+              walletAddress,
+              region: region || 'Global',
+              role: chapterRole || 'Creator',
+              bio,
+              profileImage,
+              twitterHandle,
+              discordHandle,
+              skills,
+              builderId: newBuilder.id,
+            }),
+          });
+
+          const basedCreatorsData = await basedCreatorsResponse.json();
+
+          if (basedCreatorsData.success) {
+            basedCreatorsUserId = basedCreatorsData.userId;
+            
+            await storage.createCrossPlatformMapping({
+              port444BuilderId: newBuilder.id,
+              basedCreatorsUserId: basedCreatorsData.userId,
+              walletAddress,
+              email,
+              syncStatus: 'synced',
+              lastSyncedAt: new Date().toISOString(),
+            });
+
+            console.log(`✅ Successfully synced builder ${newBuilder.id} with Based Creators (${basedCreatorsData.userId})`);
+          } else {
+            await storage.createCrossPlatformMapping({
+              port444BuilderId: newBuilder.id,
+              basedCreatorsUserId: null,
+              walletAddress,
+              email,
+              syncStatus: 'failed',
+              syncError: basedCreatorsData.error || 'Unknown error',
+            });
+
+            console.warn(`⚠️ Failed to sync with Based Creators: ${basedCreatorsData.error}`);
+          }
+        } catch (error) {
+          await storage.createCrossPlatformMapping({
+            port444BuilderId: newBuilder.id,
+            basedCreatorsUserId: null,
+            walletAddress,
+            email,
+            syncStatus: 'pending',
+            syncError: error instanceof Error ? error.message : 'Network error',
+          });
+
+          console.error('Error syncing with Based Creators:', error);
+        }
+      } else {
+        console.warn('Based Creators API not configured - skipping cross-platform sync');
+      }
+
+      // Mark chapters invite as used
+      if (inviteToken) {
+        await storage.useChaptersInvite(inviteToken, newBuilder.id, name);
+      }
+
+      // Set up authentication session
+      (req.session as any).builderId = newBuilder.id;
+      (req.session as any).userType = 'builder';
+
+      res.json({
+        success: true,
+        builderId: newBuilder.id,
+        basedCreatorsUserId,
+        message: 'Account created successfully on both platforms',
+      });
+
+    } catch (error) {
+      console.error('Error in chapters onboarding:', error);
+      res.status(500).json({
+        error: 'Failed to complete onboarding',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  });
+
   // Admin Analytics Endpoints
   app.get("/api/admin/analytics/activity-feed", requireAdminAuth, async (req, res) => {
     try {
