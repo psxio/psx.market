@@ -376,6 +376,11 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
           <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${visual.badgeColor} backdrop-blur-sm border-2 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12`}>
             <CategoryIcon className="h-5 w-5" />
           </div>
+          {builder.isChaptersMember && (
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-cyan-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30 backdrop-blur-sm border-2 transition-all duration-300 group-hover:scale-125" data-testid="badge-chapters" title="Chapters Member">
+              <Network className="h-5 w-5" />
+            </div>
+          )}
           {builder.isTrending && (
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 border-orange-500/20 backdrop-blur-sm border-2 transition-all duration-300 group-hover:scale-125" data-testid="badge-trending">
               <Flame className="h-5 w-5" />
@@ -403,6 +408,12 @@ export function BuilderCard({ builder, service }: BuilderCardProps) {
                   <p className="text-base text-muted-foreground line-clamp-2">
                     {builder.headline}
                   </p>
+                  {builder.isChaptersMember && (
+                    <Badge variant="secondary" className="mt-2 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20 text-xs" data-testid="badge-chapters-label">
+                      <Network className="h-3 w-3 mr-1" />
+                      Chapters Member
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
