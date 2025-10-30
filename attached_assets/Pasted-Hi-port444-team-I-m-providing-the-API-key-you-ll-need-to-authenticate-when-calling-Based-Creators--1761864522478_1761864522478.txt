@@ -1,0 +1,67 @@
+Hi port444 team,
+
+I'm providing the API key you'll need to authenticate when calling Based Creators' external account creation endpoint.
+
+API Key for Your Configuration:
+
+BASED_CREATORS_API_KEY=7721d22442927768dcc12b81df07555e65ad89d4cc15450f041281d4b81f1529
+
+How to Configure on Your End:
+
+Add this to your environment variables:
+BASED_CREATORS_API_KEY=7721d22442927768dcc12b81df07555e65ad89d4cc15450f041281d4b81f1529
+BASED_CREATORS_API_URL=https://595edd9e-7e04-4cf6-bb30-7e71480eedb3-00-3t4zhehiyxkq7.worf.replit.dev
+
+When calling our endpoint, include these headers:
+headers: {
+  'Content-Type': 'application/json',
+  'X-API-Key': process.env.BASED_CREATORS_API_KEY,
+  'X-Source-Platform': 'port444'
+}
+
+Endpoint Details:
+
+URL: POST /api/external/create-account
+Authentication: X-API-Key header (required)
+Purpose: Create Based Creators accounts during chapters onboarding
+Test the Integration:
+
+curl -X POST https://595edd9e-7e04-4cf6-bb30-7e71480eedb3-00-3t4zhehiyxkq7.worf.replit.dev/api/external/create-account \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: 7721d22442927768dcc12b81df07555e65ad89d4cc15450f041281d4b81f1529" \
+  -H "X-Source-Platform: port444" \
+  -d '{
+    "name": "Test User",
+    "email": "test@example.com",
+    "walletAddress": "0x1234567890abcdef",
+    "region": "Global",
+    "role": "Creator",
+    "builderId": "b_test123"
+  }'
+
+Expected Response:
+
+{
+  "success": true,
+  "userId": "...",
+  "message": "User account created successfully"
+}
+
+Complete API Documentation:
+See attached PORT444_INTEGRATION.md for full details including all request/response formats, error handling, and recovery procedures.
+
+Security Notes:
+
+Store this key securely in your environment secrets
+Never commit it to version control
+Rotate periodically for security best practices
+Let me know when you've configured your end and we can run an end-to-end test together.
+
+Thanks!
+
+Ready to send! Just:
+
+Copy this entire message
+Attach the PORT444_INTEGRATION.md file
+Send via your preferred secure channel (encrypted email, Slack, etc.)
+The key and URL are already filled in and ready to go! 🚀
