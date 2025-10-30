@@ -720,24 +720,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid Twitter username or URL" });
       }
 
-      // Verify username format is valid
-      const isValid = await socialIntegrationService.verifyTwitterUsername(username);
+      // Fetch real Twitter profile data using Twitter API v2
+      const twitterProfile = await socialIntegrationService.getTwitterProfile(username);
       
-      if (!isValid) {
-        return res.status(400).json({ error: "Invalid Twitter username format" });
+      if (!twitterProfile) {
+        return res.status(404).json({ error: "Twitter account not found or API error" });
       }
 
-      // Update builder profile with verified Twitter handle
+      // Update builder profile with verified Twitter handle and real data
       await storage.updateBuilder(req.params.id, {
-        twitterHandle: `@${username}`,
+        twitterHandle: `@${twitterProfile.username}`,
+        twitterFollowers: twitterProfile.followers_count.toString(),
       });
 
       res.json({
         verified: true,
-        username: username,
-        handle: `@${username}`,
-        profileUrl: `https://x.com/${username}`,
-        message: "Twitter account verified. Connect your X account to fetch real-time follower data.",
+        username: twitterProfile.username,
+        handle: `@${twitterProfile.username}`,
+        name: twitterProfile.name,
+        followers: twitterProfile.followers_count,
+        following: twitterProfile.following_count,
+        tweets: twitterProfile.tweet_count,
+        isVerified: twitterProfile.verified,
+        verifiedType: twitterProfile.verified_type,
+        bio: twitterProfile.description,
+        location: twitterProfile.location,
+        profileImageUrl: twitterProfile.profile_image_url,
+        profileUrl: `https://x.com/${twitterProfile.username}`,
+        message: "Twitter account verified and real-time data fetched successfully!",
       });
     } catch (error) {
       console.error("Error verifying Twitter account:", error);
