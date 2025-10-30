@@ -40,6 +40,7 @@ import {
   ArrowRight,
   Github,
   CheckCircle,
+  Network,
 } from "lucide-react";
 import type { Builder, Service, Review, BuilderProject } from "@shared/schema";
 
@@ -288,6 +289,12 @@ export default function BuilderProfileEnhanced() {
                   </h1>
                   {builder.verified && (
                     <ShieldCheck className="h-7 w-7 text-chart-3 fill-chart-3/20" data-testid="icon-verified" />
+                  )}
+                  {builder.isChaptersMember && (
+                    <Badge variant="secondary" className="gap-1.5 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20" data-testid="badge-chapters-enhanced">
+                      <Network className="h-3.5 w-3.5" />
+                      Chapters Member
+                    </Badge>
                   )}
                   {builder.isTrending && (
                     <Badge variant="default" className="gap-1">
