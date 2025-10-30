@@ -2707,6 +2707,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tokenGateWhitelisted: true,
         verificationStatus: 'verified',
         availability: 'available',
+        isChaptersMember: true, // Mark as chapters member
       });
 
       // Sync with Based Creators platform
