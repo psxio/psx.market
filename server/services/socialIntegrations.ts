@@ -20,8 +20,15 @@ interface TwitterUser {
   username: string;
   name: string;
   followers_count: number;
+  following_count: number;
+  tweet_count: number;
   verified: boolean;
+  verified_type?: string;
   profile_image_url: string;
+  description?: string;
+  location?: string;
+  url?: string;
+  created_at?: string;
 }
 
 interface YouTubeChannel {
@@ -96,15 +103,75 @@ export class SocialIntegrationService {
   }
 
   /**
-   * Verify Twitter/X username exists and get basic info
-   * Note: Full Twitter API requires OAuth 2.0 and API keys
-   * This is a simplified version - in production, use Twitter API v2
+   * Get Twitter/X user profile data using API v2
+   * Requires X_API_BEARER_TOKEN in environment
+   */
+  async getTwitterProfile(username: string): Promise<TwitterUser | null> {
+    try {
+      const bearerToken = process.env.X_API_BEARER_TOKEN;
+      
+      if (!bearerToken) {
+        console.error('X_API_BEARER_TOKEN not configured');
+        return null;
+      }
+
+      // Remove @ if present
+      const cleanUsername = username.replace(/^@/, '');
+
+      // Twitter API v2 - Get user by username
+      const response = await fetch(
+        `https://api.twitter.com/2/users/by/username/${cleanUsername}?user.fields=id,name,username,verified,verified_type,profile_image_url,description,location,url,public_metrics,created_at`,
+        {
+          headers: {
+            'Authorization': `Bearer ${bearerToken}`,
+            'User-Agent': 'port444-marketplace/1.0'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Twitter API error (${response.status}):`, errorText);
+        return null;
+      }
+
+      const data = await response.json();
+      
+      if (!data.data) {
+        console.error('Twitter user not found:', username);
+        return null;
+      }
+
+      const user = data.data;
+      const metrics = user.public_metrics || {};
+
+      return {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        followers_count: metrics.followers_count || 0,
+        following_count: metrics.following_count || 0,
+        tweet_count: metrics.tweet_count || 0,
+        verified: user.verified || false,
+        verified_type: user.verified_type,
+        profile_image_url: user.profile_image_url?.replace('_normal', '_400x400') || '',
+        description: user.description,
+        location: user.location,
+        url: user.url,
+        created_at: user.created_at
+      };
+    } catch (error) {
+      console.error('Error fetching Twitter profile:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Verify Twitter/X username exists
    */
   async verifyTwitterUsername(username: string): Promise<boolean> {
-    // For now, just validate the format
-    // In production, this would call Twitter API v2 with proper auth
-    const twitterUsernameRegex = /^[A-Za-z0-9_]{1,15}$/;
-    return twitterUsernameRegex.test(username);
+    const profile = await this.getTwitterProfile(username);
+    return profile !== null;
   }
 
   /**
