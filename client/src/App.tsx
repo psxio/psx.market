@@ -3,7 +3,8 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from 'wagmi';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
-import { config } from '@/lib/wagmiConfig';
+import { PrivyProvider } from '@privy-io/react-auth';
+import { config, privyAppId } from '@/lib/wagmiConfig';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -118,29 +119,67 @@ function AppContent() {
 
 function App() {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={darkTheme({
+    <PrivyProvider
+      appId={privyAppId}
+      config={{
+        appearance: {
+          theme: 'dark',
           accentColor: '#a855f7',
-          accentColorForeground: 'white',
-          borderRadius: 'medium',
-        })}>
-          <ThemeProvider defaultTheme="dark">
-            <UIEnhancementsProvider>
-              <AdminAuthProvider>
-                <ClientAuthProvider>
-                  <BuilderAuthProvider>
-                    <TooltipProvider>
-                      <AppContent />
-                    </TooltipProvider>
-                  </BuilderAuthProvider>
-                </ClientAuthProvider>
-              </AdminAuthProvider>
-            </UIEnhancementsProvider>
-          </ThemeProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+          logo: 'https://port444.replit.app/icon-512.png',
+        },
+        loginMethods: ['email', 'google', 'twitter', 'discord', 'wallet'],
+        embeddedWallets: {
+          createOnLogin: 'users-without-wallets',
+        },
+        supportedChains: [
+          {
+            id: 8453,
+            name: 'Base',
+            network: 'base',
+            nativeCurrency: {
+              name: 'Ethereum',
+              symbol: 'ETH',
+              decimals: 18,
+            },
+            rpcUrls: {
+              default: {
+                http: ['https://mainnet.base.org'],
+              },
+            },
+            blockExplorers: {
+              default: {
+                name: 'BaseScan',
+                url: 'https://basescan.org',
+              },
+            },
+          },
+        ],
+      }}
+    >
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={darkTheme({
+            accentColor: '#a855f7',
+            accentColorForeground: 'white',
+            borderRadius: 'medium',
+          })}>
+            <ThemeProvider defaultTheme="dark">
+              <UIEnhancementsProvider>
+                <AdminAuthProvider>
+                  <ClientAuthProvider>
+                    <BuilderAuthProvider>
+                      <TooltipProvider>
+                        <AppContent />
+                      </TooltipProvider>
+                    </BuilderAuthProvider>
+                  </ClientAuthProvider>
+                </AdminAuthProvider>
+              </UIEnhancementsProvider>
+            </ThemeProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </PrivyProvider>
   );
 }
 
