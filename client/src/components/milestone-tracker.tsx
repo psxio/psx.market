@@ -3,8 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Lock, Unlock, CheckCircle2, Clock } from "lucide-react";
+import { Lock, Unlock, CheckCircle2, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { AnimatedLoader } from "@/components/animated-loader";
 import type { MilestonePayment } from "@shared/schema";
 
 interface MilestoneTrackerProps {
@@ -20,8 +21,12 @@ export function MilestoneTracker({ orderId, onReleaseMilestone }: MilestoneTrack
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <CardContent className="flex items-center justify-center py-12">
+          <AnimatedLoader 
+            size="lg" 
+            text="Loading milestone payments..." 
+            variant="pulse" 
+          />
         </CardContent>
       </Card>
     );
