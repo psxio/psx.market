@@ -25,7 +25,7 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 ### Technical Implementations
 - **Frontend**: React and TypeScript with TanStack Query.
 - **Backend**: Express and TypeScript, providing a RESTful API.
-- **Authentication**: Session-based for admins; RainbowKit + wagmi for unified wallet authentication with token-based benefits.
+- **Authentication**: Session-based for admins; RainbowKit + wagmi for wallet connections; Privy for social authentication (Google, Twitter, Discord, Email) with embedded wallet support for users without wallets.
 - **Token Incentive System**: Benefits for $CREATE or $PSX holders based on real-time token balance checks.
 - **Data Storage**: PostgreSQL with Drizzle ORM.
 - **Smart Contract Escrow System**: On-chain USDC payments on Base using `USDCEscrow.sol` for milestone releases, dispute resolution, fees, and refunds, with integrated frontend UI.
@@ -48,5 +48,6 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **Incentive Tokens**: $CREATE (ERC-20 on Base), $PSX (ERC-20 on Base)
 - **AI Service**: OpenAI GPT-4o-mini via Replit AI Integrations
 - **Twitter/X API**: Twitter API v2 with OAuth 2.0 for profile verification and social data
+- **Authentication Provider**: Privy for social logins (Google, Twitter, Discord, Email) and embedded wallets
 - **Styling Frameworks**: Tailwind CSS, Shadcn UI
 - **Object Storage**: Replit Object Storage (Google Cloud Storage backend)
