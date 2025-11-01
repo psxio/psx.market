@@ -19,7 +19,7 @@ const connectors = connectorsForWallets(
       groupName: 'Social Login',
       wallets: [
         toPrivyWallet({
-          appId: privyAppId,
+          id: privyAppId,
           name: 'Google / Email',
           iconUrl: 'https://www.google.com/favicon.ico',
         }),
