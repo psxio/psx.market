@@ -1,5 +1,4 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { toPrivyWallet } from '@privy-io/cross-app-connect/rainbow-kit';
 import { createConfig, http } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
 import {
@@ -16,21 +15,11 @@ export const privyAppId = import.meta.env.VITE_PRIVY_APP_ID || '';
 const connectors = connectorsForWallets(
   [
     {
-      groupName: 'Social Login',
-      wallets: [
-        toPrivyWallet({
-          id: privyAppId,
-          name: 'Google / Email',
-          iconUrl: 'https://www.google.com/favicon.ico',
-        }),
-      ],
-    },
-    {
       groupName: 'Popular',
       wallets: [
-        rainbowWallet,
         metaMaskWallet,
         coinbaseWallet,
+        rainbowWallet,
         walletConnectWallet,
       ],
     },
