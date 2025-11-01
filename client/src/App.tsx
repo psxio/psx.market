@@ -128,9 +128,6 @@ function App() {
           logo: 'https://port444.replit.app/icon-512.png',
         },
         loginMethods: ['email', 'google', 'twitter', 'discord', 'wallet'],
-        embeddedWallets: {
-          createOnLogin: 'users-without-wallets',
-        },
         supportedChains: [
           {
             id: 8453,
