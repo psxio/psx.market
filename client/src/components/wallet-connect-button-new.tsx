@@ -78,105 +78,20 @@ export function WalletConnectButton() {
             {(() => {
               if (!connected && !privyAuthenticated) {
                 return (
-                  <>
-                    <button
-                      onClick={() => setShowAccountModal(true)}
-                      type="button"
-                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover-elevate active-elevate-2 h-9 px-4 py-2"
-                      data-testid="button-create-account"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <line x1="19" y1="8" x2="19" y2="14" />
-                        <line x1="22" y1="11" x2="16" y2="11" />
-                      </svg>
-                      Create Account
-                    </button>
-                    
-                    <Dialog open={showAccountModal} onOpenChange={setShowAccountModal}>
-                      <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                          <DialogTitle>Create Your Account</DialogTitle>
-                          <DialogDescription>
-                            Choose how you'd like to sign in to port444
-                          </DialogDescription>
-                        </DialogHeader>
-                        
-                        <div className="space-y-4 mt-4">
-                          <div className="space-y-3">
-                            <p className="text-sm font-medium text-muted-foreground">Social Login (Recommended)</p>
-                            <Button
-                              onClick={() => {
-                                privyLogin();
-                                setShowAccountModal(false);
-                              }}
-                              variant="outline"
-                              className="w-full gap-2 justify-start"
-                              data-testid="button-social-google"
-                            >
-                              <FaGoogle className="w-4 h-4" />
-                              Continue with Google
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                privyLogin();
-                                setShowAccountModal(false);
-                              }}
-                              variant="outline"
-                              className="w-full gap-2 justify-start"
-                              data-testid="button-social-twitter"
-                            >
-                              <FaTwitter className="w-4 h-4" />
-                              Continue with Twitter
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                privyLogin();
-                                setShowAccountModal(false);
-                              }}
-                              variant="outline"
-                              className="w-full gap-2 justify-start"
-                              data-testid="button-social-email"
-                            >
-                              <Mail className="w-4 h-4" />
-                              Continue with Email
-                            </Button>
-                          </div>
-                          
-                          <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                              <span className="w-full border-t" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                              <span className="bg-background px-2 text-muted-foreground">
-                                Or
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-3">
-                            <p className="text-sm font-medium text-muted-foreground">Web3 Wallet</p>
-                            <Button
-                              onClick={() => {
-                                openConnectModal();
-                                setShowAccountModal(false);
-                              }}
-                              variant="outline"
-                              className="w-full gap-2 justify-start"
-                              data-testid="button-connect-wallet"
-                            >
-                              <Wallet className="w-4 h-4" />
-                              Connect Wallet
-                            </Button>
-                            <p className="text-xs text-muted-foreground">
-                              MetaMask, Coinbase Wallet, Rainbow, and more
-                            </p>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </>
+                  <button
+                    onClick={openConnectModal}
+                    type="button"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover-elevate active-elevate-2 h-9 px-4 py-2"
+                    data-testid="button-create-account"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <line x1="19" y1="8" x2="19" y2="14" />
+                      <line x1="22" y1="11" x2="16" y2="11" />
+                    </svg>
+                    Create Account
+                  </button>
                 );
               }
 
