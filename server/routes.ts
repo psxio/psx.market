@@ -6184,5 +6184,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register dispute resolution routes
   registerDisputeRoutes(app);
 
+  // Twitter OAuth for builder verification
+  app.get("/api/auth/twitter/connect", async (req, res) => {
+    try {
+      const { builderId } = req.query;
+      
+      if (!builderId) {
+        return res.status(400).json({ error: "Builder ID required" });
+      }
+
+      const clientId = process.env.X_CLIENT_ID;
+      if (!clientId) {
+        return res.status(500).json({ error: "Twitter OAuth not configured" });
+      }
+
+      // Generate random state for CSRF protection
+      const state = Math.random().toString(36).substring(7);
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/twitter/callback`;
+
+      // Store state and builderId in session or temp storage
+      // For simplicity, encoding in state parameter
+      const stateData = Buffer.from(JSON.stringify({ builderId, random: state })).toString('base64');
+
+      const authUrl = `https://twitter.com/i/oauth2/authorize?` +
+        `response_type=code&` +
+        `client_id=${clientId}&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `scope=${encodeURIComponent('tweet.read users.read follows.read')}&` +
+        `state=${stateData}&` +
+        `code_challenge=challenge&` +
+        `code_challenge_method=plain`;
+
+      res.redirect(authUrl);
+    } catch (error) {
+      console.error("Twitter OAuth initiation error:", error);
+      res.status(500).json({ error: "Failed to initiate Twitter auth" });
+    }
+  });
+
+  app.get("/api/auth/twitter/callback", async (req, res) => {
+    try {
+      const { code, state } = req.query;
+
+      if (!code || !state) {
+        return res.redirect(`/builder-onboarding?error=twitter_auth_failed`);
+      }
+
+      // Decode state to get builderId
+      const stateData = JSON.parse(Buffer.from(state as string, 'base64').toString());
+      const { builderId } = stateData;
+
+      const clientId = process.env.X_CLIENT_ID;
+      const clientSecret = process.env.X_CLIENT_SECRET;
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/twitter/callback`;
+
+      // Exchange code for access token
+      const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+        },
+        body: new URLSearchParams({
+          code: code as string,
+          grant_type: 'authorization_code',
+          redirect_uri: redirectUri,
+          code_verifier: 'challenge',
+        }),
+      });
+
+      if (!tokenResponse.ok) {
+        console.error("Token exchange failed:", await tokenResponse.text());
+        return res.redirect(`/builder-onboarding?error=twitter_token_failed`);
+      }
+
+      const tokenData = await tokenResponse.json();
+      const accessToken = tokenData.access_token;
+
+      // Fetch user profile
+      const userResponse = await fetch('https://api.twitter.com/2/users/me?user.fields=public_metrics,username,profile_image_url', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!userResponse.ok) {
+        console.error("User fetch failed:", await userResponse.text());
+        return res.redirect(`/builder-onboarding?error=twitter_profile_failed`);
+      }
+
+      const userData = await userResponse.json();
+      const user = userData.data;
+
+      // Store Twitter verification data temporarily
+      // In production, you'd store this in Redis or a temp table
+      const verificationData = {
+        twitterHandle: user.username,
+        twitterFollowers: user.public_metrics.followers_count,
+        twitterVerified: true,
+        twitterProfileImage: user.profile_image_url,
+      };
+
+      // Redirect back to onboarding with Twitter data
+      const params = new URLSearchParams({
+        twitter_verified: 'true',
+        twitter_handle: user.username,
+        twitter_followers: user.public_metrics.followers_count.toString(),
+      });
+
+      res.redirect(`/builder-onboarding?${params.toString()}`);
+    } catch (error) {
+      console.error("Twitter OAuth callback error:", error);
+      res.redirect(`/builder-onboarding?error=twitter_auth_failed`);
+    }
+  });
+
   return httpServer;
 }
