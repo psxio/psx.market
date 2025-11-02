@@ -57,8 +57,8 @@ export function ProfilePreview({
             </AvatarFallback>
           </Avatar>
           
-          <div className="flex-1 space-y-1">
-            <h3 className="font-semibold text-lg leading-tight">
+          <div className="flex-1 space-y-1 overflow-hidden">
+            <h3 className="font-semibold text-lg leading-tight truncate">
               {name || "Your Name"}
             </h3>
             <p className="text-sm text-muted-foreground line-clamp-2">
@@ -89,7 +89,7 @@ export function ProfilePreview({
 
         <div className="space-y-2">
           <h4 className="text-xs font-semibold text-muted-foreground uppercase">About</h4>
-          <p className="text-sm leading-relaxed">
+          <p className="text-sm leading-relaxed line-clamp-4">
             {bio || "Your bio will appear here. Tell clients about your experience, expertise, and what makes you unique."}
           </p>
         </div>

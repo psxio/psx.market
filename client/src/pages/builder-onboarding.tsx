@@ -569,6 +569,7 @@ export default function BuilderOnboarding() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="John Doe"
+                    maxLength={50}
                     data-testid="input-name"
                   />
                 </div>
@@ -1605,9 +1606,12 @@ export default function BuilderOnboarding() {
             )}
 
             {currentStep === 3 && !formData.category && (
-              <div className="text-center py-8 text-muted-foreground">
-                Please select a category in Step 1 to see relevant fields
-              </div>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Please go back to Step 1 and select a category to continue. Your category determines which proof of work fields you'll need to fill out.
+                </AlertDescription>
+              </Alert>
             )}
 
             {/* Step 4: Review */}
