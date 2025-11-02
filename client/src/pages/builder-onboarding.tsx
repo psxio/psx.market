@@ -74,6 +74,7 @@ export default function BuilderOnboarding() {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [profilePhoto, setProfilePhoto] = useState<string>("");
   const [coverImage, setCoverImage] = useState<string>("");
+  const [twitterVerified, setTwitterVerified] = useState(false);
 
   const [formData, setFormData] = useState(() => {
     // Try to load saved data first
@@ -232,6 +233,38 @@ export default function BuilderOnboarding() {
       } catch (error) {
         console.error("Error loading quiz data:", error);
       }
+    }
+  }, [toast]);
+
+  // Handle Twitter OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const twitterVerifiedParam = params.get('twitter_verified');
+    const twitterHandle = params.get('twitter_handle');
+    const twitterFollowers = params.get('twitter_followers');
+    const error = params.get('error');
+
+    if (error) {
+      toast({
+        title: "Twitter Verification Failed",
+        description: "Could not verify your Twitter account. Please try again.",
+        variant: "destructive",
+      });
+      // Clean URL
+      window.history.replaceState({}, '', '/builder-onboarding');
+    } else if (twitterVerifiedParam === 'true' && twitterHandle) {
+      setTwitterVerified(true);
+      setFormData(prev => ({
+        ...prev,
+        twitterHandle: `@${twitterHandle}`,
+        twitterFollowers: twitterFollowers || '',
+      }));
+      toast({
+        title: "Twitter Verified!",
+        description: `Successfully connected @${twitterHandle}`,
+      });
+      // Clean URL
+      window.history.replaceState({}, '', '/builder-onboarding');
     }
   }, [toast]);
 
@@ -789,13 +822,51 @@ export default function BuilderOnboarding() {
 
                 <div>
                   <Label htmlFor="twitterHandle">X/Twitter Handle (Optional)</Label>
-                  <Input
-                    id="twitterHandle"
-                    value={formData.twitterHandle}
-                    onChange={(e) => setFormData({ ...formData, twitterHandle: e.target.value })}
-                    placeholder="@yourhandle"
-                    data-testid="input-twitter"
-                  />
+                  {twitterVerified ? (
+                    <div className="flex items-center gap-2 p-3 border rounded-md bg-muted/50">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <div className="flex-1">
+                        <p className="font-medium">{formData.twitterHandle}</p>
+                        {formData.twitterFollowers && (
+                          <p className="text-xs text-muted-foreground">
+                            {parseInt(formData.twitterFollowers).toLocaleString()} followers
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setTwitterVerified(false);
+                          setFormData({ ...formData, twitterHandle: '', twitterFollowers: '' });
+                        }}
+                        data-testid="button-twitter-disconnect"
+                      >
+                        Disconnect
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => {
+                          window.location.href = `/api/auth/twitter/connect?builderId=temp`;
+                        }}
+                        data-testid="button-twitter-verify"
+                      >
+                        <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        Verify Twitter Account
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        Connect your Twitter to auto-fill follower count and verify authenticity
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div>
