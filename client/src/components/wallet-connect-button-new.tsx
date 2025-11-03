@@ -1,13 +1,8 @@
-import { useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useReadContracts } from 'wagmi';
 import { usePrivy } from '@privy-io/react-auth';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { erc20Abi } from 'viem';
-import { FaGoogle, FaTwitter, FaDiscord } from 'react-icons/fa';
-import { Mail, Wallet } from 'lucide-react';
 
 // Token contract addresses
 const PSX_TOKEN_ADDRESS = import.meta.env.VITE_PSX_TOKEN_ADDRESS as `0x${string}` || '0x0000000000000000000000000000000000000000' as `0x${string}`;
@@ -16,7 +11,6 @@ const CREATE_TOKEN_ADDRESS = '0x3849cC93e7B71b37885237cd91a215974135cD8D' as `0x
 export function WalletConnectButton() {
   const { address, isConnected } = useAccount();
   const { ready: privyReady, authenticated: privyAuthenticated, login: privyLogin } = usePrivy();
-  const [showAccountModal, setShowAccountModal] = useState(false);
 
   // Fetch both token balances in parallel
   const { data: tokenData } = useReadContracts({
@@ -78,114 +72,20 @@ export function WalletConnectButton() {
             {(() => {
               if (!connected && !privyAuthenticated) {
                 return (
-                  <>
-                    <button
-                      onClick={() => setShowAccountModal(true)}
-                      type="button"
-                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover-elevate active-elevate-2 h-9 px-4 py-2"
-                      data-testid="button-create-account"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <line x1="19" y1="8" x2="19" y2="14" />
-                        <line x1="22" y1="11" x2="16" y2="11" />
-                      </svg>
-                      Create Account
-                    </button>
-                    
-                    <Dialog open={showAccountModal} onOpenChange={setShowAccountModal}>
-                      <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                          <DialogTitle>Create Account</DialogTitle>
-                          <DialogDescription>
-                            Choose how you'd like to sign up for port444
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 mt-4">
-                          <div className="space-y-2">
-                            <p className="text-sm font-medium">Sign up with social</p>
-                            <div className="grid grid-cols-2 gap-2">
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  setShowAccountModal(false);
-                                  privyLogin({ loginMethods: ['google'] });
-                                }}
-                                data-testid="button-signup-google"
-                              >
-                                <FaGoogle className="mr-2 h-4 w-4" />
-                                Google
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  setShowAccountModal(false);
-                                  privyLogin({ loginMethods: ['twitter'] });
-                                }}
-                                data-testid="button-signup-twitter"
-                              >
-                                <FaTwitter className="mr-2 h-4 w-4" />
-                                Twitter
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  setShowAccountModal(false);
-                                  privyLogin({ loginMethods: ['discord'] });
-                                }}
-                                data-testid="button-signup-discord"
-                              >
-                                <FaDiscord className="mr-2 h-4 w-4" />
-                                Discord
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  setShowAccountModal(false);
-                                  privyLogin({ loginMethods: ['email'] });
-                                }}
-                                data-testid="button-signup-email"
-                              >
-                                <Mail className="mr-2 h-4 w-4" />
-                                Email
-                              </Button>
-                            </div>
-                            <p className="text-xs text-muted-foreground text-center">
-                              We'll create a wallet for you automatically
-                            </p>
-                          </div>
-
-                          <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                              <span className="w-full border-t" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                              <span className="bg-background px-2 text-muted-foreground">
-                                Or
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <p className="text-sm font-medium">Connect existing wallet</p>
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => {
-                                setShowAccountModal(false);
-                                openConnectModal();
-                              }}
-                              data-testid="button-signup-wallet"
-                            >
-                              <Wallet className="mr-2 h-4 w-4" />
-                              Connect Wallet
-                            </Button>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </>
+                  <button
+                    onClick={() => privyLogin()}
+                    type="button"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover-elevate active-elevate-2 h-9 px-4 py-2"
+                    data-testid="button-create-account"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <line x1="19" y1="8" x2="19" y2="14" />
+                      <line x1="22" y1="11" x2="16" y2="11" />
+                    </svg>
+                    Create Account
+                  </button>
                 );
               }
 

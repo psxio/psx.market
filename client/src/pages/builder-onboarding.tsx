@@ -671,45 +671,14 @@ export default function BuilderOnboarding() {
                         type="button"
                         variant="outline"
                         className="w-full"
-                        onClick={openConnectModal}
-                        data-testid="button-connect-wallet"
+                        onClick={() => privyLogin()}
+                        data-testid="button-login-auth"
                       >
                         <Wallet className="mr-2 h-4 w-4" />
-                        Connect Existing Wallet
+                        Sign In / Connect Wallet
                       </Button>
-                      
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-background px-2 text-muted-foreground">
-                            Or continue with
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => privyLogin({ loginMethods: ['google'] })}
-                          data-testid="button-privy-google"
-                        >
-                          <FaGoogle className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => privyLogin({ loginMethods: ['twitter'] })}
-                          data-testid="button-privy-twitter"
-                        >
-                          <FaTwitter className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
                       <p className="text-xs text-muted-foreground text-center">
-                        No wallet? We'll create one for you automatically
+                        Connect with Google, Twitter, Email, or crypto wallet
                       </p>
                     </div>
                   ) : (
