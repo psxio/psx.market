@@ -888,6 +888,21 @@ export const insertProjectDocumentSchema = createInsertSchema(projectDocuments).
   updatedAt: true,
 });
 
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  privyId: text("privy_id").unique(),
+  walletAddress: text("wallet_address").unique(),
+  email: text("email").unique(),
+  name: text("name"),
+  profileImage: text("profile_image"),
+  authProvider: text("auth_provider").notNull(),
+  builderId: varchar("builder_id"),
+  clientId: varchar("client_id"),
+  lastLoginAt: text("last_login_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const admins = pgTable("admins", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
@@ -1278,6 +1293,15 @@ export type OrderActivity = typeof orderActivities.$inferSelect;
 
 export type InsertMilestone = z.infer<typeof insertMilestoneSchema>;
 export type Milestone = typeof milestones.$inferSelect;
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
 
 export type InsertAdmin = z.infer<typeof insertAdminSchema>;
 export type Admin = typeof admins.$inferSelect;
