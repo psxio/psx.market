@@ -921,9 +921,11 @@ export default function BuilderOnboarding() {
             )}
 
             {/* Step 3: Category-Specific Fields */}
-            {currentStep === 3 && formData.category === "kols" && (
+            {currentStep === 3 && (
               <>
-                <h3 className="text-lg font-semibold">Connect Your Social Media</h3>
+                {formData.category === "kols" && (
+                  <>
+                    <h3 className="text-lg font-semibold">Connect Your Social Media</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Connect your accounts to automatically verify your follower counts. No manual entry needed!
                 </p>
@@ -1120,12 +1122,12 @@ export default function BuilderOnboarding() {
                     ))}
                   </div>
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && formData.category === "3d-artists" && (
-              <>
-                <h3 className="text-lg font-semibold">What You Work With</h3>
+                {formData.category === "3d-artists" && (
+                  <>
+                    <h3 className="text-lg font-semibold">What You Work With</h3>
                 
                 <div>
                   <Label>3D Software (Press Enter to add)</Label>
@@ -1202,12 +1204,12 @@ export default function BuilderOnboarding() {
                   />
                   <Label htmlFor="animation">I can animate</Label>
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && formData.category === "marketers" && (
-              <>
-                <h3 className="text-lg font-semibold">Your Marketing Arsenal</h3>
+                {formData.category === "marketers" && (
+                  <>
+                    <h3 className="text-lg font-semibold">Your Marketing Arsenal</h3>
                 
                 <div>
                   <Label>Marketing Platforms (Press Enter to add)</Label>
@@ -1291,12 +1293,12 @@ export default function BuilderOnboarding() {
                     </p>
                   </div>
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && formData.category === "video-editor" && (
-              <>
-                <h3 className="text-lg font-semibold">Your Video Editing Stack</h3>
+                {formData.category === "video-editor" && (
+                  <>
+                    <h3 className="text-lg font-semibold">Your Video Editing Stack</h3>
                 
                 <div>
                   <Label>Editing Software (Press Enter to add)</Label>
@@ -1412,12 +1414,12 @@ export default function BuilderOnboarding() {
                     data-testid="input-portfolio-reel"
                   />
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && formData.category === "mods-raiders" && (
-              <>
-                <h3 className="text-lg font-semibold">Community Experience</h3>
+                {formData.category === "mods-raiders" && (
+                  <>
+                    <h3 className="text-lg font-semibold">Community Experience</h3>
                 
                 <div>
                   <Label>Platforms You Manage (Press Enter to add)</Label>
@@ -1521,12 +1523,12 @@ export default function BuilderOnboarding() {
                     I have experience coordinating raids
                   </Label>
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && formData.category === "developers" && (
-              <>
-                <h3 className="text-lg font-semibold">Development Skills</h3>
+                {formData.category === "developers" && (
+                  <>
+                    <h3 className="text-lg font-semibold">Development Skills</h3>
                 
                 <div>
                   <Label>Programming Languages (Press Enter to add)</Label>
@@ -1601,12 +1603,12 @@ export default function BuilderOnboarding() {
                     data-testid="input-github"
                   />
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && formData.category === "volume" && (
-              <>
-                <h3 className="text-lg font-semibold">Your Trading Background</h3>
+                {formData.category === "volume" && (
+                  <>
+                    <h3 className="text-lg font-semibold">Your Trading Background</h3>
                 
                 <div>
                   <Label>Years of Trading Experience</Label>
@@ -1673,43 +1675,45 @@ export default function BuilderOnboarding() {
                   />
                   <Label htmlFor="compliance">I have compliance knowledge</Label>
                 </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {currentStep === 3 && !formData.category && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Please go back to Step 1 and select a category to continue. Your category determines which proof of work fields you'll need to fill out.
-                </AlertDescription>
-              </Alert>
-            )}
-            
-            {currentStep === 3 && formData.category && 
-             formData.category !== "kols" && 
-             formData.category !== "3d-artists" &&
-             formData.category !== "marketers" &&
-             formData.category !== "video-editor" &&
-             formData.category !== "mods-raiders" &&
-             formData.category !== "developers" &&
-             formData.category !== "volume" && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  <div className="space-y-2">
-                    <p>Selected category: <strong>{formData.category}</strong></p>
-                    <p>This category doesn't have specific proof-of-work fields yet. Please select a different category or contact support.</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentStep(1)}
-                      className="mt-2"
-                    >
-                      Back to Step 1
-                    </Button>
-                  </div>
-                </AlertDescription>
-              </Alert>
+                {!formData.category && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Please go back to Step 1 and select a category to continue. Your category determines which proof of work fields you'll need to fill out.
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
+                {formData.category && 
+                 formData.category !== "kols" && 
+                 formData.category !== "3d-artists" &&
+                 formData.category !== "marketers" &&
+                 formData.category !== "video-editor" &&
+                 formData.category !== "mods-raiders" &&
+                 formData.category !== "developers" &&
+                 formData.category !== "volume" && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      <div className="space-y-2">
+                        <p>Selected category: <strong>{formData.category}</strong></p>
+                        <p>This category doesn't have specific proof-of-work fields yet. Please select a different category or contact support.</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentStep(1)}
+                          className="mt-2"
+                        >
+                          Back to Step 1
+                        </Button>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </>
             )}
 
             {/* Step 4: Review */}
