@@ -29,6 +29,8 @@ import {
 } from "lucide-react";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { usePrivy } from '@privy-io/react-auth';
+import { FaGoogle, FaTwitter, FaDiscord } from 'react-icons/fa';
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
 import { ProfilePreview } from "@/components/onboarding/ProfilePreview";
 import { ProfileStrengthWidget } from "@/components/onboarding/ProfileStrengthWidget";
@@ -67,6 +69,7 @@ export default function BuilderOnboarding() {
   const { toast } = useToast();
   const { openConnectModal } = useConnectModal();
   const { address, isConnected } = useAccount();
+  const { ready: privyReady, authenticated: privyAuthenticated, user: privyUser, login: privyLogin } = usePrivy();
   
   const inviteToken = params?.token;
   const [currentStep, setCurrentStep] = useState(1);
@@ -205,6 +208,20 @@ export default function BuilderOnboarding() {
       setFormData(prev => ({ ...prev, walletAddress: address }));
     }
   }, [isConnected, address]);
+
+  // Handle Privy authentication
+  useEffect(() => {
+    if (privyAuthenticated && privyUser) {
+      // If user has embedded wallet from Privy
+      if (privyUser.wallet?.address) {
+        setFormData(prev => ({ ...prev, walletAddress: privyUser.wallet!.address }));
+      }
+      // Auto-fill email if available
+      if (privyUser.email?.address && !formData.email) {
+        setFormData(prev => ({ ...prev, email: privyUser.email!.address }));
+      }
+    }
+  }, [privyAuthenticated, privyUser]);
 
   // Load quiz results if available
   useEffect(() => {
@@ -648,26 +665,71 @@ export default function BuilderOnboarding() {
               <>
                 <div>
                   <Label htmlFor="walletAddress">Wallet Address *</Label>
-                  {!isConnected ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={openConnectModal}
-                      data-testid="button-connect-wallet"
-                    >
-                      Connect Wallet
-                    </Button>
+                  {!isConnected && !privyAuthenticated ? (
+                    <div className="space-y-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={openConnectModal}
+                        data-testid="button-connect-wallet"
+                      >
+                        <Wallet className="mr-2 h-4 w-4" />
+                        Connect Existing Wallet
+                      </Button>
+                      
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Or continue with
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => privyLogin()}
+                          data-testid="button-privy-google"
+                        >
+                          <FaGoogle className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => privyLogin()}
+                          data-testid="button-privy-twitter"
+                        >
+                          <FaTwitter className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground text-center">
+                        No wallet? We'll create one for you automatically
+                      </p>
+                    </div>
                   ) : (
-                    <Input
-                      id="walletAddress"
-                      value={formData.walletAddress}
-                      disabled
-                      data-testid="input-wallet-address"
-                    />
+                    <div className="space-y-2">
+                      <Input
+                        id="walletAddress"
+                        value={formData.walletAddress}
+                        disabled
+                        data-testid="input-wallet-address"
+                      />
+                      {privyAuthenticated && privyUser?.wallet && (
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          Embedded wallet created for payments
+                        </p>
+                      )}
+                    </div>
                   )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    Your Base wallet for receiving payments
+                    Your Base wallet for receiving crypto payments
                   </p>
                 </div>
 
