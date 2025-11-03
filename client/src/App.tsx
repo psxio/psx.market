@@ -128,8 +128,10 @@ function App() {
           theme: 'dark',
           accentColor: '#a855f7',
           logo: 'https://port444.replit.app/icon-512.png',
+          showWalletLoginFirst: false,
+          walletList: ['metamask', 'coinbase_wallet', 'rainbow'],
         },
-        loginMethods: ['email', 'google', 'twitter', 'discord', 'wallet'],
+        loginMethods: ['email', 'google', 'twitter', 'discord'],
         supportedChains: [
           {
             id: 8453,
