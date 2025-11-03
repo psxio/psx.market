@@ -1684,6 +1684,33 @@ export default function BuilderOnboarding() {
                 </AlertDescription>
               </Alert>
             )}
+            
+            {currentStep === 3 && formData.category && 
+             formData.category !== "kols" && 
+             formData.category !== "3d-artists" &&
+             formData.category !== "marketers" &&
+             formData.category !== "video-editor" &&
+             formData.category !== "mods-raiders" &&
+             formData.category !== "developers" &&
+             formData.category !== "volume" && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-2">
+                    <p>Selected category: <strong>{formData.category}</strong></p>
+                    <p>This category doesn't have specific proof-of-work fields yet. Please select a different category or contact support.</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentStep(1)}
+                      className="mt-2"
+                    >
+                      Back to Step 1
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
 
             {/* Step 4: Review */}
             {currentStep === 4 && (
