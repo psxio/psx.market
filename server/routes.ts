@@ -14,6 +14,7 @@ import {
   insertServiceSchema,
 } from "@shared/schema";
 import { requireAdminAuth, requireClientAuth, requireBuilderAuth, generateAdminToken, revokeAdminToken, verifyAdminToken } from "./middleware/auth";
+import { privyAuthMiddleware, requireAuth, type PrivyAuthRequest } from "./middleware/privy-auth";
 import { WebSocketServer, WebSocket } from "ws";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
@@ -37,6 +38,68 @@ const loginLimiter = rateLimit({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  app.use(privyAuthMiddleware);
+  
+  app.post("/api/auth/privy/sync", async (req: PrivyAuthRequest, res) => {
+    try {
+      const { privyId, walletAddress, email, name, profileImage, authProvider } = req.body;
+      
+      if (!privyId || !authProvider) {
+        return res.status(400).json({ error: 'privyId and authProvider are required' });
+      }
+
+      let user = await storage.getUserByPrivyId(privyId);
+
+      if (user) {
+        user = await storage.updateUser(user.id, {
+          walletAddress: walletAddress || user.walletAddress || undefined,
+          email: email || user.email || undefined,
+          name: name || user.name || undefined,
+          profileImage: profileImage || user.profileImage || undefined,
+          lastLoginAt: new Date().toISOString(),
+        });
+      } else {
+        user = await storage.createUser({
+          privyId,
+          walletAddress: walletAddress || undefined,
+          email: email || undefined,
+          name: name || undefined,
+          profileImage: profileImage || undefined,
+          authProvider,
+          lastLoginAt: new Date().toISOString(),
+        });
+      }
+
+      res.json({ success: true, user });
+    } catch (error) {
+      console.error('Error syncing user:', error);
+      res.status(500).json({ error: 'Failed to sync user' });
+    }
+  });
+
+  app.get("/api/auth/me", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+
+      const user = await storage.getUserById(req.user.id);
+      
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Failed to fetch user' });
+    }
+  });
+
+  app.post("/api/auth/logout", requireAuth, async (req: PrivyAuthRequest, res) => {
+    res.json({ success: true });
+  });
   
   // External API endpoint for Based Creators to create port444 builder accounts
   app.post("/api/external/create-builder", async (req, res) => {

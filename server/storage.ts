@@ -1,4 +1,6 @@
 import {
+  type User,
+  type InsertUser,
   type Builder,
   type InsertBuilder,
   type BuilderProject,
@@ -95,6 +97,7 @@ import {
   type InsertPlatformActivity,
   type ServiceView,
   type InsertServiceView,
+  users,
   builders,
   builderProjects,
   builderInvites,
@@ -163,6 +166,13 @@ import { db } from "./db";
 import { eq, and, or, desc, count, sql as sqlFunc } from "drizzle-orm";
 
 export interface IStorage {
+  getUserById(id: string): Promise<User | undefined>;
+  getUserByPrivyId(privyId: string): Promise<User | undefined>;
+  getUserByWallet(walletAddress: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<InsertUser>): Promise<User>;
+  
   getBuilder(id: string): Promise<Builder | undefined>;
   getBuilderByWallet(walletAddress: string): Promise<Builder | undefined>;
   getBuilders(): Promise<Builder[]>;
@@ -593,6 +603,40 @@ export interface IStorage {
 export class PostgresStorage implements IStorage {
   constructor() {
     this.seedData();
+  }
+
+  async getUserById(id: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result[0];
+  }
+
+  async getUserByPrivyId(privyId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.privyId, privyId));
+    return result[0];
+  }
+
+  async getUserByWallet(walletAddress: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.walletAddress, walletAddress));
+    return result[0];
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.email, email));
+    return result[0];
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User> {
+    const result = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date().toISOString() })
+      .where(eq(users.id, id))
+      .returning();
+    return result[0];
   }
 
   private async seedData() {
