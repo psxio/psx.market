@@ -357,7 +357,7 @@ export default function BecomeClient() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => privyLogin()}
+                          onClick={() => privyLogin({ loginMethods: ['google'] })}
                           data-testid="button-privy-google"
                         >
                           <FaGoogle className="mr-2 h-4 w-4" />
@@ -366,7 +366,7 @@ export default function BecomeClient() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => privyLogin()}
+                          onClick={() => privyLogin({ loginMethods: ['twitter'] })}
                           data-testid="button-privy-twitter"
                         >
                           <FaTwitter className="mr-2 h-4 w-4" />

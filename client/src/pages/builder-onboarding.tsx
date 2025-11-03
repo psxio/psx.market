@@ -693,7 +693,7 @@ export default function BuilderOnboarding() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => privyLogin()}
+                          onClick={() => privyLogin({ loginMethods: ['google'] })}
                           data-testid="button-privy-google"
                         >
                           <FaGoogle className="h-4 w-4" />
@@ -701,7 +701,7 @@ export default function BuilderOnboarding() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => privyLogin()}
+                          onClick={() => privyLogin({ loginMethods: ['twitter'] })}
                           data-testid="button-privy-twitter"
                         >
                           <FaTwitter className="h-4 w-4" />

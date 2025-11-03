@@ -110,7 +110,7 @@ export function WalletConnectButton() {
                                 variant="outline"
                                 onClick={() => {
                                   setShowAccountModal(false);
-                                  privyLogin();
+                                  privyLogin({ loginMethods: ['google'] });
                                 }}
                                 data-testid="button-signup-google"
                               >
@@ -121,7 +121,7 @@ export function WalletConnectButton() {
                                 variant="outline"
                                 onClick={() => {
                                   setShowAccountModal(false);
-                                  privyLogin();
+                                  privyLogin({ loginMethods: ['twitter'] });
                                 }}
                                 data-testid="button-signup-twitter"
                               >
@@ -132,7 +132,7 @@ export function WalletConnectButton() {
                                 variant="outline"
                                 onClick={() => {
                                   setShowAccountModal(false);
-                                  privyLogin();
+                                  privyLogin({ loginMethods: ['discord'] });
                                 }}
                                 data-testid="button-signup-discord"
                               >
@@ -143,7 +143,7 @@ export function WalletConnectButton() {
                                 variant="outline"
                                 onClick={() => {
                                   setShowAccountModal(false);
-                                  privyLogin();
+                                  privyLogin({ loginMethods: ['email'] });
                                 }}
                                 data-testid="button-signup-email"
                               >
