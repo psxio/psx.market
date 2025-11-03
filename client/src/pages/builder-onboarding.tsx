@@ -182,8 +182,8 @@ export default function BuilderOnboarding() {
   
   // Step indicator data
   const steps = [
-    { number: 1, title: "Basic Info", completed: currentStep > 1, current: currentStep === 1 },
-    { number: 2, title: "Your Stack", completed: currentStep > 2, current: currentStep === 2 },
+    { number: 1, title: "Who You Are", completed: currentStep > 1, current: currentStep === 1 },
+    { number: 2, title: "Your Story", completed: currentStep > 2, current: currentStep === 2 },
     { number: 3, title: "Proof of Work", completed: currentStep > 3, current: currentStep === 3 },
     { number: 4, title: "Review", completed: false, current: currentStep === 4 },
   ];
@@ -546,8 +546,8 @@ export default function BuilderOnboarding() {
                   <span className="text-sm font-semibold">~{timeRemaining} min</span>
                 </div>
                 <div className="text-xs text-muted-foreground mt-2">
-                  {currentStep === 1 && "Let's get the basics set up"}
-                  {currentStep === 2 && "Show us what you're working with"}
+                  {currentStep === 1 && "Quick intro - just the basics"}
+                  {currentStep === 2 && "Tell clients what you do"}
                   {currentStep === 3 && "Time to flex your track record"}
                   {currentStep === 4 && "Almost there! Review and submit"}
                 </div>
@@ -577,21 +577,21 @@ export default function BuilderOnboarding() {
               {currentStep === 3 && <Award className="h-5 w-5 text-purple-500" />}
               {currentStep === 4 && <Wallet className="h-5 w-5 text-purple-500" />}
               <CardTitle>
-                {currentStep === 1 && "Basic Information"}
-                {currentStep === 2 && "Your Tech Stack"}
+                {currentStep === 1 && "Who You Are"}
+                {currentStep === 2 && "Tell Your Story"}
                 {currentStep === 3 && "Proof of Work"}
                 {currentStep === 4 && "Review & Submit"}
               </CardTitle>
             </div>
             <CardDescription>
-              {currentStep === 1 && "Tell us who you are"}
-              {currentStep === 2 && "Show us what you're working with"}
+              {currentStep === 1 && "Name, email, and specialty"}
+              {currentStep === 2 && "Your background and what you do"}
               {currentStep === 3 && "Show us what you've shipped"}
               {currentStep === 4 && "Lock it in and ship your profile"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Step 1: Basic Info */}
+            {/* Step 1: Who You Are */}
             {currentStep === 1 && (
               <>
                 <div>
@@ -622,6 +622,31 @@ export default function BuilderOnboarding() {
                 </div>
 
                 <div>
+                  <Label htmlFor="category">What Do You Do? *</Label>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                    required
+                  >
+                    <SelectTrigger data-testid="select-category">
+                      <SelectValue placeholder="Select your specialty" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
+            {/* Step 2: Tell Your Story */}
+            {currentStep === 2 && (
+              <>
+                <div>
                   <Label htmlFor="walletAddress">Wallet Address *</Label>
                   {!isConnected ? (
                     <Button
@@ -642,69 +667,9 @@ export default function BuilderOnboarding() {
                     />
                   )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    Your Base wallet address for receiving payments
+                    Your Base wallet for receiving payments
                   </p>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Profile Photo</Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Upload a clear photo so clients know you're real (+10% profile strength)
-                  </p>
-                  <ImageUploader
-                    currentImage={profilePhoto}
-                    onUploadComplete={(url) => setProfilePhoto(url)}
-                    label="Upload Profile Photo"
-                    maxSizeMB={5}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Cover Banner (Optional)</Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Add a cover image to make your profile stand out
-                  </p>
-                  <ImageUploader
-                    currentImage={coverImage}
-                    onUploadComplete={(url) => setCoverImage(url)}
-                    label="Upload Cover Banner"
-                    maxSizeMB={10}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="category">Category *</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => setFormData({ ...formData, category: value })}
-                    required
-                  >
-                    <SelectTrigger data-testid="select-category">
-                      <SelectValue placeholder="Select your specialty" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CATEGORIES.map((cat) => (
-                        <SelectItem key={cat.value} value={cat.value}>
-                          {cat.icon} {cat.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Bio Templates */}
-                {formData.category && (
-                  <BioTemplates
-                    category={formData.category}
-                    onSelectTemplate={(headline, bio) => {
-                      setFormData({
-                        ...formData,
-                        headline,
-                        bio,
-                      });
-                    }}
-                  />
-                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="headline">One-Liner *</Label>
@@ -742,180 +707,6 @@ export default function BuilderOnboarding() {
                     max={1000}
                     recommended={200}
                   />
-                </div>
-              </>
-            )}
-
-            {/* Step 2: Your Stack */}
-            {currentStep === 2 && (
-              <>
-                <div>
-                  <Label>Skills (Press Enter or comma to add) *</Label>
-                  <Input
-                    placeholder="e.g., Community Building, Content Creation, Token Launches"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ',') {
-                        e.preventDefault();
-                        const value = e.currentTarget.value.trim().replace(/,$/g, '');
-                        if (value) {
-                          addToArray('skills', value);
-                          e.currentTarget.value = '';
-                        }
-                      }
-                    }}
-                    onBlur={(e) => {
-                      const value = e.currentTarget.value.trim().replace(/,$/g, '');
-                      if (value) {
-                        addToArray('skills', value);
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                    data-testid="input-skills"
-                  />
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.skills.map((skill, idx) => (
-                      <Badge key={idx} variant="secondary">
-                        {skill}
-                        <button
-                          type="button"
-                          onClick={() => removeFromArray('skills', skill)}
-                          className="ml-1 hover:text-destructive"
-                        >
-                          ×
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Portfolio Links (Press Enter to add)</Label>
-                  <Input
-                    placeholder="https://..."
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const value = e.currentTarget.value.trim();
-                        if (value) {
-                          addToArray('portfolioLinks', value);
-                          e.currentTarget.value = '';
-                        }
-                      }
-                    }}
-                    data-testid="input-portfolio-links"
-                  />
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.portfolioLinks.map((link, idx) => (
-                      <Badge key={idx} variant="outline">
-                        {link.substring(0, 30)}...
-                        <button
-                          type="button"
-                          onClick={() => removeFromArray('portfolioLinks', link)}
-                          className="ml-1 hover:text-destructive"
-                        >
-                          ×
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="twitterHandle">X/Twitter Handle (Optional)</Label>
-                  {twitterVerified ? (
-                    <div className="flex items-center gap-2 p-3 border rounded-md bg-muted/50">
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                      <div className="flex-1">
-                        <p className="font-medium">{formData.twitterHandle}</p>
-                        {formData.twitterFollowers && (
-                          <p className="text-xs text-muted-foreground">
-                            {parseInt(formData.twitterFollowers).toLocaleString()} followers
-                          </p>
-                        )}
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setTwitterVerified(false);
-                          setFormData({ ...formData, twitterHandle: '', twitterFollowers: '' });
-                        }}
-                        data-testid="button-twitter-disconnect"
-                      >
-                        Disconnect
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => {
-                          window.location.href = `/api/auth/twitter/connect?builderId=temp`;
-                        }}
-                        data-testid="button-twitter-verify"
-                      >
-                        <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                        </svg>
-                        Verify Twitter Account
-                      </Button>
-                      <p className="text-xs text-muted-foreground">
-                        Connect your Twitter to auto-fill follower count and verify authenticity
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="discordHandle">Discord Server Invite (Optional)</Label>
-                  <Input
-                    id="discordHandle"
-                    value={formData.discordHandle}
-                    onChange={(e) => setFormData({ ...formData, discordHandle: e.target.value })}
-                    placeholder="yourinvitecode or https://discord.gg/yourinvitecode"
-                    data-testid="input-discord"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Add your Discord server invite link so clients can contact you (e.g., "abcd1234" or "discord.gg/abcd1234")
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3 p-4 border rounded-md">
-                  <Checkbox
-                    id="isNSFW"
-                    checked={formData.isNSFW}
-                    onCheckedChange={(checked) => setFormData({ ...formData, isNSFW: checked as boolean })}
-                    data-testid="checkbox-nsfw"
-                  />
-                  <div className="flex-1">
-                    <Label htmlFor="isNSFW" className="cursor-pointer font-medium">
-                      Adult Content (NSFW)
-                    </Label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Check this if you offer adult-themed services (NSFW art, content creation for adult projects, etc.). Your profile will be filtered from main browse pages but accessible via adult section.
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="responseTime">Average Response Time</Label>
-                  <Select
-                    value={formData.responseTime}
-                    onValueChange={(value) => setFormData({ ...formData, responseTime: value })}
-                  >
-                    <SelectTrigger data-testid="select-response-time">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1 hour">Within 1 hour</SelectItem>
-                      <SelectItem value="6 hours">Within 6 hours</SelectItem>
-                      <SelectItem value="24 hours">Within 24 hours</SelectItem>
-                      <SelectItem value="48 hours">Within 48 hours</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </>
             )}
@@ -1797,8 +1588,8 @@ export default function BuilderOnboarding() {
                   onClick={handleNext}
                   className="flex-1"
                   disabled={
-                    (currentStep === 1 && (!formData.name || !formData.email || !formData.walletAddress || !formData.category || !formData.headline || !formData.bio)) ||
-                    (currentStep === 2 && formData.skills.length === 0)
+                    (currentStep === 1 && (!formData.name || !formData.email || !formData.category)) ||
+                    (currentStep === 2 && (!formData.walletAddress || !formData.headline || !formData.bio))
                   }
                   data-testid="button-next"
                 >
