@@ -20,6 +20,7 @@ import { FAQChatbot } from "@/components/faq-chatbot";
 import { KeyboardShortcutsHelp, useKeyboardShortcuts } from "@/components/keyboard-shortcuts-help";
 import { WalletAutoLogin } from "@/components/wallet-auto-login";
 import { OnboardingRoleSelector } from "@/components/onboarding-role-selector";
+import { usePrivySync } from "@/hooks/use-privy-sync";
 import Home from "@/pages/home";
 import BuilderProfile from "@/pages/builder-profile-enhanced";
 import ServiceDetail from "@/pages/service-detail";
@@ -97,6 +98,7 @@ function Router() {
 
 function AppContent() {
   useKeyboardShortcuts();
+  usePrivySync();
   
   return (
     <>
