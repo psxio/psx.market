@@ -4,6 +4,8 @@ import { useWalletAuth } from "@/hooks/use-wallet-auth";
 import { useClientAuth } from "@/hooks/use-client-auth";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { usePrivy } from '@privy-io/react-auth';
+import { FaGoogle, FaTwitter } from 'react-icons/fa';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,6 +58,7 @@ export default function BecomeClient() {
   const { register } = useClientAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { ready: privyReady, authenticated: privyAuthenticated, user: privyUser, login: privyLogin } = usePrivy();
 
   useEffect(() => {
     if (isRegistered && userType === "client") {
@@ -64,6 +67,20 @@ export default function BecomeClient() {
       setLocation("/builder-dashboard");
     }
   }, [isRegistered, userType, setLocation]);
+
+  // Handle Privy authentication
+  useEffect(() => {
+    if (privyAuthenticated && privyUser) {
+      // If user has embedded wallet from Privy
+      if (privyUser.wallet?.address && !isConnected) {
+        // Privy wallet will be used
+      }
+      // Auto-fill email if available
+      if (privyUser.email?.address && !email) {
+        setEmail(privyUser.email.address);
+      }
+    }
+  }, [privyAuthenticated, privyUser, isConnected]);
 
   const handleCategoryToggle = (category: string) => {
     setInterestedCategories(prev =>
@@ -84,10 +101,10 @@ export default function BecomeClient() {
         });
         return;
       }
-      if (!isConnected) {
+      if (!isConnected && !privyAuthenticated) {
         toast({
           title: "Wallet required",
-          description: "Please connect your wallet to continue",
+          description: "Please connect your wallet or sign in to continue",
           variant: "destructive",
         });
         return;
@@ -127,10 +144,12 @@ export default function BecomeClient() {
   };
 
   const handleSubmit = async () => {
-    if (!isConnected || !address) {
+    const walletAddress = address || privyUser?.wallet?.address;
+    
+    if (!walletAddress) {
       toast({
         title: "Wallet required",
-        description: "Please connect your wallet before registering",
+        description: "Please connect your wallet or sign in before registering",
         variant: "destructive",
       });
       return;
@@ -140,7 +159,7 @@ export default function BecomeClient() {
 
     try {
       await register({
-        walletAddress: address.toLowerCase(),
+        walletAddress: walletAddress.toLowerCase(),
         name,
         email,
         companyName: companyName || undefined,
@@ -307,10 +326,10 @@ export default function BecomeClient() {
                     <Wallet className="h-4 w-4" />
                     Wallet Connection
                   </h3>
-                  {!isConnected ? (
+                  {!isConnected && !privyAuthenticated ? (
                     <div className="space-y-3">
                       <p className="text-sm text-muted-foreground">
-                        Connect your wallet to receive matched builder recommendations and manage payments
+                        Connect your wallet to manage payments and work with builders
                       </p>
                       <Button
                         type="button"
@@ -320,14 +339,60 @@ export default function BecomeClient() {
                         data-testid="button-connect-wallet"
                       >
                         <Wallet className="mr-2 h-4 w-4" />
-                        Connect Wallet
+                        Connect Existing Wallet
                       </Button>
+                      
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Or sign up with
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => privyLogin()}
+                          data-testid="button-privy-google"
+                        >
+                          <FaGoogle className="mr-2 h-4 w-4" />
+                          Google
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => privyLogin()}
+                          data-testid="button-privy-twitter"
+                        >
+                          <FaTwitter className="mr-2 h-4 w-4" />
+                          Twitter
+                        </Button>
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground text-center">
+                        No wallet? We'll create one for you automatically
+                      </p>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 rounded-md border bg-muted/50 p-3">
-                      <CheckCircle2 className="h-4 w-4 text-chart-3" />
-                      <span className="font-mono text-sm truncate flex-1">{address}</span>
-                      <Badge variant="secondary">Connected</Badge>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 rounded-md border bg-muted/50 p-3">
+                        <CheckCircle2 className="h-4 w-4 text-chart-3" />
+                        <span className="font-mono text-sm truncate flex-1">
+                          {address || privyUser?.wallet?.address}
+                        </span>
+                        <Badge variant="secondary">Connected</Badge>
+                      </div>
+                      {privyAuthenticated && privyUser?.wallet && (
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Embedded wallet created for payments
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
