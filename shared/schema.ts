@@ -144,6 +144,19 @@ export const builders = pgTable("builders", {
   invoiceNumberSeq: integer("invoice_number_seq").notNull().default(0), // Auto-incrementing invoice number
   invoicePrefix: text("invoice_prefix").default("INV"), // Invoice number prefix (e.g., "INV-2024-")
   
+  // Consultation Settings (Quick Win)
+  consultationEnabled: boolean("consultation_enabled").notNull().default(false),
+  consultation15minPrice: decimal("consultation_15min_price", { precision: 10, scale: 2 }),
+  consultation30minPrice: decimal("consultation_30min_price", { precision: 10, scale: 2 }),
+  consultation60minPrice: decimal("consultation_60min_price", { precision: 10, scale: 2 }),
+  consultationCalendarUrl: text("consultation_calendar_url"), // Cal.com, Calendly, etc
+  
+  // Away Mode (Quick Win)
+  isAway: boolean("is_away").notNull().default(false),
+  awayMessage: text("away_message"),
+  awayUntil: text("away_until"), // ISO date when returning
+  awayPausedAt: text("away_paused_at"),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -239,6 +252,12 @@ export const services = pgTable("services", {
   subscriptionMonthlyPrice: decimal("subscription_monthly_price", { precision: 10, scale: 2 }),
   subscriptionDescription: text("subscription_description"),
   subscriptionDeliverables: text("subscription_deliverables").array(),
+  
+  // Price Sanity Hints (Quick Win) - Market data for pricing guidance
+  marketMinPrice: decimal("market_min_price", { precision: 10, scale: 2 }),
+  marketMaxPrice: decimal("market_max_price", { precision: 10, scale: 2 }),
+  marketMedianPrice: decimal("market_median_price", { precision: 10, scale: 2 }),
+  pricePercentile: integer("price_percentile"), // 0-100, where this service sits in category
   
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -593,6 +612,12 @@ export const orders = pgTable("orders", {
   autoCancelDate: text("auto_cancel_date"), // Calculated auto-cancel date
   autoCompleteDate: text("auto_complete_date"), // Calculated auto-complete date
   autoProgressEnabled: boolean("auto_progress_enabled").notNull().default(true),
+  
+  // Auto-Messages (Quick Win) - Automated nudge tracking
+  requirementNudge24hSent: boolean("requirement_nudge_24h_sent").notNull().default(false),
+  requirementNudge72hSent: boolean("requirement_nudge_72h_sent").notNull().default(false),
+  deliveryReview48hSent: boolean("delivery_review_48h_sent").notNull().default(false),
+  idleBreaker5MessagesSent: boolean("idle_breaker_5_messages_sent").notNull().default(false),
   
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
@@ -2523,6 +2548,314 @@ export const chargebackCases = pgTable("chargeback_cases", {
   resolvedAt: text("resolved_at"),
 });
 
+// Consultation Bookings - Paid consultation calls with calendar sync
+export const consultations = pgTable("consultations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  
+  duration: integer("duration").notNull(), // 15, 30, or 60 minutes
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  
+  // Scheduling
+  scheduledAt: text("scheduled_at").notNull(), // ISO datetime
+  calendarSlotId: varchar("calendar_slot_id"), // Link to calendar slot
+  timezone: text("timezone").notNull().default("UTC"),
+  
+  // Meeting details
+  meetingUrl: text("meeting_url"), // Zoom/Google Meet/etc
+  meetingProvider: text("meeting_provider"), // 'zoom' | 'google_meet' | 'cal_com' | 'custom'
+  meetingId: text("meeting_id"), // Provider's meeting ID
+  
+  // Status
+  status: text("status").notNull().default("scheduled"), // scheduled, completed, cancelled, no_show, rescheduled
+  
+  // Payment
+  invoiceId: varchar("invoice_id"), // Auto-generated invoice
+  paymentId: varchar("payment_id"),
+  paidAt: text("paid_at"),
+  
+  // Conversion to order
+  convertedToOrder: boolean("converted_to_order").notNull().default(false),
+  convertedOrderId: varchar("converted_order_id"),
+  creditApplied: decimal("credit_applied", { precision: 10, scale: 2 }), // Consultation fee as credit
+  
+  // Completion
+  completedAt: text("completed_at"),
+  cancelledAt: text("cancelled_at"),
+  cancellationReason: text("cancellation_reason"),
+  cancelledBy: varchar("cancelled_by"), // User ID
+  
+  // Notes
+  clientNotes: text("client_notes"), // Client's pre-call notes
+  builderNotes: text("builder_notes"), // Builder's post-call notes
+  
+  // Reminders sent
+  reminder24hSent: boolean("reminder_24h_sent").notNull().default(false),
+  reminder1hSent: boolean("reminder_1h_sent").notNull().default(false),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Calendar Slots - Builder availability for consultations
+export const calendarSlots = pgTable("calendar_slots", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  
+  // Slot timing
+  startTime: text("start_time").notNull(), // ISO datetime
+  endTime: text("end_time").notNull(), // ISO datetime
+  timezone: text("timezone").notNull().default("UTC"),
+  
+  // Availability
+  isAvailable: boolean("is_available").notNull().default(true),
+  isRecurring: boolean("is_recurring").notNull().default(false), // Weekly recurring slot
+  recurringPattern: text("recurring_pattern"), // 'weekly' | 'biweekly' | 'monthly'
+  
+  // Booking
+  consultationId: varchar("consultation_id"), // If booked
+  isBooked: boolean("is_booked").notNull().default(false),
+  bookedAt: text("booked_at"),
+  
+  // Calendar sync
+  externalCalendarId: text("external_calendar_id"), // Google Calendar event ID
+  externalProvider: text("external_provider"), // 'google' | 'outlook' | 'apple'
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Order Amendments - Mid-order scope changes and top-ups
+export const orderAmendments = pgTable("order_amendments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  
+  amendmentType: text("amendment_type").notNull(), // 'scope_change' | 'top_up' | 'out_of_scope_revision' | 'timeline_extension' | 'add_deliverable'
+  
+  // Amendment details
+  reason: text("reason").notNull(),
+  description: text("description").notNull(),
+  
+  // Financial impact
+  additionalAmount: decimal("additional_amount", { precision: 10, scale: 2 }).notNull(),
+  newTotalBudget: decimal("new_total_budget", { precision: 10, scale: 2 }).notNull(),
+  
+  // Timeline impact
+  additionalDays: integer("additional_days").default(0),
+  newDeliveryDate: text("new_delivery_date"),
+  
+  // Approval workflow
+  status: text("status").notNull().default("pending"), // pending, approved, rejected, paid, completed
+  
+  requestedBy: varchar("requested_by").notNull(), // User ID (usually builder)
+  requestedByType: text("requested_by_type").notNull(), // 'builder' | 'client'
+  
+  approvedBy: varchar("approved_by"),
+  approvedAt: text("approved_at"),
+  
+  rejectedBy: varchar("rejected_by"),
+  rejectedAt: text("rejected_at"),
+  rejectionReason: text("rejection_reason"),
+  
+  // Payment
+  paymentId: varchar("payment_id"), // Additional payment
+  invoiceId: varchar("invoice_id"), // Amendment invoice
+  paidAt: text("paid_at"),
+  
+  // Escrow update
+  escrowAmended: boolean("escrow_amended").notNull().default(false),
+  escrowAmendTxHash: text("escrow_amend_tx_hash"),
+  escrowAmendedAt: text("escrow_amended_at"),
+  
+  // Deliverables
+  additionalDeliverables: text("additional_deliverables").array(),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Audit Logs - Immutable event log for all critical actions
+export const auditLogs = pgTable("audit_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  // Event identification
+  eventType: text("event_type").notNull(), // 'payout' | 'dispute' | 'admin_edit' | 'withdrawal' | 'escrow_release' | etc
+  eventCategory: text("event_category").notNull(), // 'financial' | 'administrative' | 'security' | 'user_action'
+  
+  // Actor
+  actorId: varchar("actor_id").notNull(), // User or system ID
+  actorType: text("actor_type").notNull(), // 'user' | 'admin' | 'builder' | 'client' | 'system'
+  actorEmail: text("actor_email"),
+  
+  // Target
+  targetId: varchar("target_id"), // Order ID, user ID, etc
+  targetType: text("target_type"), // 'order' | 'user' | 'payment' | 'dispute' | etc
+  
+  // Action details
+  action: text("action").notNull(), // 'created' | 'updated' | 'deleted' | 'approved' | 'released' | etc
+  description: text("description").notNull(),
+  
+  // Context
+  metadata: text("metadata"), // JSON string with additional context
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  requestId: text("request_id"), // Trace requests across services
+  
+  // Changes (for edits)
+  beforeState: text("before_state"), // JSON snapshot before change
+  afterState: text("after_state"), // JSON snapshot after change
+  
+  // Financial events
+  amount: decimal("amount", { precision: 12, scale: 2 }),
+  currency: text("currency").default("USDC"),
+  transactionHash: text("transaction_hash"),
+  
+  // Severity
+  severity: text("severity").notNull().default("info"), // 'info' | 'warning' | 'critical'
+  
+  // Export status
+  exportedToColdStorage: boolean("exported_to_cold_storage").notNull().default(false),
+  exportedAt: text("exported_at"),
+  
+  timestamp: text("timestamp").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Incident Logs - Security and anomaly detection
+export const incidentLogs = pgTable("incident_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  incidentType: text("incident_type").notNull(), // 'multi_accounting' | 'fast_withdrawal' | 'suspicious_activity' | 'fraud_attempt' | etc
+  severity: text("severity").notNull(), // 'low' | 'medium' | 'high' | 'critical'
+  status: text("status").notNull().default("open"), // open, investigating, resolved, false_positive
+  
+  // Detection
+  detectionMethod: text("detection_method").notNull(), // 'automated' | 'manual' | 'user_report'
+  detectedAt: text("detected_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  
+  // Subjects involved
+  userId: varchar("user_id"),
+  relatedUserIds: text("related_user_ids").array(), // For multi-accounting
+  
+  // Evidence
+  description: text("description").notNull(),
+  evidence: text("evidence"), // JSON with detection details
+  ipAddresses: text("ip_addresses").array(),
+  deviceFingerprints: text("device_fingerprints").array(),
+  
+  // Patterns detected
+  pattern: text("pattern"), // Description of suspicious pattern
+  confidence: decimal("confidence", { precision: 5, scale: 2 }), // AI confidence score (0-100)
+  
+  // Financial impact
+  potentialLoss: decimal("potential_loss", { precision: 12, scale: 2 }),
+  actualLoss: decimal("actual_loss", { precision: 12, scale: 2 }),
+  
+  // Investigation
+  assignedTo: varchar("assigned_to"), // Admin ID
+  investigationNotes: text("investigation_notes"),
+  investigatedAt: text("investigated_at"),
+  
+  // Resolution
+  resolvedBy: varchar("resolved_by"),
+  resolvedAt: text("resolved_at"),
+  resolution: text("resolution"),
+  actionTaken: text("action_taken"), // 'account_suspended' | 'warning_issued' | 'no_action' | etc
+  
+  // Alerting
+  alertSent: boolean("alert_sent").notNull().default(false),
+  alertSentAt: text("alert_sent_at"),
+  alertedAdmins: text("alerted_admins").array(),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Support Actions - Admin actions on user accounts (support console)
+export const supportActions = pgTable("support_actions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  actionType: text("action_type").notNull(), // 'impersonation' | 'order_merge' | 'order_split' | 'credit_issue' | 'refund_manual' | etc
+  
+  // Admin
+  adminId: varchar("admin_id").notNull(),
+  adminEmail: text("admin_email").notNull(),
+  
+  // Target
+  targetUserId: varchar("target_user_id").notNull(),
+  targetUserEmail: text("target_user_email"),
+  targetUserType: text("target_user_type"), // 'builder' | 'client'
+  
+  // Action details
+  description: text("description").notNull(),
+  reason: text("reason").notNull(), // Why this action was taken
+  
+  // Specific action data
+  orderId: varchar("order_id"), // For order-related actions
+  relatedOrderIds: text("related_order_ids").array(), // For merge/split
+  
+  creditAmount: decimal("credit_amount", { precision: 10, scale: 2 }), // For credit issuance
+  creditReason: text("credit_reason"),
+  creditExpiresAt: text("credit_expires_at"),
+  
+  // Impersonation
+  impersonationStartedAt: text("impersonation_started_at"),
+  impersonationEndedAt: text("impersonation_ended_at"),
+  impersonationDuration: integer("impersonation_duration"), // Seconds
+  impersonationReadOnly: boolean("impersonation_read_only").notNull().default(true),
+  
+  // Approval (for high-risk actions)
+  requiresApproval: boolean("requires_approval").notNull().default(false),
+  approvedBy: varchar("approved_by"),
+  approvedAt: text("approved_at"),
+  
+  // Context
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  
+  // Results
+  success: boolean("success").notNull().default(true),
+  errorMessage: text("error_message"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// User Credits - Platform credits (from consultations, refunds, promos)
+export const userCredits = pgTable("user_credits", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  userType: text("user_type").notNull(), // 'client' | 'builder'
+  
+  // Credit details
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  remainingAmount: decimal("remaining_amount", { precision: 10, scale: 2 }).notNull(),
+  
+  source: text("source").notNull(), // 'consultation_conversion' | 'refund' | 'promo' | 'admin_issued' | 'referral'
+  sourceId: varchar("source_id"), // Consultation ID, order ID, promo code, etc
+  
+  // Usage restrictions
+  applicableTo: text("applicable_to").default("all"), // 'all' | 'specific_builder' | 'specific_category'
+  applicableBuilderIds: text("applicable_builder_ids").array(),
+  applicableCategories: text("applicable_categories").array(),
+  
+  // Expiration
+  expiresAt: text("expires_at"),
+  isExpired: boolean("is_expired").notNull().default(false),
+  
+  // Usage
+  isUsed: boolean("is_used").notNull().default(false),
+  usedAmount: decimal("used_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+  usedOrderIds: text("used_order_ids").array(),
+  fullyUsedAt: text("fully_used_at"),
+  
+  // Admin notes (if admin-issued)
+  adminNotes: text("admin_notes"),
+  issuedBy: varchar("issued_by"), // Admin ID
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 // Insert Schemas
 
 export const insertUserOnlineStatusSchema = createInsertSchema(userOnlineStatus).omit({
@@ -2696,6 +3029,66 @@ export const insertChargebackCaseSchema = createInsertSchema(chargebackCases).om
   outcomeDeterminedAt: true,
 });
 
+export const insertConsultationSchema = createInsertSchema(consultations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  completedAt: true,
+  cancelledAt: true,
+  paidAt: true,
+  reminder24hSent: true,
+  reminder1hSent: true,
+});
+
+export const insertCalendarSlotSchema = createInsertSchema(calendarSlots).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  bookedAt: true,
+  isBooked: true,
+});
+
+export const insertOrderAmendmentSchema = createInsertSchema(orderAmendments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  approvedAt: true,
+  rejectedAt: true,
+  paidAt: true,
+  escrowAmendedAt: true,
+});
+
+export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({
+  id: true,
+  timestamp: true,
+  exportedAt: true,
+});
+
+export const insertIncidentLogSchema = createInsertSchema(incidentLogs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  detectedAt: true,
+  investigatedAt: true,
+  resolvedAt: true,
+  alertSentAt: true,
+});
+
+export const insertSupportActionSchema = createInsertSchema(supportActions).omit({
+  id: true,
+  createdAt: true,
+  approvedAt: true,
+  impersonationStartedAt: true,
+  impersonationEndedAt: true,
+});
+
+export const insertUserCreditSchema = createInsertSchema(userCredits).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  fullyUsedAt: true,
+});
+
 // Types
 
 export type InsertServiceAddon = z.infer<typeof insertServiceAddonSchema>;
@@ -2779,3 +3172,24 @@ export type RefundPolicy = typeof refundPolicies.$inferSelect;
 
 export type InsertChargebackCase = z.infer<typeof insertChargebackCaseSchema>;
 export type ChargebackCase = typeof chargebackCases.$inferSelect;
+
+export type InsertConsultation = z.infer<typeof insertConsultationSchema>;
+export type Consultation = typeof consultations.$inferSelect;
+
+export type InsertCalendarSlot = z.infer<typeof insertCalendarSlotSchema>;
+export type CalendarSlot = typeof calendarSlots.$inferSelect;
+
+export type InsertOrderAmendment = z.infer<typeof insertOrderAmendmentSchema>;
+export type OrderAmendment = typeof orderAmendments.$inferSelect;
+
+export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+export type AuditLog = typeof auditLogs.$inferSelect;
+
+export type InsertIncidentLog = z.infer<typeof insertIncidentLogSchema>;
+export type IncidentLog = typeof incidentLogs.$inferSelect;
+
+export type InsertSupportAction = z.infer<typeof insertSupportActionSchema>;
+export type SupportAction = typeof supportActions.$inferSelect;
+
+export type InsertUserCredit = z.infer<typeof insertUserCreditSchema>;
+export type UserCredit = typeof userCredits.$inferSelect;

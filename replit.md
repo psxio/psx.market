@@ -17,6 +17,11 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 - **Credentials Vault**: End-to-end encrypted secret sharing (API keys, passwords, tokens), auto-revocation, comprehensive audit logging
 - **Order Auto-Progress Rules**: Auto-cancel orders stuck in pending requirements, auto-complete delivered orders, configurable timers with UI countdown
 - **Refund/Chargeback Policy**: Platform policies for PayPal/Stripe disputes, chargeback defense workflow, fee responsibility configuration
+- **Consultation Bookings**: 15/30/60-minute paid calls with calendar sync (Google, Outlook, Cal.com), auto-invoice, convert to order with credit
+- **Order Amendments**: Mid-order scope changes and top-ups with escrow updates, out-of-scope revision fees, approval workflow
+- **Audit & Incident Logging**: Immutable event logs for all critical actions, cold storage export, multi-accounting detection, fast withdrawal alerts
+- **Support Console**: Unified user view, read-only impersonation, order merge/split, credit issuance, comprehensive admin action audit
+- **Quick Wins**: Auto-messages (24h/72h requirement nudges, 48h delivery review), price sanity hints, idle breaker discount prompts, away mode toggle
 
 ## System Architecture
 port444 uses a decoupled frontend and backend architecture, built with React/TypeScript for the frontend and Express/TypeScript for the backend.
@@ -45,6 +50,10 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **Credentials Vault**: End-to-end encrypted secret sharing system for API keys, passwords, tokens, and SSH keys between clients and builders with AES-256-GCM encryption, auto-revocation on order completion/cancellation, and immutable audit logging.
 - **Order Auto-Progress Rules**: Automatic order state transitions to prevent idle loops - auto-cancel if pending requirements exceed configurable days (default 7), auto-complete if delivered work exceeds configurable days (default 5), with visible countdown timers in UI and configurable fee policies.
 - **Refund & Chargeback Management**: Platform-wide and service-specific refund policies with configurable windows (full/partial/none), PayPal and Stripe chargeback/dispute tracking, automated webhook integration, evidence collection for defense, and configurable fee responsibility (platform/builder/split).
+- **Consultation Bookings**: Paid 15/30/60-minute consultation calls with calendar sync (Google Calendar, Outlook, Cal.com integration), auto-invoice generation, conversion to order with credit applied, 24h and 1h reminder system, no-show tracking, and builder availability management.
+- **Order Amendments**: Mid-order scope changes and top-ups with escrow amendment support, out-of-scope revision fee requests, client approval workflow, invoice generation, timeline extensions, and on-chain escrow updates for additional funding.
+- **Audit & Incident Logging**: Immutable audit logs for all critical actions (payouts, disputes, admin edits), cold storage export (S3/GCS), multi-accounting detection via IP/device fingerprinting, fast withdrawal alerts, anomaly detection with AI confidence scoring, and comprehensive investigation workflow.
+- **Support Console**: Unified user support view with orders/payments/messages, read-only impersonation for troubleshooting, order merge/split capabilities, platform credit issuance with expiration, manual refunds, and comprehensive audit trail for all admin actions with approval requirements for high-risk operations.
 - **Twitter/X API Integration**: Full Twitter API v2 integration for profile verification, auto-fill during onboarding, real-time follower counts, verified status checking, and social profile data fetching. Uses OAuth 2.0 Bearer token for authenticated requests.
 - **AI-Powered Builder Discovery & Matching**: OpenAI GPT-4o-mini for a client-facing matching wizard, "Similar Builders Engine," and "Smart Service Recommendations."
 - **Notification System**: Comprehensive system with browser push, email notifications, real-time counters, and read/unread tracking.
