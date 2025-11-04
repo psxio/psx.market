@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { usePrivy } from "@privy-io/react-auth";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,7 @@ import { Briefcase, ShoppingBag, Sparkles, CheckCircle } from "lucide-react";
 
 export function OnboardingRoleSelector() {
   const { address, isConnected } = useAccount();
+  const { ready: privyReady, authenticated: privyAuthenticated, user: privyUser } = usePrivy();
   const [, setLocation] = useLocation();
   const [showModal, setShowModal] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
@@ -32,6 +34,24 @@ export function OnboardingRoleSelector() {
   });
 
   useEffect(() => {
+    if (privyReady && privyAuthenticated && !hasChecked) {
+      const hasSocialLogin = privyUser?.google || privyUser?.twitter || privyUser?.discord || privyUser?.email;
+      
+      if (hasSocialLogin) {
+        const timer = setTimeout(() => {
+          const hasBuilderAccount = builderData && typeof builderData === 'object' && !('error' in builderData);
+          const hasClientAccount = clientData && typeof clientData === 'object' && !('error' in clientData);
+
+          if (!hasBuilderAccount && !hasClientAccount) {
+            setHasChecked(true);
+            setLocation('/dual-platform-onboarding');
+          }
+        }, 1000);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+    
     if (!isConnected || !address || hasChecked) {
       return;
     }
@@ -47,14 +67,14 @@ export function OnboardingRoleSelector() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isConnected, address, builderData, clientData, hasChecked]);
+  }, [isConnected, address, builderData, clientData, hasChecked, privyReady, privyAuthenticated, privyUser, setLocation]);
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected && !privyAuthenticated) {
       setHasChecked(false);
       setShowModal(false);
     }
-  }, [isConnected]);
+  }, [isConnected, privyAuthenticated]);
 
   const handleRoleSelection = (role: 'builder' | 'client') => {
     setShowModal(false);

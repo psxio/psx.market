@@ -101,6 +101,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ success: true });
   });
   
+  // Dual-Platform Onboarding Endpoint
+  app.post("/api/dual-platform/onboard", async (req, res) => {
+    try {
+      const {
+        walletAddress,
+        privyId,
+        firstName,
+        lastName,
+        email,
+        industry,
+        chapterId,
+        socialProfiles,
+        enablePort444,
+        categories,
+        bio,
+        yearsOfExperience,
+        skills,
+        languages,
+        timezone,
+        minimumBudget,
+        hourlyRate,
+        portfolioLinks,
+        telegramHandle,
+        certifications
+      } = req.body;
+
+      if (!firstName || !lastName) {
+        return res.status(400).json({ error: 'First and last name are required' });
+      }
+
+      const fullName = `${firstName} ${lastName}`;
+      const accounts: any = { basedCreators: null, port444: null };
+
+      if (enablePort444) {
+        if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'At least one category is required for port444 profile' });
+        }
+        if (!bio || bio.length < 100) {
+          return res.status(400).json({ error: 'Bio must be at least 100 characters' });
+        }
+        if (!skills || skills.length < 3) {
+          return res.status(400).json({ error: 'At least 3 skills are required' });
+        }
+      }
+
+      let existingBuilder = null;
+      if (walletAddress) {
+        existingBuilder = await storage.getBuilderByWallet(walletAddress);
+      }
+
+      if (enablePort444 && !existingBuilder) {
+        const newBuilder = await storage.createBuilder({
+          name: fullName,
+          email: email || undefined,
+          walletAddress: walletAddress || undefined,
+          privyId: privyId || undefined,
+          headline: `${yearsOfExperience || ''} ${categories?.[0] || 'Builder'}`.trim(),
+          bio: bio || '',
+          category: categories?.[0] || 'other',
+          subcategories: categories || [],
+          skills: skills || [],
+          languages: languages || [],
+          hourlyRate: hourlyRate ? parseInt(hourlyRate) : undefined,
+          minimumBudget: minimumBudget ? parseInt(minimumBudget) : undefined,
+          timezone: timezone || undefined,
+          portfolioUrl: portfolioLinks?.[0] || undefined,
+          githubUrl: socialProfiles?.github || undefined,
+          twitterHandle: socialProfiles?.twitter || undefined,
+          telegramHandle: telegramHandle || undefined,
+          availability: 'available',
+          verified: false,
+          yearsOfExperience: yearsOfExperience || undefined,
+        });
+        
+        accounts.port444 = {
+          id: newBuilder.id,
+          type: 'builder'
+        };
+      } else if (enablePort444 && existingBuilder) {
+        const updatedBuilder = await storage.updateBuilder(existingBuilder.id, {
+          name: fullName,
+          email: email || existingBuilder.email,
+          headline: `${yearsOfExperience || existingBuilder.yearsOfExperience || ''} ${categories?.[0] || existingBuilder.category}`.trim(),
+          bio: bio || existingBuilder.bio,
+          category: categories?.[0] || existingBuilder.category,
+          subcategories: categories || existingBuilder.subcategories,
+          skills: skills || existingBuilder.skills,
+          languages: languages || existingBuilder.languages,
+          hourlyRate: hourlyRate ? parseInt(hourlyRate) : existingBuilder.hourlyRate,
+          minimumBudget: minimumBudget ? parseInt(minimumBudget) : existingBuilder.minimumBudget,
+          timezone: timezone || existingBuilder.timezone,
+          yearsOfExperience: yearsOfExperience || existingBuilder.yearsOfExperience,
+        });
+        
+        accounts.port444 = {
+          id: updatedBuilder.id,
+          type: 'builder'
+        };
+      }
+
+      if (chapterId) {
+        accounts.basedCreators = {
+          chapterId: chapterId,
+          name: fullName,
+          email: email,
+          industry: industry,
+          socialProfiles: socialProfiles
+        };
+      }
+
+      res.json({
+        success: true,
+        message: 'Onboarding complete',
+        accounts: accounts
+      });
+
+    } catch (error: any) {
+      console.error('Dual-platform onboarding error:', error);
+      res.status(500).json({ error: error.message || 'Failed to complete onboarding' });
+    }
+  });
+  
   // External API endpoint for Based Creators to create port444 builder accounts
   app.post("/api/external/create-builder", async (req, res) => {
     try {
