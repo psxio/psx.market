@@ -132,6 +132,18 @@ export const builders = pgTable("builders", {
   pricingExpectations: text("pricing_expectations"),
   verificationBadges: text("verification_badges").array(),
   
+  // Tax & Invoicing Information
+  taxCountry: text("tax_country"), // ISO country code (US, GB, DE, etc.)
+  vatId: text("vat_id"), // VAT/GST number for EU/UK
+  legalName: text("legal_name"), // Legal entity name for invoices
+  businessType: text("business_type"), // 'individual' | 'sole_proprietor' | 'llc' | 'corporation'
+  taxId: text("tax_id"), // Tax ID/EIN for US
+  withholdingRate: decimal("withholding_rate", { precision: 5, scale: 2 }), // Tax withholding % (for US contractors)
+  w9Submitted: boolean("w9_submitted").notNull().default(false), // US W-9 form submitted
+  w8benSubmitted: boolean("w8ben_submitted").notNull().default(false), // Non-US W-8BEN submitted
+  invoiceNumberSeq: integer("invoice_number_seq").notNull().default(0), // Auto-incrementing invoice number
+  invoicePrefix: text("invoice_prefix").default("INV"), // Invoice number prefix (e.g., "INV-2024-")
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -1153,25 +1165,62 @@ export const refunds = pgTable("refunds", {
 export const invoices = pgTable("invoices", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   invoiceNumber: text("invoice_number").notNull().unique(),
-  paymentId: varchar("payment_id").notNull(),
-  orderId: varchar("order_id").notNull(),
+  paymentId: varchar("payment_id"),
+  orderId: varchar("order_id"),
   
   clientId: varchar("client_id").notNull(),
   builderId: varchar("builder_id").notNull(),
   
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  // Invoice Type
+  invoiceType: text("invoice_type").notNull().default("order"), // 'order' | 'monthly_statement' | 'refund' | 'adjustment'
+  
+  // Amounts
+  subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(), // Before fees
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(), // Total amount
   platformFee: decimal("platform_fee", { precision: 10, scale: 2 }).notNull(),
   builderAmount: decimal("builder_amount", { precision: 10, scale: 2 }).notNull(),
   
-  status: text("status").notNull().default("draft"),
+  // Tax Information
+  taxCountry: text("tax_country"), // ISO country code
+  taxRate: decimal("tax_rate", { precision: 5, scale: 2 }), // Tax % (VAT, GST, etc.)
+  taxAmount: decimal("tax_amount", { precision: 10, scale: 2 }), // Calculated tax
+  vatId: text("vat_id"), // VAT/GST number
+  isReverseCharge: boolean("is_reverse_charge").default(false), // EU reverse charge mechanism
+  withholdingTax: decimal("withholding_tax", { precision: 10, scale: 2 }), // US withholding
   
+  // Legal Entity Details
+  builderLegalName: text("builder_legal_name"),
+  builderTaxId: text("builder_tax_id"),
+  builderAddress: text("builder_address"),
+  
+  clientLegalName: text("client_legal_name"),
+  clientTaxId: text("client_tax_id"),
+  clientAddress: text("client_address"),
+  
+  // Status & Dates
+  status: text("status").notNull().default("draft"), // draft, sent, paid, overdue, cancelled
+  issueDate: text("issue_date").notNull(),
   dueDate: text("due_date"),
   paidAt: text("paid_at"),
+  sentAt: text("sent_at"),
   
+  // Contact
   billingEmail: text("billing_email"),
   billingAddress: text("billing_address"),
   
+  // Period (for monthly statements)
+  periodStart: text("period_start"), // For monthly statements
+  periodEnd: text("period_end"),
+  
+  // Line Items (for complex invoices)
+  lineItems: text("line_items"), // JSON array of invoice lines
+  
+  // File References
+  pdfUrl: text("pdf_url"), // Generated PDF URL
+  csvUrl: text("csv_url"), // CSV export URL
+  
   notes: text("notes"),
+  internalNotes: text("internal_notes"), // Admin-only notes
   
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
@@ -1909,7 +1958,7 @@ export const escrowDisputes = pgTable("escrow_disputes", {
   evidence: text("evidence").array(),
   evidenceUrls: text("evidence_urls").array(),
   
-  status: text("status").notNull().default("open"),
+  status: text("status").notNull().default("open"), // open, in_mediation, evidence_review, resolved, cancelled
   outcome: text("outcome"),
   
   clientPercentage: integer("client_percentage"),
@@ -1920,6 +1969,29 @@ export const escrowDisputes = pgTable("escrow_disputes", {
   resolutionNotes: text("resolution_notes"),
   
   escrowTxHash: text("escrow_tx_hash"),
+  
+  // SLA & Mediation Enhancements
+  disputeSlaDays: integer("dispute_sla_days").notNull().default(7), // Days for party to respond/accept
+  autoResolutionDate: text("auto_resolution_date"), // Date when auto-resolution triggers
+  autoResolutionAction: text("auto_resolution_action"), // 'complete' | 'refund' | 'split'
+  
+  decision: text("decision"), // 'full_refund' | 'full_payment' | 'split_payment' | 'custom'
+  splitBasisPoints: integer("split_basis_points"), // For split decisions (e.g., 5000 = 50%)
+  
+  // Mediation Flow
+  mediationStage: text("mediation_stage").default("initial"), // 'initial' | 'evidence_gathering' | 'review' | 'decision'
+  mediatorId: varchar("mediator_id"), // Admin handling mediation
+  mediatorNotes: text("mediator_notes"), // Private admin notes
+  
+  // Evidence Tracking
+  clientEvidenceUrls: text("client_evidence_urls").array(),
+  builderEvidenceUrls: text("builder_evidence_urls").array(),
+  evidenceDeadline: text("evidence_deadline"), // Deadline for evidence submission
+  
+  // Timeline Tracking
+  mediationStartedAt: text("mediation_started_at"),
+  evidenceSubmittedAt: text("evidence_submitted_at"),
+  decisionMadeAt: text("decision_made_at"),
   
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
