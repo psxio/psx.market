@@ -97,6 +97,18 @@ import {
   type InsertPlatformActivity,
   type ServiceView,
   type InsertServiceView,
+  type CustomOffer,
+  type InsertCustomOffer,
+  type OrderAddon,
+  type InsertOrderAddon,
+  type ServiceSubscription,
+  type InsertServiceSubscription,
+  type SubscriptionBilling,
+  type InsertSubscriptionBilling,
+  type WithdrawalMethod,
+  type InsertWithdrawalMethod,
+  type WithdrawalRequest,
+  type InsertWithdrawalRequest,
   users,
   builders,
   builderProjects,
@@ -159,6 +171,12 @@ import {
   messageTemplates,
   referralCodes,
   disputeMessages,
+  customOffers,
+  orderAddons,
+  serviceSubscriptions,
+  subscriptionBillings,
+  withdrawalMethods,
+  withdrawalRequests,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -598,6 +616,41 @@ export interface IStorage {
   updateDispute(id: string, data: Partial<any>): Promise<any>;
   getBuilderDisputes(builderId: string): Promise<any[]>;
   getClientDisputes(clientId: string): Promise<any[]>;
+
+  // Custom Offers (Feature #3)
+  createCustomOffer(offer: InsertCustomOffer): Promise<CustomOffer>;
+  getCustomOffer(id: string): Promise<CustomOffer | undefined>;
+  getThreadCustomOffers(threadId: string): Promise<CustomOffer[]>;
+  acceptCustomOffer(offerId: string, orderId: string): Promise<CustomOffer>;
+  declineCustomOffer(offerId: string, reason: string): Promise<CustomOffer>;
+  updateCustomOfferStatus(offerId: string, status: string): Promise<CustomOffer>;
+
+  // Order Addons (Feature #4)
+  createOrderAddon(addon: InsertOrderAddon): Promise<OrderAddon>;
+  getOrderAddons(orderId: string): Promise<OrderAddon[]>;
+
+  // Service Subscriptions (Feature #5)
+  createServiceSubscription(subscription: InsertServiceSubscription): Promise<ServiceSubscription>;
+  getServiceSubscription(id: string): Promise<ServiceSubscription | undefined>;
+  getClientSubscriptions(clientId: string): Promise<ServiceSubscription[]>;
+  getBuilderSubscriptions(builderId: string): Promise<ServiceSubscription[]>;
+  updateSubscriptionStatus(id: string, status: string, reason?: string): Promise<ServiceSubscription>;
+  recordSubscriptionBilling(billing: InsertSubscriptionBilling): Promise<SubscriptionBilling>;
+  getSubscriptionBillings(subscriptionId: string): Promise<SubscriptionBilling[]>;
+
+  // Withdrawal Methods (Feature #10)
+  createWithdrawalMethod(method: InsertWithdrawalMethod): Promise<WithdrawalMethod>;
+  getBuilderWithdrawalMethods(builderId: string): Promise<WithdrawalMethod[]>;
+  getWithdrawalMethod(id: string): Promise<WithdrawalMethod | undefined>;
+  updateWithdrawalMethod(id: string, data: Partial<WithdrawalMethod>): Promise<WithdrawalMethod>;
+  deleteWithdrawalMethod(id: string): Promise<void>;
+  setDefaultWithdrawalMethod(builderId: string, methodId: string): Promise<void>;
+
+  // Withdrawal Requests
+  createWithdrawalRequest(request: InsertWithdrawalRequest): Promise<WithdrawalRequest>;
+  getWithdrawalRequest(id: string): Promise<WithdrawalRequest | undefined>;
+  getBuilderWithdrawalRequests(builderId: string): Promise<WithdrawalRequest[]>;
+  updateWithdrawalRequestStatus(id: string, status: string, notes?: string): Promise<WithdrawalRequest>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -3798,6 +3851,219 @@ export class PostgresStorage implements IStorage {
     return await db.select().from(disputes)
       .where(sqlFunc`order_id IN (${orderIds.join(',')})`)
       .orderBy(desc(disputes.createdAt));
+  }
+
+  // Custom Offers Implementation (Feature #3)
+  async createCustomOffer(offer: InsertCustomOffer): Promise<CustomOffer> {
+    const result = await db.insert(customOffers).values(offer).returning();
+    return result[0];
+  }
+
+  async getCustomOffer(id: string): Promise<CustomOffer | undefined> {
+    const result = await db.select().from(customOffers)
+      .where(eq(customOffers.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async getThreadCustomOffers(threadId: string): Promise<CustomOffer[]> {
+    return await db.select().from(customOffers)
+      .where(eq(customOffers.threadId, threadId))
+      .orderBy(desc(customOffers.createdAt));
+  }
+
+  async acceptCustomOffer(offerId: string, orderId: string): Promise<CustomOffer> {
+    const result = await db.update(customOffers)
+      .set({
+        status: 'accepted',
+        acceptedAt: new Date().toISOString(),
+        orderId
+      })
+      .where(eq(customOffers.id, offerId))
+      .returning();
+    return result[0];
+  }
+
+  async declineCustomOffer(offerId: string, reason: string): Promise<CustomOffer> {
+    const result = await db.update(customOffers)
+      .set({
+        status: 'declined',
+        declinedAt: new Date().toISOString(),
+        declineReason: reason
+      })
+      .where(eq(customOffers.id, offerId))
+      .returning();
+    return result[0];
+  }
+
+  async updateCustomOfferStatus(offerId: string, status: string): Promise<CustomOffer> {
+    const result = await db.update(customOffers)
+      .set({ status })
+      .where(eq(customOffers.id, offerId))
+      .returning();
+    return result[0];
+  }
+
+  // Order Addons Implementation (Feature #4)
+  async createOrderAddon(addon: InsertOrderAddon): Promise<OrderAddon> {
+    const result = await db.insert(orderAddons).values(addon).returning();
+    return result[0];
+  }
+
+  async getOrderAddons(orderId: string): Promise<OrderAddon[]> {
+    return await db.select().from(orderAddons)
+      .where(eq(orderAddons.orderId, orderId));
+  }
+
+  // Service Subscriptions Implementation (Feature #5)
+  async createServiceSubscription(subscription: InsertServiceSubscription): Promise<ServiceSubscription> {
+    const result = await db.insert(serviceSubscriptions).values(subscription).returning();
+    return result[0];
+  }
+
+  async getServiceSubscription(id: string): Promise<ServiceSubscription | undefined> {
+    const result = await db.select().from(serviceSubscriptions)
+      .where(eq(serviceSubscriptions.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async getClientSubscriptions(clientId: string): Promise<ServiceSubscription[]> {
+    return await db.select().from(serviceSubscriptions)
+      .where(eq(serviceSubscriptions.clientId, clientId))
+      .orderBy(desc(serviceSubscriptions.createdAt));
+  }
+
+  async getBuilderSubscriptions(builderId: string): Promise<ServiceSubscription[]> {
+    return await db.select().from(serviceSubscriptions)
+      .where(eq(serviceSubscriptions.builderId, builderId))
+      .orderBy(desc(serviceSubscriptions.createdAt));
+  }
+
+  async updateSubscriptionStatus(id: string, status: string, reason?: string): Promise<ServiceSubscription> {
+    const updates: any = {
+      status,
+      updatedAt: new Date().toISOString()
+    };
+    
+    if (status === 'paused') {
+      updates.pausedAt = new Date().toISOString();
+    } else if (status === 'cancelled') {
+      updates.cancelledAt = new Date().toISOString();
+      if (reason) updates.cancellationReason = reason;
+    }
+
+    const result = await db.update(serviceSubscriptions)
+      .set(updates)
+      .where(eq(serviceSubscriptions.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async recordSubscriptionBilling(billing: InsertSubscriptionBilling): Promise<SubscriptionBilling> {
+    const result = await db.insert(subscriptionBillings).values(billing).returning();
+    
+    // Update subscription total billings and amount
+    await db.update(serviceSubscriptions)
+      .set({
+        totalBillings: sqlFunc`total_billings + 1`,
+        lastBillingDate: billing.billingDate,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(serviceSubscriptions.id, billing.subscriptionId));
+    
+    return result[0];
+  }
+
+  async getSubscriptionBillings(subscriptionId: string): Promise<SubscriptionBilling[]> {
+    return await db.select().from(subscriptionBillings)
+      .where(eq(subscriptionBillings.subscriptionId, subscriptionId))
+      .orderBy(desc(subscriptionBillings.billingDate));
+  }
+
+  // Withdrawal Methods Implementation (Feature #10)
+  async createWithdrawalMethod(method: InsertWithdrawalMethod): Promise<WithdrawalMethod> {
+    const result = await db.insert(withdrawalMethods).values(method).returning();
+    return result[0];
+  }
+
+  async getBuilderWithdrawalMethods(builderId: string): Promise<WithdrawalMethod[]> {
+    return await db.select().from(withdrawalMethods)
+      .where(eq(withdrawalMethods.builderId, builderId))
+      .orderBy(desc(withdrawalMethods.isDefault), desc(withdrawalMethods.createdAt));
+  }
+
+  async getWithdrawalMethod(id: string): Promise<WithdrawalMethod | undefined> {
+    const result = await db.select().from(withdrawalMethods)
+      .where(eq(withdrawalMethods.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async updateWithdrawalMethod(id: string, data: Partial<WithdrawalMethod>): Promise<WithdrawalMethod> {
+    const result = await db.update(withdrawalMethods)
+      .set({ ...data, updatedAt: new Date().toISOString() })
+      .where(eq(withdrawalMethods.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteWithdrawalMethod(id: string): Promise<void> {
+    await db.delete(withdrawalMethods).where(eq(withdrawalMethods.id, id));
+  }
+
+  async setDefaultWithdrawalMethod(builderId: string, methodId: string): Promise<void> {
+    // Remove default from all other methods
+    await db.update(withdrawalMethods)
+      .set({ isDefault: false })
+      .where(eq(withdrawalMethods.builderId, builderId));
+    
+    // Set the new default
+    await db.update(withdrawalMethods)
+      .set({ isDefault: true, updatedAt: new Date().toISOString() })
+      .where(eq(withdrawalMethods.id, methodId));
+  }
+
+  // Withdrawal Requests Implementation
+  async createWithdrawalRequest(request: InsertWithdrawalRequest): Promise<WithdrawalRequest> {
+    const result = await db.insert(withdrawalRequests).values(request).returning();
+    return result[0];
+  }
+
+  async getWithdrawalRequest(id: string): Promise<WithdrawalRequest | undefined> {
+    const result = await db.select().from(withdrawalRequests)
+      .where(eq(withdrawalRequests.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async getBuilderWithdrawalRequests(builderId: string): Promise<WithdrawalRequest[]> {
+    return await db.select().from(withdrawalRequests)
+      .where(eq(withdrawalRequests.builderId, builderId))
+      .orderBy(desc(withdrawalRequests.createdAt));
+  }
+
+  async updateWithdrawalRequestStatus(id: string, status: string, notes?: string): Promise<WithdrawalRequest> {
+    const updates: any = {
+      status,
+      updatedAt: new Date().toISOString()
+    };
+    
+    if (status === 'processing') {
+      updates.processedAt = new Date().toISOString();
+    } else if (status === 'completed') {
+      updates.completedAt = new Date().toISOString();
+    }
+    
+    if (notes) {
+      updates.processingNotes = notes;
+    }
+
+    const result = await db.update(withdrawalRequests)
+      .set(updates)
+      .where(eq(withdrawalRequests.id, id))
+      .returning();
+    return result[0];
   }
 }
 
