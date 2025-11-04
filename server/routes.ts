@@ -6362,5 +6362,434 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Consultation Bookings Routes
+  app.get("/api/consultations", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { builderId, clientId } = req.query;
+      let consultations;
+      
+      if (builderId) {
+        consultations = await storage.getBuilderConsultations(builderId as string);
+      } else if (clientId) {
+        consultations = await storage.getClientConsultations(clientId as string);
+      } else {
+        return res.status(400).json({ error: 'builderId or clientId required' });
+      }
+      
+      res.json(consultations);
+    } catch (error) {
+      console.error('Error fetching consultations:', error);
+      res.status(500).json({ error: 'Failed to fetch consultations' });
+    }
+  });
+
+  app.post("/api/consultations", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const consultationData = req.body;
+      const consultation = await storage.createConsultation(consultationData);
+      
+      if (consultationData.calendarSlotId) {
+        await storage.updateCalendarSlot(consultationData.calendarSlotId, {
+          isBooked: true,
+          consultationId: consultation.id,
+          bookedAt: new Date().toISOString()
+        });
+      }
+      
+      res.json(consultation);
+    } catch (error) {
+      console.error('Error creating consultation:', error);
+      res.status(500).json({ error: 'Failed to create consultation' });
+    }
+  });
+
+  app.put("/api/consultations/:id", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const consultation = await storage.updateConsultation(id, updates);
+      res.json(consultation);
+    } catch (error) {
+      console.error('Error updating consultation:', error);
+      res.status(500).json({ error: 'Failed to update consultation' });
+    }
+  });
+
+  app.post("/api/consultations/:id/convert", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const { orderData } = req.body;
+      
+      const consultation = await storage.getConsultation(id);
+      if (!consultation) {
+        return res.status(404).json({ error: 'Consultation not found' });
+      }
+      
+      const credit = await storage.createUserCredit({
+        userId: consultation.clientId,
+        userType: 'client',
+        amount: consultation.price,
+        remainingAmount: consultation.price,
+        source: 'consultation_conversion',
+        sourceId: consultation.id,
+        applicableTo: 'specific_builder',
+        applicableBuilderIds: [consultation.builderId]
+      });
+      
+      await storage.updateConsultation(id, {
+        convertedToOrder: true,
+        convertedOrderId: orderData.id,
+        creditApplied: consultation.price
+      });
+      
+      res.json({ consultation, credit });
+    } catch (error) {
+      console.error('Error converting consultation:', error);
+      res.status(500).json({ error: 'Failed to convert consultation' });
+    }
+  });
+
+  // Calendar Slots Routes
+  app.get("/api/calendar-slots/:builderId", async (req, res) => {
+    try {
+      const { builderId } = req.params;
+      const { startDate, endDate } = req.query;
+      
+      let slots;
+      if (startDate && endDate) {
+        slots = await storage.getAvailableSlots(builderId, startDate as string, endDate as string);
+      } else {
+        slots = await storage.getBuilderCalendarSlots(builderId);
+      }
+      
+      res.json(slots);
+    } catch (error) {
+      console.error('Error fetching calendar slots:', error);
+      res.status(500).json({ error: 'Failed to fetch calendar slots' });
+    }
+  });
+
+  app.post("/api/calendar-slots", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const slotData = req.body;
+      const slot = await storage.createCalendarSlot(slotData);
+      res.json(slot);
+    } catch (error) {
+      console.error('Error creating calendar slot:', error);
+      res.status(500).json({ error: 'Failed to create calendar slot' });
+    }
+  });
+
+  // Order Amendments Routes
+  app.get("/api/orders/:orderId/amendments", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { orderId } = req.params;
+      const amendments = await storage.getOrderAmendments(orderId);
+      res.json(amendments);
+    } catch (error) {
+      console.error('Error fetching amendments:', error);
+      res.status(500).json({ error: 'Failed to fetch amendments' });
+    }
+  });
+
+  app.post("/api/orders/:orderId/amendments", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { orderId } = req.params;
+      const amendmentData = { ...req.body, orderId };
+      const amendment = await storage.createOrderAmendment(amendmentData);
+      res.json(amendment);
+    } catch (error) {
+      console.error('Error creating amendment:', error);
+      res.status(500).json({ error: 'Failed to create amendment' });
+    }
+  });
+
+  app.put("/api/amendments/:id/approve", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const amendment = await storage.updateOrderAmendment(id, {
+        status: 'approved',
+        approvedBy: req.user?.id,
+        approvedAt: new Date().toISOString()
+      });
+      res.json(amendment);
+    } catch (error) {
+      console.error('Error approving amendment:', error);
+      res.status(500).json({ error: 'Failed to approve amendment' });
+    }
+  });
+
+  app.put("/api/amendments/:id/reject", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body;
+      const amendment = await storage.updateOrderAmendment(id, {
+        status: 'rejected',
+        rejectedBy: req.user?.id,
+        rejectedAt: new Date().toISOString(),
+        rejectionReason: reason
+      });
+      res.json(amendment);
+    } catch (error) {
+      console.error('Error rejecting amendment:', error);
+      res.status(500).json({ error: 'Failed to reject amendment' });
+    }
+  });
+
+  // Audit Logs Routes (Admin only)
+  app.get("/api/audit-logs", requireAdminAuth, async (req, res) => {
+    try {
+      const filters = {
+        actorId: req.query.actorId as string,
+        targetId: req.query.targetId as string,
+        eventType: req.query.eventType as string,
+        startDate: req.query.startDate as string,
+        endDate: req.query.endDate as string
+      };
+      const logs = await storage.getAuditLogs(filters);
+      res.json(logs);
+    } catch (error) {
+      console.error('Error fetching audit logs:', error);
+      res.status(500).json({ error: 'Failed to fetch audit logs' });
+    }
+  });
+
+  app.post("/api/audit-logs", async (req, res) => {
+    try {
+      const logData = {
+        ...req.body,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent']
+      };
+      const log = await storage.createAuditLog(logData);
+      res.json(log);
+    } catch (error) {
+      console.error('Error creating audit log:', error);
+      res.status(500).json({ error: 'Failed to create audit log' });
+    }
+  });
+
+  app.get("/api/audit-logs/export", requireAdminAuth, async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      const logs = await storage.exportAuditLogs(startDate as string, endDate as string);
+      
+      const csv = logs.map(log => [
+        log.timestamp,
+        log.eventType,
+        log.actorId,
+        log.action,
+        log.description,
+        log.amount || '',
+        log.severity
+      ].join(',')).join('\n');
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=audit-logs.csv');
+      res.send(`Timestamp,EventType,ActorId,Action,Description,Amount,Severity\n${csv}`);
+    } catch (error) {
+      console.error('Error exporting audit logs:', error);
+      res.status(500).json({ error: 'Failed to export audit logs' });
+    }
+  });
+
+  // Incident Logs Routes (Admin only)
+  app.get("/api/incident-logs", requireAdminAuth, async (req, res) => {
+    try {
+      const filters = {
+        userId: req.query.userId as string,
+        severity: req.query.severity as string,
+        status: req.query.status as string
+      };
+      const incidents = await storage.getIncidentLogs(filters);
+      res.json(incidents);
+    } catch (error) {
+      console.error('Error fetching incident logs:', error);
+      res.status(500).json({ error: 'Failed to fetch incident logs' });
+    }
+  });
+
+  app.post("/api/incident-logs", requireAdminAuth, async (req, res) => {
+    try {
+      const incident = await storage.createIncidentLog(req.body);
+      res.json(incident);
+    } catch (error) {
+      console.error('Error creating incident log:', error);
+      res.status(500).json({ error: 'Failed to create incident log' });
+    }
+  });
+
+  app.put("/api/incident-logs/:id/investigate", requireAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { adminId, notes } = req.body;
+      const incident = await storage.updateIncidentLog(id, {
+        status: 'investigating',
+        assignedTo: adminId,
+        investigationNotes: notes,
+        investigatedAt: new Date().toISOString()
+      });
+      res.json(incident);
+    } catch (error) {
+      console.error('Error updating incident:', error);
+      res.status(500).json({ error: 'Failed to update incident' });
+    }
+  });
+
+  app.put("/api/incident-logs/:id/resolve", requireAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { resolution, actionTaken, adminId } = req.body;
+      const incident = await storage.updateIncidentLog(id, {
+        status: 'resolved',
+        resolution,
+        actionTaken,
+        resolvedBy: adminId,
+        resolvedAt: new Date().toISOString()
+      });
+      res.json(incident);
+    } catch (error) {
+      console.error('Error resolving incident:', error);
+      res.status(500).json({ error: 'Failed to resolve incident' });
+    }
+  });
+
+  // Support Console Routes (Admin only)
+  app.get("/api/support/users/:userId", requireAdminAuth, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { userType } = req.query;
+      
+      const user = userType === 'builder' 
+        ? await storage.getBuilder(userId)
+        : await storage.getClient(userId);
+      
+      const orders = await storage.getOrders();
+      const credits = await storage.getUserCredits(userId);
+      const supportActions = await storage.getSupportActions(userId);
+      
+      res.json({
+        user,
+        orders: orders.filter(o => 
+          o.clientId === userId || o.builderId === userId
+        ),
+        credits,
+        supportActions
+      });
+    } catch (error) {
+      console.error('Error fetching user support view:', error);
+      res.status(500).json({ error: 'Failed to fetch user support view' });
+    }
+  });
+
+  app.post("/api/support/credits", requireAdminAuth, async (req, res) => {
+    try {
+      const { userId, userType, amount, reason, expiresAt, adminId, adminEmail } = req.body;
+      
+      const credit = await storage.createUserCredit({
+        userId,
+        userType,
+        amount,
+        remainingAmount: amount,
+        source: 'admin_issued',
+        adminNotes: reason,
+        issuedBy: adminId,
+        expiresAt
+      });
+      
+      await storage.createSupportAction({
+        actionType: 'credit_issue',
+        adminId,
+        adminEmail,
+        targetUserId: userId,
+        targetUserType: userType,
+        description: `Issued $${amount} credit`,
+        reason,
+        creditAmount: amount,
+        creditReason: reason,
+        creditExpiresAt: expiresAt
+      });
+      
+      res.json(credit);
+    } catch (error) {
+      console.error('Error issuing credit:', error);
+      res.status(500).json({ error: 'Failed to issue credit' });
+    }
+  });
+
+  app.get("/api/support/actions", requireAdminAuth, async (req, res) => {
+    try {
+      const { targetUserId } = req.query;
+      const actions = await storage.getSupportActions(targetUserId as string);
+      res.json(actions);
+    } catch (error) {
+      console.error('Error fetching support actions:', error);
+      res.status(500).json({ error: 'Failed to fetch support actions' });
+    }
+  });
+
+  // Price Sanity Hints (Quick Win)
+  app.get("/api/services/price-hints/:category", async (req, res) => {
+    try {
+      const { category } = req.params;
+      const services = await storage.getServicesByCategory(category);
+      
+      if (services.length === 0) {
+        return res.json({ min: 0, max: 0, median: 0, p25: 0, p75: 0 });
+      }
+      
+      const prices = services
+        .map(s => parseFloat(s.basicPrice))
+        .filter(p => p > 0)
+        .sort((a, b) => a - b);
+      
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      const median = prices[Math.floor(prices.length / 2)];
+      const p25 = prices[Math.floor(prices.length * 0.25)];
+      const p75 = prices[Math.floor(prices.length * 0.75)];
+      
+      res.json({ min, max, median, p25, p75 });
+    } catch (error) {
+      console.error('Error calculating price hints:', error);
+      res.status(500).json({ error: 'Failed to calculate price hints' });
+    }
+  });
+
+  // User Credits Routes
+  app.get("/api/credits", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { userId } = req.query;
+      const credits = await storage.getUserCredits(userId as string);
+      res.json(credits);
+    } catch (error) {
+      console.error('Error fetching credits:', error);
+      res.status(500).json({ error: 'Failed to fetch credits' });
+    }
+  });
+
+  app.get("/api/credits/available", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { userId } = req.query;
+      const credits = await storage.getAvailableCredits(userId as string);
+      res.json(credits);
+    } catch (error) {
+      console.error('Error fetching available credits:', error);
+      res.status(500).json({ error: 'Failed to fetch available credits' });
+    }
+  });
+
+  app.post("/api/credits/:creditId/apply", requireAuth, async (req: PrivyAuthRequest, res) => {
+    try {
+      const { creditId } = req.params;
+      const { orderId, amount } = req.body;
+      const credit = await storage.applyCredit(creditId, orderId, amount);
+      res.json(credit);
+    } catch (error) {
+      console.error('Error applying credit:', error);
+      res.status(500).json({ error: 'Failed to apply credit' });
+    }
+  });
+
   return httpServer;
 }

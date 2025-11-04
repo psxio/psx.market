@@ -109,6 +109,20 @@ import {
   type InsertWithdrawalMethod,
   type WithdrawalRequest,
   type InsertWithdrawalRequest,
+  type Consultation,
+  type InsertConsultation,
+  type CalendarSlot,
+  type InsertCalendarSlot,
+  type OrderAmendment,
+  type InsertOrderAmendment,
+  type AuditLog,
+  type InsertAuditLog,
+  type IncidentLog,
+  type InsertIncidentLog,
+  type SupportAction,
+  type InsertSupportAction,
+  type UserCredit,
+  type InsertUserCredit,
   users,
   builders,
   builderProjects,
@@ -177,6 +191,13 @@ import {
   subscriptionBillings,
   withdrawalMethods,
   withdrawalRequests,
+  consultations,
+  calendarSlots,
+  orderAmendments,
+  auditLogs,
+  incidentLogs,
+  supportActions,
+  userCredits,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import * as bcrypt from "bcryptjs";
@@ -651,6 +672,48 @@ export interface IStorage {
   getWithdrawalRequest(id: string): Promise<WithdrawalRequest | undefined>;
   getBuilderWithdrawalRequests(builderId: string): Promise<WithdrawalRequest[]>;
   updateWithdrawalRequestStatus(id: string, status: string, notes?: string): Promise<WithdrawalRequest>;
+  
+  // Consultations
+  createConsultation(consultation: InsertConsultation): Promise<Consultation>;
+  getConsultation(id: string): Promise<Consultation | undefined>;
+  getBuilderConsultations(builderId: string): Promise<Consultation[]>;
+  getClientConsultations(clientId: string): Promise<Consultation[]>;
+  updateConsultation(id: string, updates: Partial<InsertConsultation>): Promise<Consultation>;
+  
+  // Calendar Slots
+  createCalendarSlot(slot: InsertCalendarSlot): Promise<CalendarSlot>;
+  getCalendarSlot(id: string): Promise<CalendarSlot | undefined>;
+  getBuilderCalendarSlots(builderId: string): Promise<CalendarSlot[]>;
+  getAvailableSlots(builderId: string, startDate: string, endDate: string): Promise<CalendarSlot[]>;
+  updateCalendarSlot(id: string, updates: Partial<InsertCalendarSlot>): Promise<CalendarSlot>;
+  
+  // Order Amendments
+  createOrderAmendment(amendment: InsertOrderAmendment): Promise<OrderAmendment>;
+  getOrderAmendment(id: string): Promise<OrderAmendment | undefined>;
+  getOrderAmendments(orderId: string): Promise<OrderAmendment[]>;
+  updateOrderAmendment(id: string, updates: Partial<InsertOrderAmendment>): Promise<OrderAmendment>;
+  
+  // Audit Logs
+  createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
+  getAuditLogs(filters: { actorId?: string; targetId?: string; eventType?: string; startDate?: string; endDate?: string }): Promise<AuditLog[]>;
+  exportAuditLogs(startDate: string, endDate: string): Promise<AuditLog[]>;
+  
+  // Incident Logs
+  createIncidentLog(incident: InsertIncidentLog): Promise<IncidentLog>;
+  getIncidentLog(id: string): Promise<IncidentLog | undefined>;
+  getIncidentLogs(filters: { userId?: string; severity?: string; status?: string }): Promise<IncidentLog[]>;
+  updateIncidentLog(id: string, updates: Partial<InsertIncidentLog>): Promise<IncidentLog>;
+  
+  // Support Actions
+  createSupportAction(action: InsertSupportAction): Promise<SupportAction>;
+  getSupportActions(targetUserId: string): Promise<SupportAction[]>;
+  
+  // User Credits
+  createUserCredit(credit: InsertUserCredit): Promise<UserCredit>;
+  getUserCredits(userId: string): Promise<UserCredit[]>;
+  getAvailableCredits(userId: string): Promise<UserCredit[]>;
+  updateUserCredit(id: string, updates: Partial<InsertUserCredit>): Promise<UserCredit>;
+  applyCredit(creditId: string, orderId: string, amount: string): Promise<UserCredit>;
 }
 
 export class PostgresStorage implements IStorage {
@@ -4064,6 +4127,234 @@ export class PostgresStorage implements IStorage {
       .where(eq(withdrawalRequests.id, id))
       .returning();
     return result[0];
+  }
+  
+  // Consultations
+  async createConsultation(consultation: InsertConsultation): Promise<Consultation> {
+    const [result] = await db.insert(consultations).values(consultation).returning();
+    return result;
+  }
+  
+  async getConsultation(id: string): Promise<Consultation | undefined> {
+    const [result] = await db.select().from(consultations).where(eq(consultations.id, id));
+    return result;
+  }
+  
+  async getBuilderConsultations(builderId: string): Promise<Consultation[]> {
+    return await db.select().from(consultations).where(eq(consultations.builderId, builderId)).orderBy(desc(consultations.scheduledAt));
+  }
+  
+  async getClientConsultations(clientId: string): Promise<Consultation[]> {
+    return await db.select().from(consultations).where(eq(consultations.clientId, clientId)).orderBy(desc(consultations.scheduledAt));
+  }
+  
+  async updateConsultation(id: string, updates: Partial<InsertConsultation>): Promise<Consultation> {
+    const [result] = await db.update(consultations).set(updates).where(eq(consultations.id, id)).returning();
+    return result;
+  }
+  
+  // Calendar Slots
+  async createCalendarSlot(slot: InsertCalendarSlot): Promise<CalendarSlot> {
+    const [result] = await db.insert(calendarSlots).values(slot).returning();
+    return result;
+  }
+  
+  async getCalendarSlot(id: string): Promise<CalendarSlot | undefined> {
+    const [result] = await db.select().from(calendarSlots).where(eq(calendarSlots.id, id));
+    return result;
+  }
+  
+  async getBuilderCalendarSlots(builderId: string): Promise<CalendarSlot[]> {
+    return await db.select().from(calendarSlots).where(eq(calendarSlots.builderId, builderId)).orderBy(calendarSlots.startTime);
+  }
+  
+  async getAvailableSlots(builderId: string, startDate: string, endDate: string): Promise<CalendarSlot[]> {
+    return await db.select().from(calendarSlots)
+      .where(
+        and(
+          eq(calendarSlots.builderId, builderId),
+          eq(calendarSlots.isAvailable, true),
+          eq(calendarSlots.isBooked, false),
+          sqlFunc`${calendarSlots.startTime} >= ${startDate}`,
+          sqlFunc`${calendarSlots.startTime} <= ${endDate}`
+        )
+      )
+      .orderBy(calendarSlots.startTime);
+  }
+  
+  async updateCalendarSlot(id: string, updates: Partial<InsertCalendarSlot>): Promise<CalendarSlot> {
+    const [result] = await db.update(calendarSlots).set(updates).where(eq(calendarSlots.id, id)).returning();
+    return result;
+  }
+  
+  // Order Amendments
+  async createOrderAmendment(amendment: InsertOrderAmendment): Promise<OrderAmendment> {
+    const [result] = await db.insert(orderAmendments).values(amendment).returning();
+    return result;
+  }
+  
+  async getOrderAmendment(id: string): Promise<OrderAmendment | undefined> {
+    const [result] = await db.select().from(orderAmendments).where(eq(orderAmendments.id, id));
+    return result;
+  }
+  
+  async getOrderAmendments(orderId: string): Promise<OrderAmendment[]> {
+    return await db.select().from(orderAmendments).where(eq(orderAmendments.orderId, orderId)).orderBy(desc(orderAmendments.createdAt));
+  }
+  
+  async updateOrderAmendment(id: string, updates: Partial<InsertOrderAmendment>): Promise<OrderAmendment> {
+    const [result] = await db.update(orderAmendments).set(updates).where(eq(orderAmendments.id, id)).returning();
+    return result;
+  }
+  
+  // Audit Logs
+  async createAuditLog(log: InsertAuditLog): Promise<AuditLog> {
+    const [result] = await db.insert(auditLogs).values(log).returning();
+    return result;
+  }
+  
+  async getAuditLogs(filters: { actorId?: string; targetId?: string; eventType?: string; startDate?: string; endDate?: string }): Promise<AuditLog[]> {
+    const conditions = [];
+    
+    if (filters.actorId) {
+      conditions.push(eq(auditLogs.actorId, filters.actorId));
+    }
+    if (filters.targetId) {
+      conditions.push(eq(auditLogs.targetId, filters.targetId));
+    }
+    if (filters.eventType) {
+      conditions.push(eq(auditLogs.eventType, filters.eventType));
+    }
+    if (filters.startDate) {
+      conditions.push(sqlFunc`${auditLogs.timestamp} >= ${filters.startDate}`);
+    }
+    if (filters.endDate) {
+      conditions.push(sqlFunc`${auditLogs.timestamp} <= ${filters.endDate}`);
+    }
+    
+    if (conditions.length === 0) {
+      return await db.select().from(auditLogs).orderBy(desc(auditLogs.timestamp)).limit(100);
+    }
+    
+    return await db.select().from(auditLogs).where(and(...conditions)).orderBy(desc(auditLogs.timestamp));
+  }
+  
+  async exportAuditLogs(startDate: string, endDate: string): Promise<AuditLog[]> {
+    return await db.select().from(auditLogs)
+      .where(
+        and(
+          sqlFunc`${auditLogs.timestamp} >= ${startDate}`,
+          sqlFunc`${auditLogs.timestamp} <= ${endDate}`,
+          eq(auditLogs.exportedToColdStorage, false)
+        )
+      )
+      .orderBy(auditLogs.timestamp);
+  }
+  
+  // Incident Logs
+  async createIncidentLog(incident: InsertIncidentLog): Promise<IncidentLog> {
+    const [result] = await db.insert(incidentLogs).values(incident).returning();
+    return result;
+  }
+  
+  async getIncidentLog(id: string): Promise<IncidentLog | undefined> {
+    const [result] = await db.select().from(incidentLogs).where(eq(incidentLogs.id, id));
+    return result;
+  }
+  
+  async getIncidentLogs(filters: { userId?: string; severity?: string; status?: string }): Promise<IncidentLog[]> {
+    const conditions = [];
+    
+    if (filters.userId) {
+      conditions.push(eq(incidentLogs.userId, filters.userId));
+    }
+    if (filters.severity) {
+      conditions.push(eq(incidentLogs.severity, filters.severity));
+    }
+    if (filters.status) {
+      conditions.push(eq(incidentLogs.status, filters.status));
+    }
+    
+    if (conditions.length === 0) {
+      return await db.select().from(incidentLogs).orderBy(desc(incidentLogs.createdAt));
+    }
+    
+    return await db.select().from(incidentLogs).where(and(...conditions)).orderBy(desc(incidentLogs.createdAt));
+  }
+  
+  async updateIncidentLog(id: string, updates: Partial<InsertIncidentLog>): Promise<IncidentLog> {
+    const [result] = await db.update(incidentLogs).set(updates).where(eq(incidentLogs.id, id)).returning();
+    return result;
+  }
+  
+  // Support Actions
+  async createSupportAction(action: InsertSupportAction): Promise<SupportAction> {
+    const [result] = await db.insert(supportActions).values(action).returning();
+    return result;
+  }
+  
+  async getSupportActions(targetUserId: string): Promise<SupportAction[]> {
+    return await db.select().from(supportActions).where(eq(supportActions.targetUserId, targetUserId)).orderBy(desc(supportActions.createdAt));
+  }
+  
+  // User Credits
+  async createUserCredit(credit: InsertUserCredit): Promise<UserCredit> {
+    const [result] = await db.insert(userCredits).values(credit).returning();
+    return result;
+  }
+  
+  async getUserCredits(userId: string): Promise<UserCredit[]> {
+    return await db.select().from(userCredits).where(eq(userCredits.userId, userId)).orderBy(desc(userCredits.createdAt));
+  }
+  
+  async getAvailableCredits(userId: string): Promise<UserCredit[]> {
+    return await db.select().from(userCredits)
+      .where(
+        and(
+          eq(userCredits.userId, userId),
+          eq(userCredits.isExpired, false),
+          eq(userCredits.isUsed, false),
+          sqlFunc`${userCredits.remainingAmount} > 0`
+        )
+      )
+      .orderBy(userCredits.expiresAt);
+  }
+  
+  async updateUserCredit(id: string, updates: Partial<InsertUserCredit>): Promise<UserCredit> {
+    const [result] = await db.update(userCredits).set(updates).where(eq(userCredits.id, id)).returning();
+    return result;
+  }
+  
+  async applyCredit(creditId: string, orderId: string, amount: string): Promise<UserCredit> {
+    const credit = await this.getUserCredits(creditId);
+    if (!credit) {
+      throw new Error('Credit not found');
+    }
+    
+    const currentCredit = credit[0];
+    const amountNum = parseFloat(amount);
+    const remainingNum = parseFloat(currentCredit.remainingAmount);
+    const usedNum = parseFloat(currentCredit.usedAmount);
+    
+    if (amountNum > remainingNum) {
+      throw new Error('Insufficient credit balance');
+    }
+    
+    const newRemaining = (remainingNum - amountNum).toFixed(2);
+    const newUsed = (usedNum + amountNum).toFixed(2);
+    
+    const usedOrderIds = currentCredit.usedOrderIds || [];
+    usedOrderIds.push(orderId);
+    
+    const updates: Partial<InsertUserCredit> = {
+      remainingAmount: newRemaining,
+      usedAmount: newUsed,
+      usedOrderIds,
+      isUsed: parseFloat(newRemaining) === 0,
+      fullyUsedAt: parseFloat(newRemaining) === 0 ? new Date().toISOString() : currentCredit.fullyUsedAt,
+    };
+    
+    return await this.updateUserCredit(creditId, updates);
   }
 }
 
