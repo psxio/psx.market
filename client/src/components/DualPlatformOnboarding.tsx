@@ -58,11 +58,12 @@ interface OnboardingFormData {
 
 export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingProps) {
   const { toast } = useToast();
-  const { user: privyUser } = usePrivy();
+  const { user: privyUser, linkGithub, linkTwitter, linkDiscord } = usePrivy();
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [enablePort444, setEnablePort444] = useState(false);
   const [customSkillInput, setCustomSkillInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLinking, setIsLinking] = useState(false);
   
   const [formData, setFormData] = useState<OnboardingFormData>({
     firstName: '',
@@ -90,13 +91,99 @@ export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingPro
     certifications: ''
   });
   
-  const [oauthConnections, setOauthConnections] = useState({
-    github: false,
-    twitter: false,
-    farcaster: false,
-    zora: false,
-    base: false
-  });
+  // Check which accounts are already linked
+  const isGithubLinked = !!privyUser?.github;
+  const isTwitterLinked = !!privyUser?.twitter;
+  const isDiscordLinked = !!privyUser?.discord;
+  
+  // OAuth connection handlers
+  const handleGithubConnect = async () => {
+    if (isGithubLinked) {
+      toast({ title: 'GitHub already connected', variant: 'default' });
+      return;
+    }
+    
+    setIsLinking(true);
+    try {
+      await linkGithub();
+      toast({ title: 'GitHub connected successfully!', variant: 'default' });
+      
+      // Auto-fill GitHub URL if available
+      if (privyUser?.github?.username) {
+        setFormData(prev => ({
+          ...prev,
+          githubUrl: `https://github.com/${privyUser.github!.username}`
+        }));
+      }
+    } catch (error: any) {
+      console.error('GitHub link error:', error);
+      if (error.message !== 'User closed modal') {
+        toast({ 
+          title: 'Failed to connect GitHub', 
+          description: error.message || 'Please try again',
+          variant: 'destructive' 
+        });
+      }
+    } finally {
+      setIsLinking(false);
+    }
+  };
+  
+  const handleTwitterConnect = async () => {
+    if (isTwitterLinked) {
+      toast({ title: 'Twitter already connected', variant: 'default' });
+      return;
+    }
+    
+    setIsLinking(true);
+    try {
+      await linkTwitter();
+      toast({ title: 'Twitter connected successfully!', variant: 'default' });
+      
+      // Auto-fill Twitter handle if available
+      if (privyUser?.twitter?.username) {
+        setFormData(prev => ({
+          ...prev,
+          xProfile: privyUser.twitter!.username || ''
+        }));
+      }
+    } catch (error: any) {
+      console.error('Twitter link error:', error);
+      if (error.message !== 'User closed modal') {
+        toast({ 
+          title: 'Failed to connect Twitter', 
+          description: error.message || 'Please try again',
+          variant: 'destructive' 
+        });
+      }
+    } finally {
+      setIsLinking(false);
+    }
+  };
+  
+  const handleDiscordConnect = async () => {
+    if (isDiscordLinked) {
+      toast({ title: 'Discord already connected', variant: 'default' });
+      return;
+    }
+    
+    setIsLinking(true);
+    try {
+      await linkDiscord();
+      toast({ title: 'Discord connected successfully!', variant: 'default' });
+    } catch (error: any) {
+      console.error('Discord link error:', error);
+      if (error.message !== 'User closed modal') {
+        toast({ 
+          title: 'Failed to connect Discord', 
+          description: error.message || 'Please try again',
+          variant: 'destructive' 
+        });
+      }
+    } finally {
+      setIsLinking(false);
+    }
+  };
   
   // Get suggested skills based on selected categories
   const getSuggestedSkills = () => {
@@ -621,68 +708,94 @@ export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingPro
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-3">
-                  <Button
-                    variant={oauthConnections.github ? "default" : "outline"}
-                    className="h-16 justify-start gap-3"
-                    onClick={() => {
-                      // OAuth flow would go here
-                      setOauthConnections({ ...oauthConnections, github: !oauthConnections.github });
-                    }}
-                    data-testid="button-connect-github"
-                  >
-                    {oauthConnections.github ? <CheckCircle2 className="h-5 w-5" /> : <Github className="h-5 w-5" />}
-                    <span>Connect GitHub</span>
-                  </Button>
-                  
-                  <Button
-                    variant={oauthConnections.twitter ? "default" : "outline"}
-                    className="h-16 justify-start gap-3"
-                    onClick={() => {
-                      setOauthConnections({ ...oauthConnections, twitter: !oauthConnections.twitter });
-                    }}
-                    data-testid="button-connect-twitter"
-                  >
-                    {oauthConnections.twitter ? <CheckCircle2 className="h-5 w-5" /> : <SiX className="h-5 w-5" />}
-                    <span>Connect Twitter</span>
-                  </Button>
-                  
-                  <Button
-                    variant={oauthConnections.farcaster ? "default" : "outline"}
-                    className="h-16 justify-start gap-3"
-                    onClick={() => {
-                      setOauthConnections({ ...oauthConnections, farcaster: !oauthConnections.farcaster });
-                    }}
-                    data-testid="button-connect-farcaster"
-                  >
-                    {oauthConnections.farcaster ? <CheckCircle2 className="h-5 w-5" /> : <SiFarcaster className="h-5 w-5" />}
-                    <span>Connect Farcaster</span>
-                  </Button>
-                  
-                  <Button
-                    variant={oauthConnections.zora ? "default" : "outline"}
-                    className="h-16 justify-start gap-3"
-                    onClick={() => {
-                      setOauthConnections({ ...oauthConnections, zora: !oauthConnections.zora });
-                    }}
-                    data-testid="button-connect-zora"
-                  >
-                    {oauthConnections.zora ? <CheckCircle2 className="h-5 w-5" /> : <ExternalLink className="h-5 w-5" />}
-                    <span>Connect Zora</span>
-                  </Button>
+                {/* OAuth Connections */}
+                <div className="space-y-2">
+                  <Label>OAuth Connections</Label>
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <Button
+                      variant={isGithubLinked ? "default" : "outline"}
+                      className="h-16 justify-start gap-3"
+                      onClick={handleGithubConnect}
+                      disabled={isLinking || isGithubLinked}
+                      data-testid="button-connect-github"
+                    >
+                      {isLinking && <Loader2 className="h-5 w-5 animate-spin" />}
+                      {!isLinking && (isGithubLinked ? <CheckCircle2 className="h-5 w-5" /> : <Github className="h-5 w-5" />)}
+                      <span>{isGithubLinked ? 'GitHub Connected' : 'Connect GitHub'}</span>
+                    </Button>
+                    
+                    <Button
+                      variant={isTwitterLinked ? "default" : "outline"}
+                      className="h-16 justify-start gap-3"
+                      onClick={handleTwitterConnect}
+                      disabled={isLinking || isTwitterLinked}
+                      data-testid="button-connect-twitter"
+                    >
+                      {isLinking && <Loader2 className="h-5 w-5 animate-spin" />}
+                      {!isLinking && (isTwitterLinked ? <CheckCircle2 className="h-5 w-5" /> : <SiX className="h-5 w-5" />)}
+                      <span>{isTwitterLinked ? 'Twitter Connected' : 'Connect Twitter'}</span>
+                    </Button>
+                    
+                    <Button
+                      variant={isDiscordLinked ? "default" : "outline"}
+                      className="h-16 justify-start gap-3"
+                      onClick={handleDiscordConnect}
+                      disabled={isLinking || isDiscordLinked}
+                      data-testid="button-connect-discord"
+                    >
+                      {isLinking && <Loader2 className="h-5 w-5 animate-spin" />}
+                      {!isLinking && (isDiscordLinked ? <CheckCircle2 className="h-5 w-5" /> : <ExternalLink className="h-5 w-5" />)}
+                      <span>{isDiscordLinked ? 'Discord Connected' : 'Connect Discord'}</span>
+                    </Button>
+                  </div>
                 </div>
                 
-                <Button
-                  variant={oauthConnections.base ? "default" : "outline"}
-                  className="w-full h-16 justify-start gap-3"
-                  onClick={() => {
-                    setOauthConnections({ ...oauthConnections, base: !oauthConnections.base });
-                  }}
-                  data-testid="button-connect-base"
-                >
-                  {oauthConnections.base ? <CheckCircle2 className="h-5 w-5" /> : <ExternalLink className="h-5 w-5" />}
-                  <span>Connect Base Profile</span>
-                </Button>
+                {/* Manual Profile Links */}
+                <div className="space-y-3 pt-4">
+                  <Label className="text-sm text-muted-foreground">Web3 Profile Links (Optional)</Label>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="farcasterProfile" className="text-sm flex items-center gap-2">
+                      <SiFarcaster className="h-4 w-4" />
+                      Farcaster Username
+                    </Label>
+                    <Input
+                      id="farcasterProfile"
+                      placeholder="username.farcaster"
+                      value={formData.farcasterProfile}
+                      onChange={(e) => setFormData({ ...formData, farcasterProfile: e.target.value })}
+                      data-testid="input-farcaster"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="zoraProfile" className="text-sm flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Zora Profile URL
+                    </Label>
+                    <Input
+                      id="zoraProfile"
+                      placeholder="https://zora.co/@username"
+                      value={formData.zoraProfile}
+                      onChange={(e) => setFormData({ ...formData, zoraProfile: e.target.value })}
+                      data-testid="input-zora"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="baseProfile" className="text-sm flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Base Profile URL
+                    </Label>
+                    <Input
+                      id="baseProfile"
+                      placeholder="https://base.org/name/username"
+                      value={formData.baseProfile}
+                      onChange={(e) => setFormData({ ...formData, baseProfile: e.target.value })}
+                      data-testid="input-base"
+                    />
+                  </div>
+                </div>
                 
                 <div className="flex gap-2 pt-4">
                   <Button variant="outline" onClick={handleBack} className="flex-1">
