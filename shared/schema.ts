@@ -220,6 +220,14 @@ export const services = pgTable("services", {
   portfolioMedia: text("portfolio_media").array(),
   videoUrls: text("video_urls").array(),
   active: boolean("active").notNull().default(true),
+  
+  // Subscription/Recurring Services (Feature #5)
+  isSubscription: boolean("is_subscription").notNull().default(false),
+  subscriptionWeeklyPrice: decimal("subscription_weekly_price", { precision: 10, scale: 2 }),
+  subscriptionMonthlyPrice: decimal("subscription_monthly_price", { precision: 10, scale: 2 }),
+  subscriptionDescription: text("subscription_description"),
+  subscriptionDeliverables: text("subscription_deliverables").array(),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
@@ -522,7 +530,11 @@ export const orders = pgTable("orders", {
   budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
   deliveryDays: integer("delivery_days").notNull(),
   
+  // Enhanced Order Lifecycle (Feature #8)
+  // Status: pending -> pending_requirements -> in_progress -> delivered -> revision_requested -> completed
   status: text("status").notNull().default("pending"),
+  requirementsMet: boolean("requirements_met").notNull().default(false),
+  requirementsRequestedAt: text("requirements_requested_at"),
   
   acceptedAt: text("accepted_at"),
   startedAt: text("started_at"),
@@ -559,20 +571,36 @@ export const orders = pgTable("orders", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Enhanced Revision System (Feature #9)
 export const orderRevisions = pgTable("order_revisions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   orderId: varchar("order_id").notNull(),
   requestedBy: varchar("requested_by").notNull(),
+  requestedByType: text("requested_by_type").notNull(), // 'client' or 'builder'
   
   revisionNumber: integer("revision_number").notNull(),
   requestDetails: text("request_details").notNull(),
-  status: text("status").notNull().default("pending"),
+  status: text("status").notNull().default("pending"), // pending, in_progress, delivered, accepted, rejected
   
+  // Delivery details
   deliveryUrl: text("delivery_url"),
   deliveryNotes: text("delivery_notes"),
+  deliveryAttachments: text("delivery_attachments").array(),
   deliveredAt: text("delivered_at"),
   
+  // Acceptance/Rejection
+  acceptedAt: text("accepted_at"),
+  acceptedBy: varchar("accepted_by"),
+  rejectedAt: text("rejected_at"),
+  rejectedBy: varchar("rejected_by"),
+  rejectionReason: text("rejection_reason"),
+  
+  // Scope tracking
+  isWithinScope: boolean("is_within_scope").notNull().default(true),
+  additionalCharge: decimal("additional_charge", { precision: 10, scale: 2 }),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const orderActivities = pgTable("order_activities", {
@@ -2123,6 +2151,153 @@ export const disputeMessages = pgTable("dispute_messages", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Custom Offers in Chat (Feature #3)
+export const customOffers = pgTable("custom_offers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  threadId: varchar("thread_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  deliveryDays: integer("delivery_days").notNull(),
+  revisions: integer("revisions").notNull().default(2),
+  
+  deliverables: text("deliverables").array(),
+  requirements: text("requirements"),
+  
+  status: text("status").notNull().default("pending"), // pending, accepted, declined, expired, completed
+  
+  validUntil: text("valid_until").notNull(),
+  acceptedAt: text("accepted_at"),
+  declinedAt: text("declined_at"),
+  declineReason: text("decline_reason"),
+  
+  orderId: varchar("order_id"), // Created when accepted
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Order Addons - Selected addons for an order (Feature #4)
+export const orderAddons = pgTable("order_addons", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  addonId: varchar("addon_id").notNull(),
+  
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Service Subscriptions (Feature #5)
+export const serviceSubscriptions = pgTable("service_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serviceId: varchar("service_id").notNull(),
+  clientId: varchar("client_id").notNull(),
+  builderId: varchar("builder_id").notNull(),
+  
+  packageType: text("package_type").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  billingCycle: text("billing_cycle").notNull(), // weekly, monthly
+  
+  status: text("status").notNull().default("active"), // active, paused, cancelled
+  
+  nextBillingDate: text("next_billing_date").notNull(),
+  lastBillingDate: text("last_billing_date"),
+  
+  totalBillings: integer("total_billings").notNull().default(0),
+  totalPaid: decimal("total_paid", { precision: 10, scale: 2 }).default("0"),
+  
+  pausedAt: text("paused_at"),
+  cancelledAt: text("cancelled_at"),
+  cancellationReason: text("cancellation_reason"),
+  
+  escrowContractAddress: text("escrow_contract_address"),
+  autoRenew: boolean("auto_renew").notNull().default(true),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Subscription Billing History
+export const subscriptionBillings = pgTable("subscription_billings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  subscriptionId: varchar("subscription_id").notNull(),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").notNull(), // pending, paid, failed
+  
+  billingDate: text("billing_date").notNull(),
+  paidAt: text("paid_at"),
+  
+  transactionHash: text("transaction_hash"),
+  orderId: varchar("order_id"), // Associated order for this billing
+  
+  failureReason: text("failure_reason"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Withdrawal Methods (Feature #10)
+export const withdrawalMethods = pgTable("withdrawal_methods", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  
+  type: text("type").notNull(), // paypal, stripe, bank_transfer, crypto_wallet
+  
+  // PayPal
+  paypalEmail: text("paypal_email"),
+  
+  // Stripe
+  stripeAccountId: text("stripe_account_id"),
+  
+  // Bank Transfer
+  bankName: text("bank_name"),
+  accountHolderName: text("account_holder_name"),
+  accountNumber: text("account_number"),
+  routingNumber: text("routing_number"),
+  swiftCode: text("swift_code"),
+  
+  // Crypto Wallet (additional to default wallet)
+  cryptoAddress: text("crypto_address"),
+  cryptoNetwork: text("crypto_network"),
+  
+  isDefault: boolean("is_default").notNull().default(false),
+  isVerified: boolean("is_verified").notNull().default(false),
+  
+  verifiedAt: text("verified_at"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Withdrawal Requests
+export const withdrawalRequests = pgTable("withdrawal_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  builderId: varchar("builder_id").notNull(),
+  withdrawalMethodId: varchar("withdrawal_method_id").notNull(),
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  amountUsd: decimal("amount_usd", { precision: 10, scale: 2 }).notNull(),
+  
+  status: text("status").notNull().default("pending"), // pending, processing, completed, failed, cancelled
+  
+  processedAt: text("processed_at"),
+  completedAt: text("completed_at"),
+  
+  transactionHash: text("transaction_hash"),
+  transactionId: text("transaction_id"), // For PayPal/Stripe
+  
+  failureReason: text("failure_reason"),
+  processingNotes: text("processing_notes"),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 // Insert Schemas
 
 export const insertUserOnlineStatusSchema = createInsertSchema(userOnlineStatus).omit({
@@ -2218,6 +2393,53 @@ export const insertDisputeMessageSchema = createInsertSchema(disputeMessages).om
   createdAt: true,
 });
 
+// New Feature Insert Schemas
+export const insertCustomOfferSchema = createInsertSchema(customOffers).omit({
+  id: true,
+  createdAt: true,
+  acceptedAt: true,
+  declinedAt: true,
+  orderId: true,
+});
+
+export const insertOrderAddonSchema = createInsertSchema(orderAddons).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertServiceSubscriptionSchema = createInsertSchema(serviceSubscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  totalBillings: true,
+  totalPaid: true,
+  lastBillingDate: true,
+});
+
+export const insertSubscriptionBillingSchema = createInsertSchema(subscriptionBillings).omit({
+  id: true,
+  createdAt: true,
+  paidAt: true,
+});
+
+export const insertWithdrawalMethodSchema = createInsertSchema(withdrawalMethods).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  isVerified: true,
+  verifiedAt: true,
+});
+
+export const insertWithdrawalRequestSchema = createInsertSchema(withdrawalRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  processedAt: true,
+  completedAt: true,
+  transactionHash: true,
+  transactionId: true,
+});
+
 // Types
 
 export type InsertServiceAddon = z.infer<typeof insertServiceAddonSchema>;
@@ -2270,3 +2492,22 @@ export type BuilderAnalytics = typeof builderAnalytics.$inferSelect;
 
 export type InsertDisputeMessage = z.infer<typeof insertDisputeMessageSchema>;
 export type DisputeMessage = typeof disputeMessages.$inferSelect;
+
+// New Feature Types
+export type InsertCustomOffer = z.infer<typeof insertCustomOfferSchema>;
+export type CustomOffer = typeof customOffers.$inferSelect;
+
+export type InsertOrderAddon = z.infer<typeof insertOrderAddonSchema>;
+export type OrderAddon = typeof orderAddons.$inferSelect;
+
+export type InsertServiceSubscription = z.infer<typeof insertServiceSubscriptionSchema>;
+export type ServiceSubscription = typeof serviceSubscriptions.$inferSelect;
+
+export type InsertSubscriptionBilling = z.infer<typeof insertSubscriptionBillingSchema>;
+export type SubscriptionBilling = typeof subscriptionBillings.$inferSelect;
+
+export type InsertWithdrawalMethod = z.infer<typeof insertWithdrawalMethodSchema>;
+export type WithdrawalMethod = typeof withdrawalMethods.$inferSelect;
+
+export type InsertWithdrawalRequest = z.infer<typeof insertWithdrawalRequestSchema>;
+export type WithdrawalRequest = typeof withdrawalRequests.$inferSelect;
