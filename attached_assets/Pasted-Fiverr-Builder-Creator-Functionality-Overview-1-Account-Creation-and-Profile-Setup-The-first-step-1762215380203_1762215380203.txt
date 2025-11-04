@@ -1,0 +1,139 @@
+Fiverr: Builder/Creator Functionality Overview
+1. Account Creation and Profile Setup
+
+The first step for any builder or creator on Fiverr is establishing a seller account. Once registered, the creator enters a guided onboarding process that walks them through the fundamentals of the platform.
+
+Key setup elements include:
+
+Profile Information:
+
+A professional photo or brand logo
+
+Short bio summarizing skills, niche, and experience
+
+Linked social accounts for credibility (LinkedIn, GitHub, Behance, etc.)
+
+Professional Tags and Skills:
+Fiverr prompts users to choose up to 15 skills, aligning them with searchable categories (e.g., “Web Development,” “NFT Art,” “Social Media Strategy”).
+
+Language and Experience:
+The creator specifies languages, proficiency, and professional experience — helping Fiverr’s search algorithm tailor exposure to the right buyers.
+
+The platform’s algorithm evaluates early data (keywords, profile completion, verification level) to determine visibility and ranking potential.
+
+2. Gig Creation (Service Listing Layer)
+
+Each service a creator offers is structured as a “Gig” — Fiverr’s modular product unit.
+
+Gig Builder Flow:
+
+Title & Category: Defines the core offer and places it under the appropriate marketplace section (e.g., “Design → Logo Design → Minimalist Logo”).
+
+Search Tags: Up to five tags for discoverability.
+
+Packages:
+Fiverr’s three-tier pricing model—Basic, Standard, Premium—lets creators structure escalating service levels (e.g., delivery time, scope, revisions).
+
+Description & FAQs:
+Space to clarify deliverables, working style, and client expectations.
+
+Media Upload:
+Sellers can add example visuals, demo videos, or portfolio samples to demonstrate quality.
+
+Requirements Section:
+Defines what the buyer must provide before the project begins (e.g., brand assets, target audience details).
+
+The Gig Builder effectively transforms creative or technical work into a productized, repeatable service, allowing the creator to focus on delivery rather than sales logistics.
+
+3. Onboarding and Verification
+
+Once the profile and first gig are live, Fiverr’s onboarding flow focuses on legitimacy and conversion readiness:
+
+Identity Verification: Photo ID and facial verification ensure authenticity.
+
+Level System Activation: New sellers start at “Level 0” and can rise through Level 1 → Level 2 → Top Rated Seller, based on order completion rate, response time, and ratings.
+
+Dashboard Familiarization: Fiverr introduces analytics tools—views, clicks, conversion rates, and earnings breakdown—to help creators optimize their listings.
+
+4. Client Interaction & Project Workflow
+
+Creators manage orders via an integrated project dashboard:
+
+Inbox System: Centralized messaging for negotiation, clarifications, and file sharing.
+
+Custom Offers: Freelancers can craft tailored quotes directly in chat, specifying price, delivery time, and deliverables.
+
+Order Lifecycle:
+
+Pending Requirements: Wait for buyer input
+
+In Progress: Active work stage
+
+Delivered: Submission for buyer review
+
+Completed: Final acceptance triggers payment release
+
+Revisions: Managed within the order chat thread
+
+Automated reminders, countdown timers, and resolution centers ensure deadlines and disputes are handled transparently.
+
+5. Payment and Withdrawal
+
+Upon order completion, Fiverr holds funds in escrow for 14 days (7 for Top Rated Sellers), ensuring protection against chargebacks.
+Creators can then withdraw via:
+
+Payoneer
+
+PayPal
+
+Direct bank transfer (in select regions)
+
+Fiverr automatically deducts a 20% platform fee from every transaction.
+
+6. Analytics, Ratings, and Level Progression
+
+Fiverr’s creator dashboard includes:
+
+Gig Analytics: Impressions, clicks, orders, and cancellations per gig.
+
+Earnings Reports: Revenue, pending clearance, and monthly summaries.
+
+Performance Metrics:
+
+Response rate
+
+Order completion rate
+
+On-time delivery
+
+Customer satisfaction score
+
+Maintaining strong metrics boosts search ranking, unlocks Seller Levels, and enables participation in premium programs like Fiverr Pro and Promoted Gigs.
+
+7. Growth, Upselling, and Scaling
+
+Advanced creators can:
+
+Offer Gig Extras or Add-ons for additional services.
+
+Use Fiverr Learn for platform-certified training courses.
+
+Enable Fiverr Subscriptions to provide recurring services.
+
+Promote gigs through Fiverr Ads for top search placement.
+
+Join Fiverr Pro (invite or application-based) for high-tier exposure and enterprise clients.
+
+Summary
+
+From a builder’s perspective, Fiverr functions as a turnkey ecosystem that:
+
+Converts skill into sellable digital products (Gigs)
+
+Automates discovery, client communication, payment processing, and review cycles
+
+Uses data and reputation metrics to rank, reward, and expose top creators
+
+Provides a full-stack infrastructure for freelancers to operate as micro-agencies without managing logistics
+
+Essentially, Fiverr is a self-contained business engine for creators—handling marketing, lead acquisition, and payments so they can focus purely on creative output.
