@@ -1,0 +1,783 @@
+# Dual-Platform Onboarding Wizard: Technical Specification
+
+**For: port444 Marketplace Team**  
+**From: Based Creators Team**  
+**Date: November 2025**  
+**Version: 1.0**
+
+---
+
+## 🎯 Executive Summary
+
+This document describes the **Dual-Platform Onboarding Wizard** that enables seamless account creation across Based Creators and port444 marketplace using a single wallet signature. Users complete one form and automatically get accounts on both platforms, creating a powerful cross-platform creator ecosystem.
+
+---
+
+## 🌟 Overview
+
+### What is Dual-Platform Onboarding?
+
+The Dual-Platform Onboarding Wizard allows creators to:
+- ✅ **Sign up once** with their Web3 wallet
+- ✅ **Choose their platform** (just Based Creators, just port444, or BOTH)
+- ✅ **One unified profile** shared across both platforms
+- ✅ **Automatic account sync** via secure API integration
+
+### Key Benefits
+
+**For Users:**
+- Single wallet authentication across both platforms
+- One profile, two powerful creator networks
+- No duplicate data entry
+- Verified wallet-based identity
+
+**For Platforms:**
+- Shared user growth
+- Cross-platform referrals
+- Verified user base
+- API-driven integration
+
+---
+
+## 🎨 User Experience Flow
+
+### Step 1: Welcome & Platform Choice
+
+User arrives at onboarding after wallet connection and sees:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  ✨ Welcome to Based Creators!                          │
+│  Connected: 0xabcd...7843                               │
+│  One wallet, two powerful platforms for creators        │
+│                                                          │
+│  ┌───────────────┐  🔄  ┌───────────────┐             │
+│  │ Based Creators│ ←→  │   port444      │             │
+│  │ • Chapters    │      │ • Services     │             │
+│  │ • Referrals   │      │ • Portfolio    │             │
+│  │ • Meetings    │      │ • Marketplace  │             │
+│  └───────────────┘      └───────────────┘             │
+│                                                          │
+│  💡 Complete the optional port444 section               │
+│     to get both accounts                                │
+│                                                          │
+│  [Enable port444 Profile] ←─ Toggle button             │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Animations:**
+- Floating particles background (15 animated dots, subtle blue)
+- Shimmer gradient sweeping across the dual-platform card
+- Pulsing ring effect on connection icon with 360° rotation
+- Sparkle icon wiggle animation on title
+
+### Step 2: Basic Information (Required)
+
+```
+First Name * ───────────────────
+Last Name * ────────────────────
+Email ─────────────────────────
+Industry ──────────────────────
+```
+
+### Step 3: Social Profiles (OAuth Connected)
+
+**IMPORTANT:** These are OAuth-authenticated connections, not text inputs.
+
+```
+Connect Social Profiles (Optional)
+Connect your accounts to verify ownership
+
+┌──────────────────┐  ┌──────────────────┐
+│ 🔗 Connect GitHub│  │ 🔗 Connect Twitter│
+└──────────────────┘  └──────────────────┘
+
+┌──────────────────┐  ┌──────────────────┐
+│ 🔗 Connect        │  │ 🔗 Connect Zora   │
+│    Farcaster      │  └──────────────────┘
+└──────────────────┘
+
+┌──────────────────────────────────────────┐
+│ 🔗 Connect Base Profile                   │
+└──────────────────────────────────────────┘
+```
+
+Each button triggers OAuth flow and shows checkmark when connected.
+
+### Step 4: port444 Profile (Optional but Comprehensive)
+
+When user clicks "Enable port444 Profile":
+
+#### A. Service Categories (Multi-Select)
+
+```
+Service Categories * (Select all that apply)
+Choose one or more categories that match your services
+
+[✓ Web Development]  [ Smart Contracts]  [ UI/UX Design]
+[ Mobile Apps]  [✓ Branding]  [ Content Writing]
+[ Video Editing]  [ 3D Modeling]  [ Marketing]
+[✓ Blockchain]  [ AI/ML]  [ DevOps]
+...20 total categories
+
+✓ 3 categories selected
+```
+
+**Implementation Details:**
+- Multi-select badge interface
+- Click to toggle selection
+- Visual feedback (primary color when selected)
+- Checkmark icon appears when selected
+- Counter shows number of selections
+- Minimum 1, no maximum
+- Skills populate based on ALL selected categories
+
+#### B. Professional Details
+
+```
+Professional Bio * (min 100 characters)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Experienced Web3 developer specializing in...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+247/1000 characters
+
+Years of Experience *
+[ Select ] ▼
+  - Less than 1 year
+  - 1-2 years
+  - 3-5 years
+  - 5-10 years
+  - 10+ years
+
+Timezone *
+[ Select ] ▼
+  - America/New_York
+  - America/Los_Angeles
+  - Europe/London
+  ...etc
+```
+
+#### C. Skills (Dynamic, Category-Based)
+
+```
+Skills * (minimum 3, up to 15)
+
+Type to add custom skill...  [Add]
+
+Suggested for your categories:
+[+ React]  [+ Solidity]  [+ TypeScript]  [+ Node.js]
+[+ Smart Contracts]  [+ Web3.js]  [+ Hardhat]
+
+Your skills:
+[React ×]  [Solidity ×]  [TypeScript ×]  [Next.js ×]
+
+3/15 skills
+```
+
+**Smart Skill Suggestions:**
+- Skills auto-populate based on selected categories
+- Web Development → React, Vue, Angular, TypeScript, etc.
+- Smart Contracts → Solidity, Rust, Move, Vyper, etc.
+- UI/UX Design → Figma, Adobe XD, Sketch, etc.
+- 300+ pre-defined skills across 20 categories
+- Custom skill entry supported
+
+#### D. Pricing
+
+```
+┌───────────────────────────────────────────┐
+│ Pricing                                    │
+├───────────────────────────────────────────┤
+│ Minimum Project Budget     Hourly Rate    │
+│ $ [500____]               $ [100____]/hr  │
+│                            (Optional)      │
+└───────────────────────────────────────────┘
+```
+
+#### E. Additional Info (Accordion, Optional)
+
+```
+▼ Additional Information (Recommended)
+
+Portfolio Links (up to 3)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+https://github.com/yourname/project
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+https://basescan.org/address/0x...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+https://yourportfolio.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Languages Spoken
+[✓ English]  [ Spanish]  [ Mandarin]  [ French]
+[ German]  [ Japanese]  [ Portuguese]
+
+Telegram Handle
+@yourhandle
+
+Certifications
+Certified Solidity Developer, AWS Certified...
+```
+
+### Step 5: Chapter Selection
+
+```
+Join a Chapter
+Select a chapter to connect with local creators
+
+Select Chapter *
+[ Choose your chapter ] ▼
+  - Based Creators Austin - Austin, TX
+  - Based Creators NYC - New York, NY
+  - Based Creators SF - San Francisco, CA
+
+[Skip for Now]  [Complete Setup & Join Both Platforms →]
+```
+
+---
+
+## 🔧 Technical Implementation
+
+### Data Structure
+
+```typescript
+interface OnboardingFormData {
+  // Based Creators (Required)
+  firstName: string;           // Required
+  lastName: string;            // Required
+  email: string;               // Optional
+  industry: string;            // Optional
+  chapterId: string;           // Optional (can skip)
+  
+  // Social Profiles (OAuth Authenticated)
+  githubUrl: string;           // OAuth connected
+  xProfile: string;            // OAuth connected
+  farcasterProfile: string;    // OAuth connected
+  zoraProfile: string;         // OAuth connected
+  baseProfile: string;         // OAuth connected
+  
+  // port444 Fields (Optional Bundle)
+  categories: string[];        // Array! Multiple selection
+  bio: string;                 // Min 100 chars
+  yearsOfExperience: string;   // Required if port444
+  skills: string[];            // Min 3, max 15
+  languages: string[];         // Optional
+  timezone: string;            // Required if port444
+  minimumBudget: string;       // Required if port444
+  hourlyRate: string;          // Optional
+  portfolioLink1: string;      // Optional
+  portfolioLink2: string;      // Optional
+  portfolioLink3: string;      // Optional
+  telegramHandle: string;      // Optional
+  certifications: string;      // Optional
+}
+```
+
+### Validation Rules
+
+#### Minimal Path (Based Creators Only)
+```typescript
+{
+  firstName: required,
+  lastName: required,
+  // Everything else optional
+}
+```
+
+#### Dual-Platform Path (Both Platforms)
+```typescript
+{
+  // Based Creators
+  firstName: required,
+  lastName: required,
+  
+  // port444 Required
+  categories: required, minLength(1),  // At least 1 category
+  bio: required, minLength(100), maxLength(1000),
+  yearsOfExperience: required,
+  skills: required, minLength(3), maxLength(15),
+  timezone: required,
+  minimumBudget: required, min(50),
+  
+  // Everything else optional
+}
+```
+
+### API Integration
+
+#### From Based Creators → port444
+
+**Endpoint:** `POST https://port444.replit.app/api/external/create-builder`
+
+**Headers:**
+```
+Authorization: Bearer {PORT444_EXTERNAL_API_KEY}
+Content-Type: application/json
+```
+
+**Payload:**
+```json
+{
+  "walletAddress": "0xabcd...7843",
+  "firstName": "Satoshi",
+  "lastName": "Nakamoto",
+  "email": "satoshi@base.org",
+  "categories": ["web_development", "blockchain", "smart_contracts"],
+  "bio": "Experienced Web3 developer...",
+  "yearsOfExperience": "5-10 years",
+  "skills": ["React", "Solidity", "TypeScript", "Web3.js"],
+  "languages": ["English", "Spanish"],
+  "timezone": "America/Los_Angeles",
+  "minimumBudget": 500,
+  "hourlyRate": 100,
+  "portfolioLinks": [
+    "https://github.com/satoshi/project",
+    "https://basescan.org/address/0x...",
+    "https://portfolio.com"
+  ],
+  "githubUrl": "https://github.com/satoshi",
+  "xProfile": "@satoshi",
+  "farcasterProfile": "satoshi",
+  "zoraProfile": "https://zora.co/satoshi",
+  "baseProfile": "https://base.org/satoshi",
+  "telegramHandle": "@satoshi",
+  "certifications": "Certified Solidity Developer"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "user": {
+    "id": "uuid-here",
+    "walletAddress": "0xabcd...7843",
+    "profileUrl": "https://port444.replit.app/builder/uuid-here"
+  }
+}
+```
+
+#### From port444 → Based Creators
+
+**Endpoint:** `POST https://basedcreators.replit.app/api/external/create-account`
+
+**Headers:**
+```
+Authorization: Bearer {BASED_CREATORS_EXTERNAL_API_KEY}
+Content-Type: application/json
+```
+
+**Payload:**
+```json
+{
+  "walletAddress": "0xabcd...7843",
+  "firstName": "Satoshi",
+  "lastName": "Nakamoto",
+  "email": "satoshi@base.org",
+  "industry": "Web3 Development"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "user": {
+    "id": "uuid-here",
+    "walletAddress": "0xabcd...7843"
+  }
+}
+```
+
+### OAuth Implementation
+
+For each social platform, implement standard OAuth 2.0 flow:
+
+#### GitHub OAuth
+```typescript
+const connectGitHub = async () => {
+  // 1. Redirect to GitHub OAuth
+  const clientId = process.env.GITHUB_CLIENT_ID;
+  const redirectUri = `${window.location.origin}/auth/github/callback`;
+  const scope = 'read:user user:email';
+  
+  window.location.href = 
+    `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+};
+
+// 2. Handle callback
+app.get('/auth/github/callback', async (req, res) => {
+  const { code } = req.query;
+  
+  // Exchange code for token
+  const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      code
+    })
+  });
+  
+  // Get user info
+  const userResponse = await fetch('https://api.github.com/user', {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  });
+  
+  const { login, html_url } = await userResponse.json();
+  
+  // Store in session/state
+  setFormData({ ...formData, githubUrl: html_url });
+});
+```
+
+#### Twitter OAuth (Similar pattern)
+- Use Twitter OAuth 2.0 PKCE flow
+- Scope: `users.read tweet.read`
+- Store username and profile URL
+
+#### Farcaster Auth
+- Use Farcaster Auth Kit or Sign-In With Farcaster
+- Verify FID (Farcaster ID)
+- Store username and FID
+
+#### Zora & Base Profile
+- Use ENS resolution for Base names
+- Verify on-chain profile ownership
+- Link to profile pages
+
+---
+
+## 📊 Database Schema
+
+### Based Creators Side
+
+```sql
+-- Users table
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet_address VARCHAR(42) UNIQUE NOT NULL,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  email VARCHAR(255),
+  industry VARCHAR(255),
+  
+  -- Social profiles (OAuth verified)
+  github_url VARCHAR(255),
+  x_profile VARCHAR(100),
+  farcaster_profile VARCHAR(100),
+  zora_profile VARCHAR(255),
+  base_profile VARCHAR(255),
+  
+  -- port444 sync tracking
+  port444_user_id UUID,
+  port444_sync_status VARCHAR(20), -- 'synced', 'pending', 'failed'
+  port444_synced_at TIMESTAMP,
+  
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Cross-platform mapping
+CREATE TABLE cross_platform_mappings (
+  id SERIAL PRIMARY KEY,
+  wallet_address VARCHAR(42) NOT NULL,
+  based_creators_user_id UUID,
+  port444_user_id UUID,
+  sync_status VARCHAR(20),
+  last_sync_attempt TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### port444 Side (Recommended Schema)
+
+```sql
+-- Builders table
+CREATE TABLE builders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet_address VARCHAR(42) UNIQUE NOT NULL,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  email VARCHAR(255),
+  
+  -- Professional profile
+  categories TEXT[], -- Array of categories
+  bio TEXT CHECK (LENGTH(bio) >= 100),
+  years_of_experience VARCHAR(50),
+  skills TEXT[],
+  languages TEXT[],
+  timezone VARCHAR(100),
+  
+  -- Pricing
+  minimum_budget INTEGER,
+  hourly_rate INTEGER,
+  
+  -- Portfolio
+  portfolio_links TEXT[],
+  telegram_handle VARCHAR(100),
+  certifications TEXT,
+  
+  -- Social profiles (OAuth verified)
+  github_url VARCHAR(255),
+  x_profile VARCHAR(100),
+  farcaster_profile VARCHAR(100),
+  zora_profile VARCHAR(255),
+  base_profile VARCHAR(255),
+  
+  -- Based Creators sync
+  based_creators_user_id UUID,
+  based_creators_sync_status VARCHAR(20),
+  based_creators_synced_at TIMESTAMP,
+  
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create indexes
+CREATE INDEX idx_builders_wallet ON builders(wallet_address);
+CREATE INDEX idx_builders_categories ON builders USING GIN(categories);
+CREATE INDEX idx_builders_skills ON builders USING GIN(skills);
+```
+
+---
+
+## 🎨 Design System
+
+### Colors
+```css
+/* Primary (Base Blue) */
+--primary: 221 83% 53%;
+--primary-foreground: 0 0% 100%;
+
+/* Animated elements */
+--particle-color: hsl(221 83% 53% / 0.4);
+--shimmer-color: hsl(221 83% 53% / 0.2);
+--pulse-ring: hsl(221 83% 53% / 0.6);
+```
+
+### Animations
+
+**Floating Particles:**
+```css
+/* 15 particles, 3-9px size */
+animation: float 12-20s ease-in-out infinite;
+opacity: 0.15 → 0.4 → 0.15;
+scale: 0.8 → 1.2 → 0.8;
+```
+
+**Shimmer Gradient:**
+```css
+/* Horizontal sweep across card */
+background: linear-gradient(
+  to right,
+  transparent,
+  hsl(221 83% 53% / 0.2),
+  transparent
+);
+animation: shimmer 2.5s linear infinite;
+```
+
+**Pulsing Ring:**
+```css
+/* Around "One Wallet" icon */
+scale: 1 → 1.8 → 1;
+opacity: 0.6 → 0 → 0.6;
+animation: pulse 1.8s ease-out infinite;
+```
+
+**Icon Rotation:**
+```css
+/* "One Wallet" connection icon */
+animation: rotate 20s linear infinite;
+```
+
+### Component States
+
+**Category Badges (Multi-Select):**
+```
+Unselected: outline, hover-elevate
+Selected:   primary bg, checkmark icon, hover-elevate
+```
+
+**OAuth Buttons:**
+```
+Disconnected: outline, ExternalLink icon
+Connected:    primary bg, Check icon
+```
+
+---
+
+## 🔐 Security Considerations
+
+### Wallet Verification
+- All authentication based on wallet signatures
+- No password storage needed
+- Wallet address is primary key
+
+### OAuth Security
+- State parameter for CSRF protection
+- PKCE flow for Twitter OAuth 2.0
+- Secure token storage (httpOnly cookies)
+- Token refresh handling
+
+### API Security
+- API keys stored in environment variables
+- Request signing for cross-platform sync
+- Rate limiting on external endpoints
+- Idempotent operations for retry safety
+
+### Data Privacy
+- Users control which platforms to join
+- Clear consent for data sharing
+- OAuth tokens never shared between platforms
+- Right to disconnect accounts
+
+---
+
+## 📈 Success Metrics
+
+### Conversion Tracking
+```typescript
+// Track onboarding funnel
+analytics.track('Onboarding Started', { walletAddress });
+analytics.track('Port444 Enabled', { walletAddress });
+analytics.track('Categories Selected', { 
+  walletAddress, 
+  count: categories.length 
+});
+analytics.track('Onboarding Completed', {
+  walletAddress,
+  dualPlatform: enablePort444,
+  categoriesCount: categories.length,
+  skillsCount: skills.length
+});
+```
+
+### Key Metrics
+- **Dual-platform adoption rate**: % of users enabling port444
+- **Category distribution**: Most popular service categories
+- **OAuth connection rate**: % of users connecting social profiles
+- **Time to complete**: Average onboarding duration
+- **Form abandonment**: Where users drop off
+
+---
+
+## 🚀 Implementation Checklist
+
+### For port444 Team
+
+#### Phase 1: Backend Setup
+- [ ] Create `/api/external/create-builder` endpoint
+- [ ] Generate and share `PORT444_EXTERNAL_API_KEY`
+- [ ] Set up `BASED_CREATORS_EXTERNAL_API_KEY` in your env
+- [ ] Update database schema for multiple categories
+- [ ] Add cross-platform sync tracking fields
+
+#### Phase 2: OAuth Integration
+- [ ] Set up GitHub OAuth app
+- [ ] Set up Twitter OAuth 2.0 app (PKCE)
+- [ ] Integrate Farcaster Auth
+- [ ] Add Zora profile verification
+- [ ] Add Base profile verification
+
+#### Phase 3: UI Implementation
+- [ ] Create multi-select category badges
+- [ ] Add OAuth connection buttons
+- [ ] Implement skill suggestions per category
+- [ ] Add form validation
+- [ ] Create success confirmation flow
+
+#### Phase 4: Testing
+- [ ] Test API integration end-to-end
+- [ ] Test OAuth flows for all platforms
+- [ ] Test multi-category selection
+- [ ] Test form validation
+- [ ] Test error handling and retries
+
+#### Phase 5: Deployment
+- [ ] Deploy to staging
+- [ ] Run integration tests
+- [ ] Deploy to production
+- [ ] Monitor sync success rate
+- [ ] Set up error alerts
+
+---
+
+## 📞 Contact & Support
+
+**Based Creators Team:**
+- GitHub: [Based Creators Repo]
+- API Docs: https://basedcreators.replit.app/docs/api
+- Support: dev@basedcreators.com
+
+**Integration Questions:**
+- Reach out for API keys
+- Request technical walkthrough
+- Get access to staging environment
+
+---
+
+## 🎯 Next Steps
+
+1. **Review this spec** with your team
+2. **Set up OAuth apps** for social platforms
+3. **Implement backend API** for receiving users
+4. **Create UI components** for onboarding
+5. **Coordinate testing** between platforms
+6. **Launch together** 🚀
+
+---
+
+## Appendix A: Complete Category List
+
+```typescript
+const PORT444_CATEGORIES = [
+  { value: "web_development", label: "Web Development" },
+  { value: "mobile_development", label: "Mobile Development" },
+  { value: "blockchain", label: "Blockchain & Web3" },
+  { value: "smart_contracts", label: "Smart Contract Development" },
+  { value: "ui_ux_design", label: "UI/UX Design" },
+  { value: "graphic_design", label: "Graphic Design" },
+  { value: "branding", label: "Branding & Identity" },
+  { value: "video_editing", label: "Video Editing" },
+  { value: "animation", label: "Animation & Motion" },
+  { value: "3d_modeling", label: "3D Modeling" },
+  { value: "content_writing", label: "Content Writing" },
+  { value: "copywriting", label: "Copywriting" },
+  { value: "seo_marketing", label: "SEO & Marketing" },
+  { value: "social_media", label: "Social Media Management" },
+  { value: "community_management", label: "Community Management" },
+  { value: "ai_ml", label: "AI & Machine Learning" },
+  { value: "data_science", label: "Data Science" },
+  { value: "devops", label: "DevOps & Infrastructure" },
+  { value: "cybersecurity", label: "Cybersecurity" },
+  { value: "consulting", label: "Business Consulting" }
+];
+```
+
+## Appendix B: Skill Suggestions by Category
+
+**Web Development:**
+React, Vue, Angular, Next.js, TypeScript, JavaScript, Node.js, Express, HTML/CSS, Tailwind, Redux, GraphQL, REST APIs, PostgreSQL, MongoDB
+
+**Blockchain & Web3:**
+Solidity, Rust, Move, Ethers.js, Web3.js, Hardhat, Foundry, Smart Contracts, DeFi, NFTs, DAOs, Base, Ethereum, Polygon
+
+**Smart Contract Development:**
+Solidity, Vyper, Rust, Move, OpenZeppelin, Hardhat, Foundry, Truffle, Security Audits, Gas Optimization, Unit Testing, ERC Standards
+
+**UI/UX Design:**
+Figma, Adobe XD, Sketch, Prototyping, User Research, Wireframing, Design Systems, Interaction Design, Usability Testing, Mobile Design
+
+**Graphic Design:**
+Photoshop, Illustrator, InDesign, Brand Identity, Typography, Color Theory, Print Design, Digital Illustration, Logo Design
+
+*(And 15 more categories with 300+ total skills)*
+
+---
+
+**END OF SPECIFICATION**
+
+*This specification is a living document. Updates and clarifications will be provided as the integration evolves.*

@@ -63,6 +63,7 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **URL Synchronization**: Complete URL parameter synchronization for shareable filter states across marketplace pages, maintaining filter persistence on reload.
 - **Cross-Platform Integration**: Seamless 2-way account synchronization between port444 and Based Creators using a `cross_platform_users` table and API endpoints for account creation and linking.
 - **Invite Systems**: Builder invite system (peer-to-peer) and Based Creators Chapters invite system with dedicated 4-step onboarding including mandatory service creation during registration.
+- **Dual-Platform Onboarding Wizard**: Complete 5-step wizard enabling seamless account creation across Based Creators and port444 with single wallet signature. Features floating particles animation, shimmer gradients, pulsing rings, multi-select categories (20 options), dynamic skill suggestions (300+ skills), OAuth social connections (GitHub, Twitter, Farcaster, Zora, Base), professional bio (100-1000 chars), pricing setup, and chapter selection. Conditional port444 profile section with full validation.
 
 ## External Dependencies
 - **Blockchain Network**: Base (mainnet and Sepolia testnet)
