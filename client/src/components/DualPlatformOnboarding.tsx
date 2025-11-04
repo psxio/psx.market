@@ -34,7 +34,7 @@ interface OnboardingFormData {
   firstName: string;
   lastName: string;
   email: string;
-  industry: string;
+  industries: string[];
   chapterId: string;
   githubUrl: string;
   xProfile: string;
@@ -68,7 +68,7 @@ export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingPro
     firstName: '',
     lastName: '',
     email: '',
-    industry: '',
+    industries: [],
     chapterId: '',
     githubUrl: '',
     xProfile: '',
@@ -213,7 +213,7 @@ export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingPro
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email || privyUser?.email?.address,
-        industry: formData.industry,
+        industries: formData.industries,
         chapterId: formData.chapterId,
         socialProfiles: {
           github: formData.githubUrl,
@@ -545,15 +545,46 @@ export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingPro
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="industry">Industry</Label>
+                  <Label htmlFor="industry">
+                    Industries <span className="text-muted-foreground text-xs">(Select all that apply)</span>
+                  </Label>
+                  
+                  {/* Selected Industries Display */}
+                  {formData.industries.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {formData.industries.map(ind => (
+                        <Badge key={ind} variant="secondary" className="gap-1">
+                          {ind}
+                          <X
+                            className="h-3 w-3 cursor-pointer hover:text-destructive"
+                            onClick={() => setFormData(prev => ({
+                              ...prev,
+                              industries: prev.industries.filter(i => i !== ind)
+                            }))}
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  
                   <div className="relative">
                     <Briefcase className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Select value={formData.industry} onValueChange={(val) => setFormData({ ...formData, industry: val })}>
+                    <Select 
+                      value="" 
+                      onValueChange={(val) => {
+                        if (val && !formData.industries.includes(val)) {
+                          setFormData(prev => ({
+                            ...prev,
+                            industries: [...prev.industries, val]
+                          }));
+                        }
+                      }}
+                    >
                       <SelectTrigger className="pl-10" data-testid="select-industry">
-                        <SelectValue placeholder="Select your industry" />
+                        <SelectValue placeholder={formData.industries.length > 0 ? "Add another industry" : "Select industries"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {INDUSTRIES.map(ind => (
+                        {INDUSTRIES.filter(ind => !formData.industries.includes(ind)).map(ind => (
                           <SelectItem key={ind} value={ind}>{ind}</SelectItem>
                         ))}
                       </SelectContent>

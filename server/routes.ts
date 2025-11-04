@@ -110,7 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         firstName,
         lastName,
         email,
-        industry,
+        industries,
         chapterId,
         socialProfiles,
         enablePort444,
@@ -206,7 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           chapterId: chapterId,
           name: fullName,
           email: email,
-          industry: industry,
+          industries: industries || [],
           socialProfiles: socialProfiles
         };
       }
