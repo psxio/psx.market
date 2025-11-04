@@ -100,7 +100,7 @@ export function OnboardingRoleSelector() {
   return (
     <>
     <Dialog open={showDualPlatformModal} onOpenChange={setShowDualPlatformModal}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0 bg-transparent border-0 shadow-none">
         <DualPlatformOnboarding onComplete={handleDualPlatformComplete} />
       </DialogContent>
     </Dialog>
