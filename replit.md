@@ -10,9 +10,13 @@ port444 is a Web3 marketplace connecting premium builders with clients in the me
 - Animations: Scroll-triggered reveal animations throughout (fadeInUp, fadeInLeft, fadeInRight, fadeInScale, slideInUp, zoomIn, bounceIn)
 - Navigation: Help and Admin links moved to footer (not in navbar)
 
-## Recent Updates
+## Recent Updates (November 2025)
 - **Tax & Invoicing System**: Auto-generated invoices per order, monthly statements, W-9/W-8BEN/EU VAT compliance, downloadable CSV/PDF exports, year-end reporting
 - **Dispute SLA Codification**: 7-day auto-resolution timers, mediation flow with evidence tracking, split-payout presets (100/0, 70/30, 50/50), decision matrix
+- **IP & Licensing**: Per-order IP modes (work-for-hire, license, shared, builder-retains), commercial rights add-on, SoW PDF attachment to escrow, configurable IP transfer timing
+- **Credentials Vault**: End-to-end encrypted secret sharing (API keys, passwords, tokens), auto-revocation, comprehensive audit logging
+- **Order Auto-Progress Rules**: Auto-cancel orders stuck in pending requirements, auto-complete delivered orders, configurable timers with UI countdown
+- **Refund/Chargeback Policy**: Platform policies for PayPal/Stripe disputes, chargeback defense workflow, fee responsibility configuration
 
 ## System Architecture
 port444 uses a decoupled frontend and backend architecture, built with React/TypeScript for the frontend and Express/TypeScript for the backend.
@@ -37,6 +41,10 @@ port444 uses a decoupled frontend and backend architecture, built with React/Typ
 - **File Upload & Storage**: Replit Object Storage with ACL and presigned URLs.
 - **Tax & Invoicing System**: Automated invoice generation per order with tax compliance (W-9/1099 for US, W-8BEN for non-US, EU VAT), monthly statements, CSV/PDF downloads, year-end exports by jurisdiction.
 - **Dispute SLA & Mediation**: Codified dispute resolution with 7-day SLA timers, auto-resolution mechanisms, evidence tracking, mediation stages, and split-payout presets (100/0, 70/30, 50/50).
+- **IP & Licensing Management**: Per-order IP assignment (work-for-hire, license, shared ownership, builder retains), commercial rights add-ons, Statement of Work (SoW) PDF documents attached to escrow hash, configurable IP transfer timing (on completion, payment, or milestone).
+- **Credentials Vault**: End-to-end encrypted secret sharing system for API keys, passwords, tokens, and SSH keys between clients and builders with AES-256-GCM encryption, auto-revocation on order completion/cancellation, and immutable audit logging.
+- **Order Auto-Progress Rules**: Automatic order state transitions to prevent idle loops - auto-cancel if pending requirements exceed configurable days (default 7), auto-complete if delivered work exceeds configurable days (default 5), with visible countdown timers in UI and configurable fee policies.
+- **Refund & Chargeback Management**: Platform-wide and service-specific refund policies with configurable windows (full/partial/none), PayPal and Stripe chargeback/dispute tracking, automated webhook integration, evidence collection for defense, and configurable fee responsibility (platform/builder/split).
 - **Twitter/X API Integration**: Full Twitter API v2 integration for profile verification, auto-fill during onboarding, real-time follower counts, verified status checking, and social profile data fetching. Uses OAuth 2.0 Bearer token for authenticated requests.
 - **AI-Powered Builder Discovery & Matching**: OpenAI GPT-4o-mini for a client-facing matching wizard, "Similar Builders Engine," and "Smart Service Recommendations."
 - **Notification System**: Comprehensive system with browser push, email notifications, real-time counters, and read/unread tracking.

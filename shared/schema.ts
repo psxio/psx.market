@@ -579,6 +579,21 @@ export const orders = pgTable("orders", {
   disputeResolvedAt: text("dispute_resolved_at"),
   disputeOutcome: text("dispute_outcome"),
   
+  // IP & Licensing / SoW Templates
+  ipMode: text("ip_mode").default("work_for_hire"), // 'work_for_hire' | 'license' | 'shared' | 'builder_retains'
+  licenseTerms: text("license_terms"), // Detailed license terms text
+  commercialRights: boolean("commercial_rights").notNull().default(false), // Commercial usage rights granted
+  ipTransferOn: text("ip_transfer_on").default("payment"), // 'completion' | 'payment' | 'milestone'
+  sowDocUrl: text("sow_doc_url"), // Statement of Work PDF URL (attached to escrow)
+  sowDocHash: text("sow_doc_hash"), // IPFS/escrow hash of SoW document
+  
+  // Order Auto-Progress Rules
+  autoCancelDays: integer("auto_cancel_days"), // Days before auto-cancel if pending requirements
+  autoCompleteDays: integer("auto_complete_days"), // Days before auto-complete if delivered
+  autoCancelDate: text("auto_cancel_date"), // Calculated auto-cancel date
+  autoCompleteDate: text("auto_complete_date"), // Calculated auto-complete date
+  autoProgressEnabled: boolean("auto_progress_enabled").notNull().default(true),
+  
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -2370,6 +2385,144 @@ export const withdrawalRequests = pgTable("withdrawal_requests", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// Credentials Vault - Secure Secret Sharing (encrypted API keys/logins)
+export const orderSecrets = pgTable("order_secrets", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  
+  label: text("label").notNull(), // e.g., "Twitter API Key", "Database Password"
+  description: text("description"), // Usage notes
+  secretType: text("secret_type").notNull(), // 'api_key' | 'password' | 'token' | 'ssh_key' | 'other'
+  
+  // Encrypted data (end-to-end encrypted before storage)
+  encryptedBlob: text("encrypted_blob").notNull(), // Encrypted secret value
+  encryptionMethod: text("encryption_method").notNull().default("AES-256-GCM"), // Encryption algorithm
+  iv: text("iv").notNull(), // Initialization vector for decryption
+  
+  // Access control
+  createdBy: varchar("created_by").notNull(), // User ID who created (usually client)
+  createdByType: text("created_by_type").notNull(), // 'client' | 'builder'
+  accessibleTo: text("accessible_to").array(), // User IDs who can access
+  
+  // Lifecycle
+  isActive: boolean("is_active").notNull().default(true),
+  revokedAt: text("revoked_at"),
+  revokedBy: varchar("revoked_by"),
+  revocationReason: text("revocation_reason"),
+  autoRevokeOn: text("auto_revoke_on").default("completion"), // 'completion' | 'cancellation' | 'manual' | 'never'
+  
+  // Audit trail
+  lastAccessedAt: text("last_accessed_at"),
+  lastAccessedBy: varchar("last_accessed_by"),
+  accessCount: integer("access_count").notNull().default(0),
+  
+  expiresAt: text("expires_at"), // Optional expiration
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Secret Access Logs - Audit trail for credential access
+export const secretAccessLogs = pgTable("secret_access_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  secretId: varchar("secret_id").notNull(),
+  orderId: varchar("order_id").notNull(),
+  
+  accessedBy: varchar("accessed_by").notNull(), // User ID
+  accessedByType: text("accessed_by_type").notNull(), // 'client' | 'builder'
+  
+  action: text("action").notNull(), // 'viewed' | 'copied' | 'downloaded' | 'revoked'
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  
+  success: boolean("success").notNull().default(true),
+  failureReason: text("failure_reason"),
+  
+  accessedAt: text("accessed_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Refund & Chargeback Policies (for fiat payment rails)
+export const refundPolicies = pgTable("refund_policies", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  
+  policyName: text("policy_name").notNull(), // e.g., "Standard Refund Policy", "PayPal Dispute Policy"
+  policyType: text("policy_type").notNull(), // 'platform_default' | 'service_specific' | 'builder_custom'
+  
+  applicableTo: text("applicable_to").notNull().default("all"), // 'all' | 'fiat_only' | 'crypto_only'
+  paymentMethod: text("payment_method"), // 'paypal' | 'stripe' | 'crypto' | 'all'
+  
+  // Refund windows (in days)
+  fullRefundWindow: integer("full_refund_window").default(7), // Days for 100% refund
+  partialRefundWindow: integer("partial_refund_window").default(14), // Days for partial refund
+  noRefundAfter: integer("no_refund_after").default(30), // Days after which no refunds
+  
+  // Refund percentages by scenario
+  nonDeliveryRefund: integer("non_delivery_refund").default(100), // % refund if builder doesn't deliver
+  qualityIssueRefund: integer("quality_issue_refund").default(50), // % refund for quality issues
+  cancellationByClientRefund: integer("cancellation_by_client_refund").default(100), // % if client cancels early
+  cancellationByBuilderRefund: integer("cancellation_by_builder_refund").default(100), // % if builder cancels
+  
+  // Chargeback handling (PayPal/Stripe disputes)
+  chargebackDefenseEnabled: boolean("chargeback_defense_enabled").default(true),
+  chargebackFeeResponsibility: text("chargeback_fee_responsibility").default("platform"), // 'platform' | 'builder' | 'split'
+  chargebackResponseTime: integer("chargeback_response_time").default(7), // Days to respond to chargeback
+  
+  // Fee deductions on refunds
+  platformFeeRefundable: boolean("platform_fee_refundable").default(false), // Refund platform fee?
+  processingFeeRefundable: boolean("processing_fee_refundable").default(false), // Refund processing fee?
+  
+  // Restrictions
+  maxRefundsPerBuilder: integer("max_refunds_per_builder"), // Limit refunds per builder
+  maxRefundsPerClient: integer("max_refunds_per_client"), // Limit refunds per client
+  
+  // Policy details
+  termsText: text("terms_text"), // Full policy text
+  exclusions: text("exclusions").array(), // What's NOT covered
+  
+  isActive: boolean("is_active").notNull().default(true),
+  isDefault: boolean("is_default").notNull().default(false),
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Chargeback Cases (PayPal/Stripe disputes)
+export const chargebackCases = pgTable("chargeback_cases", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderId: varchar("order_id").notNull(),
+  paymentId: varchar("payment_id").notNull(),
+  
+  caseType: text("case_type").notNull(), // 'chargeback' | 'dispute' | 'inquiry'
+  provider: text("provider").notNull(), // 'paypal' | 'stripe'
+  providerCaseId: text("provider_case_id").notNull(), // External case ID
+  
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  reason: text("reason").notNull(), // e.g., "fraudulent", "not_received", "not_as_described"
+  
+  status: text("status").notNull().default("open"), // open, under_review, won, lost, closed
+  
+  // Response & Defense
+  responseDeadline: text("response_deadline").notNull(),
+  defendedAt: text("defended_at"),
+  defendedBy: varchar("defended_by"), // Admin or builder
+  defenseNotes: text("defense_notes"),
+  evidenceUrls: text("evidence_urls").array(),
+  
+  // Outcome
+  outcome: text("outcome"), // 'won' | 'lost' | 'split' | 'withdrawn'
+  outcomeDeterminedAt: text("outcome_determined_at"),
+  amountRetained: decimal("amount_retained", { precision: 10, scale: 2 }),
+  amountRefunded: decimal("amount_refunded", { precision: 10, scale: 2 }),
+  chargebackFee: decimal("chargeback_fee", { precision: 10, scale: 2 }), // Provider fee
+  
+  // Responsibility
+  feeResponsibility: text("fee_responsibility").default("platform"), // Who pays chargeback fee
+  
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  resolvedAt: text("resolved_at"),
+});
+
 // Insert Schemas
 
 export const insertUserOnlineStatusSchema = createInsertSchema(userOnlineStatus).omit({
@@ -2512,6 +2665,37 @@ export const insertWithdrawalRequestSchema = createInsertSchema(withdrawalReques
   transactionId: true,
 });
 
+export const insertOrderSecretSchema = createInsertSchema(orderSecrets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  revokedAt: true,
+  revokedBy: true,
+  lastAccessedAt: true,
+  lastAccessedBy: true,
+  accessCount: true,
+});
+
+export const insertSecretAccessLogSchema = createInsertSchema(secretAccessLogs).omit({
+  id: true,
+  accessedAt: true,
+});
+
+export const insertRefundPolicySchema = createInsertSchema(refundPolicies).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertChargebackCaseSchema = createInsertSchema(chargebackCases).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  resolvedAt: true,
+  defendedAt: true,
+  outcomeDeterminedAt: true,
+});
+
 // Types
 
 export type InsertServiceAddon = z.infer<typeof insertServiceAddonSchema>;
@@ -2583,3 +2767,15 @@ export type WithdrawalMethod = typeof withdrawalMethods.$inferSelect;
 
 export type InsertWithdrawalRequest = z.infer<typeof insertWithdrawalRequestSchema>;
 export type WithdrawalRequest = typeof withdrawalRequests.$inferSelect;
+
+export type InsertOrderSecret = z.infer<typeof insertOrderSecretSchema>;
+export type OrderSecret = typeof orderSecrets.$inferSelect;
+
+export type InsertSecretAccessLog = z.infer<typeof insertSecretAccessLogSchema>;
+export type SecretAccessLog = typeof secretAccessLogs.$inferSelect;
+
+export type InsertRefundPolicy = z.infer<typeof insertRefundPolicySchema>;
+export type RefundPolicy = typeof refundPolicies.$inferSelect;
+
+export type InsertChargebackCase = z.infer<typeof insertChargebackCaseSchema>;
+export type ChargebackCase = typeof chargebackCases.$inferSelect;
