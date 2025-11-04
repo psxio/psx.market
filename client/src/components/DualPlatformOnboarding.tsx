@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { usePrivy } from '@privy-io/react-auth';
+import { queryClient } from '@/lib/queryClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +13,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { useToast } from '@/hooks/use-toast';
 import { 
   Sparkles, Repeat2, CheckCircle2, ExternalLink, X, Plus,
-  User, Mail, Briefcase, Github, MapPin, DollarSign, Clock, Globe
+  User, Mail, Briefcase, Github, MapPin, DollarSign, Clock, Globe, Loader2
 } from 'lucide-react';
 import { SiX, SiFarcaster } from 'react-icons/si';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,8 +27,7 @@ import {
 } from '@/lib/onboardingConstants';
 
 interface DualPlatformOnboardingProps {
-  walletAddress: string;
-  onComplete: (data: OnboardingFormData) => void;
+  onComplete: (data: any) => void;
 }
 
 interface OnboardingFormData {
@@ -55,11 +56,13 @@ interface OnboardingFormData {
   certifications: string;
 }
 
-export function DualPlatformOnboarding({ walletAddress, onComplete }: DualPlatformOnboardingProps) {
+export function DualPlatformOnboarding({ onComplete }: DualPlatformOnboardingProps) {
   const { toast } = useToast();
+  const { user: privyUser } = usePrivy();
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [enablePort444, setEnablePort444] = useState(false);
   const [customSkillInput, setCustomSkillInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState<OnboardingFormData>({
     firstName: '',
@@ -196,9 +199,82 @@ export function DualPlatformOnboarding({ walletAddress, onComplete }: DualPlatfo
     if (step > 1) setStep((step - 1) as any);
   };
   
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (!validateStep()) return;
-    onComplete(formData);
+    setIsSubmitting(true);
+    
+    try {
+      const walletAccount = privyUser?.linkedAccounts?.find((acc: any) => acc.type === 'wallet');
+      const walletAddress = privyUser?.wallet?.address || (walletAccount as any)?.address;
+      
+      const payload = {
+        walletAddress,
+        privyId: privyUser?.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email || privyUser?.email?.address,
+        industry: formData.industry,
+        chapterId: formData.chapterId,
+        socialProfiles: {
+          github: formData.githubUrl,
+          twitter: formData.xProfile || privyUser?.twitter?.username,
+          farcaster: formData.farcasterProfile,
+          zora: formData.zoraProfile,
+          base: formData.baseProfile,
+        },
+        enablePort444: formData.categories.length > 0,
+        categories: formData.categories,
+        bio: formData.bio,
+        yearsOfExperience: formData.yearsOfExperience,
+        skills: formData.skills,
+        languages: formData.languages,
+        timezone: formData.timezone,
+        minimumBudget: formData.minimumBudget ? parseInt(formData.minimumBudget) : undefined,
+        hourlyRate: formData.hourlyRate ? parseInt(formData.hourlyRate) : undefined,
+        portfolioLinks: [
+          formData.portfolioLink1,
+          formData.portfolioLink2,
+          formData.portfolioLink3
+        ].filter(Boolean),
+        telegramHandle: formData.telegramHandle,
+        certifications: formData.certifications,
+      };
+
+      const response = await fetch('/api/dual-platform/onboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        toast({
+          title: 'Welcome to the community! 🎉',
+          description: `Your account${formData.categories.length > 0 ? 's have' : ' has'} been created successfully.`,
+        });
+
+        await queryClient.invalidateQueries({ queryKey: ['/api/builders/me'] });
+        await queryClient.invalidateQueries({ queryKey: ['/api/clients/me'] });
+
+        onComplete(result);
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create account');
+      }
+    } catch (error: any) {
+      console.error('Onboarding error:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to complete onboarding. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   // Floating particles animation
@@ -209,6 +285,12 @@ export function DualPlatformOnboarding({ walletAddress, onComplete }: DualPlatfo
     y: Math.random() * 100,
     duration: Math.random() * 8 + 12
   }));
+  
+  // Get wallet address for display
+  const walletAccount = privyUser?.linkedAccounts?.find((acc: any) => acc.type === 'wallet');
+  const walletAddress = privyUser?.wallet?.address || 
+                        (walletAccount as any)?.address ||
+                        '0x0000000000000000000000000000000000000000';
   
   return (
     <div className="max-w-4xl mx-auto p-6" data-testid="dual-platform-onboarding">
@@ -1007,7 +1089,7 @@ export function DualPlatformOnboarding({ walletAddress, onComplete }: DualPlatfo
                 </Card>
                 
                 <div className="flex gap-2 pt-4">
-                  <Button variant="outline" onClick={handleBack} className="flex-1">
+                  <Button variant="outline" onClick={handleBack} className="flex-1" disabled={isSubmitting}>
                     Back
                   </Button>
                   <Button
@@ -1015,7 +1097,9 @@ export function DualPlatformOnboarding({ walletAddress, onComplete }: DualPlatfo
                     onClick={handleComplete}
                     className="flex-1"
                     data-testid="button-skip-chapter"
+                    disabled={isSubmitting}
                   >
+                    {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     Skip for Now
                   </Button>
                   <Button
@@ -1023,9 +1107,14 @@ export function DualPlatformOnboarding({ walletAddress, onComplete }: DualPlatfo
                     className="flex-1 h-12"
                     size="lg"
                     data-testid="button-complete-onboarding"
+                    disabled={isSubmitting}
                   >
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Complete Setup
+                    {isSubmitting ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                    )}
+                    {isSubmitting ? 'Creating Account...' : 'Complete Setup'}
                   </Button>
                 </div>
               </CardContent>

@@ -13,12 +13,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, ShoppingBag, Sparkles, CheckCircle } from "lucide-react";
+import { DualPlatformOnboarding } from "@/components/DualPlatformOnboarding";
 
 export function OnboardingRoleSelector() {
   const { address, isConnected } = useAccount();
   const { ready: privyReady, authenticated: privyAuthenticated, user: privyUser } = usePrivy();
   const [, setLocation] = useLocation();
   const [showModal, setShowModal] = useState(false);
+  const [showDualPlatformModal, setShowDualPlatformModal] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
 
   const { data: builderData } = useQuery({
@@ -44,7 +46,7 @@ export function OnboardingRoleSelector() {
 
           if (!hasBuilderAccount && !hasClientAccount) {
             setHasChecked(true);
-            setLocation('/dual-platform-onboarding');
+            setShowDualPlatformModal(true);
           }
         }, 1000);
         
@@ -67,7 +69,7 @@ export function OnboardingRoleSelector() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isConnected, address, builderData, clientData, hasChecked, privyReady, privyAuthenticated, privyUser, setLocation]);
+  }, [isConnected, address, builderData, clientData, hasChecked, privyReady, privyAuthenticated, privyUser]);
 
   useEffect(() => {
     if (!isConnected && !privyAuthenticated) {
@@ -85,7 +87,24 @@ export function OnboardingRoleSelector() {
     }
   };
 
+  const handleDualPlatformComplete = (data: any) => {
+    setShowDualPlatformModal(false);
+    
+    if (data?.accounts?.port444) {
+      setLocation('/builder-dashboard');
+    } else {
+      setLocation('/');
+    }
+  };
+
   return (
+    <>
+    <Dialog open={showDualPlatformModal} onOpenChange={setShowDualPlatformModal}>
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0">
+        <DualPlatformOnboarding onComplete={handleDualPlatformComplete} />
+      </DialogContent>
+    </Dialog>
+    
     <Dialog open={showModal} onOpenChange={setShowModal}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
@@ -173,5 +192,6 @@ export function OnboardingRoleSelector() {
         </p>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
